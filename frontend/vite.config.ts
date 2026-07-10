@@ -8,7 +8,7 @@ import { defineConfig } from 'vite'
 const configDir = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-  base: './',
+  base: '/golden-project/',
   plugins: [react(), tailwindcss()],
   envDir: path.resolve(configDir, '..'),
   server: {
