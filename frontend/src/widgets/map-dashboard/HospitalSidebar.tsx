@@ -24,6 +24,8 @@ interface HospitalSidebarProps {
   onShowAvailableOnlyChange: (value: boolean) => void;
   careTarget: 'all' | 'adult' | 'pediatric' | 'senior';
   onCareTargetChange: (value: 'all' | 'adult' | 'pediatric' | 'senior') => void;
+  isSheetExpanded?: boolean;
+  onToggleSheet?: () => void;
 }
 
 export function HospitalSidebar({
@@ -39,6 +41,8 @@ export function HospitalSidebar({
   onShowAvailableOnlyChange,
   careTarget,
   onCareTargetChange,
+  isSheetExpanded = false,
+  onToggleSheet,
 }: HospitalSidebarProps) {
   const { etas, hasFallback, fetchEtas } = useEtaController();
 
@@ -72,7 +76,11 @@ export function HospitalSidebar({
   return (
     <aside className={DASHBOARD_SIDEBAR_PANEL_CLASS}>
       {/* 모바일 바텀 시트 드래그 핸들 */}
-      <div className="flex w-full items-center justify-center pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing">
+      <div 
+        className="flex w-full items-center justify-center pt-3 pb-2 lg:hidden cursor-pointer"
+        onClick={onToggleSheet}
+        aria-label={isSheetExpanded ? '시트 접기' : '시트 펼치기'}
+      >
         <div className="h-1.5 w-12 rounded-full bg-slate-300" />
       </div>
 

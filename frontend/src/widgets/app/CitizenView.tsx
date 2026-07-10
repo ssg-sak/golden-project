@@ -70,6 +70,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
   const [selectedHospital, setSelectedHospital] = useState<HospitalRecord | null>(null);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [careTarget, setCareTarget] = useState<'all' | 'adult' | 'pediatric' | 'senior'>('all');
+  const [isSheetExpanded, setIsSheetExpanded] = useState(false);
 
   const showLocations = useOptimalLocationsStore((state) => state.showLocations);
   const fetchLocations = useOptimalLocationsStore((state) => state.fetchLocations);
@@ -126,7 +127,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
       ) : null}
 
       <main className={DASHBOARD_MAIN_CLASS}>
-        <div className={DASHBOARD_SIDEBAR_COL_CLASS}>
+        <div className={`${DASHBOARD_SIDEBAR_COL_CLASS} ${isSheetExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-10rem)] lg:translate-y-0'}`}>
           <HospitalSidebar
             hospitals={hospitals}
             selectedHospital={selectedHospital}
@@ -140,6 +141,8 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
             onShowAvailableOnlyChange={setShowAvailableOnly}
             careTarget={careTarget}
             onCareTargetChange={handleCareTargetChange}
+            isSheetExpanded={isSheetExpanded}
+            onToggleSheet={() => setIsSheetExpanded(p => !p)}
           />
         </div>
 
