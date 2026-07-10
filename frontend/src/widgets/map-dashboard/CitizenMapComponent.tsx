@@ -104,12 +104,7 @@ export function CitizenMapComponent({
     <div className="relative h-full min-h-0 w-full flex-1">
       <div
         ref={containerRef}
-        className="relative h-full min-h-0 w-full touch-pan-y lg:touch-auto"
-        onWheelCapture={(event) => {
-          if (window.matchMedia('(min-width: 1024px)').matches) {
-            event.stopPropagation();
-          }
-        }}
+        className="relative h-full min-h-[50vh] lg:min-h-0 w-full touch-pan-y lg:touch-auto"
       >
         <Map
           center={mapCenter}
