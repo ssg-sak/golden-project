@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+
+:root {
+  font-family:
+    'Pretendard Variable',
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
+  line-height: 1.5;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #f1f5f9;
+}
+
+h1,
+h2 {
+  margin: 0;
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-lg border border-slate-200 bg-white shadow-sm;
+  }
+
+  .glass-panel-strong {
+    @apply rounded-lg border border-slate-200 bg-white shadow-sm;
+  }
+
+  .map-float-card {
+    @apply rounded-md border border-slate-200/90 bg-white shadow-sm;
+  }
+}

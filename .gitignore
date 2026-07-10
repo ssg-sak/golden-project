@@ -1,0 +1,73 @@
+# 환경 변수 (Git 업로드 금지)
+.env
+.env.*
+!.env.example
+
+# 로컬 의존성/빌드 산출물
+node_modules/
+dist/
+**/.vite/
+coverage/
+
+# Python 캐시 및 가상환경
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# 로컬 실행 산출물 및 임시 파일
+*.log
+*.tmp
+*.temp
+result.txt
+
+.DS_Store
+*.log
+test-results/
+playwright-report/
+
+# =========================
+# 보안 및 자격 증명 (절대 유출 금지)
+# =========================
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_rsa.pub
+
+# 시크릿 설정 파일
+secrets.json
+credentials.json
+client_secret.json
+auth.json
+*.ovpn
+.npmrc
+.netrc
+backend/get_kakao_error.py
+
+# 데이터베이스
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# OS 및 기타 IDE
+Thumbs.db
+.idea/
+
+# =========================
+# 문서 (Docs) - 화이트리스트 방식 (기본 비공개)
+# =========================
+# 1. docs 하위의 모든 항목을 기본적으로 숨김
+docs/**
+!docs/
+
+# 2. 예외적으로 공개할 외부 어필용 포트폴리오 파일만 허용
+!docs/README.md
+!docs/PORTFOLIO.md
+!docs/CASE_STUDY_PORTFOLIO.md

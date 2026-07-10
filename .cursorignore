@@ -1,0 +1,9 @@
+*.geojson
+node_modules/
+.git/
+package-lock.json
+dist/
+data/raw/
+.env
+.env.*
+!.env.example
