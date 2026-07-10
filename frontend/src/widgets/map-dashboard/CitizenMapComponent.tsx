@@ -104,7 +104,7 @@ export function CitizenMapComponent({
     <div className="relative h-full min-h-0 w-full flex-1">
       <div
         ref={containerRef}
-        className="relative h-full min-h-[50vh] lg:min-h-0 w-full touch-pan-y lg:touch-auto"
+        className="relative h-full min-h-[50vh] lg:min-h-0 w-full touch-none"
       >
         <Map
           center={mapCenter}
