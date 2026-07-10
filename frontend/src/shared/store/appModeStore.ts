@@ -13,9 +13,11 @@ interface AppModeStore {
   setSimulationMode: (on: boolean) => void;
 }
 
+import { ENV } from '../config/env';
+
 export const useAppModeStore = create<AppModeStore>()((set) => ({
   viewMode: 'citizen',
   setViewMode: (mode) => set({ viewMode: mode }),
-  isSimulationMode: window.location.hostname.includes('github.io'), // 깃허브 배포판은 시뮬레이션(스냅샷) 켜짐, 로컬은 실제 API(false)
+  isSimulationMode: ENV.IS_SIMULATION_MODE, // .env.demo 에 의해서만 켜짐
   setSimulationMode: (on) => set({ isSimulationMode: on }),
 }));
