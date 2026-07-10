@@ -16,6 +16,6 @@ interface AppModeStore {
 export const useAppModeStore = create<AppModeStore>()((set) => ({
   viewMode: 'citizen',
   setViewMode: (mode) => set({ viewMode: mode }),
-  isSimulationMode: true, // 깃허브 배포판 기본값: 시뮬레이션 켜짐
+  isSimulationMode: window.location.hostname.includes('github.io'), // 깃허브 배포판은 시뮬레이션(스냅샷) 켜짐, 로컬은 실제 API(false)
   setSimulationMode: (on) => set({ isSimulationMode: on }),
 }));
