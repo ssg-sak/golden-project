@@ -38,5 +38,7 @@ export function isHospitalUnavailable(hospital: HospitalRecord): boolean {
 }
 
 export function isHospitalAvailable(hospital: HospitalRecord): boolean {
+  // 응급실(권역/지역응급센터)은 24시간이므로 병상 수와 무관하게 목록에 표시
+  if (hospital.tier === 1 || hospital.tier === 2) return true;
   return resolveBedStatus(hospital).status === 'available';
 }
