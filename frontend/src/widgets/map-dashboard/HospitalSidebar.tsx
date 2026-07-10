@@ -71,6 +71,11 @@ export function HospitalSidebar({
 
   return (
     <aside className={DASHBOARD_SIDEBAR_PANEL_CLASS}>
+      {/* 모바일 바텀 시트 드래그 핸들 */}
+      <div className="flex w-full items-center justify-center pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing">
+        <div className="h-1.5 w-12 rounded-full bg-slate-300" />
+      </div>
+
       <PanelSidebarHeader
         variant="citizen"
         icon={<CitizenLocationIcon />}

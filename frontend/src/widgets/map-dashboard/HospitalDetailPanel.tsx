@@ -21,7 +21,11 @@ interface HospitalDetailPanelProps {
 
 function EmptyPanel() {
   return (
-    <aside className={`${PANEL_SHELL} justify-center bg-white`}>
+    <aside className={`${PANEL_SHELL} justify-center bg-white relative`}>
+      {/* 모바일 바텀 시트 드래그 핸들 */}
+      <div className="absolute top-0 left-0 right-0 flex w-full items-center justify-center pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing">
+        <div className="h-1.5 w-12 rounded-full bg-slate-200" />
+      </div>
       <div className="px-6 py-10 text-center">
         <p className="text-4xl" aria-hidden>
           🏥
@@ -47,6 +51,10 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
 
   return (
     <aside className={PANEL_SHELL}>
+      {/* 모바일 바텀 시트 드래그 핸들 */}
+      <div className="flex w-full items-center justify-center pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing bg-white/50 backdrop-blur-md">
+        <div className="h-1.5 w-12 rounded-full bg-slate-300" />
+      </div>
       <div
         className={`shrink-0 border-b px-5 py-5 ${
           bedStatus.status === 'unavailable'
