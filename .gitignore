@@ -71,3 +71,9 @@ docs/**
 !docs/README.md
 !docs/PORTFOLIO.md
 !docs/CASE_STUDY_PORTFOLIO.md
+
+# =========================
+# 기타 누락된 기밀 문서
+# =========================
+기획서.html
+frontend/src/widgets/map-dashboard/implementation_plan.md
