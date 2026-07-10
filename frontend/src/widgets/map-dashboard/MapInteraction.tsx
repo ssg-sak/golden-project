@@ -20,8 +20,15 @@ export function MapInteraction({
     if (!map || initializedRef.current) return;
     initializedRef.current = true;
 
+    // 드래그 및 줌(마우스 휠 포함) 무조건 강제 활성화 (이중 방어)
     map.setDraggable(true);
     map.setZoomable(true);
+    
+    // 카카오맵 내부적으로 휠 이벤트를 온전히 받도록 속성 덮어쓰기
+    if (typeof map.setKeyboardShortcuts === 'function') {
+      map.setKeyboardShortcuts(true);
+    }
+    
     map.setMinLevel(minLevel);
     map.setMaxLevel(maxLevel);
     map.setLevel(defaultLevel);
