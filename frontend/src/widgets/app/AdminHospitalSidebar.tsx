@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 
-import { DASHBOARD_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-layout';
+import { DESKTOP_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-layout';
 import {
   HOSPITAL_TIER_ORDER,
   HOSPITAL_TIER_VISUAL,
@@ -64,7 +64,7 @@ export function AdminHospitalSidebar({
   }, [highlightedHospitalName, selectedHospital]);
 
   return (
-    <aside className={DASHBOARD_SIDEBAR_PANEL_CLASS}>
+    <aside className={DESKTOP_SIDEBAR_PANEL_CLASS}>
       <PanelSidebarHeader
         variant="admin"
         icon={<AdminPolicyIcon />}

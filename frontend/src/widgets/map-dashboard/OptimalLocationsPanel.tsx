@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useOptimalLocationsStore, type OptimalLocation } from './lib/useOptimalLocationsStore';
 import { useReverseGeocode } from './lib/useReverseGeocode';
-import { DASHBOARD_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-layout';
+import { DESKTOP_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-layout';
 
 // -----------------------------------------------------------------------------
 // Presentational (View) Components
@@ -98,7 +98,7 @@ interface OptimalLocationsViewProps {
 
 function OptimalLocationsView({ locations, maxDemand, highestId, lowestId, currentMode, onClose }: OptimalLocationsViewProps) {
   return (
-    <aside className={DASHBOARD_SIDEBAR_PANEL_CLASS}>
+    <aside className={DESKTOP_SIDEBAR_PANEL_CLASS}>
       <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-100 px-4">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 shadow-inner">

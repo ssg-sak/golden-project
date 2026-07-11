@@ -7,8 +7,7 @@ from typing import Any
 
 import httpx
 
-from app.core.env import has_data_go_kr_api_key
-from app.services.bed_payload import bed_payload, null_bed_payload
+from app.services.bed_payload import null_bed_payload
 
 logger = logging.getLogger(__name__)
 

@@ -5,7 +5,7 @@ import {
   DASHBOARD_DETAIL_INNER_CLASS,
   DASHBOARD_MAIN_CLASS,
   DASHBOARD_MAP_COL_CLASS,
-  DASHBOARD_SIDEBAR_COL_CLASS,
+  DESKTOP_SIDEBAR_WRAPPER_CLASS,
   DASHBOARD_VIEW_ROOT_CLASS,
 } from '../../shared/constants/dashboard-layout';
 
@@ -81,7 +81,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
       {adminState.policyStatus ? <PolicyStatusBanner {...adminState.policyStatus} /> : null}
 
       <main className={DASHBOARD_MAIN_CLASS}>
-        <div className={DASHBOARD_SIDEBAR_COL_CLASS}>
+        <div className={`hidden lg:flex ${DESKTOP_SIDEBAR_WRAPPER_CLASS}`}>
           <AdminHospitalSidebar
             hospitals={adminState.hospitals}
             selectedHospital={adminState.selectedHospital}
