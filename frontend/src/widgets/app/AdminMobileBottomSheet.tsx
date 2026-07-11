@@ -53,7 +53,7 @@ interface AdminMobileBottomSheetProps {
   vulnerabilityUpdatedAt?: string | null;
   totalHospitalsDelta?: number | null;
   highRiskDelta?: number | null;
-  policyStatus?: any;
+  policyStatus?: unknown;
 }
 
 export function AdminMobileBottomSheet({
@@ -119,7 +119,7 @@ export function AdminMobileBottomSheet({
     controls.start(sheetState);
   }, [sheetState, controls]);
 
-  const handleDragEnd = (_event: any, info: PanInfo) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 50;
     const velocity = info.velocity.y;
     const offset = info.offset.y;
