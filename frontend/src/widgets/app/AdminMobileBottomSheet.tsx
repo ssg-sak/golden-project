@@ -148,7 +148,7 @@ export function AdminMobileBottomSheet({
       initial="half"
       animate={controls}
       variants={variants}
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+      transition={{ type: 'spring', damping: 30, stiffness: 400 }}
       drag="y"
       dragConstraints={{ top: 0, bottom: 0 }}
       dragElastic={0.2}
