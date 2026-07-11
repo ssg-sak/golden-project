@@ -120,7 +120,7 @@ export function PlatformIntroView() {
 
         <section className="mt-12 border border-slate-300 bg-white">
           <div className="border-b-2 border-teal-800 px-6 py-5">
-            <p className="text-sm font-bold text-teal-800">사회과학 분석 보고서 주요 결과</p>
+            <p className="text-sm font-bold text-teal-800">응급의료 인프라 심층 분석 주요 결과</p>
             <h2 className="mt-1 text-2xl font-extrabold">소아·고령층 이중 트랙 공간 분석</h2>
             <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-600">
               총량 확대만으로 해결하기 어려운 의료 격차에 대해 취약지역을 먼저 찾고 한정된 자원의 공간적 우선순위를 검토하는 방법을 제안합니다.
