@@ -11,6 +11,7 @@ import { MapRelayout } from './MapRelayout';
 import { SelectedHospitalPin } from './SelectedHospitalPin';
 import { enforceDaeguMapBounds } from './lib/daegu-map-bounds';
 import { filterByCareTarget } from './lib/hospital-filter';
+import { isHospitalAvailable } from '../../shared/lib/bed-status';
 import type { KakaoLatLng } from './lib/geojson-to-kakao';
 import { userLocationMarkerImage } from './lib/kakao-marker-images';
 
@@ -53,7 +54,7 @@ export function CitizenMapComponent({
 
     // 1) 병상(available) 필터
     if (showAvailableOnly) {
-      filtered = filtered.filter((h) => (h.available_beds ?? 0) > 0);
+      filtered = filtered.filter((h) => isHospitalAvailable(h));
     }
 
     // 2) 진료대상(careTarget) 공통 필터 적용

@@ -42,7 +42,7 @@ export function HospitalMarkerOverlay({
   return (
     <CustomOverlayMap
       position={position}
-      clickable={false}
+      clickable={true}
       xAnchor={0.5}
       yAnchor={0.5}
       zIndex={isSelected ? 6 : 4}

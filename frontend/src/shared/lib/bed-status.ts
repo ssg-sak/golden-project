@@ -38,7 +38,9 @@ export function isHospitalUnavailable(hospital: HospitalRecord): boolean {
 }
 
 export function isHospitalAvailable(hospital: HospitalRecord): boolean {
-  // 응급실(권역/지역응급센터)은 24시간이므로 병상 수와 무관하게 목록에 표시
-  if (hospital.tier === 1 || hospital.tier === 2) return true;
+  // 달빛어린이병원(Tier 3)은 병상 수(HIRA 데이터)가 없지만, 소아/야간 진료 기관이므로 '진료 가능' 필터에서 보이도록 예외 처리
+  if (hospital.tier === 3) return true;
+  
+  // Tier 1, 2 응급실은 실제 병상 수를 기반으로 진료 가능 여부 판별 (수용 불가면 필터링됨)
   return resolveBedStatus(hospital).status === 'available';
 }
