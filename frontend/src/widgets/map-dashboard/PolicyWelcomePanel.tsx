@@ -21,7 +21,7 @@ export function PolicyWelcomePanel() {
       <div className="p-5">
         <section className="mb-7 border border-slate-300 bg-slate-50">
           <div className="border-b border-slate-300 px-4 py-3">
-            <p className="text-xs font-bold text-teal-800">2026년 7월 응급의료 인프라 심층 분석 보고서</p>
+            <p className="text-xs font-bold text-teal-800">2026년 7월 응급의료 인프라 분석 리포트</p>
             <h3 className="mt-1 text-base font-extrabold text-slate-900">데이터 기반 거버넌스와 응급의료 사각지대의 해소</h3>
           </div>
           <dl className="grid grid-cols-2 divide-x divide-slate-300 border-b border-slate-300">

@@ -170,7 +170,7 @@ export function MapToolbar({
             onClick={onCaptureReport}
             className="rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-300 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
           >
-            심층 분석 보고서 열람
+            응급의료 인프라 분석 리포트
           </button>
         </div>
         
