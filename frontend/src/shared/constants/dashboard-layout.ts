@@ -8,9 +8,9 @@ export const DASHBOARD_VIEW_ROOT_CLASS = 'flex min-h-0 flex-1 flex-col';
 export const DASHBOARD_MAIN_CLASS =
   'relative mx-auto flex w-full max-w-[1800px] flex-1 overflow-hidden lg:flex-row lg:items-stretch lg:gap-3 lg:p-6 lg:overflow-visible';
 
-/** 모바일 바텀 시트 전용 최상위 래퍼 (absolute 위치 및 높이 제한) */
+/** 모바일 바텀 시트 전용 최상위 래퍼 (absolute 위치 및 높이 고정) */
 export const MOBILE_BOTTOM_SHEET_WRAPPER_CLASS =
-  'absolute bottom-0 left-0 right-0 z-10 flex flex-col max-h-[55dvh] overflow-hidden rounded-t-3xl bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] transition-transform duration-300';
+  'absolute bottom-0 left-0 right-0 z-10 flex flex-col h-[55dvh] overflow-hidden rounded-t-3xl bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] transition-transform duration-300';
 
 /** 모바일 바텀 시트 내부 패널 (내부 스크롤 허용용 Flex 구조) */
 export const MOBILE_BOTTOM_SHEET_PANEL_CLASS =
