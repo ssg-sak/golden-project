@@ -10,7 +10,6 @@ import { CitizenView } from '../widgets/app/CitizenView';
 import { GlobalNavigationBar } from '../widgets/app/GlobalNavigationBar';
 import { PlatformIntroView } from '../widgets/app/PlatformIntroView';
 import { DisclaimerBanner } from '../widgets/shared/DisclaimerBanner';
-import { SimulationBanner } from '../widgets/shared/SimulationBanner';
 import { DemoWarningBanner } from '../widgets/shared/DemoWarningBanner';
 import { DemoNoticeModal } from '../widgets/shared/DemoNoticeModal';
 import { GovernanceFooter } from '../widgets/shared/GovernanceFooter';
@@ -42,7 +41,6 @@ export default function AppPage() {
       <div className="fixed top-0 left-0 right-0 z-50 flex flex-col lg:relative lg:z-auto">
         <DemoWarningBanner />
         <GlobalNavigationBar />
-        <SimulationBanner />
         <DisclaimerBanner />
       </div>
 
