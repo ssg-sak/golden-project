@@ -97,7 +97,6 @@ export function CitizenMapComponent({
     panMapTo(userLocation.lat, userLocation.lng, USER_LOCATION_LEVEL, false);
   }, [userLocation, panMapTo]);
 
-  const lastPannedHospitalRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!selectedHospital) {
