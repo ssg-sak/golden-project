@@ -10,6 +10,7 @@ import { GlobalNavigationBar } from '../app/GlobalNavigationBar';
 import { DisclaimerBanner } from '../shared/DisclaimerBanner';
 import { GovernanceFooter } from '../shared/GovernanceFooter';
 import { DegradedDataBanner } from '../shared/DegradedDataBanner';
+import { DemoWarningBanner } from '../shared/DemoWarningBanner';
 
 import { HospitalListItem } from './HospitalListItem';
 import { LocationNotice } from './LocationNotice';
@@ -49,6 +50,7 @@ export function LandingPage() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-slate-100">
+      <DemoWarningBanner />
       <GlobalNavigationBar />
       <DisclaimerBanner />
 

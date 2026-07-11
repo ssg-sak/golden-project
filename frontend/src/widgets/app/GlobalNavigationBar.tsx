@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import { DemoWarningBanner } from '../shared/DemoWarningBanner';
 import { useAppModeStore, type ViewMode } from '../../shared/store/appModeStore';
 
 const NAV_ITEMS: { id: ViewMode; label: string; shortLabel: string }[] = [
@@ -69,7 +68,6 @@ export function GlobalNavigationBar() {
 
   return (
     <header className="shrink-0 border-b border-slate-200/50 bg-white/85 backdrop-blur-md shadow-sm lg:bg-white lg:border-slate-200">
-      <DemoWarningBanner />
       <div className="mx-auto flex h-14 max-w-[1800px] items-center justify-between gap-4 px-4 md:px-8">
         <Link
           to="/"

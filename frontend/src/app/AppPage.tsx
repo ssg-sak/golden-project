@@ -11,6 +11,7 @@ import { GlobalNavigationBar } from '../widgets/app/GlobalNavigationBar';
 import { PlatformIntroView } from '../widgets/app/PlatformIntroView';
 import { DisclaimerBanner } from '../widgets/shared/DisclaimerBanner';
 import { SimulationBanner } from '../widgets/shared/SimulationBanner';
+import { DemoWarningBanner } from '../widgets/shared/DemoWarningBanner';
 import { DemoNoticeModal } from '../widgets/shared/DemoNoticeModal';
 import { GovernanceFooter } from '../widgets/shared/GovernanceFooter';
 
@@ -39,6 +40,7 @@ export default function AppPage() {
       
       {/* 모바일에서는 지도 위로 플로팅, 데스크톱에서는 정상 흐름 */}
       <div className="fixed top-0 left-0 right-0 z-50 flex flex-col lg:relative lg:z-auto">
+        <DemoWarningBanner />
         <GlobalNavigationBar />
         <SimulationBanner />
         <DisclaimerBanner />
