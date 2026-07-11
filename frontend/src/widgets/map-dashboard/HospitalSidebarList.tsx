@@ -36,8 +36,8 @@ export function HospitalSidebarList({
   const etas = useEtaController((state) => state.etas);
 
   return (
-    <div className="flex flex-col lg:min-h-0 lg:flex-1">
-      <ul className="space-y-1.5 px-2 py-2 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pb-3">
+    <div className="flex flex-1 flex-col overflow-hidden lg:min-h-0">
+      <ul className="flex-1 overflow-y-auto space-y-1.5 px-2 py-2 pb-6 lg:pb-3">
         {loading ? (
           <li className="px-2 py-8 text-center text-base leading-relaxed text-slate-500">
             {HOSPITALS_LOADING_MESSAGE}
