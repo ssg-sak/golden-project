@@ -40,12 +40,13 @@ export const useOptimalLocationsStore = create<OptimalLocationsState>((set, get)
     set({ isLoading: true, error: null });
 
     try {
-      let fetchUrl = '/data/optimal_locations_pediatric.json'; // fallback 기본값
+      const dataBaseUrl = `${import.meta.env.BASE_URL}data/`;
+      let fetchUrl = `${dataBaseUrl}optimal_locations_pediatric.json`; // fallback 기본값
       
       if (currentMode === 'senior') {
-        fetchUrl = '/data/optimal_locations_senior.json';
+        fetchUrl = `${dataBaseUrl}optimal_locations_senior.json`;
       } else if (currentMode === 'pediatric') {
-        fetchUrl = '/data/optimal_locations_pediatric.json';
+        fetchUrl = `${dataBaseUrl}optimal_locations_pediatric.json`;
       } else {
         // all 이나 adult 일 때는 AI 분석 거점이 아직 없으므로 빈 배열 처리 (또는 pediatric 기본)
         set({ locations: [], isLoading: false });

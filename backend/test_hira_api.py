@@ -10,7 +10,7 @@ load_dotenv()
 HIRA_API_KEY = os.environ.get("HIRA_API_KEY")
 URL = "http://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList"
 
-async def test_api():
+async def _probe_api():
     if not HIRA_API_KEY:
         print("HIRA_API_KEY not found in .env")
         return
@@ -37,5 +37,10 @@ async def test_api():
         except Exception as e:
             print(f"Request failed: {e}")
 
+
+def test_api():
+    """Run the asynchronous integration probe without requiring a pytest plugin."""
+    asyncio.run(_probe_api())
+
 if __name__ == "__main__":
-    asyncio.run(test_api())
+    asyncio.run(_probe_api())
