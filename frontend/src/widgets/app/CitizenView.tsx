@@ -72,7 +72,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
   const [selectedHospital, setSelectedHospital] = useState<HospitalRecord | null>(null);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [careTarget, setCareTarget] = useState<'all' | 'adult' | 'pediatric' | 'senior'>('all');
-  const [isSheetExpanded, setIsSheetExpanded] = useState(false);
+  const [isSheetExpanded, setIsSheetExpanded] = useState(true);
 
   const showLocations = useOptimalLocationsStore((state) => state.showLocations);
   const fetchLocations = useOptimalLocationsStore((state) => state.fetchLocations);
@@ -130,7 +130,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
 
       <main className={DASHBOARD_MAIN_CLASS}>
         {/* 모바일 바텀 시트 (lg 미만에서만 렌더링) */}
-        <div className={`block lg:hidden ${MOBILE_BOTTOM_SHEET_WRAPPER_CLASS} ${isSheetExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-10rem)]'}`}>
+        <div className={`block lg:hidden ${MOBILE_BOTTOM_SHEET_WRAPPER_CLASS} ${isSheetExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-14rem)]'}`}>
           <MobileBottomSheet
             hospitals={hospitals}
             selectedHospital={selectedHospital}
