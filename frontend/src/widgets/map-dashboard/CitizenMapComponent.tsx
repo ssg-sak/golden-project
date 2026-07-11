@@ -60,7 +60,7 @@ export function CitizenMapComponent({
     return filterByCareTarget(filtered, careTarget);
   }, [hospitals, showAvailableOnly, careTarget]);
 
-  const panMapTo = useCallback((lat: number, lng: number, level: number) => {
+  const panMapTo = useCallback((lat: number, lng: number, level: number, applyOffset: boolean = false) => {
     const map = mapRef.current;
     if (!map) return;
     
@@ -70,18 +70,20 @@ export function CitizenMapComponent({
     
     const targetLatLng = new kakao.maps.LatLng(lat, lng);
     
-    if (window.innerWidth < 1024) {
-      const levelScale = Math.pow(2, clampLevel(level) - 3);
-      const latOffsetPerPixel = 0.00001 * levelScale;
-      const pixelOffset = window.innerHeight * 0.25;
-      
-      const offsetLat = targetLatLng.getLat() - (pixelOffset * latOffsetPerPixel);
-      const offsetLatLng = new kakao.maps.LatLng(offsetLat, targetLatLng.getLng());
-      
-      map.panTo(offsetLatLng);
+    if (applyOffset && window.innerWidth < 1024) {
+      const proj = map.getProjection();
+      if (proj) {
+        const pixelOffset = window.innerHeight * 0.25;
+        const point = proj.pointFromCoords(targetLatLng);
+        const offsetLatLng = proj.coordsFromPoint(new kakao.maps.Point(point.x, point.y + pixelOffset));
+        map.panTo(offsetLatLng);
+      } else {
+        map.panTo(targetLatLng);
+      }
     } else {
       map.panTo(targetLatLng);
     }
+
     
     map.setLevel(clampLevel(level), { animate: true });
   }, []);
@@ -91,8 +93,11 @@ export function CitizenMapComponent({
     const key = `${userLocation.lat},${userLocation.lng}`;
     if (lastPannedUserRef.current === key) return;
     lastPannedUserRef.current = key;
-    panMapTo(userLocation.lat, userLocation.lng, USER_LOCATION_LEVEL);
+    // 내 위치는 바텀시트가 열리지 않으므로 offset 적용 안 함 (false)
+    panMapTo(userLocation.lat, userLocation.lng, USER_LOCATION_LEVEL, false);
   }, [userLocation, panMapTo]);
+
+  const lastPannedHospitalRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!selectedHospital) {
@@ -101,7 +106,8 @@ export function CitizenMapComponent({
     }
     if (lastPannedHospitalRef.current === selectedHospital.name) return;
     lastPannedHospitalRef.current = selectedHospital.name;
-    panMapTo(selectedHospital.lat, selectedHospital.lng, SELECTED_LEVEL);
+    // 병원 선택 시 모바일 바텀시트가 열리므로 offset 적용 (true)
+    panMapTo(selectedHospital.lat, selectedHospital.lng, SELECTED_LEVEL, true);
   }, [selectedHospital, panMapTo]);
 
   const handleHospitalSelect = useCallback(

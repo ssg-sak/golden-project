@@ -15,7 +15,7 @@ export function useMapController(mapRef: React.MutableRefObject<kakao.maps.Map |
   const [locating, setLocating] = useState(false);
 
   const panMapTo = useCallback(
-    (lat: number, lng: number, level: number, animateLevel = true) => {
+    (lat: number, lng: number, level: number, applyOffset: boolean = false, animateLevel = true) => {
       const map = mapRef.current;
       if (!map) return;
 
@@ -25,17 +25,18 @@ export function useMapController(mapRef: React.MutableRefObject<kakao.maps.Map |
       const clamped = clampToDaeguBounds(lat, lng);
       const targetLatLng = new kakao.maps.LatLng(clamped.lat, clamped.lng);
       
-      if (window.innerWidth < 1024) {
+      if (applyOffset && window.innerWidth < 1024) {
         // 모바일 바텀 시트를 피하기 위해 지도의 중심을 마커보다 남쪽으로 이동
-        // 줌 레벨에 따른 대략적인 위도 오프셋 (레벨 3에서 픽셀당 약 0.00001도)
-        const levelScale = Math.pow(2, clampLevel(level) - 3);
-        const latOffsetPerPixel = 0.00001 * levelScale;
-        const pixelOffset = window.innerHeight * 0.25; // 화면의 25%
-        
-        const offsetLat = targetLatLng.getLat() - (pixelOffset * latOffsetPerPixel);
-        const offsetLatLng = new kakao.maps.LatLng(offsetLat, targetLatLng.getLng());
-        
-        map.panTo(offsetLatLng);
+        const proj = map.getProjection();
+        if (proj) {
+          const pixelOffset = window.innerHeight * 0.25; // 화면의 25%
+          const point = proj.pointFromCoords(targetLatLng);
+          // Y축은 아래로 갈수록 증가. 맵의 중심이 마커보다 아래에 있어야 하므로 Y에 더함
+          const offsetLatLng = proj.coordsFromPoint(new kakao.maps.Point(point.x, point.y + pixelOffset));
+          map.panTo(offsetLatLng);
+        } else {
+          map.panTo(targetLatLng);
+        }
       } else {
         map.panTo(targetLatLng);
       }

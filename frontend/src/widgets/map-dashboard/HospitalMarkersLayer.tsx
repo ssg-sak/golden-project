@@ -10,7 +10,7 @@ interface HospitalMarkersLayerProps {
   selectedHospital: HospitalRecord | null;
   highlightedHospitalName?: string | null;
   onMarkerSelect: (hospital: HospitalRecord) => void;
-  panMapTo: (lat: number, lng: number, level: number, animateLevel?: boolean) => void;
+  panMapTo: (lat: number, lng: number, level: number, applyOffset?: boolean, animateLevel?: boolean) => void;
 }
 
 export function HospitalMarkersLayer({
@@ -21,8 +21,8 @@ export function HospitalMarkersLayer({
   panMapTo,
 }: HospitalMarkersLayerProps) {
   useEffect(() => {
-    if (selectedHospital?.name) {
-      panMapTo(selectedHospital.lat, selectedHospital.lng, HOSPITAL_SELECTED_LEVEL, true);
+    if (selectedHospital) {
+      panMapTo(selectedHospital.lat, selectedHospital.lng, HOSPITAL_SELECTED_LEVEL, true, true);
     }
   }, [selectedHospital?.name, selectedHospital?.lat, selectedHospital?.lng, panMapTo]);
 

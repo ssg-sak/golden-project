@@ -55,14 +55,14 @@ export function MapComponent(props: MapComponentProps) {
   const { userLocation, locating, panMapTo, handleLocateMe } = useMapController(mapRef);
 
   useEffect(() => {
-    if (props.selectedHospital?.name) {
-      panMapTo(props.selectedHospital.lat, props.selectedHospital.lng, HOSPITAL_SELECTED_LEVEL, true);
+    if (props.selectedHospital) {
+      panMapTo(props.selectedHospital.lat, props.selectedHospital.lng, HOSPITAL_SELECTED_LEVEL, true, true);
     }
   }, [props.selectedHospital?.name, props.selectedHospital?.lat, props.selectedHospital?.lng, panMapTo]);
 
   useEffect(() => {
     if (mapState.selectedRecord?.adm_nm) {
-      panMapTo(mapState.selectedRecord.center_lat, mapState.selectedRecord.center_lng, SELECTED_LEVEL);
+      panMapTo(mapState.selectedRecord.center_lat, mapState.selectedRecord.center_lng, SELECTED_LEVEL, true, true);
     }
   }, [mapState.selectedRecord?.adm_nm, mapState.selectedRecord?.center_lat, mapState.selectedRecord?.center_lng, panMapTo]);
 
