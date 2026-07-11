@@ -57,6 +57,10 @@ export function HospitalMarkerOverlay({
           event.stopPropagation();
           onSelect(hospital);
         }}
+        onTouchEnd={(event) => {
+          event.stopPropagation();
+          onSelect(hospital);
+        }}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
