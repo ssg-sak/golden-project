@@ -2,7 +2,7 @@ import type { HospitalTier } from '../types/hospital';
 
 export interface HospitalTierVisual {
   tier: HospitalTier;
-  /** 공식 명칭 — 권역·대형, 준종합, 달빛·소아 */
+  /** 서비스 표시 명칭 — 중증 거점, 일반 응급, 달빛·소아 */
   label: string;
   /** 필터·범례용 짧은 설명 */
   description: string;
@@ -24,7 +24,7 @@ export interface HospitalTierVisual {
 export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
   1: {
     tier: 1,
-    label: '권역·대형',
+    label: '중증 거점',
     description: '중증 응급 수용 가능한 대형 거점',
     glyph: '+',
     chipClass: 'bg-rose-50 ring-rose-100',
@@ -42,8 +42,8 @@ export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
   },
   2: {
     tier: 2,
-    label: '준종합',
-    description: '일반 응급 진료 가능',
+    label: '일반 응급',
+    description: '웹에 등록된 일반 응급 진료기관',
     glyph: '+',
     chipClass: 'bg-sky-50 ring-sky-100',
     chipTextClass: 'text-sky-700',

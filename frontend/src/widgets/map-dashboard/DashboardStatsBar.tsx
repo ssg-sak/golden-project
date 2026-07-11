@@ -13,44 +13,15 @@ interface DashboardStatsBarProps {
 }
 
 function formatUpdatedAt(value?: string | null): string {
-  if (!value) return '—';
+  if (!value) return '확인 중';
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (Number.isNaN(date.getTime())) return '확인 중';
   return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 }
 
-function formatValue(value: number | undefined, loading?: boolean): string {
-  if (loading) return '—';
-  if (value === undefined) return '—';
+function value(value: number | undefined, loading?: boolean): string {
+  if (loading || value === undefined) return '—';
   return value.toLocaleString('ko-KR');
-}
-
-function formatDelta(value?: number | null): string {
-  if (value == null || Number.isNaN(value)) return '변화 없음';
-  if (value === 0) return '변화 없음';
-  return value > 0 ? `직전 대비 +${value}` : `직전 대비 ${value}`;
-}
-
-interface MetricProps {
-  label: string;
-  value: string;
-  detail?: string;
-  accent?: string;
-}
-
-function Metric({ label, value, detail, accent = 'bg-slate-400' }: MetricProps) {
-  return (
-    <div className="flex min-w-0 flex-1 flex-col gap-1 rounded-xl border border-slate-200/80 bg-white px-3 py-2 shadow-[0_1px_0_rgba(15,23,42,0.03)]">
-      <div className="flex items-center gap-2">
-        <span className={`h-2 w-2 shrink-0 rounded-full ${accent}`} aria-hidden />
-        <span className="text-xs font-semibold tracking-tight text-slate-600">{label}</span>
-      </div>
-      <p className="text-2xl font-extrabold tabular-nums tracking-tight text-slate-900 md:text-[1.55rem]">
-        {value}
-      </p>
-      {detail && <p className="text-[11px] leading-snug text-slate-500">{detail}</p>}
-    </div>
-  );
 }
 
 export function DashboardStatsBar({
@@ -63,53 +34,39 @@ export function DashboardStatsBar({
   loading,
   hospitalsUpdatedAt,
   vulnerabilityUpdatedAt,
-  totalHospitalsDelta,
-  highRiskDelta,
 }: DashboardStatsBarProps) {
   const totalHospitals = tier1Count + tier2Count + tier3Count;
 
+  const rows = [
+    ['분석 행정동', value(districtCount, loading), '대구광역시 읍·면·동'],
+    ['웹 등록 의료기관', value(totalHospitals, loading), `중증 거점 ${value(tier1Count, loading)} · 일반 응급 ${value(tier2Count, loading)} · 소아 ${value(tier3Count, loading)}`],
+    ['고위험 행정동', value(highRiskDistrictCount, loading), `현재 기준값 ${Math.round(highRiskThreshold ?? 0)} 이상`],
+    ['기준 인구자료', '2026.06', '주민등록인구 기준'],
+  ];
+
   return (
-    <section
-      className="shrink-0 border-b border-slate-300/70 bg-[#f6f9fc]"
-      aria-label="대시보드 요약 지표"
-    >
-      <div className="mx-auto max-w-[1800px] px-4 py-2.5 md:px-6 md:py-3.5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="grid flex-1 grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4 sm:gap-y-0">
-            <Metric
-              label="분석 행정동"
-              value={formatValue(districtCount, loading)}
-              detail="대구광역시 읍·면·동"
-              accent="bg-slate-500"
-            />
-            <Metric
-              label="응급의료기관"
-              value={formatValue(totalHospitals, loading)}
-              detail={`권역·대형 ${formatValue(tier1Count, loading)} · 준종합 ${formatValue(tier2Count, loading)} · 달빛·소아 ${formatValue(tier3Count, loading)} (${formatDelta(totalHospitalsDelta)})`}
-              accent="bg-red-600"
-            />
-            <Metric
-              label="고위험 행정동"
-              value={formatValue(highRiskDistrictCount, loading)}
-              detail={`기준 ${Math.round(highRiskThreshold ?? 0)} (${formatDelta(highRiskDelta)})`}
-              accent="bg-amber-600"
-            />
-            <Metric
-              label="인구 데이터"
-              value="2026.06"
-              detail="통계청 주민등록인구"
-              accent="bg-slate-400"
-            />
+    <section className="shrink-0 border-b border-slate-300 bg-white" aria-label="정책 현황 요약">
+      <div className="mx-auto max-w-[1800px] px-4 py-3 md:px-6">
+        <div className="flex flex-col gap-2 border-b border-slate-300 pb-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-bold text-teal-800">정책 현황 요약</p>
+            <h1 className="mt-0.5 text-lg font-extrabold text-slate-900">대구광역시 응급의료 접근성 모니터링</h1>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-600">
-            <span className="rounded-full bg-white px-2.5 py-1 ring-1 ring-slate-300/80">
-              병원 데이터 {formatUpdatedAt(hospitalsUpdatedAt)}
-            </span>
-            <span className="rounded-full bg-white px-2.5 py-1 ring-1 ring-slate-300/80">
-              분석 데이터 {formatUpdatedAt(vulnerabilityUpdatedAt)}
-            </span>
-          </div>
+          <p className="text-xs text-slate-500">
+            병원 {formatUpdatedAt(hospitalsUpdatedAt)} 갱신 · 분석 {formatUpdatedAt(vulnerabilityUpdatedAt)} 갱신
+          </p>
         </div>
+        <dl className="grid divide-y divide-slate-200 sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">
+          {rows.map(([label, metric, detail]) => (
+            <div key={label} className="px-3 py-3 first:pl-0">
+              <dt className="text-xs font-bold text-slate-600">{label}</dt>
+              <dd className="mt-1 flex items-baseline gap-2">
+                <strong className="text-xl font-extrabold tabular-nums text-slate-900">{metric}</strong>
+                <span className="text-[11px] leading-4 text-slate-500">{detail}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

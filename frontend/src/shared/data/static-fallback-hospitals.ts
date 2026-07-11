@@ -1,5 +1,5 @@
-import finalHospitalsJson from '../../assets/final_hospitals.json';
 import type { HospitalRecord } from '../types/hospital';
+import { getCanonicalHospitals } from '../lib/canonical-hospitals';
 
 type StaticHospitalRow = Pick<HospitalRecord, 'name' | 'lat' | 'lng' | 'tier' | 'address'>;
 
@@ -8,7 +8,7 @@ type StaticHospitalRow = Pick<HospitalRecord, 'name' | 'lat' | 'lng' | 'tier' | 
  * 병상은 null — 「실시간 확인 중」만 표시 (허위 초록 병상 방지).
  */
 export const STATIC_FALLBACK_HOSPITAL_DATA: HospitalRecord[] = (
-  finalHospitalsJson as StaticHospitalRow[]
+  getCanonicalHospitals() as StaticHospitalRow[]
 ).map((hospital) => ({
   ...hospital,
   hvec: null,

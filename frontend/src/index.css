@@ -10,6 +10,10 @@
     sans-serif;
   line-height: 1.5;
   color: #0f172a;
+  --public-navy: #153b50;
+  --public-teal: #08766c;
+  --public-line: #cbd5dc;
+  --public-canvas: #eef2f3;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -30,12 +34,46 @@ body,
 
 body {
   margin: 0;
-  background-color: #f1f5f9;
+  background-color: var(--public-canvas);
 }
 
 h1,
 h2 {
   margin: 0;
+}
+
+/* 공공 의료 포털 시각 체계: 장식보다 정보 위계와 경계를 우선한다. */
+#root .rounded-3xl,
+#root .rounded-2xl,
+#root .rounded-xl {
+  border-radius: 4px;
+}
+
+#root .rounded-lg,
+#root .rounded-md {
+  border-radius: 3px;
+}
+
+#root .shadow-2xl,
+#root .shadow-xl,
+#root .shadow-lg,
+#root .shadow-md {
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.12);
+}
+
+#root .backdrop-blur-md,
+#root .backdrop-blur-sm {
+  backdrop-filter: none;
+}
+
+#root button,
+#root a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root :focus-visible {
+  outline: 2px solid #0f766e;
+  outline-offset: 2px;
 }
 
 @layer components {

@@ -2,6 +2,7 @@ import type { LocationSource } from '../../shared/hooks/useUserLocation';
 import { LocationNotice } from '../landing/LocationNotice';
 
 interface HospitalSidebarControlsProps {
+  heading?: string;
   isLocating: boolean;
   locationSource: LocationSource | null;
   locationErrorReason: Parameters<typeof LocationNotice>[0]['errorReason'];
@@ -13,6 +14,7 @@ interface HospitalSidebarControlsProps {
 }
 
 export function HospitalSidebarControls({
+  heading = '누가 진료받나요?',
   isLocating,
   locationSource,
   locationErrorReason,
@@ -34,7 +36,8 @@ export function HospitalSidebarControls({
         locatingMessage="위치 파악 중 📍"
       />
 
-      {/* 2. 가로 스크롤(Chip) 필터 목록 */}
+      <p className="text-xs font-bold text-slate-700">{heading}</p>
+      {/* 2. 가로 스크롤 필터 목록 */}
       <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
         {/* 병상 보유 필터 칩 */}
         <button
@@ -42,7 +45,7 @@ export function HospitalSidebarControls({
           onClick={() => onShowAvailableOnlyChange(!showAvailableOnly)}
           className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors border ${
             showAvailableOnly
-              ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+              ? 'border-teal-700 bg-teal-50 text-teal-800'
               : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
           }`}
         >
@@ -66,7 +69,7 @@ export function HospitalSidebarControls({
               onClick={() => onCareTargetChange(option.key as 'all' | 'adult' | 'pediatric' | 'senior')}
               className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors border ${
                 active
-                  ? 'border-indigo-600 bg-indigo-600 text-white'
+                  ? 'border-teal-800 bg-teal-800 text-white'
                   : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
               }`}
             >

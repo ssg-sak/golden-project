@@ -6,13 +6,13 @@ export function GovernanceFooter({ variant = 'default' }: GovernanceFooterProps)
   const isCompact = variant === 'compact';
 
   return (
-    <footer className="shrink-0 border-t border-slate-200 bg-white">
+    <footer className="shrink-0 border-t-2 border-teal-800 bg-[#e7ecee]">
       <div
         className={`mx-auto w-full text-center ${
           isCompact ? 'max-w-none px-4 py-2 sm:px-6' : 'max-w-3xl px-4 py-6 sm:px-6'
         }`}
       >
-        <p className={`leading-relaxed text-slate-600 ${isCompact ? 'text-[11px]' : 'text-sm'}`}>
+        <p className={`leading-relaxed text-slate-700 ${isCompact ? 'text-[11px]' : 'text-sm'}`}>
           <span className="font-semibold text-slate-800">대구 골든타임</span>
           {' — '}
           <span className="font-semibold text-slate-800">국립중앙의료원</span> 실시간 응급 의료

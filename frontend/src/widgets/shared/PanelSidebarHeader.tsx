@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 type PanelSidebarVariant = 'citizen' | 'admin';
 
 const VARIANT_CLASS: Record<PanelSidebarVariant, string> = {
-  citizen: 'border-rose-100/80 bg-gradient-to-br from-rose-600 to-rose-800',
-  admin: 'border-slate-200/80 bg-gradient-to-br from-slate-700 to-slate-900',
+  citizen: 'border-teal-900 bg-teal-800',
+  admin: 'border-slate-900 bg-slate-800',
 };
 
 interface PanelSidebarHeaderProps {
@@ -40,7 +40,7 @@ export function PanelSidebarHeader({
 export function CitizenLocationIcon() {
   return (
     <span
-      className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 ring-1 ring-white/30"
+      className="flex h-9 w-9 items-center justify-center border border-white/40 bg-white/10"
       aria-hidden
     >
       <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="currentColor">
@@ -53,7 +53,7 @@ export function CitizenLocationIcon() {
 export function AdminPolicyIcon() {
   return (
     <span
-      className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/25"
+      className="flex h-9 w-9 items-center justify-center border border-white/30 bg-white/10"
       aria-hidden
     >
       <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth="2">

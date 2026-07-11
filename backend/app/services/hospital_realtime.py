@@ -12,7 +12,6 @@ from app.services.bed_payload import null_bed_payload
 logger = logging.getLogger(__name__)
 
 CANONICAL_DISPLAY_NAMES: dict[str, str] = {
-    "계명대학교대구동산병원": "계명대학교 동산병원",
     "계명대학교동산병원": "계명대학교 동산병원",
     "의료법인구의료재단구병원": "구병원",
     "(재)미리내천주성삼성직수도회천주성삼병원": "천주성삼병원",

@@ -1,107 +1,96 @@
-import { useOptimalLocationsStore } from './lib/useOptimalLocationsStore';
+const guideRows = [
+  ['1', '지역을 선택합니다', '지도에서 행정동을 선택하면 취약인구, 병원 접근거리와 종합 취약도 지수를 확인할 수 있습니다.'],
+  ['2', '지표를 비교합니다', '색이 진할수록 현재 설정한 기준에서 의료 접근 취약도가 높은 지역입니다.'],
+  ['3', '정책 후보를 검토합니다', '고위험 지역과 소아·일반 응급 우선 지역을 비교해 현장 조사 대상을 좁힙니다.'],
+  ['4', '근거를 내려받습니다', '검토 결과는 CSV 또는 인쇄 보고서로 내려받아 추가 분석에 활용합니다.'],
+];
 
 export function PolicyWelcomePanel() {
-  const currentMode = useOptimalLocationsStore((state) => state.currentMode);
-  const isSenior = currentMode === 'senior';
+  const reportUrl = `${import.meta.env.BASE_URL}data/사회과학_분석_보고서.pdf`;
 
   return (
-    <div className="flex h-full flex-col bg-white p-6 shadow-sm border-l border-slate-200 overflow-y-auto">
-      {/* 1. Header (공공 정책 보고서 스타일) */}
-      <div className="mb-8 border-b-2 border-slate-800 pb-4 mt-2">
-        <div className="mb-2 flex items-center gap-2">
-          <div className="h-6 w-1.5 bg-[#004ea2]" />
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">
-            데이터 기반 정책 의사결정 지원
-          </h2>
-        </div>
-        <p className="mt-4 text-[15px] leading-relaxed text-slate-700 break-keep text-justify">
-          막연한 민원 위주의 자원 배분에서 탈피하여, 
-          <strong className="font-semibold text-slate-900"> 사각지대 지수(VDI)</strong> 및 
-          <strong className="font-semibold text-slate-900"> AI 공간 분석(K-Means)</strong> 기반의 
-          객관적이고 공정한 의료 거점 선정 기준을 제시합니다.
+    <aside className="flex h-full flex-col overflow-y-auto border-l border-slate-300 bg-white">
+      <header className="border-b-2 border-teal-800 bg-slate-50 px-5 py-5">
+        <p className="text-xs font-bold text-teal-800">분석 이용 안내</p>
+        <h2 className="mt-1 text-xl font-extrabold text-slate-900">지역 의료 접근성 판단 지원</h2>
+        <p className="mt-3 text-sm leading-6 text-slate-600">
+          행정동별 취약인구와 의료기관 접근성을 함께 비교해 우선 검토가 필요한 지역을 찾습니다.
         </p>
-      </div>
+      </header>
 
-      {/* 2. ROI Section (공식 브리핑 자료 형태) */}
-      <div className="mb-8 border border-slate-300 bg-[#f8fafc] p-5 rounded-sm">
-        <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-slate-900 border-b border-slate-300 pb-2">
-          <span className="text-[#004ea2] text-sm">■</span> 의료 안전망 확충 시뮬레이션 결과
-        </h3>
-        
-        <div className="flex flex-col gap-px mb-5 bg-slate-300 border border-slate-300">
-          <div className="flex items-center justify-between bg-white px-4 py-3">
-            <span className="text-sm font-medium text-slate-600">
-              [현재] {isSenior ? '취약계층 노인가구 커버리지 (3km 내)' : '보호 유치원 커버리지 (3km 내)'}
-            </span>
-            <span className="text-sm font-bold text-slate-700">
-              {isSenior ? '74.5%' : '89.2%'} <span className="font-normal text-slate-500">{isSenior ? '(120/161개소)' : '(885/992개소)'}</span>
-            </span>
+      <div className="p-5">
+        <section className="mb-7 border border-slate-300 bg-slate-50">
+          <div className="border-b border-slate-300 px-4 py-3">
+            <p className="text-xs font-bold text-teal-800">2026년 7월 사회과학 분석 보고서</p>
+            <h3 className="mt-1 text-base font-extrabold text-slate-900">데이터 기반 거버넌스와 응급의료 사각지대의 해소</h3>
           </div>
-          
-          <div className="flex items-center justify-between bg-[#f0f5fa] px-4 py-3">
-            <span className="text-sm font-bold text-[#004ea2]">
-              [개선] VDI 파인튜닝 거점 {isSenior ? '3곳' : '4곳'} 신설 시
-            </span>
-            <span className="text-sm font-bold text-[#004ea2]">
-              100.0% <span className="font-normal opacity-80">{isSenior ? '(161/161개소)' : '(992/992개소)'}</span>
-            </span>
+          <dl className="grid grid-cols-2 divide-x divide-slate-300 border-b border-slate-300">
+            <div className="p-4">
+              <dt className="text-xs font-bold text-slate-600">소아 분석 기준</dt>
+              <dd className="mt-2 text-sm font-extrabold text-slate-900">달빛 6곳 · 사각지대 414곳</dd>
+              <dd className="mt-1 text-xs text-slate-500">정책 거점 후보 4곳</dd>
+            </div>
+            <div className="p-4">
+              <dt className="text-xs font-bold text-slate-600">어르신 분석 기준</dt>
+              <dd className="mt-2 text-sm font-extrabold text-slate-900">센터급 공급 18곳 · 사각지대 38곳</dd>
+              <dd className="mt-1 text-xs text-slate-500">정책 거점 후보 3곳</dd>
+            </div>
+          </dl>
+          <div className="p-4">
+            <p className="text-xs leading-5 text-slate-600">
+              웹 등록 Tier 1·2 기관과 보고서의 어르신 공급 기준은 현재 모두 18곳입니다. 기관별 명단은 분석 재실행 시 다시 대조해야 합니다.
+            </p>
+            <a
+              href={reportUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex border border-teal-800 bg-teal-800 px-3 py-2 text-xs font-bold text-white hover:bg-teal-900"
+            >
+              전체 보고서 열기 (PDF 24쪽)
+            </a>
           </div>
-        </div>
+        </section>
 
-        <div className="border-l-4 border-[#004ea2] bg-white px-4 py-3 shadow-sm">
-          <p className="text-[14px] font-bold text-slate-800 leading-snug">
-            기대 효과: <span className="text-[#004ea2]">K-Means (K={isSenior ? '3' : '4'}) 모바일 클리닉 투입으로 사각지대 100% 해소</span>
+        <section>
+          <h3 className="border-l-4 border-teal-700 pl-3 text-sm font-extrabold text-slate-900">분석 순서</h3>
+          <ol className="mt-4 divide-y divide-slate-200 border-y border-slate-300">
+            {guideRows.map(([number, title, description]) => (
+              <li key={number} className="grid grid-cols-[28px_1fr] gap-2 py-4">
+                <span className="font-mono text-sm font-bold text-teal-800">{number}</span>
+                <div>
+                  <strong className="text-sm text-slate-900">{title}</strong>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">{description}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="mt-7">
+          <h3 className="border-l-4 border-slate-600 pl-3 text-sm font-extrabold text-slate-900">주요 지표 읽는 법</h3>
+          <dl className="mt-4 divide-y divide-slate-200 border border-slate-300">
+            <div className="p-4">
+              <dt className="text-sm font-bold text-slate-900">취약도 지수</dt>
+              <dd className="mt-1 text-xs leading-5 text-slate-600">취약인구 규모와 의료기관 접근성을 결합한 상대 비교 지표입니다.</dd>
+            </div>
+            <div className="p-4">
+              <dt className="text-sm font-bold text-slate-900">최근접 병원 거리</dt>
+              <dd className="mt-1 text-xs leading-5 text-slate-600">행정동 중심점과 가까운 의료기관 사이의 직선거리이며 실제 이동시간과 다를 수 있습니다.</dd>
+            </div>
+            <div className="p-4">
+              <dt className="text-sm font-bold text-slate-900">고위험 기준</dt>
+              <dd className="mt-1 text-xs leading-5 text-slate-600">지도 상단의 기준값을 조절해 검토 대상 지역의 범위를 변경할 수 있습니다.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section className="mt-7 border border-amber-300 bg-amber-50 p-4">
+          <h3 className="text-sm font-extrabold text-amber-950">정책 활용 시 유의사항</h3>
+          <p className="mt-2 text-xs leading-5 text-amber-900">
+            분석 결과는 정책 결정을 자동으로 확정하지 않습니다. 교통 여건, 실제 진료 역량, 주민 수요와 현장 조사를 함께 검토해야 합니다.
           </p>
-          <ul className="mt-2 pt-2 border-t border-slate-100 flex flex-col gap-1.5 text-[13px] text-slate-600">
-            {isSenior ? (
-              <>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 bg-slate-400 rounded-full" />
-                  <span><strong>제1거점 (달성군 남부 수요권)</strong>: 다수 독거가구 커버 (최우선 인프라)</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 bg-slate-400 rounded-full" />
-                  <span><strong>제2거점 (동구 외곽 취약권)</strong>: 교통 소외 노인가구 타겟팅</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-rose-500 rounded-full" />
-                  <span className="text-rose-700"><strong>제3거점 (군위군 북부권)</strong>: 초고령화 VDI 집중 타겟</span>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 bg-slate-400 rounded-full" />
-                  <span><strong>제1거점 (동북부 거대 수요권)</strong>: 63개소 커버 (굳건한 최우선 인프라)</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 bg-slate-400 rounded-full" />
-                  <span><strong>제2거점 (남서부 심해 취약권)</strong>: 21개소 커버 (정밀 타겟팅)</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1 h-1 bg-slate-400 rounded-full" />
-                  <span><strong>제3거점 (서부 도심 외곽권)</strong>: 20개소 커버 (신규 분리)</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-rose-500 rounded-full" />
-                  <span className="text-rose-700"><strong>제4거점 (북부 최북단)</strong>: 3개소 커버 (VDI 집중 타겟)</span>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>
+        </section>
       </div>
-
-      {/* 3. Call to Action (공지사항 및 안내 형태) */}
-      <div className="mt-auto border border-slate-300 bg-[#f1f5f9] p-4 rounded-sm">
-        <p className="flex items-start gap-2.5 text-[14px] font-medium leading-relaxed text-slate-700">
-          <span className="text-[#004ea2] font-bold mt-[1px]">※</span>
-          <span>
-            좌측 지도의 <strong className="text-rose-700">붉은색 히트맵(고위험군)</strong> 지역을 클릭하여, 
-            해당 행정동의 상세 사각지대 지수(VDI) 및 현황을 확인하시기 바랍니다.
-          </span>
-        </p>
-      </div>
-    </div>
+    </aside>
   );
 }

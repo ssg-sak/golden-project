@@ -58,8 +58,8 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
       <div
         className={`shrink-0 border-b px-5 py-5 ${
           bedStatus.status === 'unavailable'
-            ? 'border-rose-100 bg-gradient-to-br from-rose-50 to-white'
-            : 'border-emerald-100 bg-gradient-to-br from-emerald-50 to-white'
+            ? 'border-rose-300 bg-rose-50'
+            : 'border-teal-300 bg-teal-50'
         }`}
       >
         <CitizenBedLabel hospital={hospital} size="detail" />
@@ -72,8 +72,8 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
         <HospitalLocationMeta hospital={hospital} variant="compact" />
 
-        <section className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
-          <p className="text-xs font-bold text-slate-500">응급 연락</p>
+        <section className="border border-teal-300 bg-teal-50 p-4">
+          <p className="text-xs font-bold text-teal-900">1. 출발 전 병원에 전화 확인</p>
           <div className="mt-2">
             <CitizenHospitalTelLink hospital={hospital} />
           </div>
@@ -170,10 +170,10 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           href={kakaoDirectionsUrl(hospital.name, hospital.lat, hospital.lng)}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-4 py-4 text-lg font-extrabold text-white shadow-lg transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
+          className="flex w-full items-center justify-center gap-2 border border-teal-900 bg-teal-800 px-4 py-4 text-lg font-extrabold text-white transition hover:bg-teal-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
         >
           <span aria-hidden>🚑</span>
-          카카오내비로 즉시 길찾기
+          2. 전화 확인 후 길찾기
         </a>
       </div>
     </aside>

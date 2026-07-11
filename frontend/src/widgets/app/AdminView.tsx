@@ -33,7 +33,7 @@ import { PolicyStatusBanner } from './PolicyStatusBanner';
 
 function HospitalsLoadingState() {
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl bg-slate-50 px-6 text-center">
+    <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-4 border border-slate-300 bg-white px-6 text-center">
       <span className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600" />
       <p className="text-base font-semibold text-slate-800">분석 데이터를 불러오고 있습니다</p>
     </div>
@@ -62,7 +62,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
   const adminState = useAdminController(kakao, onRetryHospitals);
 
   return (
-    <div className={`${DASHBOARD_VIEW_ROOT_CLASS} bg-gradient-to-b from-[#f5f8fc] via-white to-[#f2f6fb]`}>
+    <div className={`${DASHBOARD_VIEW_ROOT_CLASS} bg-[#eef2f3]`}>
       <div className="hidden lg:block shrink-0">
         <DashboardStatsBar
           districtCount={adminState.vulnerabilityError ? 0 : adminState.vulnerabilityData.length}

@@ -13,11 +13,15 @@ export function useDashboardActions({
   setActiveFilter,
 }: UseDashboardActionsProps) {
   const setActivePreset = usePresetStore((state) => state.setActivePreset);
+  const publicDataUrl = useCallback(
+    (filename: string) => `${import.meta.env.BASE_URL}data/${filename}`,
+    [],
+  );
 
   const handlePresetSelect = useCallback(
     async (preset: 'highRiskTop10' | 'pediatricPriority' | 'generalPriority') => {
       try {
-        const response = await fetch('/data/priority_targets.json');
+        const response = await fetch(publicDataUrl('priority_targets.json'));
         if (!response.ok) throw new Error('Failed to fetch priority targets');
         const data = await response.json();
 
@@ -49,26 +53,28 @@ export function useDashboardActions({
         alert('우선순위 데이터를 불러오는 데 실패했습니다.');
       }
     },
-    [onDistrictSelect, setActiveFilter, setActivePreset],
+    [onDistrictSelect, publicDataUrl, setActiveFilter, setActivePreset],
   );
 
   const handleExportCsv = useCallback(() => {
     const link = document.createElement('a');
-    link.href = '/data/policy_monitoring_report.csv';
+    link.href = publicDataUrl('policy_monitoring_report.csv');
     link.download = `policy-monitoring-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.append(link);
     link.click();
     link.remove();
-  }, []);
+  }, [publicDataUrl]);
 
   const handleCaptureReport = useCallback((e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
     }
-    // TODO: public/data/ 폴더에 '사회과학_분석_보고서.pdf'를 배치해야 합니다.
-    // 파일이 없으면 Vite 개발 서버가 index.html을 반환하여 새로고침처럼 보이게 됩니다.
-    window.open('/data/사회과학_분석_보고서.pdf', '_blank', 'noopener,noreferrer');
-  }, []);
+    window.open(
+      publicDataUrl('사회과학_분석_보고서.pdf'),
+      '_blank',
+      'noopener,noreferrer',
+    );
+  }, [publicDataUrl]);
 
   return {
     handlePresetSelect,

@@ -57,27 +57,27 @@ export function MapToolbar({
 
         {/* Zone 2: 프리셋 */}
         <div className="flex items-center gap-2">
-          <span className="hidden text-[11px] font-bold text-slate-500 sm:inline-block mr-1">프리셋</span>
+          <span className="hidden text-[11px] font-bold text-slate-700 sm:inline-block mr-1">빠른 지역 조회</span>
           <button
             type="button"
             onClick={() => onPresetSelect?.('highRiskTop10')}
             className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 transition-colors"
           >
-            고위험 Top 10
+            고위험 지역 10곳
           </button>
           <button
             type="button"
             onClick={() => onPresetSelect?.('pediatricPriority')}
             className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 transition-colors"
           >
-            소아 취약 우선
+            소아 의료 취약지역
           </button>
           <button
             type="button"
             onClick={() => onPresetSelect?.('generalPriority')}
             className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 transition-colors"
           >
-            일반 응급 우선
+            응급의료 취약지역
           </button>
           <button
             type="button"
@@ -170,7 +170,7 @@ export function MapToolbar({
             onClick={onCaptureReport}
             className="rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-300 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
           >
-            보고서 인쇄
+            사회과학 보고서 보기
           </button>
         </div>
         

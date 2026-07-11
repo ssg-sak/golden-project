@@ -33,7 +33,7 @@ interface CitizenViewProps {
 
 function HospitalsLoadingState() {
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl bg-gradient-to-b from-slate-50 to-white px-6 text-center">
+    <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-4 border border-slate-300 bg-white px-6 text-center">
       <span className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600" />
       <p className="max-w-sm text-base font-semibold leading-relaxed text-slate-800">
         {HOSPITALS_LOADING_MESSAGE}
@@ -52,7 +52,7 @@ function HospitalsErrorState({ onRetry }: { onRetry: () => void }) {
       <button
         type="button"
         onClick={onRetry}
-        className="rounded-full bg-rose-600 px-5 py-2 text-sm font-semibold text-white"
+        className="border border-rose-700 bg-rose-700 px-5 py-2 text-sm font-semibold text-white hover:bg-rose-800"
       >
         다시 시도
       </button>
@@ -110,7 +110,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
   const mapBlocked = hospitalsLoading || hospitalsError !== null;
 
   return (
-    <div className={`${DASHBOARD_VIEW_ROOT_CLASS} relative bg-gradient-to-b from-emerald-50/35 via-white to-indigo-50/35`}>
+    <div className={`${DASHBOARD_VIEW_ROOT_CLASS} relative bg-[#eef2f3]`}>
       <div className="absolute left-0 right-0 top-[110px] z-40 flex flex-col gap-1 px-2 lg:static lg:block lg:p-0 pointer-events-none [&>*]:pointer-events-auto">
         <EmergencyBanner />
         

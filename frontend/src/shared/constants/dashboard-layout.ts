@@ -25,7 +25,7 @@ export const DESKTOP_SIDEBAR_PANEL_CLASS =
 
 /** 지도 — 모바일 풀스크린 (absolute inset-0) */
 export const DASHBOARD_MAP_COL_CLASS =
-  'absolute inset-0 z-0 flex flex-col lg:glass-panel-strong lg:relative lg:order-2 lg:z-auto lg:min-h-[calc(100dvh-9rem)] lg:min-w-0 lg:flex-1 lg:rounded-xl lg:p-0.5';
+  'absolute inset-0 z-0 flex flex-col lg:glass-panel-strong lg:relative lg:order-2 lg:z-auto lg:min-h-[calc(100dvh-9rem)] lg:min-w-0 lg:flex-1 lg:rounded-sm lg:p-0.5';
 
 /** 우측 패널 — 모바일 플로팅 팝업 / 바텀 시트 (z-20) */
 export const DASHBOARD_DETAIL_COL_CLASS =

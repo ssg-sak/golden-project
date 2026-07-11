@@ -1,5 +1,5 @@
-import finalHospitalsJson from './final_hospitals.json';
 import type { HospitalRecord } from '../shared/types/hospital';
+import { getCanonicalHospitals } from '../shared/lib/canonical-hospitals';
 
 type StaticHospitalRow = Pick<HospitalRecord, 'name' | 'lat' | 'lng' | 'tier' | 'address'>;
 
@@ -8,7 +8,7 @@ type StaticHospitalRow = Pick<HospitalRecord, 'name' | 'lat' | 'lng' | 'tier' | 
  * 정적 파일(final_hospitals.json)을 기반으로, 과거 병상 부족/혼잡 상황을 임의 연출.
  */
 export const DEMO_SNAPSHOT_HOSPITAL_DATA: HospitalRecord[] = (
-  finalHospitalsJson as StaticHospitalRow[]
+  getCanonicalHospitals() as StaticHospitalRow[]
 ).map((hospital, idx) => {
   // 인덱스 기반으로 임의의 가짜 병상 상태를 생성하여 긴박한 상황 연출
   const rand = (idx * 7) % 10; 

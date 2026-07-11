@@ -37,7 +37,7 @@ export function HospitalSidebarList({
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden lg:min-h-0">
-      <ul className="flex-1 overflow-y-auto space-y-1.5 px-2 py-2 pb-6 lg:pb-3">
+      <ul className="flex-1 divide-y divide-slate-200 overflow-y-auto border-t border-slate-200 bg-white pb-6 lg:pb-3">
         {loading ? (
           <li className="px-2 py-8 text-center text-base leading-relaxed text-slate-500">
             {HOSPITALS_LOADING_MESSAGE}
@@ -102,24 +102,23 @@ export function HospitalSidebarList({
                       onHospitalSelect(hospital);
                     }
                   }}
-                  className={`flex w-full cursor-pointer flex-col gap-2.5 rounded-xl px-3 py-3 text-left transition-colors ${
+                  className={`flex w-full cursor-pointer flex-col gap-2 px-4 py-4 text-left transition-colors ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-400'
-                      : 'bg-white ring-1 ring-slate-100 hover:bg-slate-50 hover:ring-emerald-200'
+                      ? 'border-l-4 border-teal-800 bg-teal-50'
+                      : 'border-l-4 border-transparent bg-white hover:bg-slate-50'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-bold text-slate-500">{String(index + 1).padStart(2, '0')}</span>
+                      {index < 3 ? (
+                        <span className="border border-teal-200 bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-800">
+                          가까운 병원
+                        </span>
+                      ) : null}
+                    </div>
                     <span
-                      className={`text-xs font-bold ${
-                        isActive ? 'text-indigo-200' : 'text-slate-400'
-                      }`}
-                    >
-                      {index + 1}위
-                    </span>
-                    <span
-                      className={`text-lg font-extrabold tabular-nums tracking-tight ${
-                        isActive ? 'text-white' : 'text-indigo-600'
-                      }`}
+                      className="text-lg font-extrabold tabular-nums tracking-tight text-teal-800"
                     >
                       {formatDistanceKm(hospital.distanceKm)}
                     </span>
@@ -131,30 +130,26 @@ export function HospitalSidebarList({
                     if (etaSeconds == null) return null;
                     const mins = Math.ceil(etaSeconds / 60);
                     return (
-                      <div className="flex w-fit items-center gap-1.5 rounded-lg bg-indigo-50 px-2.5 py-1 text-sm font-bold text-indigo-700 ring-1 ring-indigo-200">
-                        <span>🚗</span>
-                        <span>{mins}분 소요</span>
+                      <div className="flex w-fit items-center gap-1.5 border-l-2 border-slate-400 pl-2 text-sm font-bold text-slate-700">
+                        <span>차량 약 {mins}분</span>
                       </div>
                     );
                   })()}
 
                   <div className="flex justify-between gap-2">
-                    <CitizenBedLabel hospital={hospital} inverted={isActive} />
+                    <CitizenBedLabel hospital={hospital} />
                   </div>
                   <span
-                    className={`text-base font-bold leading-snug ${
-                      isActive ? 'text-white' : 'text-slate-900'
-                    }`}
+                    className="text-base font-bold leading-snug text-slate-900"
                   >
                     {hospital.name}
                   </span>
                   <div className="flex items-end justify-between gap-2">
-                    <CitizenHospitalTelLink hospital={hospital} inverted={isActive} />
+                    <CitizenHospitalTelLink hospital={hospital} />
                     <CitizenKakaoNavLink
                       hospitalName={hospital.name}
                       lat={hospital.lat}
                       lng={hospital.lng}
-                      inverted={isActive}
                     />
                   </div>
                 </div>

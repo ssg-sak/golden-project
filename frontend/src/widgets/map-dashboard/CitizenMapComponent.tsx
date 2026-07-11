@@ -68,13 +68,15 @@ export function CitizenMapComponent({
     // 우측 패널(DetailPanel) 열림/닫힘으로 인해 flex-1 지도 컨테이너 크기가 변경되었을 때, 
     // 카카오맵 내부 캔버스 사이즈를 동기화하여 중앙 좌표가 우측 패널 뒤로 숨는(밀리는) 현상을 방지함.
     map.relayout();
+    // Projection 보정은 목표 줌을 적용한 뒤 계산해야 선택 핀이 화면 밖으로 밀리지 않는다.
+    map.setLevel(clampLevel(level), { animate: false });
     
     const targetLatLng = new kakao.maps.LatLng(lat, lng);
     
     if (applyOffset && window.innerWidth < 1024) {
       const proj = map.getProjection();
       if (proj) {
-        const pixelOffset = window.innerHeight * 0.25;
+        const pixelOffset = Math.min(160, Math.max(72, window.innerHeight * 0.18));
         const point = proj.pointFromCoords(targetLatLng);
         const offsetLatLng = proj.coordsFromPoint(new kakao.maps.Point(point.x, point.y + pixelOffset));
         map.panTo(offsetLatLng);
@@ -86,7 +88,6 @@ export function CitizenMapComponent({
     }
 
     
-    map.setLevel(clampLevel(level), { animate: true });
   }, []);
 
   useEffect(() => {
@@ -134,7 +135,7 @@ export function CitizenMapComponent({
           zoomable
           scrollwheel
           keyboardShortcuts
-          style={{ width: '100%', height: '100%', borderRadius: '0.75rem' }}
+          style={{ width: '100%', height: '100%', borderRadius: '2px' }}
           onCreate={(map) => {
             mapRef.current = map;
           }}
@@ -172,7 +173,7 @@ export function CitizenMapComponent({
         </Map>
       </div>
 
-      <div className="pointer-events-none absolute bottom-3 left-3 z-[800] flex gap-2 rounded-lg bg-white/95 px-2.5 py-1.5 text-[10px] font-semibold shadow-md ring-1 ring-slate-200">
+      <div className="pointer-events-none absolute bottom-3 left-3 z-[800] flex gap-3 border border-slate-300 bg-white px-3 py-2 text-[10px] font-semibold shadow-sm">
         <span className="flex items-center gap-1 text-green-700">
           <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
           진료 가능

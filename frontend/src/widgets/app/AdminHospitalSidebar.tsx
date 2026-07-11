@@ -74,6 +74,7 @@ export function AdminHospitalSidebar({
 
       {onModeChange && (
         <HospitalSidebarControls
+          heading="분석 대상 인구"
           isLocating={false}
           locationSource={null}
           locationErrorReason={null}
@@ -84,11 +85,11 @@ export function AdminHospitalSidebar({
         />
       )}
 
-      <div className="shrink-0 grid grid-cols-3 gap-1.5 border-b border-slate-200 bg-[#f8fbff] p-2.5">
+      <div className="shrink-0 grid grid-cols-3 divide-x divide-slate-300 border-b border-slate-300 bg-slate-50">
         {HOSPITAL_TIER_ORDER.map((tier) => (
           <div
             key={tier}
-            className={`rounded-lg p-1.5 text-center ring-1 shadow-[0_1px_0_rgba(15,23,42,0.03)] ${HOSPITAL_TIER_VISUAL[tier].chipClass}`}
+            className="p-2 text-center"
           >
             <p className="text-[10px] font-semibold text-slate-500">
               {HOSPITAL_TIER_VISUAL[tier].label}
@@ -103,12 +104,12 @@ export function AdminHospitalSidebar({
       <div className="flex flex-col lg:min-h-0 lg:flex-1">
         <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-3 py-2">
           <p className="text-sm font-bold text-slate-700">병원 목록</p>
-          <span className="rounded-full bg-white px-2 py-0.5 text-xs font-bold text-[#2b63d9] ring-1 ring-slate-300">
+          <span className="border border-slate-300 bg-white px-2 py-0.5 text-xs font-bold text-teal-800">
             {loading ? '…' : `${hospitals.length}곳`}
           </span>
         </div>
 
-        <ul className="space-y-1 px-2 pb-2 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
+        <ul className="divide-y divide-slate-200 lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
           {loading ? (
             <li className="px-2 py-6 text-center text-sm text-slate-400">불러오는 중…</li>
           ) : null}
@@ -126,12 +127,12 @@ export function AdminHospitalSidebar({
                     }}
                     type="button"
                     onClick={() => handleItemClick(hospital)}
-                    className={`flex w-full items-start gap-2.5 rounded-xl px-3 py-2.5 text-left transition ${
+                    className={`flex w-full items-start gap-2.5 border-l-4 px-3 py-3 text-left transition ${
                       isActive
-                        ? 'bg-[#2b63d9] text-white shadow-md'
+                        ? 'border-teal-800 bg-teal-50 text-slate-900'
                         : isHighlighted
-                          ? 'bg-blue-50 ring-2 ring-blue-300'
-                          : 'bg-white ring-1 ring-slate-200 hover:ring-blue-300'
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-transparent bg-white hover:bg-slate-50'
                     }`}
                   >
                     <TierIcon tier={hospital.tier} size="sm" className="mt-0.5" />
@@ -139,13 +140,13 @@ export function AdminHospitalSidebar({
                       <span className="block truncate text-sm font-semibold">{hospital.name}</span>
                       <span
                         className={`mt-0.5 flex flex-wrap items-center gap-1.5 text-xs ${
-                          isActive ? 'text-indigo-100' : 'text-slate-500'
+                          'text-slate-500'
                         }`}
                       >
                         <span>{hospitalTierBadge(hospital.tier)}</span>
                         <AvailableBedsBadge
                           availableBeds={hospitalAvailableBeds(hospital)}
-                          variant={isActive ? 'inverse' : 'default'}
+                          variant="default"
                         />
                       </span>
                     </span>

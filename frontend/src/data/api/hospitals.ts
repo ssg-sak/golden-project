@@ -2,6 +2,7 @@ import { HOSPITALS_FETCH_TIMEOUT_MS } from '../../shared/constants/circuit-break
 import { HOSPITALS_API_URL } from '../../shared/config/api';
 import { fetchWithTimeout } from '../../shared/lib/fetch-with-timeout';
 import type { HospitalRecord } from '../../shared/types/hospital';
+import { normalizeHospitalLocations } from '../../shared/lib/canonical-hospitals';
 
 function isHospitalRecord(value: unknown): value is HospitalRecord {
   if (!value || typeof value !== 'object') return false;
@@ -82,5 +83,5 @@ export async function fetchHospitals(signal?: AbortSignal): Promise<HospitalReco
     throw new Error('병원 정보 응답 형식을 확인할 수 없습니다');
   }
 
-  return parseHospitalPayload(payload);
+  return normalizeHospitalLocations(parseHospitalPayload(payload));
 }
