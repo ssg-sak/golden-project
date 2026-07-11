@@ -9,10 +9,10 @@ export const DASHBOARD_MAIN_CLASS =
   'relative mx-auto flex w-full max-w-[1800px] flex-1 overflow-hidden lg:flex-row lg:items-stretch lg:gap-3 lg:p-6 lg:overflow-visible';
 
 /** 좌측 패널 — 모바일 바텀 시트화 (absolute bottom-0) */
-export const DASHBOARD_SIDEBAR_COL_CLASS = `absolute bottom-0 left-0 right-0 z-10 flex flex-col max-h-[55dvh] rounded-t-3xl bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] transition-transform duration-300 lg:relative lg:order-1 lg:z-auto lg:max-h-none lg:w-72 lg:self-start lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-80 lg:sticky ${DASHBOARD_STICKY_TOP_CLASS}`;
+export const DASHBOARD_SIDEBAR_COL_CLASS = `absolute bottom-0 left-0 right-0 z-10 flex flex-col max-h-[55dvh] overflow-hidden rounded-t-3xl bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] transition-transform duration-300 lg:relative lg:order-1 lg:z-auto lg:max-h-none lg:w-72 lg:self-start lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-80 lg:sticky ${DASHBOARD_STICKY_TOP_CLASS}`;
 
 export const DASHBOARD_SIDEBAR_PANEL_CLASS =
-  'flex w-full flex-col lg:glass-panel-strong lg:max-h-[calc(100dvh-8.5rem)] lg:overflow-hidden';
+  'flex w-full h-full flex-col overflow-hidden lg:glass-panel-strong lg:max-h-[calc(100dvh-8.5rem)]';
 
 /** 지도 — 모바일 풀스크린 (absolute inset-0) */
 export const DASHBOARD_MAP_COL_CLASS =
