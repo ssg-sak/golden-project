@@ -55,6 +55,7 @@ function HospitalsErrorState({ onRetry }: { onRetry: () => void }) {
   );
 }
 
+import { AdminMobileBottomSheet } from './AdminMobileBottomSheet';
 import { useAdminController } from './useAdminController';
 
 export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
@@ -81,6 +82,22 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
       {adminState.policyStatus ? <PolicyStatusBanner {...adminState.policyStatus} /> : null}
 
       <main className={DASHBOARD_MAIN_CLASS}>
+        <div className="block lg:hidden">
+          <AdminMobileBottomSheet
+            hospitals={adminState.hospitals}
+            selectedHospital={adminState.selectedHospital}
+            onHospitalSelect={adminState.handleHospitalSelect}
+            loading={adminState.hospitalsLoading}
+            highlightedHospitalName={adminState.highlightedHospitalName}
+            currentMode={adminState.currentMode as 'all' | 'adult' | 'pediatric' | 'senior'}
+            onModeChange={(val) => adminState.setOptimalMode(val)}
+            isDetailOpen={adminState.isDetailOpen}
+            selectedVulnerability={adminState.selectedVulnerability}
+            vulnerabilitySummary={adminState.vulnerabilitySummary ?? undefined}
+            onDistrictSelect={adminState.handleDistrictSelect}
+          />
+        </div>
+
         <div className={`hidden lg:flex ${DESKTOP_SIDEBAR_WRAPPER_CLASS}`}>
           <AdminHospitalSidebar
             hospitals={adminState.hospitals}
@@ -138,9 +155,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
         </div>
 
         <div
-          className={`${DASHBOARD_DETAIL_COL_CLASS} relative overflow-hidden ${
-            adminState.isDetailOpen ? '' : 'hidden lg:block'
-          }`}
+          className={`${DASHBOARD_DETAIL_COL_CLASS} relative overflow-hidden hidden lg:block`}
         >
           <div
             className={`${DASHBOARD_DETAIL_INNER_CLASS} transition-transform duration-300 ease-in-out`}
