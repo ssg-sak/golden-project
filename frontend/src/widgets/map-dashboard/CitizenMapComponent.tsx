@@ -67,17 +67,14 @@ export function CitizenMapComponent({
     const targetLatLng = new kakao.maps.LatLng(lat, lng);
     
     if (window.innerWidth < 1024) {
-      try {
-        const proj = map.getProjection();
-        const point = proj.pointFromCoords(targetLatLng);
-        // 모바일에서는 바텀 시트가 하단을 가리므로 지도의 실제 중심을 화면 1/4만큼 아래로 내려서
-        // 마커가 화면 상단(보이는 영역의 중심)에 오도록 보정
-        point.y += window.innerHeight * 0.25;
-        const offsetLatLng = proj.coordsFromPoint(point);
-        map.panTo(offsetLatLng);
-      } catch (e) {
-        map.panTo(targetLatLng);
-      }
+      const levelScale = Math.pow(2, clampLevel(level) - 3);
+      const latOffsetPerPixel = 0.00001 * levelScale;
+      const pixelOffset = window.innerHeight * 0.25;
+      
+      const offsetLat = targetLatLng.getLat() - (pixelOffset * latOffsetPerPixel);
+      const offsetLatLng = new kakao.maps.LatLng(offsetLat, targetLatLng.getLng());
+      
+      map.panTo(offsetLatLng);
     } else {
       map.panTo(targetLatLng);
     }
