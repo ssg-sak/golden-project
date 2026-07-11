@@ -53,7 +53,7 @@ interface AdminMobileBottomSheetProps {
   vulnerabilityUpdatedAt?: string | null;
   totalHospitalsDelta?: number | null;
   highRiskDelta?: number | null;
-  policyStatus?: unknown;
+  policyStatus?: React.ComponentProps<typeof PolicyStatusBanner> | null;
 }
 
 export function AdminMobileBottomSheet({
