@@ -19,6 +19,9 @@ export function useMapController(mapRef: React.MutableRefObject<kakao.maps.Map |
       const map = mapRef.current;
       if (!map) return;
 
+      // 패널 개폐 등으로 인한 지도 컨테이너 사이즈 변경 동기화
+      map.relayout();
+
       const clamped = clampToDaeguBounds(lat, lng);
       const targetLatLng = new kakao.maps.LatLng(clamped.lat, clamped.lng);
       

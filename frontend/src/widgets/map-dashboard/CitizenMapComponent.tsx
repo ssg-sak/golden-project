@@ -64,6 +64,10 @@ export function CitizenMapComponent({
     const map = mapRef.current;
     if (!map) return;
     
+    // 우측 패널(DetailPanel) 열림/닫힘으로 인해 flex-1 지도 컨테이너 크기가 변경되었을 때, 
+    // 카카오맵 내부 캔버스 사이즈를 동기화하여 중앙 좌표가 우측 패널 뒤로 숨는(밀리는) 현상을 방지함.
+    map.relayout();
+    
     const targetLatLng = new kakao.maps.LatLng(lat, lng);
     
     if (window.innerWidth < 1024) {
