@@ -20,6 +20,10 @@ import { TierIcon } from '../map-dashboard/TierIcon';
 import { HospitalSidebarControls } from '../map-dashboard/HospitalSidebarControls';
 import { DetailPanel } from '../map-dashboard/DetailPanel';
 
+import { DashboardStatsBar } from '../map-dashboard/DashboardStatsBar';
+import { MetricsGuide } from '../map-dashboard/MetricsGuide';
+import { PolicyStatusBanner } from './PolicyStatusBanner';
+
 interface AdminMobileBottomSheetProps {
   hospitals: HospitalRecord[];
   selectedHospital: HospitalRecord | null;
@@ -39,6 +43,17 @@ interface AdminMobileBottomSheetProps {
     riskThreshold: number;
   };
   onDistrictSelect: (district: string | null) => void;
+
+  // Stats Props
+  districtCount: number;
+  highRiskDistrictCount?: number;
+  highRiskThreshold?: number;
+  statsLoading?: boolean;
+  hospitalsUpdatedAt?: string | null;
+  vulnerabilityUpdatedAt?: string | null;
+  totalHospitalsDelta?: number | null;
+  highRiskDelta?: number | null;
+  policyStatus?: any;
 }
 
 export function AdminMobileBottomSheet({
@@ -53,6 +68,15 @@ export function AdminMobileBottomSheet({
   selectedVulnerability,
   vulnerabilitySummary,
   onDistrictSelect,
+  districtCount,
+  highRiskDistrictCount,
+  highRiskThreshold,
+  statsLoading,
+  hospitalsUpdatedAt,
+  vulnerabilityUpdatedAt,
+  totalHospitalsDelta,
+  highRiskDelta,
+  policyStatus,
 }: AdminMobileBottomSheetProps) {
   const rowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const controls = useAnimation();
@@ -211,58 +235,79 @@ export function AdminMobileBottomSheet({
             </span>
           </div>
 
-          <ul className="space-y-1 px-2 pb-2 overflow-y-auto bg-white flex-1">
-            {loading ? (
-              <li className="px-2 py-6 text-center text-sm text-slate-400">불러오는 중…</li>
-            ) : null}
-            {!loading &&
-              sortedHospitals.map((hospital) => {
-                const isActive = selectedHospital?.name === hospital.name;
-                const isHighlighted =
-                  !isActive && highlightedHospitalName === hospital.name;
+          <div className="flex-1 overflow-y-auto bg-white pb-6">
+            {policyStatus ? <PolicyStatusBanner {...policyStatus} /> : null}
+            
+            <div className="border-b border-slate-200/60 pb-2">
+              <DashboardStatsBar
+                districtCount={districtCount}
+                tier1Count={tier1Count}
+                tier2Count={tier2Count}
+                tier3Count={tier3Count}
+                highRiskDistrictCount={highRiskDistrictCount}
+                highRiskThreshold={highRiskThreshold}
+                loading={statsLoading}
+                hospitalsUpdatedAt={hospitalsUpdatedAt}
+                vulnerabilityUpdatedAt={vulnerabilityUpdatedAt}
+                totalHospitalsDelta={totalHospitalsDelta}
+                highRiskDelta={highRiskDelta}
+              />
+              <MetricsGuide />
+            </div>
 
-                return (
-                  <li key={hospital.name}>
-                    <button
-                      ref={(element) => {
-                        rowRefs.current[hospital.name] = element;
-                      }}
-                      type="button"
-                      onClick={() => handleItemClick(hospital)}
-                      className={`flex w-full items-start gap-2.5 rounded-xl px-3 py-2.5 text-left transition ${
-                        isActive
-                          ? 'bg-[#2b63d9] text-white shadow-md'
-                          : isHighlighted
-                            ? 'bg-blue-50 ring-2 ring-blue-300'
-                            : 'bg-white ring-1 ring-slate-200 hover:ring-blue-300'
-                      }`}
-                    >
-                      <TierIcon tier={hospital.tier} size="sm" className="mt-0.5" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-semibold">{hospital.name}</span>
-                        <span
-                          className={`mt-0.5 flex flex-wrap items-center gap-1.5 text-xs ${
-                            isActive ? 'text-indigo-100' : 'text-slate-500'
-                          }`}
-                        >
-                          <span>{hospitalTierBadge(hospital.tier)}</span>
-                          <AvailableBedsBadge
-                            availableBeds={hospitalAvailableBeds(hospital)}
-                            variant={isActive ? 'inverse' : 'default'}
-                          />
+            <ul className="space-y-1 px-2 pt-2">
+              {loading ? (
+                <li className="px-2 py-6 text-center text-sm text-slate-400">불러오는 중…</li>
+              ) : null}
+              {!loading &&
+                sortedHospitals.map((hospital) => {
+                  const isActive = selectedHospital?.name === hospital.name;
+                  const isHighlighted =
+                    !isActive && highlightedHospitalName === hospital.name;
+
+                  return (
+                    <li key={hospital.name}>
+                      <button
+                        ref={(element) => {
+                          rowRefs.current[hospital.name] = element;
+                        }}
+                        type="button"
+                        onClick={() => handleItemClick(hospital)}
+                        className={`flex w-full items-start gap-2.5 rounded-xl px-3 py-2.5 text-left transition ${
+                          isActive
+                            ? 'bg-[#2b63d9] text-white shadow-md'
+                            : isHighlighted
+                              ? 'bg-blue-50 ring-2 ring-blue-300'
+                              : 'bg-white ring-1 ring-slate-200 hover:ring-blue-300'
+                        }`}
+                      >
+                        <TierIcon tier={hospital.tier} size="sm" className="mt-0.5" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold">{hospital.name}</span>
+                          <span
+                            className={`mt-0.5 flex flex-wrap items-center gap-1.5 text-xs ${
+                              isActive ? 'text-indigo-100' : 'text-slate-500'
+                            }`}
+                          >
+                            <span>{hospitalTierBadge(hospital.tier)}</span>
+                            <AvailableBedsBadge
+                              availableBeds={hospitalAvailableBeds(hospital)}
+                              variant={isActive ? 'inverse' : 'default'}
+                            />
+                          </span>
                         </span>
-                      </span>
-                      {isActive ? <TierBadge tier={hospital.tier} /> : null}
-                      {isHighlighted ? (
-                        <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white">
-                          추천
-                        </span>
-                      ) : null}
-                    </button>
-                  </li>
-                );
-              })}
-          </ul>
+                        {isActive ? <TierBadge tier={hospital.tier} /> : null}
+                        {isHighlighted ? (
+                          <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                            추천
+                          </span>
+                        ) : null}
+                      </button>
+                    </li>
+                  );
+                })}
+            </ul>
+          </div>
         </div>
       )}
     </motion.aside>

@@ -36,11 +36,15 @@ export default function AppPage() {
   return (
     <div className="flex min-h-dvh flex-col bg-slate-100">
       <DemoNoticeModal />
-      <GlobalNavigationBar />
-      <SimulationBanner />
-      <DisclaimerBanner />
+      
+      {/* 모바일에서는 지도 위로 플로팅, 데스크톱에서는 정상 흐름 */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex flex-col lg:relative lg:z-auto">
+        <GlobalNavigationBar />
+        <SimulationBanner />
+        <DisclaimerBanner />
+      </div>
 
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-0 flex-1 flex-col pt-[var(--mobile-nav-height,0px)] lg:pt-0">
         {viewMode === 'citizen' && (
           <div key="citizen" className="flex min-h-0 flex-1 flex-col transition-opacity duration-200">
             <CitizenView kakao={kakao} onRetryHospitals={handleRetryHospitals} />

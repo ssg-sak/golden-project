@@ -110,21 +110,23 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
   const mapBlocked = hospitalsLoading || hospitalsError !== null;
 
   return (
-    <div className={`${DASHBOARD_VIEW_ROOT_CLASS} bg-gradient-to-b from-emerald-50/35 via-white to-indigo-50/35`}>
-      <EmergencyBanner />
-
-      {hospitalsDegraded ? (
-        <DegradedDataBanner
-          compact
-          isRetrying={hospitalsLoading}
-          message={
-            hospitalsDegradedMode === 'stale-cache'
-              ? '네트워크 문제로 이전에 불러온 병원 정보를 표시 중입니다. 병상 수는 최신이 아닐 수 있습니다.'
-              : '실시간 병상 정보를 확인하지 못해 기본 병원 목록을 표시 중입니다. 거리·전화·길찾기를 우선 참고해 주세요.'
-          }
-          onRetry={onRetryHospitals}
-        />
-      ) : null}
+    <div className={`${DASHBOARD_VIEW_ROOT_CLASS} relative bg-gradient-to-b from-emerald-50/35 via-white to-indigo-50/35`}>
+      <div className="absolute left-0 right-0 top-[110px] z-40 flex flex-col gap-1 px-2 lg:static lg:block lg:p-0 pointer-events-none [&>*]:pointer-events-auto">
+        <EmergencyBanner />
+        
+        {hospitalsDegraded ? (
+          <DegradedDataBanner
+            compact
+            isRetrying={hospitalsLoading}
+            message={
+              hospitalsDegradedMode === 'stale-cache'
+                ? '네트워크 문제로 이전에 불러온 병원 정보를 표시 중입니다. 병상 수는 최신이 아닐 수 있습니다.'
+                : '실시간 병상 정보를 확인하지 못해 기본 병원 목록을 표시 중입니다. 거리·전화·길찾기를 우선 참고해 주세요.'
+            }
+            onRetry={onRetryHospitals}
+          />
+        ) : null}
+      </div>
 
       <main className={DASHBOARD_MAIN_CLASS}>
         {/* 모바일 바텀 시트 (lg 미만에서만 렌더링, Framer Motion 자체 제어) */}

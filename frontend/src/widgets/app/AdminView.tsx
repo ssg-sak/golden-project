@@ -63,23 +63,25 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
 
   return (
     <div className={`${DASHBOARD_VIEW_ROOT_CLASS} bg-gradient-to-b from-[#f5f8fc] via-white to-[#f2f6fb]`}>
-      <DashboardStatsBar
-        districtCount={adminState.vulnerabilityError ? 0 : adminState.vulnerabilityData.length}
-        tier1Count={adminState.hospitals.filter((h) => h.tier === 1).length}
-        tier2Count={adminState.hospitals.filter((h) => h.tier === 2).length}
-        tier3Count={adminState.hospitals.filter((h) => h.tier === 3).length}
-        highRiskDistrictCount={adminState.highRiskDistrictCount}
-        highRiskThreshold={adminState.riskThreshold}
-        loading={adminState.statsLoading}
-        hospitalsUpdatedAt={adminState.hospitalsUpdatedAt}
-        vulnerabilityUpdatedAt={adminState.vulnerabilityUpdatedAt}
-        totalHospitalsDelta={adminState.totalHospitalsDelta}
-        highRiskDelta={adminState.highRiskDelta}
-      />
+      <div className="hidden lg:block shrink-0">
+        <DashboardStatsBar
+          districtCount={adminState.vulnerabilityError ? 0 : adminState.vulnerabilityData.length}
+          tier1Count={adminState.hospitals.filter((h) => h.tier === 1).length}
+          tier2Count={adminState.hospitals.filter((h) => h.tier === 2).length}
+          tier3Count={adminState.hospitals.filter((h) => h.tier === 3).length}
+          highRiskDistrictCount={adminState.highRiskDistrictCount}
+          highRiskThreshold={adminState.riskThreshold}
+          loading={adminState.statsLoading}
+          hospitalsUpdatedAt={adminState.hospitalsUpdatedAt}
+          vulnerabilityUpdatedAt={adminState.vulnerabilityUpdatedAt}
+          totalHospitalsDelta={adminState.totalHospitalsDelta}
+          highRiskDelta={adminState.highRiskDelta}
+        />
 
-      <MetricsGuide />
+        <MetricsGuide />
 
-      {adminState.policyStatus ? <PolicyStatusBanner {...adminState.policyStatus} /> : null}
+        {adminState.policyStatus ? <PolicyStatusBanner {...adminState.policyStatus} /> : null}
+      </div>
 
       <main className={DASHBOARD_MAIN_CLASS}>
         <div className="block lg:hidden">
@@ -95,6 +97,17 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
             selectedVulnerability={adminState.selectedVulnerability}
             vulnerabilitySummary={adminState.vulnerabilitySummary ?? undefined}
             onDistrictSelect={adminState.handleDistrictSelect}
+            
+            // 추가 Props for Mobile PC-Info Overlay
+            districtCount={adminState.vulnerabilityError ? 0 : adminState.vulnerabilityData.length}
+            highRiskDistrictCount={adminState.highRiskDistrictCount}
+            highRiskThreshold={adminState.riskThreshold}
+            statsLoading={adminState.statsLoading}
+            hospitalsUpdatedAt={adminState.hospitalsUpdatedAt}
+            vulnerabilityUpdatedAt={adminState.vulnerabilityUpdatedAt}
+            totalHospitalsDelta={adminState.totalHospitalsDelta}
+            highRiskDelta={adminState.highRiskDelta}
+            policyStatus={adminState.policyStatus}
           />
         </div>
 

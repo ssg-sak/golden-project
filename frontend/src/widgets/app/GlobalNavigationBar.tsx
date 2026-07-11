@@ -67,7 +67,7 @@ export function GlobalNavigationBar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 shrink-0 border-b border-slate-200 bg-white shadow-sm">
+    <header className="shrink-0 border-b border-slate-200/50 bg-white/85 backdrop-blur-md shadow-sm lg:bg-white lg:border-slate-200">
       <div className="mx-auto flex h-14 max-w-[1800px] items-center justify-between gap-4 px-4 md:px-8">
         <Link
           to="/"
@@ -96,7 +96,7 @@ export function GlobalNavigationBar() {
       </div>
 
       <nav
-        className="border-t border-slate-100 bg-white"
+        className="border-t border-slate-100/50 bg-white/85 backdrop-blur-md lg:bg-white lg:border-slate-100"
         aria-label="서비스 메뉴"
       >
         <div className="mx-auto flex max-w-[1800px] items-stretch gap-1 px-2 sm:gap-2 sm:px-6 md:px-8">
