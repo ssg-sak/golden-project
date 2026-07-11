@@ -111,10 +111,6 @@ export function CitizenMapComponent({
     enforceDaeguMapBounds(map);
   }, []);
 
-  const mapCenter = userLocation
-    ? { lat: userLocation.lat, lng: userLocation.lng }
-    : DAEGU_CENTER;
-
   return (
     <div className="relative h-full min-h-0 w-full flex-1">
       <div
@@ -122,7 +118,7 @@ export function CitizenMapComponent({
         className="relative h-full min-h-[50vh] lg:min-h-0 w-full touch-none"
       >
         <Map
-          center={mapCenter}
+          center={DAEGU_CENTER}
           isPanto
           draggable
           zoomable
