@@ -121,55 +121,42 @@ export function MapComponent(props: MapComponentProps) {
           <MapRelayout containerRef={containerRef} />
           <ZoomControl position="RIGHT" />
 
-          {mapState.showHeatmap &&
-            mapState.districtShapes.map((shape) => {
-              const record = mapState.recordMap.get(toAdmNmKey(shape.admNm));
-              const score = record?.vulnerability_index ?? mapState.indexRange.min;
-
-              const isPresetActive = mapState.activePreset !== null;
-              const isIncludedInPreset = isPresetActive && mapState.presetData.includes(shape.admNm);
-
-              if (isPresetActive && !isIncludedInPreset) {
-                return null;
+          {mapState.heatmapViewModel.map((item) => (
+            <DistrictPolygon
+              key={item.key}
+              shape={item.shape}
+              strokeColor={
+                item.isIncludedInPreset
+                  ? '#ef4444'
+                  : vulnerabilityIndexToStrokeColor(
+                      item.score,
+                      mapState.indexRange.min,
+                      mapState.indexRange.max,
+                    )
               }
-
-              return (
-                <DistrictPolygon
-                  key={shape.id}
-                  shape={shape}
-                  strokeColor={
-                    isIncludedInPreset
-                      ? '#ef4444'
-                      : vulnerabilityIndexToStrokeColor(
-                          score,
-                          mapState.indexRange.min,
-                          mapState.indexRange.max,
-                        )
-                  }
-                  fillColor={
-                    isIncludedInPreset
-                      ? '#ef4444'
-                      : vulnerabilityIndexToFillColor(
-                          score,
-                          mapState.indexRange.min,
-                          mapState.indexRange.max,
-                        )
-                  }
-                  fillOpacity={
-                    isIncludedInPreset
-                      ? 0.7
-                      : vulnerabilityIndexToFillOpacity(
-                          score,
-                          mapState.indexRange.min,
-                          mapState.indexRange.max,
-                        )
-                  }
-                  isSelected={mapState.selectedKey === toAdmNmKey(shape.admNm)}
-                  onSelect={mapState.handleDistrictSelectInternal}
-                  onHoverChange={mapState.handleDistrictHoverChange}
-                />
-              );
-            })}
+              fillColor={
+                item.isIncludedInPreset
+                  ? '#ef4444'
+                  : vulnerabilityIndexToFillColor(
+                      item.score,
+                      mapState.indexRange.min,
+                      mapState.indexRange.max,
+                    )
+              }
+              fillOpacity={
+                item.isIncludedInPreset
+                  ? 0.7
+                  : vulnerabilityIndexToFillOpacity(
+                      item.score,
+                      mapState.indexRange.min,
+                      mapState.indexRange.max,
+                    )
+              }
+              isSelected={mapState.selectedKey === toAdmNmKey(item.shape.admNm)}
+              onSelect={mapState.handleDistrictSelectInternal}
+              onHoverChange={mapState.handleDistrictHoverChange}
+            />
+          ))}
 
           {mapState.showHeatmap && mapState.hoveredRecord && mapState.hoveredDistrict && (
             <DistrictHoverTooltip

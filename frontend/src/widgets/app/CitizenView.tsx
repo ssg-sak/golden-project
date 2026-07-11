@@ -5,7 +5,8 @@ import {
   DASHBOARD_DETAIL_INNER_CLASS,
   DASHBOARD_MAIN_CLASS,
   DASHBOARD_MAP_COL_CLASS,
-  DASHBOARD_SIDEBAR_COL_CLASS,
+  MOBILE_BOTTOM_SHEET_WRAPPER_CLASS,
+  DESKTOP_SIDEBAR_WRAPPER_CLASS,
   DASHBOARD_VIEW_ROOT_CLASS,
 } from '../../shared/constants/dashboard-layout';
 import { HOSPITALS_LOADING_MESSAGE } from '../../shared/constants/loading-messages';
@@ -16,7 +17,8 @@ import { EmergencyBanner } from '../shared/EmergencyBanner';
 import { DegradedDataBanner } from '../shared/DegradedDataBanner';
 import { CitizenMapComponent } from '../map-dashboard/CitizenMapComponent';
 import { HospitalDetailPanel } from '../map-dashboard/HospitalDetailPanel';
-import { HospitalSidebar } from '../map-dashboard/HospitalSidebar';
+import { MobileBottomSheet } from '../map-dashboard/MobileBottomSheet';
+import { DesktopSidebar } from '../map-dashboard/DesktopSidebar';
 import { useOptimalLocationsStore } from '../map-dashboard/lib/useOptimalLocationsStore';
 
 interface KakaoState {
@@ -127,8 +129,9 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
       ) : null}
 
       <main className={DASHBOARD_MAIN_CLASS}>
-        <div className={`${DASHBOARD_SIDEBAR_COL_CLASS} ${isSheetExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-10rem)] lg:translate-y-0'}`}>
-          <HospitalSidebar
+        {/* 모바일 바텀 시트 (lg 미만에서만 렌더링) */}
+        <div className={`block lg:hidden ${MOBILE_BOTTOM_SHEET_WRAPPER_CLASS} ${isSheetExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-10rem)]'}`}>
+          <MobileBottomSheet
             hospitals={hospitals}
             selectedHospital={selectedHospital}
             onHospitalSelect={handleHospitalSelect}
@@ -143,6 +146,24 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
             onCareTargetChange={handleCareTargetChange}
             isSheetExpanded={isSheetExpanded}
             onToggleSheet={() => setIsSheetExpanded(p => !p)}
+          />
+        </div>
+
+        {/* 데스크톱 사이드바 (lg 이상에서만 렌더링) */}
+        <div className={`hidden lg:flex ${DESKTOP_SIDEBAR_WRAPPER_CLASS}`}>
+          <DesktopSidebar
+            hospitals={hospitals}
+            selectedHospital={selectedHospital}
+            onHospitalSelect={handleHospitalSelect}
+            loading={hospitalsLoading}
+            userLocation={location}
+            isLocating={isLocating}
+            locationErrorReason={errorReason}
+            onRetryLocation={retry}
+            showAvailableOnly={showAvailableOnly}
+            onShowAvailableOnlyChange={setShowAvailableOnly}
+            careTarget={careTarget}
+            onCareTargetChange={handleCareTargetChange}
           />
         </div>
 

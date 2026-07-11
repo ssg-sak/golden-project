@@ -134,11 +134,31 @@ export function useMapComponentController({
     [onDistrictSelect, onHospitalSelect, selectedHospital],
   );
 
+  const heatmapViewModel = useMemo(() => {
+    if (!showHeatmap) return [];
+    
+    return districtShapes.map(shape => {
+      const record = recordMap.get(toAdmNmKey(shape.admNm));
+      const score = record?.vulnerability_index ?? indexRange.min;
+      const isIncludedInPreset = activePreset !== null && presetData.includes(shape.admNm);
+      const isVisible = activePreset === null || isIncludedInPreset;
+      
+      return {
+        shape,
+        score,
+        isIncludedInPreset,
+        isVisible,
+        key: shape.id,
+      };
+    }).filter(item => item.isVisible);
+  }, [showHeatmap, districtShapes, recordMap, indexRange.min, activePreset, presetData]);
+
   return {
     activeFilter,
     handleFilterChange,
     filteredHospitals,
     showHeatmap,
+    heatmapViewModel,
     districtShapes,
     recordMap,
     indexRange,

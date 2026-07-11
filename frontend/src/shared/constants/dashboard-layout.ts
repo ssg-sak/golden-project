@@ -8,11 +8,20 @@ export const DASHBOARD_VIEW_ROOT_CLASS = 'flex min-h-0 flex-1 flex-col';
 export const DASHBOARD_MAIN_CLASS =
   'relative mx-auto flex w-full max-w-[1800px] flex-1 overflow-hidden lg:flex-row lg:items-stretch lg:gap-3 lg:p-6 lg:overflow-visible';
 
-/** 좌측 패널 — 모바일 바텀 시트화 (absolute bottom-0) */
-export const DASHBOARD_SIDEBAR_COL_CLASS = `absolute bottom-0 left-0 right-0 z-10 flex flex-col max-h-[55dvh] overflow-hidden rounded-t-3xl bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] transition-transform duration-300 lg:relative lg:order-1 lg:z-auto lg:max-h-none lg:w-72 lg:self-start lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-80 lg:sticky ${DASHBOARD_STICKY_TOP_CLASS}`;
+/** 모바일 바텀 시트 전용 최상위 래퍼 (absolute 위치 및 높이 제한) */
+export const MOBILE_BOTTOM_SHEET_WRAPPER_CLASS =
+  'absolute bottom-0 left-0 right-0 z-10 flex flex-col max-h-[55dvh] overflow-hidden rounded-t-3xl bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] transition-transform duration-300';
 
-export const DASHBOARD_SIDEBAR_PANEL_CLASS =
-  'flex w-full h-full flex-col overflow-hidden lg:glass-panel-strong lg:max-h-[calc(100dvh-8.5rem)]';
+/** 모바일 바텀 시트 내부 패널 (내부 스크롤 허용용 Flex 구조) */
+export const MOBILE_BOTTOM_SHEET_PANEL_CLASS =
+  'flex w-full h-full flex-col overflow-hidden';
+
+/** 데스크톱 사이드바 전용 최상위 래퍼 (sticky 위치) */
+export const DESKTOP_SIDEBAR_WRAPPER_CLASS = `relative order-1 w-72 self-start xl:w-80 sticky ${DASHBOARD_STICKY_TOP_CLASS}`;
+
+/** 데스크톱 사이드바 내부 패널 (Glassmorphism 및 높이 제한) */
+export const DESKTOP_SIDEBAR_PANEL_CLASS =
+  'flex w-full flex-col glass-panel-strong max-h-[calc(100dvh-8.5rem)] overflow-hidden';
 
 /** 지도 — 모바일 풀스크린 (absolute inset-0) */
 export const DASHBOARD_MAP_COL_CLASS =
