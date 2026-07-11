@@ -11,7 +11,7 @@ import { useEtaController } from './lib/useEtaController';
 interface HospitalSidebarListProps {
   sortedHospitals: (HospitalRecord & { distanceKm: number })[];
   selectedHospital: HospitalRecord | null;
-  onHospitalSelect: (hospital: HospitalRecord) => void;
+  onHospitalSelect: (hospital: HospitalRecord | null) => void;
   loading?: boolean;
   userLocation: UserLocation | null;
   isLocating: boolean;

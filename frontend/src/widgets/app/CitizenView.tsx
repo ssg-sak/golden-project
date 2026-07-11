@@ -5,7 +5,6 @@ import {
   DASHBOARD_DETAIL_INNER_CLASS,
   DASHBOARD_MAIN_CLASS,
   DASHBOARD_MAP_COL_CLASS,
-  MOBILE_BOTTOM_SHEET_WRAPPER_CLASS,
   DESKTOP_SIDEBAR_WRAPPER_CLASS,
   DASHBOARD_VIEW_ROOT_CLASS,
 } from '../../shared/constants/dashboard-layout';
@@ -72,7 +71,6 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
   const [selectedHospital, setSelectedHospital] = useState<HospitalRecord | null>(null);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [careTarget, setCareTarget] = useState<'all' | 'adult' | 'pediatric' | 'senior'>('all');
-  const [isSheetExpanded, setIsSheetExpanded] = useState(true);
 
   const showLocations = useOptimalLocationsStore((state) => state.showLocations);
   const fetchLocations = useOptimalLocationsStore((state) => state.fetchLocations);
@@ -85,7 +83,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
     }
   }, [careTarget, showLocations, fetchLocations]);
 
-  const handleHospitalSelect = useCallback((hospital: HospitalRecord) => {
+  const handleHospitalSelect = useCallback((hospital: HospitalRecord | null) => {
     setSelectedHospital(hospital);
   }, []);
 
@@ -129,8 +127,8 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
       ) : null}
 
       <main className={DASHBOARD_MAIN_CLASS}>
-        {/* 모바일 바텀 시트 (lg 미만에서만 렌더링) */}
-        <div className={`block lg:hidden ${MOBILE_BOTTOM_SHEET_WRAPPER_CLASS} ${isSheetExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-14rem)]'}`}>
+        {/* 모바일 바텀 시트 (lg 미만에서만 렌더링, Framer Motion 자체 제어) */}
+        <div className="block lg:hidden">
           <MobileBottomSheet
             hospitals={hospitals}
             selectedHospital={selectedHospital}
@@ -144,8 +142,6 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
             onShowAvailableOnlyChange={setShowAvailableOnly}
             careTarget={careTarget}
             onCareTargetChange={handleCareTargetChange}
-            isSheetExpanded={isSheetExpanded}
-            onToggleSheet={() => setIsSheetExpanded(p => !p)}
           />
         </div>
 
@@ -207,9 +203,10 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
           ) : null}
         </div>
 
+        {/* 데스크톱 DetailPanel (lg 이상에서만 렌더링) */}
         <div
-          className={`${DASHBOARD_DETAIL_COL_CLASS} ${
-            selectedHospital ? 'block' : 'hidden lg:block'
+          className={`${DASHBOARD_DETAIL_COL_CLASS} hidden lg:block ${
+            selectedHospital ? 'lg:flex' : ''
           }`}
         >
           <div className={DASHBOARD_DETAIL_INNER_CLASS}>
