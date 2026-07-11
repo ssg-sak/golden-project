@@ -76,3 +76,16 @@ if (window.innerWidth < 1024) {
 }
 ```
 - **결과:** 줌 아웃 상태에서 누르든 줌 인 상태에서 누르든, **픽셀 단위의 투영 왜곡 없이 안전하게 타겟 위도로 계산**되어 마커가 항상 모바일 화면 상단(보이는 영역의 한가운데)에 부드럽게 안착하게 됨.
+---
+
+## 7. 4차 장애 (Follow-up Incident): 지도 원위치 튕김(Bouncing) 현상
+- **발생 일시:** 2026년 7월 11일
+- **장애 현상:** 사용자가 병원 목록의 아이템이나 마커를 클릭하여 지도를 해당 위치로 이동(`panTo`)시켰음에도 불구하고, 화면 내의 다른 상태(State)가 업데이트되면서 모바일 시트나 패널이 렌더링될 때 **지도가 다시 초기 로드 위치(userLocation)로 억지로 되돌아가는 현상**이 발생함.
+
+### 7-1. 근본 원인 (Root Cause): Declarative vs Imperative 제어권 충돌
+- 리액트 환경에서 지도를 다룰 때, `<Map center={mapCenter}>`와 같이 **선언적(Declarative)**으로 중심축을 정의하는 방식과, `map.panTo()`를 통해 **명령적(Imperative)**으로 이동시키는 방식을 동시에 혼용하여 발생한 충돌임.
+- 시민 탭(`CitizenMapComponent`)에서 렌더링 시마다 `userLocation`을 기반으로 새로운 객체 `{ lat, lng }`를 `mapCenter`로 생성해 넘겨주었는데, `<Map>` 컴포넌트는 이를 감지하고 "개발자가 현재 지도의 중심을 강제로 `mapCenter`로 유지하라고 선언했다"고 오판하여 `panTo` 직후 무조건 원위치로 튕겨버린 것.
+
+### 7-2. 최종 조치 내역: '선언적 렌더링 개입 차단'
+- 지도 컴포넌트의 `center` Prop에는 정적인 기본 좌표(`DAEGU_CENTER`)만 고정 할당하여, React의 선언적 렌더링이 지도 중심축을 강제하지 못하도록 개입을 차단함.
+- 이후 내 위치 찾기, 병원 클릭 등 **모든 동적인 지도 패닝은 Effect 훅 내부에서 `panMapTo()`라는 명령적(Imperative) API만으로 제어되도록 구조를 완벽하게 통일**함. (자세한 내용은 `docs/guides/React_Kakao_Maps_Centering_Guide.md` 참조)
