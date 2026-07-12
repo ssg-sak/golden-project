@@ -1,114 +1,109 @@
 import type { HospitalRecord } from '../../shared/types/hospital';
-import {
-  calculateInfrastructureMetrics,
-  hasSufficientInfrastructureData,
-} from './lib/hospital-infrastructure-score';
+import { hospitalTierBadge } from '../../shared/types/hospital';
+import { calculateInfrastructureMetrics } from './lib/hospital-infrastructure-score';
 
 const clampScore = (value: number) => Math.max(0, Math.min(100, value));
 
-function polygonPoints(values: number[], radius = 38): string {
+function polygonPoints(values: Array<number | null>, radius = 37): string {
   const angleStep = (Math.PI * 2) / values.length;
-  return values
-    .map((value, index) => {
-      const scaledRadius = (clampScore(value) / 100) * radius;
-      const x = 50 + scaledRadius * Math.sin(index * angleStep);
-      const y = 50 - scaledRadius * Math.cos(index * angleStep);
-      return `${x},${y}`;
-    })
-    .join(' ');
+  return values.map((value, index) => {
+    const scaledRadius = (clampScore(value ?? 0) / 100) * radius;
+    const angle = index * angleStep;
+    return `${50 + scaledRadius * Math.sin(angle)},${50 - scaledRadius * Math.cos(angle)}`;
+  }).join(' ');
 }
 
-function metricPoint(value: number, index: number, length: number, radius = 38) {
+function metricPoint(value: number, index: number, length: number, radius = 37) {
   const angle = index * ((Math.PI * 2) / length);
   const scaledRadius = (clampScore(value) / 100) * radius;
-  return {
-    x: 50 + scaledRadius * Math.sin(angle),
-    y: 50 - scaledRadius * Math.cos(angle),
-  };
+  return { x: 50 + scaledRadius * Math.sin(angle), y: 50 - scaledRadius * Math.cos(angle) };
 }
 
 export function HospitalRadarChart({ hospital }: { hospital: HospitalRecord }) {
-  if (!hasSufficientInfrastructureData(hospital)) {
-    return (
-      <section className="shrink-0 rounded-2xl bg-white p-4 ring-1 ring-slate-200">
-        <h3 className="text-sm font-bold text-slate-800">의료 인프라 분석</h3>
-        <p className="mt-2 text-xs leading-relaxed text-slate-500">
-          의료진·장비·병상 정보가 모이면 지역 의료자원 규모를 비교할 수 있어요. 현재는 일부 정보를 확인하고 있습니다.
-        </p>
-        <span className="mt-3 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-500">
-          데이터 확인 중
-        </span>
-      </section>
-    );
-  }
-
   const metrics = calculateInfrastructureMetrics(hospital);
   const values = metrics.map(({ value }) => value);
-  const overallScore = Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
-  const gridLevels = [100, 75, 50, 25];
+  const knownValues = values.filter((value): value is number => value !== null);
+  const overallScore = knownValues.length >= 2
+    ? Math.round(knownValues.reduce((sum, value) => sum + value, 0) / knownValues.length)
+    : null;
   const labelPositions = [
     { x: 50, y: 7, anchor: 'middle' as const },
-    { x: 94, y: 52, anchor: 'end' as const },
+    { x: 96, y: 52, anchor: 'end' as const },
     { x: 50, y: 98, anchor: 'middle' as const },
-    { x: 6, y: 52, anchor: 'start' as const },
+    { x: 4, y: 52, anchor: 'start' as const },
   ];
 
   return (
-    <section
-      className="relative shrink-0 overflow-hidden rounded-2xl bg-slate-950 p-4 text-white ring-1 ring-indigo-400/30 shadow-xl"
-      style={{ minHeight: '352px', flexShrink: 0 }}
-    >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.16),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.2),transparent_44%)]" />
-      <div className="relative flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-bold text-slate-200">의료 인프라 비교 지표</p>
-          <p className="mt-1 text-[10px] text-slate-400">지역별 의료자원 분포와 부족 영역을 비교하는 참고 자료</p>
+    <section className="relative shrink-0 overflow-hidden rounded-2xl border border-blue-200 bg-[#f7fafc] p-4 text-slate-800 shadow-sm">
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-800 via-teal-700 to-blue-800" />
+      <div className="relative flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
+        <div className="flex gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-900 text-lg font-black text-white" aria-hidden>+</span>
+          <div>
+            <p className="text-sm font-extrabold text-blue-950">의료자원 행정 비교표</p>
+            <p className="mt-1 text-[10px] leading-relaxed text-slate-500">
+              신고 인프라와 현재 병상 여력을 항목별로 확인하는 정책 참고자료
+            </p>
+          </div>
         </div>
-        <span className="rounded-lg bg-indigo-400/15 px-2 py-1 text-sm font-black text-indigo-200 ring-1 ring-indigo-300/25">
-          {overallScore}<span className="text-[9px] font-semibold text-slate-400"> / 100</span>
-        </span>
+        <div className="text-right">
+          <span className="inline-flex rounded-full bg-blue-50 px-2 py-1 text-[10px] font-bold text-blue-800 ring-1 ring-blue-200">
+            {hospitalTierBadge(hospital.tier)}
+          </span>
+          <p className="mt-1 text-lg font-black text-blue-950">{overallScore === null ? '산정 보류' : `${overallScore}점`}</p>
+        </div>
       </div>
 
-      <div className="relative mt-2 flex justify-center" style={{ minHeight: '192px' }}>
-        <svg viewBox="0 0 100 100" className="h-48 w-48" style={{ width: '192px', height: '192px', flex: '0 0 192px' }} role="img" aria-label={`의료 인프라 종합 점수 ${overallScore}점`}>
-          {gridLevels.map((level) => (
-            <polygon key={level} points={polygonPoints(metrics.map(() => level))} fill="none" stroke="#334155" strokeWidth="0.6" />
+      <div className="relative mt-3 flex justify-center">
+        <svg viewBox="0 0 100 100" className="h-48 w-48" role="img" aria-label="의료자원 행정 비교 방사형 도표">
+          {[100, 75, 50, 25].map((level) => (
+            <polygon key={level} points={polygonPoints(metrics.map(() => level))} fill="none" stroke="#cbd5e1" strokeWidth="0.6" />
           ))}
           {labelPositions.map((position, index) => (
-            <line key={metrics[index].label} x1="50" y1="50" x2={position.x} y2={position.y} stroke="#334155" strokeWidth="0.5" />
+            <line key={metrics[index].label} x1="50" y1="50" x2={position.x} y2={position.y} stroke="#cbd5e1" strokeWidth="0.5" />
           ))}
-          <polygon points={polygonPoints(values)} fill="rgba(56,189,248,0.24)" stroke="#67e8f9" strokeWidth="1.4" className="transition-all duration-700" />
+          <polygon points={polygonPoints(values)} fill="rgba(13,148,136,0.16)" stroke="#0f766e" strokeWidth="1.4" />
           {values.map((value, index) => {
-            const { x, y } = metricPoint(value, index, values.length);
-            return <circle key={metrics[index].label} cx={x} cy={y} r="1.5" fill="#a7f3d0" />;
+            if (value === null) return null;
+            const point = metricPoint(value, index, values.length);
+            return <circle key={metrics[index].label} cx={point.x} cy={point.y} r="1.7" fill="#1d4ed8" />;
           })}
           {metrics.map((metric, index) => (
-            <text key={metric.label} x={labelPositions[index].x} y={labelPositions[index].y} textAnchor={labelPositions[index].anchor} fontSize="4" fill="#cbd5e1">
+            <text key={metric.label} x={labelPositions[index].x} y={labelPositions[index].y} textAnchor={labelPositions[index].anchor} fontSize="3.7" fontWeight="700" fill="#334155">
               {metric.label}
             </text>
           ))}
         </svg>
       </div>
 
-      <dl className="relative grid grid-cols-2 gap-2">
+      <dl className="grid grid-cols-2 gap-2">
         {metrics.map((metric) => (
-          <div key={metric.label} className="flex items-center justify-between rounded-lg bg-white/5 px-2.5 py-1.5 ring-1 ring-white/10">
-            <dt className="text-[10px] text-slate-400">{metric.label}</dt>
-            <dd className="text-xs font-bold text-slate-100">{Math.round(metric.value)}점</dd>
+          <div key={metric.label} className="rounded-lg border border-slate-200 bg-white px-3 py-2">
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-[10px] font-bold text-slate-600">{metric.label}</dt>
+              <dd className={`text-xs font-black ${metric.value === null ? 'text-slate-400' : 'text-blue-900'}`}>
+                {metric.value === null ? '미제공' : `${Math.round(metric.value)}점`}
+              </dd>
+            </div>
+            <p className="mt-1 text-[9px] leading-relaxed text-slate-500">{metric.detail}</p>
           </div>
         ))}
       </dl>
-      <details className="relative mt-3 rounded-lg bg-white/5 text-[10px] text-slate-300 ring-1 ring-white/10">
-        <summary className="cursor-pointer px-3 py-2 font-bold text-slate-200">지표 계산 기준 보기</summary>
-        <div className="space-y-2 border-t border-white/10 px-3 py-3 leading-relaxed">
-          <p><strong className="text-cyan-200">의료진</strong> · 심평원 등록 의료진 50명을 100점 상한으로 환산</p>
-          <p><strong className="text-cyan-200">장비</strong> · 심평원 조회 장비 중 보유 장비의 비율</p>
-          <p><strong className="text-cyan-200">수용력</strong> · 현재 가용 응급 병상 20개를 100점 상한으로 환산</p>
-          <p><strong className="text-cyan-200">기관 등급</strong> · 서비스 분류 기준 Tier 1=100점, Tier 2=70점</p>
-          <p className="border-t border-white/10 pt-2 text-slate-400">종합점수는 네 지표의 단순 평균입니다. 50명·20개 상한과 등급 점수는 지역 비교를 위한 초기 기준이며 심평원 공식 산식이 아닙니다.</p>
+
+      <details className="mt-3 rounded-lg border border-blue-200 bg-blue-50/70 text-[10px] text-slate-600">
+        <summary className="cursor-pointer px-3 py-2 font-bold text-blue-950">지표 산정 기준과 행정적 해석</summary>
+        <div className="space-y-2 border-t border-blue-200 px-3 py-3 leading-relaxed">
+          <p><strong>의료인력 기반</strong> · 기관 역할별 참고 규모(Tier 1 400명, Tier 2 100명, Tier 3 30명) 대비 등록 의사 수</p>
+          <p><strong>핵심장비 확인</strong> · 심평원에서 확인된 장비 항목 중 보유 항목 비율</p>
+          <p><strong>일반응급실 여력</strong> · 국립중앙의료원 응급실일반 가용/전체 병상 비율</p>
+          <p><strong>특수병상 대응</strong> · 분만실·음압·일반·코호트 격리 중 값이 제공된 유형의 현재 가용 비율</p>
+          <p className="border-t border-blue-200 pt-2 text-slate-500">기관 등급은 점수가 아니라 의료체계상 역할이므로 종합점수에서 제외했습니다. 미제공 항목도 0점으로 간주하지 않습니다.</p>
         </div>
       </details>
-      <p className="relative mt-3 text-[9px] leading-relaxed text-slate-400">의료자원 규모를 비교하는 참고 지표입니다. 다른 지역·수용 지표와 함께 비교해 주세요.</p>
+
+      <p className="mt-3 text-[9px] leading-relaxed text-slate-500">
+        이 값은 병원 품질 순위가 아니라 의료자원 배분과 공백 영역 검토를 위한 행정 참고지표입니다.
+      </p>
     </section>
   );
 }

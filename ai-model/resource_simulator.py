@@ -118,20 +118,25 @@ def generate_recommendation_text(cluster_id: int, pipeline_type: str,
     priority_ko = {"HIGH": "[HIGH] 최우선", "MEDIUM": "[MED] 중요", "LOW": "[LOW] 관찰"}
     priority_label = priority_ko.get(gap["priority_level"], "")
 
-    nearest_name = nearby[0]["name"] if nearby else "인근 의료기관"
+    nearest_name = nearby[0]["name"] if nearby else ""
     pipeline_ko  = "소아" if pipeline_type == "pediatric" else "어르신"
 
     lines = [f"{priority_label} | {pipeline_ko} 클러스터 #{cluster_id} (수요: {demand}개소)"]
 
-    if gap["doctors_needed"] > 0:
-        lines.append(
-            f"→ {nearest_name}에 응급의학전문의 {gap['doctors_needed']}명 충원 권고"
-            f" (반경 5km 평균 {gap['avg_doctors_nearby']}명)"
-        )
-    if gap["mri_needed"]:
-        lines.append(f"→ 반경 내 MRI 보유 병원 부재. {nearest_name}에 MRI 1대 추가 배정 권고")
-    if gap["ct_needed"]:
-        lines.append(f"→ CT 보유 병원 커버리지 부족. CT 장비 지원 검토 필요")
+    if not nearby:
+        lines.append(f"→ 반경 5km 내 기존 병원 전무(0개). 신규 공공의료센터 설립 및 전문의 {gap['doctors_needed']}명 긴급 배치 강력 권고")
+        if gap["mri_needed"]:
+            lines.append(f"→ 신규 센터에 MRI 1대 및 CT 필수 도입 권고")
+    else:
+        if gap["doctors_needed"] > 0:
+            lines.append(
+                f"→ {nearest_name}에 응급의학전문의 {gap['doctors_needed']}명 충원 권고"
+                f" (반경 5km 평균 {gap['avg_doctors_nearby']}명)"
+            )
+        if gap["mri_needed"]:
+            lines.append(f"→ 반경 내 MRI 보유 병원 부재. {nearest_name}에 MRI 1대 추가 배정 권고")
+        if gap["ct_needed"]:
+            lines.append(f"→ CT 보유 병원 커버리지 부족. CT 장비 지원 검토 필요")
     if gap["priority_level"] == "LOW":
         lines.append("→ 현재 인프라 수준 양호. 지속적 모니터링 권고")
 

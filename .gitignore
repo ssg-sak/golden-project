@@ -71,6 +71,7 @@ docs/**
 !docs/README.md
 !docs/PORTFOLIO.md
 !docs/CASE_STUDY_PORTFOLIO.md
+!docs/**/*.csv
 
 # =========================
 # 기타 누락된 기밀 문서

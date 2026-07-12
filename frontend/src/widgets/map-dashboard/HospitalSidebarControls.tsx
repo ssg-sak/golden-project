@@ -38,7 +38,10 @@ export function HospitalSidebarControls({
 
       <p className="text-xs font-bold text-slate-700">{heading}</p>
       {/* 2. 가로 스크롤 필터 목록 */}
-      <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+      <div 
+        className="flex w-full items-center gap-2 overflow-x-auto pb-1 scrollbar-hide"
+        onPointerDownCapture={(e) => e.stopPropagation()}
+      >
         {/* 병상 보유 필터 칩 */}
         <button
           type="button"

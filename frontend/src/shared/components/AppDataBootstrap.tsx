@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { ENV } from '../config/env';
+import { startDashboardSummaryPolling } from '../store/dashboardSummaryStore';
 import { useHospitalStore } from '../store/hospitalStore';
 import { useVulnerabilityStore } from '../store/vulnerabilityStore';
 
@@ -40,6 +42,11 @@ export function AppDataBootstrap({ children }: { children: React.ReactNode }) {
     vulnerabilityError,
     fetchVulnerability,
   ]);
+
+  useEffect(() => {
+    if (!ENV.USE_DYNAMIC_DASHBOARD_DATA) return undefined;
+    return startDashboardSummaryPolling();
+  }, []);
 
   return children;
 }

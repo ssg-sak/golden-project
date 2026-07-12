@@ -5,15 +5,16 @@ from pathlib import Path
 import json
 
 # Add backend directory to sys.path
-BASE_DIR = Path(__file__).resolve().parents[2]
-if str(BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = BACKEND_DIR.parent
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
 
 from app.db.database import engine, Base, SessionLocal
 from app.db.models import Hospital
 
 def main():
-    json_path = BASE_DIR / "data" / "processed" / "final_hospitals.json"
+    json_path = PROJECT_ROOT / "data" / "processed" / "final_hospitals.json"
     if not json_path.exists():
         print(f"Error: {json_path} does not exist.")
         return

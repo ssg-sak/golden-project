@@ -96,3 +96,21 @@ def should_use_mock_realtime() -> bool:
         return True
     
     return not has_data_go_kr_api_key()
+
+
+def get_env(name: str, default: str | None = None) -> str | None:
+    """레거시 fetcher/scheduler 호환 alias."""
+    return env_str(name, default)
+
+
+def has_sgis_credentials() -> bool:
+    key = (env_str("SGIS_CONSUMER_KEY") or "").strip()
+    secret = (env_str("SGIS_CONSUMER_SECRET") or "").strip()
+    return bool(key and secret and key not in _PLACEHOLDER_KEYS)
+
+
+def data_refresh_admin_token() -> str | None:
+    token = (env_str("DATA_REFRESH_ADMIN_TOKEN") or "").strip()
+    if not token or token in _PLACEHOLDER_KEYS:
+        return None
+    return token

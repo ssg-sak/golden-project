@@ -14,21 +14,18 @@ def bed_payload(
     severe_conditions: dict[str, Any] | None = None,
     operating_hours: str | None = None,
     equipment_status: dict[str, bool] | None = None,
-    special_beds: dict[str, int] | None = None,
+    special_beds: dict[str, Any] | None = None,
     realtime_messages: list[str] | None = None,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "hvec": hvec,
         "hvoc": hvoc,
-        "available_beds": hvec + hvoc,
+        # 시민용 수용 상태는 공식 화면과 동일하게 '응급실일반'만 기준으로 삼는다.
+        "available_beds": hvec,
         "realtime_source": source,
         "total_hvec": total_hvec,
         "total_hvoc": total_hvoc,
-        "total_beds": (
-            (total_hvec or 0) + (total_hvoc or 0)
-            if (total_hvec is not None or total_hvoc is not None)
-            else None
-        ),
+        "total_beds": total_hvec,
     }
     if severe_conditions is not None:
         payload["severe_conditions"] = severe_conditions

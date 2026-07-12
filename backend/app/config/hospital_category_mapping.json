@@ -1,0 +1,52 @@
+{
+  "version": "1.0",
+  "description": "final_hospitals.json tier 기준 대시보드 분류. tier1=large, tier2=secondary, tier3=moonlightPediatric",
+  "priority": ["large", "secondary", "moonlightPediatric"],
+  "by_facility_id": {
+    "A1303386": "secondary",
+    "A2800003": "large",
+    "A2800006": "large",
+    "A2800007": "large",
+    "A2800010": "secondary",
+    "A2800011": "large",
+    "A2800015": "large",
+    "A2800016": "secondary",
+    "A2800021": "secondary",
+    "A2800032": "secondary",
+    "A2800045": "secondary",
+    "A2800067": "secondary",
+    "A2800055": "secondary",
+    "A2800026": "secondary",
+    "A2800041": "secondary",
+    "A2800038": "secondary",
+    "A2800017": "secondary",
+    "A2800085": "secondary",
+    "A2800019": "large",
+    "A2800024": "moonlightPediatric",
+    "A2800101": "moonlightPediatric",
+    "A2800102": "moonlightPediatric",
+    "A2800103": "moonlightPediatric",
+    "A2800104": "moonlightPediatric",
+    "A2800105": "moonlightPediatric"
+  },
+  "official_type_rules": [
+    {
+      "match_keywords": ["권역응급", "전문응급", "권역응급의료센터", "전문응급의료센터"],
+      "dashboard_category": "large",
+      "active": true
+    },
+    {
+      "match_keywords": ["지역응급", "지역응급의료기관", "지역응급의료센터"],
+      "dashboard_category": "secondary",
+      "active": true
+    }
+  ],
+  "moonlight_facility_ids": [
+    "A2800024",
+    "A2800101",
+    "A2800102",
+    "A2800103",
+    "A2800104",
+    "A2800105"
+  ]
+}

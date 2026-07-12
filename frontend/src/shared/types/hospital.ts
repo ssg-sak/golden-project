@@ -27,6 +27,11 @@ export interface HospitalRecord {
   realtime_source?: string;
   /** 응급실 특이사항 메시지 목록 (공공 API getEmrrmSrsillDissMsgInqire) */
   realtime_messages?: string[] | null;
+  /** 특수 병상 현황 (가용/기준) */
+  special_beds?: Record<
+    string,
+    { available: number | null; total: number | null; is_available?: boolean | null }
+  > | null;
 
   // --- HIRA API Data ---
   /** 병원 운영 시간 */
@@ -39,6 +44,8 @@ export interface HospitalRecord {
   hira_notices?: string[];
   /** api일 때만 실제 HIRA 응답에서 취득한 값 */
   hira_source?: 'api';
+  /** 심평원 자료 기준 시점. 예: 2026.03 */
+  hira_reference_date?: string;
 }
 
 export function hospitalDisplayName(hospital: HospitalRecord): string {
@@ -54,18 +61,16 @@ export function hospitalTierBadge(tier: HospitalTier): string {
 }
 
 export function hospitalAvailableBeds(hospital: HospitalRecord): number | undefined {
+  if (typeof hospital.hvec === 'number') {
+    return hospital.hvec;
+  }
+
   if (hospital.available_beds === null) {
     return undefined;
   }
 
   if (typeof hospital.available_beds === 'number') {
     return hospital.available_beds;
-  }
-
-  const hasHvec = typeof hospital.hvec === 'number';
-  const hasHvoc = typeof hospital.hvoc === 'number';
-  if (hasHvec || hasHvoc) {
-    return (hospital.hvec ?? 0) + (hospital.hvoc ?? 0);
   }
 
   return undefined;

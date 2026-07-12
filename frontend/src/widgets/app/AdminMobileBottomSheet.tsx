@@ -32,6 +32,8 @@ interface AdminMobileBottomSheetProps {
   highlightedHospitalName?: string | null;
   currentMode?: 'all' | 'adult' | 'pediatric' | 'senior';
   onModeChange?: (val: 'all' | 'adult' | 'pediatric' | 'senior') => void;
+  showAvailableOnly?: boolean;
+  onShowAvailableOnlyChange?: (value: boolean) => void;
   
   // Detail Props
   isDetailOpen: boolean;
@@ -46,6 +48,9 @@ interface AdminMobileBottomSheetProps {
 
   // Stats Props
   districtCount: number;
+  tier1Count?: number;
+  tier2Count?: number;
+  tier3Count?: number;
   highRiskDistrictCount?: number;
   highRiskThreshold?: number;
   statsLoading?: boolean;
@@ -53,6 +58,11 @@ interface AdminMobileBottomSheetProps {
   vulnerabilityUpdatedAt?: string | null;
   totalHospitalsDelta?: number | null;
   highRiskDelta?: number | null;
+  populationBaseMonth?: string;
+  adminAreaChangeText?: string;
+  emergencyChangeText?: string;
+  highRiskChangeText?: string;
+  dataStale?: boolean;
   policyStatus?: React.ComponentProps<typeof PolicyStatusBanner> | null;
 }
 
@@ -64,11 +74,16 @@ export function AdminMobileBottomSheet({
   highlightedHospitalName = null,
   currentMode = 'all',
   onModeChange,
+  showAvailableOnly = false,
+  onShowAvailableOnlyChange,
   isDetailOpen,
   selectedVulnerability,
   vulnerabilitySummary,
   onDistrictSelect,
   districtCount,
+  tier1Count: tier1CountProp,
+  tier2Count: tier2CountProp,
+  tier3Count: tier3CountProp,
   highRiskDistrictCount,
   highRiskThreshold,
   statsLoading,
@@ -76,6 +91,11 @@ export function AdminMobileBottomSheet({
   vulnerabilityUpdatedAt,
   totalHospitalsDelta,
   highRiskDelta,
+  populationBaseMonth,
+  adminAreaChangeText,
+  emergencyChangeText,
+  highRiskChangeText,
+  dataStale,
   policyStatus,
 }: AdminMobileBottomSheetProps) {
   const rowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -92,9 +112,9 @@ export function AdminMobileBottomSheet({
     [hospitals],
   );
 
-  const tier1Count = hospitals.filter((h) => h.tier === 1).length;
-  const tier2Count = hospitals.filter((h) => h.tier === 2).length;
-  const tier3Count = hospitals.filter((h) => h.tier === 3).length;
+  const tier1Count = tier1CountProp ?? hospitals.filter((h) => h.tier === 1).length;
+  const tier2Count = tier2CountProp ?? hospitals.filter((h) => h.tier === 2).length;
+  const tier3Count = tier3CountProp ?? hospitals.filter((h) => h.tier === 3).length;
 
   function handleItemClick(hospital: HospitalRecord) {
     onHospitalSelect(selectedHospital?.name === hospital.name ? null : hospital);
@@ -205,8 +225,8 @@ export function AdminMobileBottomSheet({
               isLocating={false}
               locationSource={null}
               locationErrorReason={null}
-              showAvailableOnly={false}
-              onShowAvailableOnlyChange={() => {}}
+              showAvailableOnly={showAvailableOnly}
+              onShowAvailableOnlyChange={onShowAvailableOnlyChange ?? (() => {})}
               careTarget={currentMode}
               onCareTargetChange={onModeChange}
             />
@@ -251,6 +271,11 @@ export function AdminMobileBottomSheet({
                 vulnerabilityUpdatedAt={vulnerabilityUpdatedAt}
                 totalHospitalsDelta={totalHospitalsDelta}
                 highRiskDelta={highRiskDelta}
+                populationBaseMonth={populationBaseMonth}
+                adminAreaChangeText={adminAreaChangeText}
+                emergencyChangeText={emergencyChangeText}
+                highRiskChangeText={highRiskChangeText}
+                dataStale={dataStale}
               />
               <MetricsGuide />
             </div>

@@ -3,116 +3,80 @@
     "pipeline": "pediatric",
     "cluster_id": 1,
     "location": {
-      "lat": 35.852571027250846,
-      "lng": 128.67710275758188
+      "lat": 35.89923227823275,
+      "lng": 128.63724659735632
     },
-    "demand": 107,
+    "demand": 320,
     "nearby_hospitals": [
-      "율하연합소아청소년과의원",
-      "천주성삼병원",
-      "대구보훈병원",
-      "강남종합병원"
+      "강남종합병원",
+      "우리아이아동병원",
+      "구병원",
+      "경북대학교병원"
     ],
     "nearby_count": 4,
     "resource_gap": {
       "doctors_needed": 0,
       "mri_needed": false,
       "ct_needed": false,
-      "avg_doctors_nearby": 15.5,
+      "avg_doctors_nearby": 31.5,
       "mri_coverage_ratio": 0.5,
       "priority_level": "LOW"
     },
-    "recommendation": "[LOW] 관찰 | 소아 클러스터 #1 (수요: 107개소) | → 현재 인프라 수준 양호. 지속적 모니터링 권고"
+    "recommendation": "[LOW] 관찰 | 소아 클러스터 #1 (수요: 320개소) | → 현재 인프라 수준 양호. 지속적 모니터링 권고"
   },
   {
     "pipeline": "pediatric",
     "cluster_id": 2,
     "location": {
-      "lat": 35.78279949713811,
-      "lng": 128.46053268352514
+      "lat": 35.7983586947844,
+      "lng": 128.46344525918232
     },
-    "demand": 73,
+    "demand": 65,
     "nearby_hospitals": [],
     "nearby_count": 0,
     "resource_gap": {
-      "doctors_needed": 14,
+      "doctors_needed": 13,
       "mri_needed": true,
       "ct_needed": true,
       "avg_doctors_nearby": 0,
       "mri_coverage_ratio": 0.0,
       "priority_level": "HIGH"
     },
-    "recommendation": "[HIGH] 최우선 | 소아 클러스터 #2 (수요: 73개소) | → 인근 의료기관에 응급의학전문의 14명 충원 권고 (반경 5km 평균 0명) | → 반경 내 MRI 보유 병원 부재. 인근 의료기관에 MRI 1대 추가 배정 권고 | → CT 보유 병원 커버리지 부족. CT 장비 지원 검토 필요"
-  },
-  {
-    "pipeline": "pediatric",
-    "cluster_id": 3,
-    "location": {
-      "lat": 35.918025034891755,
-      "lng": 128.62688734049175
-    },
-    "demand": 231,
-    "nearby_hospitals": [
-      "우리아이아동병원",
-      "강남종합병원"
-    ],
-    "nearby_count": 2,
-    "resource_gap": {
-      "doctors_needed": 5,
-      "mri_needed": true,
-      "ct_needed": false,
-      "avg_doctors_nearby": 10.0,
-      "mri_coverage_ratio": 0.0,
-      "priority_level": "HIGH"
-    },
-    "recommendation": "[HIGH] 최우선 | 소아 클러스터 #3 (수요: 231개소) | → 우리아이아동병원에 응급의학전문의 5명 충원 권고 (반경 5km 평균 10.0명) | → 반경 내 MRI 보유 병원 부재. 우리아이아동병원에 MRI 1대 추가 배정 권고"
-  },
-  {
-    "pipeline": "pediatric",
-    "cluster_id": 4,
-    "location": {
-      "lat": 36.22113672639793,
-      "lng": 128.5913759580586
-    },
-    "demand": 3,
-    "nearby_hospitals": [],
-    "nearby_count": 0,
-    "resource_gap": {
-      "doctors_needed": 10,
-      "mri_needed": true,
-      "ct_needed": true,
-      "avg_doctors_nearby": 0,
-      "mri_coverage_ratio": 0.0,
-      "priority_level": "HIGH"
-    },
-    "recommendation": "[HIGH] 최우선 | 소아 클러스터 #4 (수요: 3개소) | → 인근 의료기관에 응급의학전문의 10명 충원 권고 (반경 5km 평균 0명) | → 반경 내 MRI 보유 병원 부재. 인근 의료기관에 MRI 1대 추가 배정 권고 | → CT 보유 병원 커버리지 부족. CT 장비 지원 검토 필요"
+    "recommendation": "[HIGH] 최우선 | 소아 클러스터 #2 (수요: 65개소) | → 반경 5km 내 기존 병원 전무(0개). 신규 공공의료센터 설립 및 전문의 13명 긴급 배치 강력 권고 | → 신규 센터에 MRI 1대 및 CT 필수 도입 권고"
   },
   {
     "pipeline": "senior",
     "cluster_id": 1,
     "location": {
-      "lat": 35.75774384542887,
-      "lng": 128.49177420409498
+      "lat": 35.877463126784384,
+      "lng": 128.65556749592622
     },
-    "demand": 9,
-    "nearby_hospitals": [],
-    "nearby_count": 0,
+    "demand": 24,
+    "nearby_hospitals": [
+      "강남종합병원",
+      "율하연합소아청소년과의원",
+      "구병원",
+      "대구보훈병원",
+      "우리아이아동병원",
+      "경북대학교병원"
+    ],
+    "nearby_count": 6,
     "resource_gap": {
-      "doctors_needed": 10,
-      "mri_needed": true,
-      "ct_needed": true,
-      "avg_doctors_nearby": 0,
-      "mri_coverage_ratio": 0.0,
-      "priority_level": "HIGH"
+      "doctors_needed": 0,
+      "mri_needed": false,
+      "ct_needed": false,
+      "avg_doctors_nearby": 26.0,
+      "mri_coverage_ratio": 0.5,
+      "priority_level": "LOW"
     },
-    "recommendation": "[HIGH] 최우선 | 어르신 클러스터 #1 (수요: 9개소) | → 인근 의료기관에 응급의학전문의 10명 충원 권고 (반경 5km 평균 0명) | → 반경 내 MRI 보유 병원 부재. 인근 의료기관에 MRI 1대 추가 배정 권고 | → CT 보유 병원 커버리지 부족. CT 장비 지원 검토 필요"
+    "recommendation": "[LOW] 관찰 | 어르신 클러스터 #1 (수요: 24개소) | → 현재 인프라 수준 양호. 지속적 모니터링 권고"
   },
   {
     "pipeline": "senior",
     "cluster_id": 2,
     "location": {
-      "lat": 36.18933491436157,
-      "lng": 128.62286311108096
+      "lat": 36.18103764676466,
+      "lng": 128.6267603145774
     },
     "demand": 8,
     "nearby_hospitals": [],
@@ -125,29 +89,26 @@
       "mri_coverage_ratio": 0.0,
       "priority_level": "HIGH"
     },
-    "recommendation": "[HIGH] 최우선 | 어르신 클러스터 #2 (수요: 8개소) | → 인근 의료기관에 응급의학전문의 10명 충원 권고 (반경 5km 평균 0명) | → 반경 내 MRI 보유 병원 부재. 인근 의료기관에 MRI 1대 추가 배정 권고 | → CT 보유 병원 커버리지 부족. CT 장비 지원 검토 필요"
+    "recommendation": "[HIGH] 최우선 | 어르신 클러스터 #2 (수요: 8개소) | → 반경 5km 내 기존 병원 전무(0개). 신규 공공의료센터 설립 및 전문의 10명 긴급 배치 강력 권고 | → 신규 센터에 MRI 1대 및 CT 필수 도입 권고"
   },
   {
     "pipeline": "senior",
     "cluster_id": 3,
     "location": {
-      "lat": 35.906706570192576,
-      "lng": 128.6671204326368
+      "lat": 35.74408995943169,
+      "lng": 128.46630463284217
     },
-    "demand": 21,
-    "nearby_hospitals": [
-      "강남종합병원",
-      "우리아이아동병원"
-    ],
-    "nearby_count": 2,
+    "demand": 7,
+    "nearby_hospitals": [],
+    "nearby_count": 0,
     "resource_gap": {
-      "doctors_needed": 5,
+      "doctors_needed": 10,
       "mri_needed": true,
-      "ct_needed": false,
-      "avg_doctors_nearby": 10.0,
+      "ct_needed": true,
+      "avg_doctors_nearby": 0,
       "mri_coverage_ratio": 0.0,
       "priority_level": "HIGH"
     },
-    "recommendation": "[HIGH] 최우선 | 어르신 클러스터 #3 (수요: 21개소) | → 강남종합병원에 응급의학전문의 5명 충원 권고 (반경 5km 평균 10.0명) | → 반경 내 MRI 보유 병원 부재. 강남종합병원에 MRI 1대 추가 배정 권고"
+    "recommendation": "[HIGH] 최우선 | 어르신 클러스터 #3 (수요: 7개소) | → 반경 5km 내 기존 병원 전무(0개). 신규 공공의료센터 설립 및 전문의 10명 긴급 배치 강력 권고 | → 신규 센터에 MRI 1대 및 CT 필수 도입 권고"
   }
 ]

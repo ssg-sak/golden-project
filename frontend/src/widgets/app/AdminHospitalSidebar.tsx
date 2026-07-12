@@ -24,6 +24,8 @@ interface AdminHospitalSidebarProps {
   highlightedHospitalName?: string | null;
   currentMode?: 'all' | 'adult' | 'pediatric' | 'senior';
   onModeChange?: (val: 'all' | 'adult' | 'pediatric' | 'senior') => void;
+  showAvailableOnly?: boolean;
+  onShowAvailableOnlyChange?: (value: boolean) => void;
 }
 
 export function AdminHospitalSidebar({
@@ -34,6 +36,8 @@ export function AdminHospitalSidebar({
   highlightedHospitalName = null,
   currentMode = 'all',
   onModeChange,
+  showAvailableOnly = false,
+  onShowAvailableOnlyChange,
 }: AdminHospitalSidebarProps) {
   const rowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -78,8 +82,8 @@ export function AdminHospitalSidebar({
           isLocating={false}
           locationSource={null}
           locationErrorReason={null}
-          showAvailableOnly={false}
-          onShowAvailableOnlyChange={() => {}}
+          showAvailableOnly={showAvailableOnly}
+          onShowAvailableOnlyChange={onShowAvailableOnlyChange ?? (() => {})}
           careTarget={currentMode}
           onCareTargetChange={onModeChange}
         />

@@ -28,6 +28,7 @@ import sys
 from pathlib import Path
 
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 import requests
 from shapely.geometry import Point
@@ -170,10 +171,30 @@ def compute_distances_and_index(
     metric_gdf["nearest_hospital_address"] = nearest_addresses
 
     print("[4/4] vulnerability_index 산출")
-    print("      공식: min_dist_to_hospital × (65세이상_인구 + 0~9세_인구)")
-    metric_gdf["vulnerability_index"] = (
-        metric_gdf["min_dist_to_hospital"] * metric_gdf["취약인구"]
+    print("      검증된 공식 적용 (Log-Scale & Min-Max Norm 두 가지 모두 도출)")
+    
+    # 모델 1: Log-Scale 모델 (프론트엔드의 기존 15000, 30000 임계치 스케일과 가장 잘 맞음)
+    metric_gdf["vdi_log"] = (
+        np.log1p(metric_gdf["min_dist_to_hospital"]) * metric_gdf["취약인구"]
     ).round(2)
+
+    # 모델 2: Min-Max 정규화 합산 모델 (통계적으로 가장 공평한 영향력)
+    dist_min = metric_gdf["min_dist_to_hospital"].min()
+    dist_max = metric_gdf["min_dist_to_hospital"].max()
+    pop_min = metric_gdf["취약인구"].min()
+    pop_max = metric_gdf["취약인구"].max()
+
+    # 분모가 0이 되는 것을 방지
+    dist_range = (dist_max - dist_min) if dist_max > dist_min else 1.0
+    pop_range = (pop_max - pop_min) if pop_max > pop_min else 1.0
+
+    dist_norm = (metric_gdf["min_dist_to_hospital"] - dist_min) / dist_range
+    pop_norm = (metric_gdf["취약인구"] - pop_min) / pop_range
+
+    metric_gdf["vdi_norm"] = ((dist_norm * 0.5 + pop_norm * 0.5) * 100).round(2)
+
+    # 대표 지표로 Log 모델 설정 (기존 데이터 스케일 호환성 유지 및 거리 페널티 현실화)
+    metric_gdf["vulnerability_index"] = metric_gdf["vdi_log"]
 
     return metric_gdf.to_crs("EPSG:4326")
 
@@ -196,6 +217,8 @@ def export_geojson(gdf: gpd.GeoDataFrame) -> None:
         "nearest_hospital_tier",
         "nearest_hospital_address",
         "vulnerability_index",
+        "vdi_log",
+        "vdi_norm",
         "geometry",
     ]
     output = gdf[columns]

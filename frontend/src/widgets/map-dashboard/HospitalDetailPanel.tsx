@@ -3,8 +3,6 @@ import { resolveBedStatus } from '../../shared/lib/bed-status';
 import { hospitalTierLabel } from '../../shared/lib/hospital-tier-visual';
 import {
   hospitalDisplayName,
-  hospitalTotalBeds,
-  hospitalTotalBedsIsInvalid,
 } from '../../shared/types/hospital';
 import type { HospitalRecord } from '../../shared/types/hospital';
 
@@ -12,6 +10,7 @@ import { CitizenBedLabel } from './CitizenBedLabel';
 import { CitizenHospitalTelLink } from './CitizenHospitalTelLink';
 import { HospitalLocationMeta } from './HospitalLocationMeta';
 import { HospitalMoonlightInfo } from './HospitalMoonlightInfo';
+import { HospitalGranularBeds } from './HospitalGranularBeds';
 
 const PANEL_SHELL =
   'glass-panel-strong flex h-full min-h-0 flex-col overflow-hidden';
@@ -47,9 +46,6 @@ function EmptyPanel() {
 
 function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
   const bedStatus = resolveBedStatus(hospital);
-  const totalBeds = hospitalTotalBeds(hospital);
-  const totalBedsInvalid = hospitalTotalBedsIsInvalid(hospital);
-
   return (
     <aside className={PANEL_SHELL}>
       {/* 모바일 바텀 시트 드래그 핸들 */}
@@ -131,33 +127,7 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
         )}
 
         {hospital.tier !== 3 ? (
-        <section className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
-          <p className="mb-3 text-xs font-bold text-slate-500">실시간 병상 현황</p>
-          {bedStatus.status === 'available' ? (
-            <dl className="space-y-2 text-sm">
-              <div className="flex justify-between gap-3">
-                <dt className="text-slate-600">현재 가용 병상</dt>
-                <dd className="font-bold text-emerald-700">
-                  {bedStatus.count}개 가용
-                  {totalBeds !== undefined ? (
-                    <span className="ml-1 text-[11px] font-normal text-slate-400">
-                      (전체 {totalBeds}개 중)
-                    </span>
-                  ) : null}
-                  {totalBedsInvalid ? (
-                    <span className="ml-1 text-[10px] text-amber-600">※ 불일치</span>
-                  ) : null}
-                </dd>
-              </div>
-            </dl>
-          ) : bedStatus.status === 'unavailable' ? (
-            <p className="text-sm font-bold text-rose-700">
-              현재 응급실 수용이 어렵습니다. 다른 병원을 확인해 주세요.
-            </p>
-          ) : (
-            <p className="text-sm text-amber-800">병상 정보를 확인하고 있습니다.</p>
-          )}
-        </section>
+          <HospitalGranularBeds hospital={hospital} />
         ) : null}
 
         {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (

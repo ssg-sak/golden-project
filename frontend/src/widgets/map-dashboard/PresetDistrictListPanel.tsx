@@ -1,5 +1,6 @@
-import { usePresetStore } from './lib/usePresetStore';
 import { useVulnerabilityStore } from '../../shared/store/vulnerabilityStore';
+
+import { usePresetStore } from './lib/usePresetStore';
 
 const PANEL_SHELL =
   'flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-[#fcfdff] shadow-[0_1px_0_rgba(15,23,42,0.03)]';
@@ -7,6 +8,15 @@ const PANEL_SHELL =
 interface PresetDistrictListPanelProps {
   onDistrictSelect: (admNm: string) => void;
   selectedDistrict: string | null;
+}
+
+function simplifyDistrictName(admNm: string): string {
+  return admNm.replace(/^대구광역시\s*/, '').trim();
+}
+
+function formatScore(value?: number): string {
+  if (value === undefined || Number.isNaN(value)) return '-';
+  return Math.round(value).toLocaleString('ko-KR');
 }
 
 export function PresetDistrictListPanel({
@@ -17,57 +27,86 @@ export function PresetDistrictListPanel({
   const presetData = usePresetStore((state) => state.presetData);
   const records = useVulnerabilityStore((state) => state.records);
 
-  const presetName =
+  const presetMeta =
     activePreset === 'highRiskTop10'
-      ? '고위험 Top 10'
+      ? {
+          title: 'VDI 고위험 지역',
+          description: 'VDI Log가 높은 행정동을 우선순위로 보여줍니다.',
+        }
       : activePreset === 'pediatricPriority'
-        ? '소아 취약 우선'
+        ? {
+            title: '소아 응급 취약지역',
+            description: '가까운 기관이 달빛·소아 진료기관인 지역 중 VDI Log가 높은 곳입니다.',
+          }
         : activePreset === 'generalPriority'
-          ? '일반 응급 우선'
-          : '프리셋';
+          ? {
+              title: '일반 응급 취약지역',
+              description: '권역·대형 또는 준종합 응급의료기관 접근성이 취약한 지역입니다.',
+            }
+          : {
+              title: '빠른 지역 조회',
+              description: '상단의 빠른 조회 버튼을 선택해 주세요.',
+            };
 
   return (
     <aside className={PANEL_SHELL}>
       <div className="shrink-0 border-b border-slate-200 bg-rose-50 px-5 py-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-rose-600">활성 프리셋</p>
-        <h2 className="mt-1 text-xl font-extrabold leading-tight text-slate-900">{presetName}</h2>
-        <p className="mt-1 text-xs text-slate-500">
-          해당 지역들을 순서대로 확인해 보세요.
+        <p className="text-[10px] font-bold uppercase tracking-widest text-rose-600">
+          빠른 지역 조회
+        </p>
+        <h2 className="mt-1 text-xl font-extrabold leading-tight text-slate-900">
+          {presetMeta.title}
+        </h2>
+        <p className="mt-1 text-xs leading-5 text-slate-600">{presetMeta.description}</p>
+        <p className="mt-2 text-[11px] font-semibold text-rose-700">
+          VDI Log는 기본 위험 점수, VDI Norm은 0~100 비교 점수입니다.
         </p>
       </div>
+
       <div className="flex flex-1 flex-col overflow-y-auto p-4">
         <ul className="space-y-2">
           {presetData.map((admNm, index) => {
-            const isSelected = selectedDistrict === admNm;
-            const record = records.find(r => r.adm_nm.includes(admNm) || admNm.includes(r.adm_nm) || r.dong_name === admNm);
-            const score = record?.vulnerability_index ?? 0;
-            
+            const isSelected =
+              selectedDistrict === admNm ||
+              simplifyDistrictName(selectedDistrict ?? '') === admNm ||
+              selectedDistrict === `대구광역시 ${admNm}`;
+            const record = records.find((row) => simplifyDistrictName(row.adm_nm) === admNm);
+
             return (
               <li key={admNm}>
                 <button
                   type="button"
                   onClick={() => onDistrictSelect(admNm)}
-                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left ring-1 transition-all ${
+                  className={`flex w-full flex-col gap-2 rounded-xl px-4 py-3 text-left ring-1 transition-all ${
                     isSelected
-                      ? 'bg-rose-500 text-white ring-rose-500 shadow-md'
+                      ? 'bg-rose-600 text-white shadow-md ring-rose-600'
                       : 'bg-white text-slate-700 ring-slate-200 hover:bg-rose-50 hover:ring-rose-200'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                      isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
-                    }`}>
-                      {index + 1}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                          isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                        }`}
+                      >
+                        {index + 1}
+                      </span>
+                      <span className="truncate font-bold">{admNm}</span>
+                    </div>
+                    <span className={`shrink-0 text-xs font-semibold ${isSelected ? 'text-rose-100' : 'text-slate-500'}`}>
+                      VDI Log {formatScore(record?.vdi_log)}
                     </span>
-                    <span className="font-bold">{admNm}</span>
                   </div>
-                  {score > 0 && (
-                    <span className={`text-xs font-semibold ${
-                      isSelected ? 'text-rose-100' : 'text-slate-500'
-                    }`}>
-                      VDI: {Math.round(score).toLocaleString()}
-                    </span>
-                  )}
+
+                  {record ? (
+                    <div className={`grid grid-cols-2 gap-2 text-[11px] ${isSelected ? 'text-rose-50' : 'text-slate-500'}`}>
+                      <span>VDI Norm {record.vdi_norm.toFixed(1)}점</span>
+                      <span>취약인구 {record.vulnerable_pop.toLocaleString('ko-KR')}명</span>
+                      <span>최근접 {record.min_dist_to_hospital.toFixed(2)}km</span>
+                      <span className="truncate">{record.nearest_hospital_name ?? '최근접 병원 확인 중'}</span>
+                    </div>
+                  ) : null}
                 </button>
               </li>
             );

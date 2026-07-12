@@ -17,15 +17,20 @@ from app.api.routes import hospitals, indicators, vulnerability, optimal_locatio
 
 from app.core.env import load_dotenv
 from app.services.bed_poller import start_bed_poller, stop_bed_poller
+from app.services.scheduler import start_public_data_scheduler, stop_public_data_scheduler
+from app.db.database import Base, engine
 
 load_dotenv()
+Base.metadata.create_all(bind=engine)
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    start_public_data_scheduler()
     await start_bed_poller()
     yield
     await stop_bed_poller()
+    stop_public_data_scheduler()
 
 
 app = FastAPI(
@@ -47,6 +52,8 @@ app.include_router(hospitals.router)
 app.include_router(vulnerability.router)
 app.include_router(optimal_locations.router)
 app.include_router(routing.router)
+from app.api.routes import dashboard
+app.include_router(dashboard.router)
 
 
 @app.get("/")
@@ -59,4 +66,6 @@ def root() -> dict:
         "hospitals": "/api/hospitals",
         "vulnerability": "/api/vulnerability",
         "optimal_locations": "/api/optimal-locations",
+        "dashboard_summary": "/api/dashboard/summary",
+        "dashboard_data_status": "/api/dashboard/data-status",
     }

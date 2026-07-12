@@ -62,7 +62,7 @@ export function useMapComponentController({
 
   const skipMapClearRef = useRef(false);
 
-  const { handlePresetSelect, handleExportCsv, handleCaptureReport } = useDashboardActions({
+  const { handlePresetSelect, handleExportCsv } = useDashboardActions({
     onDistrictSelect,
     setActiveFilter,
   });
@@ -86,7 +86,7 @@ export function useMapComponentController({
   const recordMap = useMemo(() => buildVulnerabilityRecordMap(vulnerabilityRecords), [vulnerabilityRecords]);
 
   const indexRange = useMemo(
-    () => getVulnerabilityRange(vulnerabilityRecords.map((row) => row.vulnerability_index)),
+    () => getVulnerabilityRange(vulnerabilityRecords.map((row) => row.vdi_log)),
     [vulnerabilityRecords],
   );
 
@@ -139,8 +139,10 @@ export function useMapComponentController({
     
     return districtShapes.map(shape => {
       const record = recordMap.get(toAdmNmKey(shape.admNm));
-      const score = record?.vulnerability_index ?? indexRange.min;
-      const isIncludedInPreset = activePreset !== null && presetData.includes(shape.admNm);
+      const score = record?.vdi_log ?? indexRange.min;
+      const shapeKey = toAdmNmKey(shape.admNm);
+      const isIncludedInPreset =
+        activePreset !== null && presetData.some((admNm) => toAdmNmKey(admNm) === shapeKey);
       const isVisible = activePreset === null || isIncludedInPreset;
       
       return {
@@ -177,6 +179,5 @@ export function useMapComponentController({
     handleHospitalSelectInternal,
     handlePresetSelect,
     handleExportCsv,
-    handleCaptureReport,
   };
 }

@@ -8,21 +8,23 @@ interface CitizenBedLabelProps {
 }
 
 export function CitizenBedLabel({ hospital, size = 'list', inverted = false }: CitizenBedLabelProps) {
-  const { status, count } = resolveBedStatus(hospital);
+  const { status, count, congestion } = resolveBedStatus(hospital);
   const isLarge = size === 'detail';
+  const sizeClass = isLarge ? 'text-lg' : 'text-sm';
 
   if (status === 'available') {
+    const visual = congestion === 'crowded'
+      ? { dot: 'bg-rose-500', text: inverted ? 'text-rose-100' : 'text-rose-700', label: '혼잡' }
+      : congestion === 'moderate'
+        ? { dot: 'bg-amber-500', text: inverted ? 'text-amber-100' : 'text-amber-700', label: '보통' }
+        : { dot: 'bg-emerald-500', text: inverted ? 'text-emerald-100' : 'text-emerald-700', label: '원활' };
     return (
       <span
-        className={`inline-flex items-center gap-1.5 font-bold ${
-          isLarge ? 'text-lg' : 'text-sm'
-        } ${inverted ? 'text-emerald-100' : 'text-emerald-700'}`}
+        className={`inline-flex items-center gap-1.5 font-bold ${sizeClass} ${visual.text}`}
+        title={`국립중앙의료원 실시간 응급실일반 기준 · ${visual.label}`}
       >
-        <span aria-hidden>🟢</span>
-        <span aria-hidden className="font-bold">
-          ✓
-        </span>
-        진료 가능{count !== undefined ? ` (${count}개)` : ''}
+        <span className={`h-3 w-3 rounded-full ${visual.dot}`} aria-hidden />
+        일반응급실 {visual.label}{count !== undefined ? ` (${count}개)` : ''}
       </span>
     );
   }
@@ -30,26 +32,25 @@ export function CitizenBedLabel({ hospital, size = 'list', inverted = false }: C
   if (status === 'unavailable') {
     return (
       <span
-        className={`inline-flex items-center gap-1.5 font-bold ${
-          isLarge ? 'text-lg' : 'text-sm'
-        } ${inverted ? 'text-rose-100' : 'text-rose-700'}`}
+        className={`inline-flex items-center gap-1.5 font-bold ${sizeClass} ${
+          inverted ? 'text-rose-100' : 'text-rose-700'
+        }`}
+        title="국립중앙의료원 실시간 응급실일반 가용 병상 기준"
       >
-        <span aria-hidden>🔴</span>
-        <span aria-hidden className="font-bold">
-          ⚠
-        </span>
-        수용 불가 (이동 금지)
+        <span className="h-3 w-3 rounded-full bg-rose-500" aria-hidden />
+        일반응급실 여유 없음
       </span>
     );
   }
 
   return (
     <span
-      className={`inline-flex items-center font-medium ${
-        isLarge ? 'text-base' : 'text-sm'
-      } ${inverted ? 'text-slate-200' : 'text-slate-500'}`}
+      className={`inline-flex items-center gap-1.5 font-medium ${sizeClass} ${
+        inverted ? 'text-slate-200' : 'text-slate-500'
+      }`}
     >
-      전화 문의 요망
+      <span className="h-3 w-3 rounded-full bg-slate-400" aria-hidden />
+      일반응급실 현황 확인 중
     </span>
   );
 }

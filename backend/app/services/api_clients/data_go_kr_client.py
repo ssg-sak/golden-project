@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 BED_API_BASE = "https://apis.data.go.kr/B552657/ErmctInfoInqireService"
 BED_OPERATION = "getEmrrmRltmUsefulSckbdInfoInqire"
+STATIC_BED_OPERATION = "getEmrrmSckbdInfoInqire"
 MSG_OPERATION = "getEmrrmSrsillDissMsgInqire"
 
 REGION_STAGE1 = "대구광역시"
@@ -78,6 +79,7 @@ def _is_api_response_ok(xml_text: str) -> bool:
 
 def _merge_api_rows(
     rows: list[dict[str, Any]],
+    static_rows: dict[str, dict[str, Any]],
     target_names: set[str],
     matched: dict[str, dict[str, Any]],
 ) -> None:
@@ -91,16 +93,7 @@ def _merge_api_rows(
         if name not in target_names:
             continue
 
-        hvec_val = _to_int(_pick_field(row, "hvec"))
-        hvoc_val = _to_int(_pick_field(row, "hvoc"))
-        hvec = hvec_val if hvec_val is not None else 0
-        hvoc = hvoc_val if hvoc_val is not None else 0
-
-        # 총 병상수: hvs01=응급실 일반 총, hvs02=응급실 소아 총
-        hvs01_raw = _pick_field(row, "hvs01")
-        hvs02_raw = _pick_field(row, "hvs02")
-        total_hvec = _to_int(hvs01_raw)
-        total_hvoc = _to_int(hvs02_raw)
+        static_row = static_rows.get(name, {})
 
         # AI 환각 로직 완전 제거 (없는 필드 매핑 및 24시간 하드코딩 삭제)
         # Assume Nothing 룰에 따라 실존하는 API 응답 필드만 정직하게 파싱
@@ -112,15 +105,45 @@ def _merge_api_rows(
             "인공호흡기": _pick_field(row, "hvventiayn").upper() in ["Y", "O", "가능", "TRUE", "1"],
             "인큐베이터": _pick_field(row, "hvincuayn").upper() in ["Y", "O", "가능", "TRUE", "1"],
         }
+        
+        hvec_val = _to_int(_pick_field(row, "hvec"))
+        hvoc_val = _to_int(_pick_field(row, "hv28")) # hv28: 응급실 소아 가용
+        hvec = hvec_val if hvec_val is not None else 0
+        hvoc = hvoc_val if hvoc_val is not None else 0
+
+        # 총 병상수는 실시간(Realtime) API 응답(row)에 이미 hvs01, hvs02 등으로 포함되어 있음
+        total_hvec = _to_int(_pick_field(row, "hvs01"))
+        total_hvoc = _to_int(_pick_field(row, "hvs02"))
 
         special_beds = {
-            "음압격리": _to_int(_pick_field(row, "hvcc")) or 0,
-            "일반격리": _to_int(_pick_field(row, "hvncc")) or 0,
-            "일반중환자": _to_int(_pick_field(row, "hv6")) or 0,
-            "신생아중환자": _to_int(_pick_field(row, "hv9")) or 0,
-            "소아중환자": _to_int(_pick_field(row, "hv10")) or 0,
-            "응급전용수술실": _to_int(_pick_field(row, "hv8")) or 0,
-            "소아인큐베이터": _to_int(_pick_field(row, "hv11")) or 0,
+            "음압격리": {
+                "available": _to_int(_pick_field(row, "hvcc")) or 0,
+                "total": _to_int(_pick_field(row, "hvs03")),
+            },
+            "일반격리": {
+                "available": _to_int(_pick_field(row, "hvncc")) or 0,
+                "total": _to_int(_pick_field(row, "hvs04")),
+            },
+            "일반중환자": {
+                "available": _to_int(_pick_field(row, "hv6")) or 0,
+                "total": _to_int(_pick_field(row, "hvs06")),
+            },
+            "신생아중환자": {
+                "available": _to_int(_pick_field(row, "hv9")) or 0,
+                "total": _to_int(_pick_field(row, "hvs09")),
+            },
+            "소아중환자": {
+                "available": _to_int(_pick_field(row, "hv10")) or 0,
+                "total": _to_int(_pick_field(row, "hvs10")),
+            },
+            "응급전용수술실": {
+                "available": _to_int(_pick_field(row, "hv8")) or 0,
+                "total": _to_int(_pick_field(row, "hvs08")),
+            },
+            "소아인큐베이터": {
+                "available": _to_int(_pick_field(row, "hv11")) or 0,
+                "total": _to_int(_pick_field(row, "hvs11")),
+            },
         }
 
         matched[name] = bed_payload(
@@ -138,10 +161,34 @@ def _merge_api_rows(
 async def _fetch_region_beds_async(
     client: httpx.AsyncClient,
     url: str,
+    static_url: str,
     service_key: str,
     target_names: set[str],
     matched: dict[str, dict[str, Any]],
 ) -> None:
+    # 1. 정적(총 병상) 정보 먼저 호출
+    static_response = await client.get(
+        static_url,
+        params={
+            "serviceKey": service_key,
+            "STAGE1": REGION_STAGE1,
+            "pageNo": "1",
+            "numOfRows": "200",
+        },
+    )
+    
+    static_rows = {}
+    if static_response.status_code == 200 and _is_api_response_ok(static_response.text):
+        try:
+            from app.services.hospital_realtime import display_name
+            for sr in _parse_xml_items(static_response.text):
+                api_name = _pick_field(sr, "dutyName", "dutyname")
+                if api_name:
+                    static_rows[display_name(api_name)] = sr
+        except ET.ParseError:
+            logger.warning("[hospitals] XML parse error for static API")
+
+    # 2. 실시간 병상 호출
     response = await client.get(
         url,
         params={
@@ -179,7 +226,7 @@ async def _fetch_region_beds_async(
         logger.warning("[hospitals] XML parse error: %s", exc)
         return
 
-    _merge_api_rows(rows, target_names, matched)
+    _merge_api_rows(rows, static_rows, target_names, matched)
 
 async def fetch_data_go_kr_beds(
     client: httpx.AsyncClient,
@@ -188,9 +235,10 @@ async def fetch_data_go_kr_beds(
     matched: dict[str, dict[str, Any]],
 ) -> None:
     url = f"{BED_API_BASE}/{BED_OPERATION}"
+    static_url = f"{BED_API_BASE}/{STATIC_BED_OPERATION}"
     try:
         await _fetch_region_beds_async(
-            client, url, service_key, target_names, matched
+            client, url, static_url, service_key, target_names, matched
         )
     except httpx.TimeoutException as exc:
         logger.warning("[hospitals] public API timeout: %s", exc)

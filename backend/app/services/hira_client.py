@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import asyncio
+import csv
 import logging
+import re
+from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
 
@@ -19,6 +22,46 @@ DAEGU_SIDO_CODE = "230000"
 REQUEST_TIMEOUT_SEC = 4.0
 EQUIPMENT_BUDGET_SEC = 1.5
 MAX_CONCURRENCY = 8
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+HIRA_SNAPSHOT_PATH = PROJECT_ROOT / "data" / "processed" / "daegu_hira_infrastructure.csv"
+
+
+def _normalize_name(value: str) -> str:
+    value = re.sub(r"\([^)]*\)", "", value)
+    value = re.sub(r"^(의료법인|학교법인|재단법인|사회복지법인)", "", value)
+    return re.sub(r"[^0-9A-Za-z가-힣]", "", value)
+
+
+def _snapshot_name(api_name: str, targets: list[str]) -> str | None:
+    normalized = _normalize_name(api_name)
+    target_map = {_normalize_name(name): name for name in targets}
+    if normalized in target_map:
+        return target_map[normalized]
+    candidates = [name for key, name in target_map.items() if len(key) >= 3 and (key in normalized or normalized in key)]
+    return candidates[0] if len(candidates) == 1 else None
+
+
+def load_hira_snapshot(hospital_names: list[str]) -> dict[str, dict[str, Any]]:
+    result = get_null_hira_data(hospital_names)
+    if not HIRA_SNAPSHOT_PATH.exists():
+        return result
+    with HIRA_SNAPSHOT_PATH.open("r", encoding="utf-8-sig", newline="") as handle:
+        for row in csv.DictReader(handle):
+            name = _snapshot_name(row.get("요양기관명", ""), hospital_names)
+            if name is None:
+                continue
+            doctors = _integer(row.get("총의사수"))
+            result[name] = {
+                "hira_source": "api",
+                "hira_reference_date": "2026.03",
+                "equipment_status": {
+                    "CT": (_integer(row.get("CT보유대수")) or 0) > 0,
+                    "MRI": (_integer(row.get("MRI보유대수")) or 0) > 0,
+                },
+            }
+            if doctors is not None:
+                result[name]["doctors_count"] = doctors
+    return result
 
 
 def get_null_hira_data(hospital_names: list[str]) -> dict[str, dict[str, Any]]:
@@ -88,10 +131,11 @@ async def _fetch_equipment(
 
 async def fetch_hira_data_async(hospital_names: list[str]) -> dict[str, dict[str, Any]]:
     api_key = env_str("HIRA_API_KEY") or env_str("DATA_GO_KR_API_KEY")
+    snapshot = load_hira_snapshot(hospital_names)
     if not api_key or api_key == "YOUR_API_KEY_HERE":
-        return get_null_hira_data(hospital_names)
+        return snapshot
 
-    result = get_null_hira_data(hospital_names)
+    result = snapshot
     timeout = httpx.Timeout(REQUEST_TIMEOUT_SEC)
     async with httpx.AsyncClient(timeout=timeout) as client:
         try:
@@ -116,7 +160,7 @@ async def fetch_hira_data_async(hospital_names: list[str]) -> dict[str, dict[str
             doctors_count = _integer(row.get("drTotCnt"))
             if doctors_count is not None:
                 hospital_data["doctors_count"] = doctors_count
-            result[name] = hospital_data
+            result[name] = {**result.get(name, {}), **hospital_data}
             if row.get("ykiho"):
                 ykiho_by_name[name] = row["ykiho"]
 

@@ -2,8 +2,6 @@ import { create } from 'zustand';
 
 import { fetchHospitals } from '../../data/api/hospitals';
 import { STATIC_FALLBACK_HOSPITAL_DATA } from '../data/static-fallback-hospitals';
-import { DEMO_SNAPSHOT_HOSPITAL_DATA } from '../../data/demo-snapshot-hospitals';
-import { useAppModeStore } from './appModeStore';
 import { FetchTimeoutError } from '../lib/fetch-with-timeout';
 import { readErrorMessage } from '../lib/error-message';
 import type { HospitalRecord } from '../types/hospital';
@@ -39,19 +37,6 @@ export const useHospitalStore = create<HospitalStore>((set, get) => ({
   error: null,
 
   fetchHospitals: async () => {
-    const isSimMode = useAppModeStore.getState().isSimulationMode;
-    if (isSimMode) {
-      set({
-        hospitals: DEMO_SNAPSHOT_HOSPITAL_DATA,
-        isLoading: false,
-        error: null,
-        isDegraded: false,
-        degradedMode: null,
-        lastUpdatedAt: new Date().toISOString(),
-      });
-      return;
-    }
-
     const fetchId = ++hospitalFetchSeq;
 
     if (abortController) {
@@ -96,7 +81,7 @@ export const useHospitalStore = create<HospitalStore>((set, get) => ({
       if (import.meta.env.DEV) {
         const reason =
           error instanceof FetchTimeoutError
-            ? 'circuit breaker timeout (3s)'
+            ? 'circuit breaker timeout (6s)'
             : error;
         console.warn('[hospitalStore] graceful degradation:', reason);
       }

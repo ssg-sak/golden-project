@@ -31,6 +31,21 @@ const vdiItems = [
   ],
 ];
 
+const simulationItems = [
+  [
+    '우리 동네 의료 공백의 가시화',
+    'AI 클러스터링과 공간 연산을 통해, 우리 동네에 응급의료 인프라나 전문의가 얼마나 부족한지 시민 누구나 직관적으로 파악할 수 있도록 돕습니다.',
+  ],
+  [
+    '데이터 기반 정책의 가능성 실증',
+    '직관이나 민원이 아닌 데이터를 바탕으로 "어디에 무엇이 필요한지"를 계산합니다. 비록 교육 과정에서 만든 단순 추정 모델이지만, 데이터 기반 행정의 청사진을 제시합니다.',
+  ],
+  [
+    '함께 논의하기 위한 참고 자료 (면책 고지)',
+    '화면에 표출된 수치와 권고안은 공식 확정 자료가 아닌 검증용 예시 데이터(추정치)입니다. 실제 정책 결정의 근거가 아닌, 지역 문제를 함께 고민하기 위한 아이디어 스케치로 보아주세요.',
+  ],
+];
+
 const policyAudienceItems = [
   {
     title: '시민',
@@ -163,6 +178,26 @@ export function PlatformIntroView() {
             {vdiItems.map(([title, description]) => (
               <div key={title} className="p-6">
                 <h3 className="font-extrabold text-slate-900">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12 border border-slate-300 bg-white">
+          <div className="border-b-2 border-teal-800 px-6 py-5">
+            <p className="text-sm font-bold text-teal-800">AI 인프라 시뮬레이션 결과 안내</p>
+            <h2 className="mt-1 text-2xl font-extrabold">
+              AI 데이터 분석이 만드는 지역 사회의 새로운 논의 출발점
+            </h2>
+            <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-600">
+              이 시뮬레이션은 단순히 취약 지점을 찾는 것을 넘어, "무엇을 얼마나 투입해야 할까?"라는 질문에 대한 가상의 해답을 제시합니다. 비록 교육용 추정치에 불과하지만, 시민과 지역 관계자 모두가 같은 데이터를 보며 우리 동네의 공공의료 청사진을 함께 그려보는 계기가 되기를 바랍니다.
+            </p>
+          </div>
+          <div className="grid divide-y divide-slate-300 md:grid-cols-3 md:divide-x md:divide-y-0">
+            {simulationItems.map(([title, description]) => (
+              <div key={title} className="p-6 bg-teal-50/30">
+                <h3 className="font-extrabold text-teal-900">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p>
               </div>
             ))}

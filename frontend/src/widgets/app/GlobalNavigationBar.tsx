@@ -4,8 +4,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppModeStore, type ViewMode } from '../../shared/store/appModeStore';
 
 const NAV_ITEMS: { id: ViewMode; label: string; shortLabel: string }[] = [
-  { id: 'citizen', label: '시민 구조망 (응급)', shortLabel: '시민 구조망' },
-  { id: 'admin', label: '정책·분석 모니터링', shortLabel: '정책·분석' },
+  { id: 'citizen', label: '시민 구조망', shortLabel: '시민' },
+  { id: 'admin', label: '정책·분석 모니터링', shortLabel: '정책' },
 ];
 
 function formatHeaderDate(date: Date): string {
@@ -67,7 +67,7 @@ export function GlobalNavigationBar() {
   }
 
   return (
-    <header className="shrink-0 border-b border-slate-200/50 bg-white/85 backdrop-blur-md shadow-sm lg:bg-white lg:border-slate-200">
+    <header className="shrink-0 border-b border-slate-200/50 bg-white/85 shadow-sm backdrop-blur-md lg:border-slate-200 lg:bg-white">
       <div className="mx-auto flex h-14 max-w-[1800px] items-center justify-between gap-4 px-4 md:px-8">
         <Link
           to="/"
@@ -85,18 +85,16 @@ export function GlobalNavigationBar() {
           </div>
         </Link>
 
-        <div className="flex shrink-0 items-center gap-4">
-          <time
-            className="hidden text-right text-xs text-slate-500 sm:block"
-            dateTime={now.toISOString()}
-          >
-            {formatHeaderDate(now)}
-          </time>
-        </div>
+        <time
+          className="hidden text-right text-xs text-slate-500 sm:block"
+          dateTime={now.toISOString()}
+        >
+          {formatHeaderDate(now)}
+        </time>
       </div>
 
       <nav
-        className="border-t border-slate-100/50 bg-white/85 backdrop-blur-md lg:bg-white lg:border-slate-100"
+        className="border-t border-slate-100/50 bg-white/85 backdrop-blur-md lg:border-slate-100 lg:bg-white"
         aria-label="서비스 메뉴"
       >
         <div className="mx-auto flex max-w-[1800px] items-stretch gap-1 px-2 sm:gap-2 sm:px-6 md:px-8">
@@ -134,9 +132,7 @@ export function GlobalNavigationBar() {
                 onClick={() => setViewMode('citizen')}
                 className="inline-flex items-center gap-1 rounded-md px-3 py-2 text-xs font-semibold text-blue-700 ring-1 ring-blue-200 transition hover:bg-blue-50 sm:text-sm"
               >
-                <span aria-hidden>←</span>
-                <span className="hidden sm:inline">메인으로 돌아가기</span>
-                <span className="sm:hidden">돌아가기</span>
+                메인으로
               </Link>
             ) : (
               <>
@@ -158,7 +154,6 @@ export function GlobalNavigationBar() {
           </div>
         </div>
       </nav>
-
     </header>
   );
 }

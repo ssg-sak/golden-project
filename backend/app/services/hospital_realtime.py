@@ -60,12 +60,22 @@ async def fetch_all_beds_from_api_async(
 
     try:
         async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+            from app.services.api_clients.nemc_mediboard_client import (
+                fetch_nemc_mediboard_beds,
+            )
             from app.services.api_clients.data_go_kr_client import (
                 fetch_data_go_kr_beds,
                 fetch_data_go_kr_messages,
             )
             # 1단계: 병상 데이터 수집
-            await fetch_data_go_kr_beds(client, service_key, target_names, matched)
+            try:
+                await fetch_nemc_mediboard_beds(client, target_names, matched)
+            except (httpx.HTTPError, ValueError) as exc:
+                logger.warning("[hospitals] NEMC mediboard error: %s", exc)
+
+            unmatched = target_names.difference(matched)
+            if unmatched:
+                await fetch_data_go_kr_beds(client, service_key, unmatched, matched)
             # 2단계: 응급실 특이사항 메시지 수집 (matched에 병합)
             if matched:
                 await fetch_data_go_kr_messages(client, service_key, target_names, matched)

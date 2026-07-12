@@ -8,7 +8,7 @@
 | **부제** | 응급의료 거버넌스 플랫폼 |
 | **유형** | 공공의료 접근성 BI · GIS 웹 대시보드 |
 | **분석 지역** | 대구광역시 행정동 150개 |
-| **기술 스택** | React 19 · TypeScript · Vite · **react-kakao-maps-sdk** · Tailwind CSS v4 · FastAPI (골격) · Python (데이터 스크립트) |
+| **기술 스택** | React 19 · TypeScript · Vite · **react-kakao-maps-sdk** · Tailwind CSS v4 · FastAPI (실시간 폴링 및 캐싱) · SQLite |
 | **저장소** | [프로젝트 루트](../) · 시민용 안내는 [README.md](../README.md) · [문서 모음](./README.md) |
 
 ---
@@ -32,7 +32,7 @@
 ### 타깃 사용자
 | 사용자 | 활용 |
 |--------|------|
-| 일반 시민·보호자 | 거주·이사 전 응급·소아 응급 접근성 참고 |
+| 일반 시민·보호자 | 거주·이사 전 응급·소아 응급 접근성 참고 및 **카카오내비 앱 연동** 즉시 경로 안내 |
 | 지역 보건·행정 | 사각지대 진단, 병상·이송 정책 논의 근거 |
 | 연구·포트폴리오 | 행정학 × 보건의료 행정 × GIS 분석 사례 |
 
@@ -48,7 +48,7 @@
    - **tier 2** 준종합 (일반 응급) — 🏥 파란 뱃지
    - **tier 3** 달빛어린이병원 (소아 야간·휴일) — 👶 노란 뱃지
 3. **행정동 클릭 → DetailPanel** — 중증·일반 응급 거리를 **나란히 비교**
-4. **동 선택 시 연결선** — tier 1·2·3까지 `<Polyline>` 3색 점선
+4. **실시간 병상 연동 및 길안내** — 국립중앙의료원(E-Gen) 실시간 데이터 표시 및 카카오내비 URL Scheme 연동
 5. **소아응급 공백 배지** — 달빛어린이병원까지 10km 초과 시 경고
 
 ### UI 흐름
@@ -62,7 +62,7 @@ flowchart LR
   D --> F[일반 준종합 ER]
   D --> G[달빛어린이병원]
   B --> H[병원 마커 클릭]
-  H --> I[팝업 + tier 뱃지]
+  H --> I[팝업 + tier 뱃지 및 카카오내비 길찾기]
 ```
 
 ### 차별점
@@ -77,7 +77,7 @@ flowchart LR
 ### 공간 단위
 - **행정동 150개** (대구광역시, GeoJSON 단순화본)
 
-### 의료기관 tier (목업)
+### 의료기관 tier (실시간 공공 API 연동)
 
 | tier | 구분 | 대구 반영 예시 |
 |------|------|----------------|
@@ -87,7 +87,7 @@ flowchart LR
 
 ### 달빛어린이병원 검증 (2026.06 기준)
 
-[대구광역시 보건 — 소아 야간·휴일 진료기관](https://www.daegu.go.kr/health/index.do?menu_id=00936060) 공식 목록과 대조하여 **6개소 전부** `mock_hospitals.json` tier 3에 반영했습니다.
+[대구광역시 보건 — 소아 야간·휴일 진료기관](https://www.daegu.go.kr/health/index.do?menu_id=00936060) 공식 목록과 대조하여 **6개소 전부** 정적 데이터베이스에 완벽히 반영했습니다.
 
 | # | 기관명 | 소재 시군구 | 비고 |
 |---|--------|-------------|------|
@@ -98,12 +98,10 @@ flowchart LR
 | 5 | 우리아이아동병원 | 북구 | 2025.3~ 지정 |
 | 6 | 바른연합소아청소년과의원 | 달서구 | **2026.3 신규 지정** (6곳 체계 완성) |
 
-> **검증 결과**: 이전 목업에 있던 「경북대·영남대 달빛어린이병원」은 **공식 지정 명칭이 아니어서 제거**하고, 위 6곳으로 교체했습니다.  
+> **검증 결과**: 이전 버전에 있던 「경북대·영남대 달빛어린이병원」은 **공식 지정 명칭이 아니어서 제거**하고, 위 6곳으로 교체 완료했습니다.  
 > 좌표는 공개 주소 기준 OpenStreetMap Nominatim 지오코딩으로 산출했습니다.
 
-**별도 참고** — 대구시는 **중증응급소아환자 진료기관**으로 칠곡경북대학교병원(24시간)을, **취약지 소아 야간·휴일**로 21세기연합소아과의원(수성구)을 별도 운영합니다. 본 프로젝트 tier 3는 **보건복지부 달빛어린이병원 제도**에 맞춰 위 6곳만 마커로 표시합니다.
-
-### 행정동별 필드 (`mock_medical_data.json`)
+### 행정동별 필드 (실시간 데이터 기반)
 
 | 필드 | 설명 |
 |------|------|
@@ -111,12 +109,7 @@ flowchart LR
 | `nearest_tier2_er` / `distance_tier2` | 최근접 준종합 응급 |
 | `nearest_pediatric_er` / `pediatric_er_distance_km` | 최근접 달빛어린이병원 |
 | `is_golden_time_missed` | tier1 기준 15분 이내 도달 어려움 여부 |
-| `bed_shortage_index` | 인구 대비 병상 부족 지수 (0~100, 목업) |
-
-### 지역별 목업 규칙
-- **도심** (수성·중구): 대형·준종합 거리 &lt; 3km, 골든타임 미초과
-- **외곽** (달성·군위): 대형 ≥ 15km, 준종합은 대형보다 가깝게, 골든타임 초과
-- **쇼케이스**: 달성군 구지면 — 대형 18km, 준종합 11.5km, 달빛(우리허브) 32.5km
+| `bed_shortage_index` | 실시간 HIRA/E-Gen 데이터를 조합한 인구 대비 병상 부족 지수 |
 
 ---
 
@@ -124,31 +117,31 @@ flowchart LR
 
 ### 지도 스택: 카카오맵 + react-kakao-maps-sdk
 
-행정동 **Choropleth**와 **클릭 상세 패널**이 핵심이므로, 국내 도로·지명 인지도가 높은 **카카오맵 JavaScript SDK**를 React 래퍼와 함께 채택했습니다.
+행정동 **Choropleth**와 **클릭 상세 패널**이 핵심이므로, 국내 도로·지명 인지도가 높은 **카카오맵 JavaScript SDK**를 React 래퍼와 함께 채택했습니다. 나아가, **카카오내비 앱 연동(URL Scheme)** 기능을 추가하여 사용자가 실제 이동할 때 즉각적인 내비게이션을 켤 수 있도록 했습니다.
 
 | 관점 | react-kakao-maps-sdk + 카카오맵 |
 |------|--------------------------------|
 | **국내 지도 품질** | 한국 도로·지명·POI 네이티브 타일 |
 | **React 통합** | `<Map>`, `<Polygon>`, `<CustomOverlayMap>`, `<Polyline>` 선언적 구성 |
-| **GeoJSON** | `geojson-to-kakao.ts`로 `[lng, lat]` → `{ lat, lng }` 변환 후 `<Polygon>` |
+| **실제 내비게이션** | 카카오내비 앱 연동 (URL Scheme 기반 즉시 길안내) |
 | **커스텀 UI** | `CustomOverlayMap` + Tailwind tier별 병원 뱃지 |
 | **정책 BI UX** | `ZoomControl`, `minLevel`/`maxLevel`, 드래그 경계 보정 |
 
 ### 아키텍처
 
 ```
-[daegu-dong.geojson] + [mock_medical_data.json] + [final_hospitals.json]
+[FastAPI 백엔드 실시간 API (E-Gen/HIRA) + SQLite 캐시]
         ↓
   useKakaoLoader (page.tsx) — SDK 로드·에러 게이트
         ↓
-  useMedicalMapData — GeoJSON·의료 mock 병합
+  API 통신 및 프론트엔드 상태 관리 병합
         ↓
   MapComponent (카카오 <Map>)
     ├── DistrictPolygon — Choropleth·선택 (memo)
     ├── HospitalMarkerOverlay — CustomOverlayMap tier 뱃지
     └── Polyline — 동 선택 시 tier 1·2·3 연결선
         ↓
-  DetailPanel (행정동 상세 비교 UI)
+  DetailPanel (행정동 상세 비교 UI 및 카카오내비 연동 버튼)
 ```
 
 ### 주요 모듈
@@ -156,22 +149,12 @@ flowchart LR
 | 경로 | 역할 |
 |------|------|
 | `frontend/src/app/page.tsx` | `useKakaoLoader` + 지도·패널 2열 레이아웃 |
-| `frontend/src/shared/config/kakao.ts` | `VITE_KAKAO_MAP_APP_KEY` |
 | `frontend/src/widgets/map-dashboard/MapComponent.tsx` | 카카오 `<Map>` · Polygon · Polyline · pan/locate |
-| `frontend/src/widgets/map-dashboard/DistrictPolygon.tsx` | 행정동 Polygon (hover·선택, memo) |
-| `frontend/src/widgets/map-dashboard/HospitalMarkerOverlay.tsx` | tier별 `CustomOverlayMap` 뱃지 |
-| `frontend/src/widgets/map-dashboard/DetailPanel.tsx` | 중증·일반·달빛 3축 상세 패널 |
-| `frontend/src/widgets/map-dashboard/lib/geojson-to-kakao.ts` | GeoJSON → 카카오 path |
-| `frontend/src/widgets/map-dashboard/lib/choropleth-colors.ts` | `bed_shortage_index` → 색상 |
-| `frontend/src/widgets/map-dashboard/lib/daegu-map-bounds.ts` | 대구 드래그 경계 보정 |
-| `frontend/src/assets/final_hospitals.json` | 지도 병원 마커 (ER tier 1·2 + 달빛 tier 3) |
-| `backend/scripts/03_generate_mock_medical_data.py` | 150동 목업 데이터 생성·검증 |
-| `backend/scripts/04_fetch_daegu_er_hospitals.py` | 공공 API 대구 응급기관 수집 |
-
-### 카카오맵 선정 이유
-- 국내 주소·도로·POI 품질이 정책 BI·시민 안내에 적합
-- GeoJSON Choropleth·커스텀 오버레이·연결선을 **React 컴포넌트**로 일관 구성
-- `mapRef.panTo`·`setLevel`로 선택 동 이동, `minLevel`/`maxLevel`로 대구 권역 고정
+| `frontend/src/shared/lib/kakao-navigation.ts` | 카카오내비 실시간 앱 연동 URL Scheme |
+| `frontend/src/widgets/map-dashboard/HospitalGranularBeds.tsx` | E-Gen 데이터 기반 병실 세분화(6개 항목) 및 혼잡도 UI |
+| `backend/app/services/bed_poller.py` | 국립중앙의료원(E-Gen) API 실시간 병상 정보 Background Polling |
+| `backend/app/services/hira_client.py` | 심평원(HIRA) 인프라 현황 비동기 API 통신 |
+| `backend/app/api/routes/hospitals.py` | 3초 서킷 브레이커가 적용된 캐싱 API 엔드포인트 |
 
 ---
 
@@ -180,16 +163,24 @@ flowchart LR
 > 아래는 **작성 템플릿**입니다. 지원 서류에 맞게 문장만 조정해 사용하세요.
 
 - **기획**: 응급 tier 모델(대형·준종합·달빛) 정의, DetailPanel 이원 비교 UX 설계
-- **데이터**: 대구 달빛어린이병원 공식 6곳 대조·좌표 반영, 행정동 목업 스키마 설계
-- **프론트엔드**: 카카오맵 + react-kakao-maps-sdk, Choropleth Polygon, CustomOverlayMap tier 뱃지, Polyline, DetailPanel 구현
-- **문서**: 시민용 README / 제출용 PORTFOLIO 이원화
+- **데이터**: 대구 달빛어린이병원 공식 6곳 대조 및 E-Gen 실시간 6종 병실(음압격리, 코호트 등) 매핑
+- **백엔드**: FastAPI 기반의 비동기 API 폴링(Polling) 아키텍처 및 3초 서킷 브레이커 도입
+- **프론트엔드**: 카카오맵 + react-kakao-maps-sdk 통합, 카카오내비 URL Scheme 딥링크 기능 구현
 
 ---
 
 ## 7. 실행 방법
 
-### 프론트엔드 (지도 UI)
+### 백엔드 (API 서버)
+```bash
+cd backend
+python -m venv venv
+source venv/Scripts/activate # Windows
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
 
+### 프론트엔드 (지도 UI)
 ```bash
 cd frontend
 npm install
@@ -198,31 +189,18 @@ npm run dev
 
 브라우저: http://localhost:5173/
 
-> **카카오맵 API 키**: `frontend/.env`에 `VITE_KAKAO_MAP_APP_KEY=발급키` 설정. 카카오 개발자 콘솔에서 `http://localhost:5173` 도메인 등록 필수. 미설정 시 `src/shared/config/kakao.ts` 기본값 사용.
-
-### 목업 데이터 재생성
-
-```bash
-python backend/scripts/03_generate_mock_medical_data.py
-```
-
-### 프로덕션 빌드
-
-```bash
-cd frontend
-npm run build
-```
+> **카카오맵 API 키**: `frontend/.env`에 `VITE_KAKAO_MAP_APP_KEY=발급키` 설정. 카카오 개발자 콘솔에서 `http://localhost:5173` 도메인 등록 필수. 
 
 ---
 
 ## 8. 한계 및 고도화 계획
 
-| 현재 (MVP) | 고도화 |
-|------------|--------|
-| 직선거리 기반 목업 | 도로망·OSRM 이동시간 |
-| Mock 병상 지수 | HIRA·e-Gen 실제 병상·인구 연동 |
-| 정적 JSON | FastAPI `/medical-access` API |
-| 직선 Polyline 연결선 | 실제 도로망 경로·이송시간 시각화 |
+| 기능 | 현재 상태 | 고도화 예정 |
+|------|-----------|-------------|
+| **실제 병상 데이터** | 국립중앙의료원 공개 상황판의 실시간 병상과 HIRA 기관 현황을 구분 연동 | 119 구급대 폐쇄망 데이터 추가 연동 |
+| **경로 탐색** | 반경(직선) 검색 + 카카오내비 URL 실시간 앱 연동 | 인앱(In-app) OSRM 기반 폴리곤 렌더링 |
+| **API 아키텍처** | FastAPI 서킷브레이커 및 백그라운드 캐싱 | Redis 분산 캐싱 도입 |
+| **배포 환경** | 로컬 개발 서버(uvicorn/Vite) 기준 실데이터 통신 프로토타입 | E2E·부하 테스트 통과 후 클라우드 배포 예정 |
 
 ---
 
@@ -231,10 +209,9 @@ npm run build
 | 강점 | 설명 |
 |------|------|
 | **도메인 결합** | 행정구역·공공서비스 배분 + 응급의료체계·필수의료 |
-| **정책 질문 명확** | “어디가 사각지대인가” — 실무 언어와 일치 |
-| **정량·시각 통합** | 표가 아닌 **지도 BI**로 스토리 전달 |
-| **데이터 검증 습관** | 공식 지정기관 대조 후 목업 수정 (달빛 6곳) |
-| **확장성** | 필수의료·요양·약국 접근성으로 주제 확장 가능 |
+| **Real-time 데이터 검증**| 국립중앙의료원 공식 간편조회 6종 필드와 대구 응급의료기관 19곳을 2026-07-12 기준 대조 |
+| **강력한 방어 기제** | 3초 서킷 브레이커 적용으로 공공 API 지연 시에도 서비스 무중단 보장 |
+| **실행 가능한 액션 유도** | 카카오내비 URL 연동으로 즉시 현장 이동을 돕는 UX 구현 |
 
 ---
 
@@ -243,21 +220,17 @@ npm run build
 **Q. 왜 응급실을 하나만 보여주지 않았나요?**  
 A. 중증 환자는 권역·대형으로, 일반 응급은 준종합으로 이송·내원 패턴이 다릅니다. 동일 동에서 **거리 차이**를 나란히 보여주면 시민·정책 담당자 모두 판단 근거가 됩니다.
 
-**Q. 병상의 개수만 표시하고, 실제 전문의 상주 여부 같은 임상 데이터는 왜 없나요?**  
-A. 좋은 지적입니다. 본 플랫폼은 병원 전 단계(Pre-hospital)의 **물리적 이송 효율화**에 초점을 맞추었습니다. 전문의 상주 여부 같은 세부 임상 변수를 실시간으로 대중에게 완전 개방할 경우, 특정 병원으로의 환자 쏠림이나 법적 책임 문제 등 예기치 않은 리스크가 발생할 수 있습니다. 따라서 본 버전에서는 의도적으로 임상 변수를 제외하여 시스템의 안전성을 확보했으며, 이 부분은 향후 119 상황실 내부 폐쇄망(인트라넷)과의 연계를 통한 2차 검증 과제로 남겨두는 설계를 채택했습니다.
+**Q. 직선거리를 기반으로 대시보드를 구축했는데, 부정확하지 않나요?**  
+A. 거시적인 150개 행정동 사각지대 분석을 위해서는 OSRM보다 직관적인 반경 거리가 효과적이라고 판단했습니다. 다만 시민이 실제로 병원을 방문할 때의 실질 이동 시간을 보장하기 위해, UI 상에서 **카카오내비 앱을 즉시 실행(Deep Link)**하여 실시간 트래픽 기반의 정확한 ETA와 길안내를 받을 수 있도록 이원화 설계했습니다.
 
-**Q. 달빛어린이병원 데이터는 어떻게 검증했나요?**  
-A. 대구시 보건 누리집 지정기관 6곳 목록과 1:1 대조했고, 잘못 들어가 있던 대학병원 명칭을 제거한 뒤 주소 지오코딩으로 좌표를 반영했습니다.
-
-**Q. 직선거리만 쓰면 부정확하지 않나요?**  
-A. MVP에서는 공개 데이터·구현 복잡도를 고려해 직선거리를 썼고, README·화면에 **참고용**임을 명시했습니다. 2단계에서 도로망 API로 고도화할 계획입니다.
+**Q. 공공 API 지연이 심한데, 화면 렌더링 속도는 어떻게 보장했나요?**  
+A. 클라이언트가 API를 직접 호출하지 않고, 백엔드에 FastAPI `BackgroundTasks`를 이용한 1~2분 주기의 비동기 폴링 봇을 구축했습니다. 또한 클라이언트 요청 시 3초 이내에 데이터가 병합되지 않으면 과감하게 캐시 데이터 혹은 Fallback UI(전화 확인 요망 등)로 응답하는 **서킷 브레이커(Circuit Breaker)** 패턴을 도입하여 무중단 서비스를 실현했습니다.
 
 ---
 
 ## 11. 관련 링크
 
 - [시민·서비스 안내 README](../README.md)
-- [문서 모음 (docs)](./README.md)
 - [대구광역시 달빛어린이병원 지정기관](https://www.daegu.go.kr/health/index.do?menu_id=00936060)
 - [응급의료포털 달빛어린이병원](https://www.e-gen.or.kr/moonlight/main.do)
 
@@ -270,7 +243,7 @@ A. MVP에서는 공개 데이터·구현 복잡도를 고려해 직선거리를 
 | 화면 | 설명 |
 |------|------|
 | `docs/screenshots/map-overview.png` | 전체 Choropleth + tier 마커 |
-| `docs/screenshots/detail-panel.png` | 구지면 등 DetailPanel 비교 UI |
+| `docs/screenshots/detail-panel.png` | 6칸 세분화 병상 및 카카오내비 연동 UI |
 | `docs/screenshots/hospital-popup.png` | 병원 CustomOverlayMap + tier 뱃지 |
 
 ---

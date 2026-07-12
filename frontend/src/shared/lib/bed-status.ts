@@ -5,6 +5,7 @@ export type BedAvailabilityStatus = 'available' | 'unavailable' | 'unknown';
 
 export interface BedStatusInfo {
   status: BedAvailabilityStatus;
+  congestion?: 'smooth' | 'moderate' | 'crowded';
   /** 진료 가능 시 표시할 병상 수 */
   count?: number;
 }
@@ -14,10 +15,13 @@ export interface BedStatusInfo {
  */
 export function resolveBedStatus(hospital: HospitalRecord): BedStatusInfo {
   if (typeof hospital.hvec === 'number') {
-    const hvoc = typeof hospital.hvoc === 'number' ? hospital.hvoc : 0;
-    const total = hospital.hvec + hvoc;
-    if (total > 0) {
-      return { status: 'available', count: total };
+    if (hospital.hvec > 0) {
+      const ratio =
+        typeof hospital.total_hvec === 'number' && hospital.total_hvec > 0
+          ? hospital.hvec / hospital.total_hvec
+          : null;
+      const congestion = ratio === null ? 'smooth' : ratio >= 0.8 ? 'smooth' : ratio >= 0.5 ? 'moderate' : 'crowded';
+      return { status: 'available', count: hospital.hvec, congestion };
     }
     return { status: 'unavailable' };
   }

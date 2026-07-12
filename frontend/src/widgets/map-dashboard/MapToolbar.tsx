@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
+
 import { useVulnerabilityStore } from '../../shared/store/vulnerabilityStore';
-import { usePresetStore } from './lib/usePresetStore';
 
 import { HeatmapToggle } from './HeatmapToggle';
 import { HospitalFilterBar } from './HospitalFilterBar';
 import type { HospitalFilter } from './lib/hospital-filter';
+import { usePresetStore } from './lib/usePresetStore';
 import { getVulnerabilityRange } from './lib/vulnerability-choropleth-colors';
 
 interface MapToolbarProps {
@@ -14,8 +15,13 @@ interface MapToolbarProps {
   onRiskThresholdChange?: (value: number) => void;
   onPresetSelect?: (preset: 'highRiskTop10' | 'pediatricPriority' | 'generalPriority') => void;
   onExportCsv?: () => void;
-  onCaptureReport?: () => void;
 }
+
+const QUICK_LOOKUPS = [
+  { preset: 'highRiskTop10' as const, label: 'VDI 고위험 10곳', filter: 'all' as HospitalFilter },
+  { preset: 'pediatricPriority' as const, label: '소아 취약 우선', filter: 'tier3' as HospitalFilter },
+  { preset: 'generalPriority' as const, label: '응급 취약 우선', filter: 'tier2' as HospitalFilter },
+];
 
 export function MapToolbar({
   activeFilter,
@@ -24,67 +30,62 @@ export function MapToolbar({
   onRiskThresholdChange,
   onPresetSelect,
   onExportCsv,
-  onCaptureReport,
 }: MapToolbarProps) {
   const showHeatmap = useVulnerabilityStore((state) => state.showHeatmap);
   const vulnerabilityRecords = useVulnerabilityStore((state) => state.records);
   const vulnerabilityLoading = useVulnerabilityStore((state) => state.isLoading);
-
+  const activePreset = usePresetStore((state) => state.activePreset);
+  const clearPreset = usePresetStore((state) => state.clearPreset);
 
   const { min: vulnerabilityMin, max: vulnerabilityMax } = useMemo(() => {
-    return getVulnerabilityRange(vulnerabilityRecords.map(r => r.vulnerability_index));
+    return getVulnerabilityRange(vulnerabilityRecords.map((record) => record.vdi_log));
   }, [vulnerabilityRecords]);
-  
+
   const hasRange =
-    typeof vulnerabilityMin === 'number' &&
-    typeof vulnerabilityMax === 'number' &&
+    Number.isFinite(vulnerabilityMin) &&
+    Number.isFinite(vulnerabilityMax) &&
     vulnerabilityMax >= vulnerabilityMin;
-  const span = hasRange ? vulnerabilityMax - vulnerabilityMin : 0;
-  const q1 = hasRange ? vulnerabilityMin + span * 0.25 : 0;
-  const q2 = hasRange ? vulnerabilityMin + span * 0.5 : 0;
-  const q3 = hasRange ? vulnerabilityMin + span * 0.75 : 0;
 
   return (
     <div className="shrink-0 border-b border-slate-300/70 bg-[#eef3f9] px-3 py-2.5">
-      <div className="flex flex-wrap items-center gap-y-3 gap-x-4">
-        
-        {/* Zone 1: 기본 필터 */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
         <div className="flex items-center">
           <HospitalFilterBar activeFilter={activeFilter} onFilterChange={onFilterChange} />
         </div>
 
         <div className="hidden h-6 w-px bg-slate-300 xl:block" />
 
-        {/* Zone 2: 프리셋 */}
         <div className="flex items-center gap-2">
-          <span className="hidden text-[11px] font-bold text-slate-700 sm:inline-block mr-1">빠른 지역 조회</span>
-          <button
-            type="button"
-            onClick={() => onPresetSelect?.('highRiskTop10')}
-            className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 transition-colors"
-          >
-            고위험 지역 10곳
-          </button>
-          <button
-            type="button"
-            onClick={() => onPresetSelect?.('pediatricPriority')}
-            className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 transition-colors"
-          >
-            소아 의료 취약지역
-          </button>
-          <button
-            type="button"
-            onClick={() => onPresetSelect?.('generalPriority')}
-            className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 transition-colors"
-          >
-            응급의료 취약지역
-          </button>
+          <span className="hidden text-[11px] font-bold text-slate-700 sm:inline-block">
+            빠른 지역 조회
+          </span>
+          {QUICK_LOOKUPS.map((item) => {
+            const selected = activePreset === item.preset;
+            return (
+              <button
+                key={item.preset}
+                type="button"
+                onClick={() => {
+                  onFilterChange(item.filter);
+                  onPresetSelect?.(item.preset);
+                }}
+                className={`rounded-md px-2.5 py-1.5 text-xs font-semibold ring-1 transition-colors ${
+                  selected
+                    ? 'bg-rose-600 text-white ring-rose-600'
+                    : 'bg-white text-slate-700 ring-slate-300 hover:bg-rose-50 hover:text-rose-700 hover:ring-rose-200'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
           <button
             type="button"
             onClick={() => {
-              usePresetStore.getState().clearPreset();
+              clearPreset();
+              onFilterChange('all');
             }}
-            className="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-200 transition-colors ml-1"
+            className="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 ring-1 ring-slate-300 transition-colors hover:bg-slate-200"
           >
             초기화
           </button>
@@ -92,88 +93,64 @@ export function MapToolbar({
 
         <div className="hidden h-6 w-px bg-slate-300 xl:block" />
 
-        {/* Zone 3: 지도 조작 & AI */}
         <div className="flex flex-wrap items-center gap-3">
           {hasRange && typeof riskThreshold === 'number' ? (
-            <label className="flex items-center gap-2 rounded-md bg-white px-2.5 py-1.5 ring-1 ring-slate-300 shadow-sm">
+            <label className="flex items-center gap-2 rounded-md bg-white px-2.5 py-1.5 shadow-sm ring-1 ring-slate-300">
               <span className="text-[10px] font-semibold text-slate-600">고위험 기준</span>
               <input
                 type="range"
-                min={Math.floor(vulnerabilityMin ?? 0)}
-                max={Math.ceil(vulnerabilityMax ?? 0)}
-                value={riskThreshold}
+                min={1500}
+                max={10000}
+                step={100}
+                value={Math.min(10000, Math.max(1500, riskThreshold))}
                 onChange={(event) => onRiskThresholdChange?.(Number(event.target.value))}
-                className="w-20 sm:w-24 accent-rose-600"
+                className="w-24 accent-rose-600 sm:w-32"
+                aria-label="VDI Log 고위험 기준"
               />
-              <span className="text-[10px] font-bold text-rose-700 w-4">{Math.round(riskThreshold)}</span>
+              <span className="w-14 text-right text-[10px] font-bold tabular-nums text-rose-700">
+                {Math.round(riskThreshold).toLocaleString('ko-KR')}
+              </span>
             </label>
           ) : null}
 
           {showHeatmap ? (
             <div
-              className="hidden items-center gap-2 rounded-md bg-white px-2.5 py-1.5 ring-1 ring-slate-300 shadow-sm lg:flex"
-              aria-hidden
+              className="hidden items-center gap-2 rounded-md bg-white px-2.5 py-1.5 shadow-sm ring-1 ring-slate-300 lg:flex"
+              aria-label="VDI Log 위험 기준"
             >
-              {hasRange ? (
-                <>
-                  <span className="text-[10px] font-medium text-slate-500">
-                    낮음 {Math.round(vulnerabilityMin)}
-                  </span>
-                  <div
-                    className="h-1.5 w-16 rounded-full"
-                    style={{
-                      background:
-                        'linear-gradient(to right, rgba(254,249,195,0.9) 0%, #fca5a5 55%, #7f1d1d 100%)',
-                    }}
-                  />
-                  <span className="text-[10px] font-medium text-slate-500">
-                    {Math.round(q1)}
-                  </span>
-                  <span className="text-[10px] font-medium text-slate-500">
-                    {Math.round(q2)}
-                  </span>
-                  <span className="text-[10px] font-medium text-slate-500">
-                    {Math.round(q3)}
-                  </span>
-                  <span className="text-[10px] font-semibold text-rose-900">
-                    높음 {Math.round(vulnerabilityMax)}
-                  </span>
-                </>
-              ) : (
-                <span className="text-[10px] font-medium text-slate-500">
-                  분석 범위 계산 중…
-                </span>
-              )}
+              <span className="text-[10px] font-medium text-slate-500">VDI Log</span>
+              <div
+                className="h-1.5 w-20 rounded-full"
+                style={{
+                  background:
+                    'linear-gradient(to right, rgba(254,249,195,0.95) 0%, #f59e0b 35%, #ef4444 70%, #7f1d1d 100%)',
+                }}
+              />
+              <span className="text-[10px] font-semibold text-amber-700">1,500+</span>
+              <span className="text-[10px] font-semibold text-orange-700">5,000+</span>
+              <span className="text-[10px] font-semibold text-red-800">10,000+</span>
+              <span className="text-[10px] font-medium text-slate-400">
+                범위 {Math.round(vulnerabilityMin).toLocaleString('ko-KR')}~{Math.round(vulnerabilityMax).toLocaleString('ko-KR')}
+              </span>
             </div>
           ) : null}
 
           <HeatmapToggle />
 
-
-          
           {vulnerabilityLoading ? (
-            <span className="text-[10px] font-medium text-slate-400">분석 중…</span>
+            <span className="text-[10px] font-medium text-slate-400">분석 불러오는 중</span>
           ) : null}
         </div>
 
-        {/* Zone 4: 유틸리티 */}
         <div className="ml-auto flex items-center gap-2 xl:pl-4">
           <button
             type="button"
             onClick={onExportCsv}
-            className="rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-300 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
+            className="rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 shadow-sm ring-1 ring-slate-300 transition-colors hover:bg-slate-50 hover:text-slate-900"
           >
             CSV 내보내기
           </button>
-          <button
-            type="button"
-            onClick={onCaptureReport}
-            className="rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 ring-1 ring-slate-300 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
-          >
-            응급의료 인프라 분석 리포트
-          </button>
         </div>
-        
       </div>
     </div>
   );

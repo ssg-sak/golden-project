@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import type React from 'react';
+import { useVulnerabilityStore } from '../../../shared/store/vulnerabilityStore';
+
 import type { HospitalFilter } from './hospital-filter';
 import { usePresetStore } from './usePresetStore';
 
@@ -8,52 +9,59 @@ interface UseDashboardActionsProps {
   setActiveFilter: (filter: HospitalFilter) => void;
 }
 
+function simplifyDistrictName(admNm: string): string {
+  return admNm.replace(/^대구광역시\s*/, '').trim();
+}
+
 export function useDashboardActions({
   onDistrictSelect,
   setActiveFilter,
 }: UseDashboardActionsProps) {
   const setActivePreset = usePresetStore((state) => state.setActivePreset);
+  const records = useVulnerabilityStore((state) => state.records);
   const publicDataUrl = useCallback(
     (filename: string) => `${import.meta.env.BASE_URL}data/${filename}`,
     [],
   );
 
   const handlePresetSelect = useCallback(
-    async (preset: 'highRiskTop10' | 'pediatricPriority' | 'generalPriority') => {
-      try {
-        const response = await fetch(publicDataUrl('priority_targets.json'));
-        if (!response.ok) throw new Error('Failed to fetch priority targets');
-        const data = await response.json();
+    (preset: 'highRiskTop10' | 'pediatricPriority' | 'generalPriority') => {
+      const sorted = [...records].sort((a, b) => b.vdi_log - a.vdi_log);
 
-        if (preset === 'highRiskTop10') {
-          setActiveFilter('all');
-          if (data.highRiskTop10 && data.highRiskTop10.length > 0) {
-            setActivePreset('highRiskTop10', data.highRiskTop10);
-            onDistrictSelect(data.highRiskTop10[0]);
-          }
-          return;
+      if (preset === 'highRiskTop10') {
+        setActiveFilter('all');
+        const top10 = sorted.slice(0, 10).map((record) => simplifyDistrictName(record.adm_nm));
+        if (top10.length > 0) {
+          setActivePreset('highRiskTop10', top10);
+          onDistrictSelect(top10[0]);
         }
-        if (preset === 'pediatricPriority') {
-          setActiveFilter('tier3');
-          if (data.pediatricPriority) {
-            setActivePreset('pediatricPriority', [data.pediatricPriority]);
-            onDistrictSelect(data.pediatricPriority);
-          }
-          return;
+        return;
+      }
+
+      if (preset === 'pediatricPriority') {
+        setActiveFilter('tier3');
+        const pediatric = sorted
+          .filter((record) => record.nearest_hospital_tier === 3)
+          .slice(0, 10)
+          .map((record) => simplifyDistrictName(record.adm_nm));
+        if (pediatric.length > 0) {
+          setActivePreset('pediatricPriority', pediatric);
+          onDistrictSelect(pediatric[0]);
         }
-        if (preset === 'generalPriority') {
-          setActiveFilter('tier2');
-          if (data.generalPriority) {
-            setActivePreset('generalPriority', [data.generalPriority]);
-            onDistrictSelect(data.generalPriority);
-          }
-        }
-      } catch (error) {
-        console.error('Priority preset selection failed:', error);
-        alert('우선순위 데이터를 불러오는 데 실패했습니다.');
+        return;
+      }
+
+      setActiveFilter('tier2');
+      const general = sorted
+        .filter((record) => record.nearest_hospital_tier === 1 || record.nearest_hospital_tier === 2)
+        .slice(0, 10)
+        .map((record) => simplifyDistrictName(record.adm_nm));
+      if (general.length > 0) {
+        setActivePreset('generalPriority', general);
+        onDistrictSelect(general[0]);
       }
     },
-    [onDistrictSelect, publicDataUrl, setActiveFilter, setActivePreset],
+    [onDistrictSelect, records, setActiveFilter, setActivePreset],
   );
 
   const handleExportCsv = useCallback(() => {
@@ -65,20 +73,8 @@ export function useDashboardActions({
     link.remove();
   }, [publicDataUrl]);
 
-  const handleCaptureReport = useCallback((e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-    }
-    window.open(
-      publicDataUrl('사회과학_분석_보고서.pdf'),
-      '_blank',
-      'noopener,noreferrer',
-    );
-  }, [publicDataUrl]);
-
   return {
     handlePresetSelect,
     handleExportCsv,
-    handleCaptureReport,
   };
 }
