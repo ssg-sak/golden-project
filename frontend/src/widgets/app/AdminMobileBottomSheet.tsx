@@ -199,7 +199,7 @@ export function AdminMobileBottomSheet({
               목록으로 돌아가기
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto pb-20 bg-white">
+          <div className="flex-1 overscroll-contain overflow-y-auto bg-white pb-[max(5rem,env(safe-area-inset-bottom))]">
             <DetailPanel
               selectedHospital={selectedHospital}
               vulnerabilityRecord={selectedVulnerability}
@@ -255,7 +255,7 @@ export function AdminMobileBottomSheet({
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto bg-white pb-6">
+          <div className="flex-1 overscroll-contain overflow-y-auto bg-white pb-[max(1.5rem,env(safe-area-inset-bottom))]">
             {policyStatus ? <PolicyStatusBanner {...policyStatus} /> : null}
             
             <div className="border-b border-slate-200/60 pb-2">

@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import type { HospitalRecord } from '../../shared/types/hospital';
+import { EmergencyEquipmentGuide } from './EmergencyEquipmentGuide';
 
 export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
   const [isNoticesOpen, setIsNoticesOpen] = useState(false);
@@ -28,11 +29,11 @@ export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
   }
 
   return (
-    <section className="shrink-0 rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+    <section className="shrink-0 border border-slate-200 bg-white p-4 shadow-sm">
       <div className="mb-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span aria-hidden="true" className="h-4 w-1.5 rounded-full bg-blue-500" />
-          <h3 className="text-sm font-extrabold text-slate-800">심평원 인프라 정보</h3>
+          <span aria-hidden="true" className="h-4 w-1 bg-teal-800" />
+          <h3 className="text-sm font-extrabold text-slate-900">병원 의료자원 정보</h3>
         </div>
         {hospital.hira_reference_date ? (
           <span className="text-[9px] font-semibold text-slate-500">심평원 {hospital.hira_reference_date} 기준</span>
@@ -43,18 +44,19 @@ export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
 
       <div className="space-y-3">
         {emergencyEquipment.length > 0 ? (
-          <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-3">
-            <p className="text-[10px] font-extrabold text-blue-950">응급 핵심장비 현재 가용</p>
+          <div className="border-l-4 border-teal-700 bg-slate-50 p-3">
+            <p className="text-xs font-extrabold text-slate-900">응급진료 핵심장비 4종 · 현재 가용 여부</p>
             <p className="mb-2 mt-1 text-[10px] leading-relaxed text-slate-500">
-              국립중앙의료원 실시간 응급의료 정보입니다. 환자 상태에 따른 실제 사용 가능 여부는 병원에 확인해 주세요.
+              응급실 진료에 활용되는 영상검사·혈관검사·호흡보조 장비입니다. 국립중앙의료원 실시간 응급의료 정보이며 실제 사용 여부는 병원에 확인해 주세요.
             </p>
             <ul className="grid grid-cols-2 gap-1.5">
               {emergencyEquipment.map(([name, available]) => (
-                <li key={name} className={`rounded-lg px-2 py-1.5 text-[10px] font-bold ring-1 ${available ? 'bg-emerald-50 text-emerald-800 ring-emerald-200' : 'bg-rose-50 text-rose-700 ring-rose-200'}`}>
+                <li key={name} className={`rounded-lg px-2 py-1.5 text-[10px] font-bold ring-1 ${available ? 'bg-emerald-50 text-emerald-800 ring-emerald-200' : 'bg-slate-950 text-white ring-slate-950'}`}>
                   {name} · {available ? '가용' : '현재 불가'}
                 </li>
               ))}
             </ul>
+            <EmergencyEquipmentGuide />
           </div>
         ) : null}
         {hospital.doctors_count !== undefined ? (
@@ -74,11 +76,11 @@ export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
           </div>
         ) : null}
 
-        {equipment.length > 0 ? (
+        {equipment.length > 0 && emergencyEquipment.length === 0 ? (
           <div>
-            <p className="text-[10px] font-bold text-slate-500">의료 장비 보유 현황</p>
+            <p className="text-[10px] font-bold text-slate-600">심평원 등록 장비 보유 현황</p>
             <p className="mb-2 mt-1 text-[10px] leading-relaxed text-slate-400">
-              장비가 등록된 항목만 보여줍니다. 실제 사용 가능 여부는 병원에 직접 확인해 주세요.
+              정기 등록자료의 보유 여부이며 위의 현재 가용 정보와 기준이 다릅니다.
             </p>
             <ul className="flex flex-wrap gap-1.5">
               {equipment.map(([name, available]) => (
@@ -87,21 +89,21 @@ export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
                   className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-[10px] font-bold ring-1 ${
                     available
                       ? 'bg-emerald-50 text-emerald-800 ring-emerald-200'
-                      : 'bg-slate-50 text-slate-400 ring-slate-200'
+                      : 'bg-slate-950 text-white ring-slate-950'
                   }`}
                 >
                   <span
                     aria-hidden="true"
-                    className={`h-1.5 w-1.5 rounded-full ${available ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                    className={`h-1.5 w-1.5 rounded-full ${available ? 'bg-emerald-500' : 'bg-white'}`}
                   />
                   {name} · {available ? '보유' : '미보유'}
                 </li>
               ))}
             </ul>
           </div>
-        ) : (
+        ) : equipment.length === 0 && emergencyEquipment.length === 0 ? (
           <p className="text-[10px] text-slate-400">등록된 의료 장비 정보가 없습니다.</p>
-        )}
+        ) : null}
 
         {hospital.hira_notices?.length ? (
           <div className="overflow-hidden rounded-xl bg-slate-50 ring-1 ring-slate-200">

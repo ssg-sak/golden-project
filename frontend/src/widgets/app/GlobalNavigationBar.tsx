@@ -27,7 +27,7 @@ function PortalLogoMark() {
       role="img"
       aria-hidden
     >
-      <rect width="40" height="40" rx="10" className="fill-blue-600" />
+      <rect width="40" height="40" rx="10" className="fill-teal-800" />
       <circle cx="20" cy="20" r="11" stroke="white" strokeWidth="1.5" opacity="0.35" />
       <path
         d="M20 9a11 11 0 0 1 9.52 5.5"
@@ -72,11 +72,11 @@ export function GlobalNavigationBar() {
         <Link
           to="/"
           onClick={() => setViewMode('citizen')}
-          className="flex min-w-0 items-center gap-2.5 rounded-lg transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          className="flex min-w-0 items-center gap-2.5 rounded-lg transition hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
         >
           <PortalLogoMark />
           <div className="min-w-0">
-            <p className="truncate text-[10px] font-bold uppercase tracking-widest text-blue-600">
+            <p className="truncate text-[10px] font-bold uppercase tracking-widest text-teal-700">
               응급의료 거버넌스 플랫폼
             </p>
             <p className="truncate text-base font-extrabold leading-tight text-slate-900 md:text-lg">
@@ -109,14 +109,14 @@ export function GlobalNavigationBar() {
                 onClick={() => handleNavClick(item.id)}
                 className={`relative px-3 py-3 text-sm font-semibold transition-colors duration-200 sm:px-5 sm:text-[15px] ${
                   isActive
-                    ? 'text-blue-700'
+                    ? 'text-teal-800'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
                 <span className="hidden sm:inline">{item.label}</span>
                 <span className="sm:hidden">{item.shortLabel}</span>
                 <span
-                  className={`absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-blue-600 transition-all duration-200 sm:inset-x-4 ${
+                  className={`absolute inset-x-2 bottom-0 h-0.5 bg-teal-700 transition-all duration-200 sm:inset-x-4 ${
                     isActive ? 'opacity-100' : 'opacity-0'
                   }`}
                   aria-hidden
@@ -130,7 +130,7 @@ export function GlobalNavigationBar() {
               <Link
                 to="/"
                 onClick={() => setViewMode('citizen')}
-                className="inline-flex items-center gap-1 rounded-md px-3 py-2 text-xs font-semibold text-blue-700 ring-1 ring-blue-200 transition hover:bg-blue-50 sm:text-sm"
+                className="inline-flex items-center gap-1 border border-teal-200 px-3 py-2 text-xs font-semibold text-teal-800 transition hover:bg-teal-50 sm:text-sm"
               >
                 메인으로
               </Link>
@@ -138,7 +138,7 @@ export function GlobalNavigationBar() {
               <>
                 <Link
                   to="/about"
-                  className="rounded-md px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50 sm:text-sm"
+                  className="px-3 py-2 text-xs font-semibold text-teal-800 transition hover:bg-teal-50 sm:text-sm"
                 >
                   공식 소개
                 </Link>

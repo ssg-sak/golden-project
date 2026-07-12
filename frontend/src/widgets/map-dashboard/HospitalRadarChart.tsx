@@ -1,6 +1,7 @@
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { hospitalTierBadge } from '../../shared/types/hospital';
 import { calculateInfrastructureMetrics } from './lib/hospital-infrastructure-score';
+import { EmergencyEquipmentGuide } from './EmergencyEquipmentGuide';
 
 const clampScore = (value: number) => Math.max(0, Math.min(100, value));
 
@@ -100,6 +101,8 @@ export function HospitalRadarChart({ hospital }: { hospital: HospitalRecord }) {
           <p className="border-t border-blue-200 pt-2 text-slate-500">기관 등급은 점수가 아니라 의료체계상 역할이므로 종합점수에서 제외했습니다. 미제공 항목도 0점으로 간주하지 않습니다.</p>
         </div>
       </details>
+
+      <EmergencyEquipmentGuide variant="admin" />
 
       <p className="mt-3 text-[9px] leading-relaxed text-slate-500">
         이 값은 병원 품질 순위가 아니라 의료자원 배분과 공백 영역 검토를 위한 행정 참고지표입니다.

@@ -11,6 +11,7 @@ import { CitizenHospitalTelLink } from './CitizenHospitalTelLink';
 import { HospitalLocationMeta } from './HospitalLocationMeta';
 import { HospitalMoonlightInfo } from './HospitalMoonlightInfo';
 import { HospitalGranularBeds } from './HospitalGranularBeds';
+import { HospitalHiraInfo } from './HospitalHiraInfo';
 
 const PANEL_SHELL =
   'glass-panel-strong flex h-full min-h-0 flex-col overflow-hidden';
@@ -91,40 +92,7 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           </p>
         ) : null}
 
-        {/* 의료 인프라 현황 (심평원 데이터) */}
-        {hospital.tier !== 3 && (typeof hospital.doctors_count === 'number' || hospital.equipment_status) && (
-          <section className="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl" aria-hidden>🏥</span>
-              <p className="text-xs font-bold text-slate-800">의료 인프라 현황 (HIRA 데이터)</p>
-            </div>
-            <p className="text-[11px] font-medium text-slate-500 mb-3 leading-relaxed">
-              본 정보는 심평원 정적 인프라 데이터입니다. 실시간 상황과 다를 수 있으므로 방문 전 진료 가능 여부를 확인 바랍니다.
-            </p>
-            <div className="flex flex-col gap-2 text-xs text-slate-700 font-medium">
-              {typeof hospital.doctors_count === 'number' && (
-                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                  <span className="flex items-center gap-1.5"><span aria-hidden>👨‍⚕️</span>전문의 보유 현황</span>
-                  <span className="font-extrabold text-slate-900">{hospital.doctors_count}명</span>
-                </div>
-              )}
-              {hospital.equipment_status && Object.keys(hospital.equipment_status).length > 0 && (
-                <div className="flex flex-col gap-1.5 pt-1">
-                  <span className="flex items-center gap-1.5"><span aria-hidden>⚙️</span>주요 의료장비 보유</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {Object.entries(hospital.equipment_status).map(([eqName, hasEq]) => 
-                      hasEq ? (
-                        <span key={eqName} className="inline-flex items-center rounded-md bg-teal-50 px-2 py-1 text-[11px] font-bold text-teal-700 ring-1 ring-teal-200">
-                          {eqName} 보유
-                        </span>
-                      ) : null
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
+        {hospital.tier !== 3 ? <HospitalHiraInfo hospital={hospital} /> : null}
 
         {hospital.tier !== 3 ? (
           <HospitalGranularBeds hospital={hospital} />

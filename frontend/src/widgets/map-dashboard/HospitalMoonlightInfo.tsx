@@ -94,14 +94,16 @@ export function HospitalMoonlightInfo({ hospital, variant }: HospitalMoonlightIn
         <div className="mt-3">
           <p className="mb-2 text-[10px] font-bold text-slate-500">등록 장비</p>
           <div className="flex flex-wrap gap-1.5">
-            {equipment
-              .filter(([, hasEquipment]) => hasEquipment)
-              .map(([name]) => (
+            {equipment.map(([name, hasEquipment]) => (
                 <span
                   key={name}
-                  className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-emerald-700 ring-1 ring-emerald-200"
+                  className={`rounded-full px-2 py-1 text-[10px] font-bold ring-1 ${
+                    hasEquipment
+                      ? 'bg-white text-emerald-700 ring-emerald-200'
+                      : 'bg-slate-950 text-white ring-slate-950'
+                  }`}
                 >
-                  {name}
+                  {name} · {hasEquipment ? '보유' : '미보유'}
                 </span>
               ))}
           </div>

@@ -139,7 +139,7 @@ export function MobileBottomSheet({
               목록으로 돌아가기
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto pb-20">
+          <div className="flex-1 overscroll-contain overflow-y-auto pb-[max(5rem,env(safe-area-inset-bottom))]">
             <HospitalDetailPanel hospital={selectedHospital} />
           </div>
         </div>
