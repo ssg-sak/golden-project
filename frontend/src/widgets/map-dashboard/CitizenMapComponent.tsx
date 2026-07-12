@@ -19,7 +19,7 @@ const DAEGU_CENTER: KakaoLatLng = { lat: 35.8714, lng: 128.6014 };
 const DEFAULT_LEVEL = 7;
 const SELECTED_LEVEL = 4;
 const USER_LOCATION_LEVEL = 5;
-const MIN_LEVEL = 2;
+const MIN_LEVEL = 1;
 const MAX_LEVEL = 12;
 
 function clampLevel(level: number): number {

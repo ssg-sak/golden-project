@@ -79,7 +79,6 @@ export function MapComponent(props: MapComponentProps) {
         onRiskThresholdChange={onRiskThresholdChange}
         onPresetSelect={mapState.handlePresetSelect}
         onExportCsv={mapState.handleExportCsv}
-        onCaptureReport={mapState.handleCaptureReport}
       />
       {mapState.optimalError && mapState.showOptimalLocations && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-10 rounded-md bg-rose-50 px-4 py-2 text-sm text-rose-600 shadow-md ring-1 ring-rose-200">
@@ -93,12 +92,7 @@ export function MapComponent(props: MapComponentProps) {
       )}
       <div
         ref={containerRef}
-        className="relative min-h-0 flex-1 w-full touch-pan-y lg:touch-auto"
-        onWheelCapture={(event) => {
-          if (window.matchMedia('(min-width: 1024px)').matches) {
-            event.stopPropagation();
-          }
-        }}
+        className="relative min-h-0 flex-1 w-full touch-none"
       >
         <Map
           center={DAEGU_CENTER}
@@ -163,7 +157,7 @@ export function MapComponent(props: MapComponentProps) {
               admNm={mapState.hoveredDistrict}
               centerLat={mapState.hoveredRecord.center_lat}
               centerLng={mapState.hoveredRecord.center_lng}
-              vulnerabilityIndex={mapState.hoveredRecord.vulnerability_index}
+              vulnerabilityIndex={mapState.hoveredRecord.vdi_log}
             />
           )}
 

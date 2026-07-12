@@ -3,7 +3,7 @@ import type { KakaoLatLng } from './geojson-to-kakao';
 import { clampToDaeguBounds, isInsideDaeguBounds } from './daegu-map-bounds';
 
 export const USER_LOCATION_LEVEL = 4;
-export const MIN_LEVEL = 2;
+export const MIN_LEVEL = 1;
 export const MAX_LEVEL = 12;
 
 function clampLevel(level: number): number {
@@ -21,6 +21,9 @@ export function useMapController(mapRef: React.MutableRefObject<kakao.maps.Map |
 
       // 패널 개폐 등으로 인한 지도 컨테이너 사이즈 변경 동기화
       map.relayout();
+
+      // Projection 보정은 목표 줌을 적용한 뒤 계산해야 선택 핀이 화면 밖으로 밀리지 않는다.
+      map.setLevel(clampLevel(level), { animate: animateLevel });
 
       const clamped = clampToDaeguBounds(lat, lng);
       const targetLatLng = new kakao.maps.LatLng(clamped.lat, clamped.lng);
@@ -40,8 +43,6 @@ export function useMapController(mapRef: React.MutableRefObject<kakao.maps.Map |
       } else {
         map.panTo(targetLatLng);
       }
-      
-      map.setLevel(clampLevel(level), { animate: animateLevel });
     },
     [mapRef],
   );
