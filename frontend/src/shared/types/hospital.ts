@@ -40,6 +40,8 @@ export interface HospitalRecord {
   doctors_count?: number;
   /** 장비 보유 여부 (예: CT: true, MRI: false) */
   equipment_status?: Record<string, boolean>;
+  /** 국립중앙의료원 응급 핵심장비 현재 가용 여부 */
+  emergency_equipment_status?: Record<string, boolean>;
   /** 심평원 지정/안내 특이사항 (예: 달빛어린이병원 지정, 등급 등) */
   hira_notices?: string[];
   /** api일 때만 실제 HIRA 응답에서 취득한 값 */

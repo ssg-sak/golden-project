@@ -14,6 +14,7 @@ def bed_payload(
     severe_conditions: dict[str, Any] | None = None,
     operating_hours: str | None = None,
     equipment_status: dict[str, bool] | None = None,
+    emergency_equipment_status: dict[str, bool] | None = None,
     special_beds: dict[str, Any] | None = None,
     realtime_messages: list[str] | None = None,
 ) -> dict[str, Any]:
@@ -33,6 +34,8 @@ def bed_payload(
         payload["operating_hours"] = operating_hours
     if equipment_status is not None:
         payload["equipment_status"] = equipment_status
+    if emergency_equipment_status is not None:
+        payload["emergency_equipment_status"] = emergency_equipment_status
     if special_beds is not None:
         payload["special_beds"] = special_beds
     if realtime_messages is not None:
@@ -49,6 +52,7 @@ def null_bed_payload() -> dict[str, Any]:
         "severe_conditions": None,
         "operating_hours": None,
         "equipment_status": None,
+        "emergency_equipment_status": None,
         "special_beds": None,
         "realtime_messages": None,
     }

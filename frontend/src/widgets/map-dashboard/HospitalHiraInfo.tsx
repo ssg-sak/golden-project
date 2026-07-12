@@ -5,9 +5,11 @@ export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
   const [isNoticesOpen, setIsNoticesOpen] = useState(false);
   const noticesId = useId();
   const equipment = Object.entries(hospital.equipment_status ?? {});
+  const emergencyEquipment = Object.entries(hospital.emergency_equipment_status ?? {});
   const hasData =
     hospital.doctors_count !== undefined ||
     equipment.length > 0 ||
+    emergencyEquipment.length > 0 ||
     Boolean(hospital.operating_hours || hospital.hira_notices?.length);
 
   if (!hasData) {
@@ -40,6 +42,21 @@ export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
       </div>
 
       <div className="space-y-3">
+        {emergencyEquipment.length > 0 ? (
+          <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-3">
+            <p className="text-[10px] font-extrabold text-blue-950">응급 핵심장비 현재 가용</p>
+            <p className="mb-2 mt-1 text-[10px] leading-relaxed text-slate-500">
+              국립중앙의료원 실시간 응급의료 정보입니다. 환자 상태에 따른 실제 사용 가능 여부는 병원에 확인해 주세요.
+            </p>
+            <ul className="grid grid-cols-2 gap-1.5">
+              {emergencyEquipment.map(([name, available]) => (
+                <li key={name} className={`rounded-lg px-2 py-1.5 text-[10px] font-bold ring-1 ${available ? 'bg-emerald-50 text-emerald-800 ring-emerald-200' : 'bg-rose-50 text-rose-700 ring-rose-200'}`}>
+                  {name} · {available ? '가용' : '현재 불가'}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
         {hospital.doctors_count !== undefined ? (
           <div className="flex items-end justify-between border-b border-slate-100 pb-3">
             <span className="text-xs font-bold text-slate-500">등록 의사 수</span>

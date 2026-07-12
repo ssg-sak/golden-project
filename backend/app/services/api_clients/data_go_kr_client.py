@@ -98,13 +98,16 @@ def _merge_api_rows(
         # AI 환각 로직 완전 제거 (없는 필드 매핑 및 24시간 하드코딩 삭제)
         # Assume Nothing 룰에 따라 실존하는 API 응답 필드만 정직하게 파싱
 
-        equipment_status = {
+        emergency_equipment_status = {
             "CT": _pick_field(row, "hvctayn").upper() in ["Y", "O", "가능", "TRUE", "1"],
             "MRI": _pick_field(row, "hvmriayn").upper() in ["Y", "O", "가능", "TRUE", "1"],
-            "조영기": _pick_field(row, "hvangioayn").upper() in ["Y", "O", "가능", "TRUE", "1"],
+            "조영촬영기": _pick_field(row, "hvangioayn").upper() in ["Y", "O", "가능", "TRUE", "1"],
             "인공호흡기": _pick_field(row, "hvventiayn").upper() in ["Y", "O", "가능", "TRUE", "1"],
-            "인큐베이터": _pick_field(row, "hvincuayn").upper() in ["Y", "O", "가능", "TRUE", "1"],
         }
+
+        if name in matched:
+            matched[name]["emergency_equipment_status"] = emergency_equipment_status
+            continue
         
         hvec_val = _to_int(_pick_field(row, "hvec"))
         hvoc_val = _to_int(_pick_field(row, "hv28")) # hv28: 응급실 소아 가용
@@ -154,7 +157,7 @@ def _merge_api_rows(
             total_hvoc=total_hvoc,
             severe_conditions=None,
             operating_hours=None,
-            equipment_status=equipment_status,
+            emergency_equipment_status=emergency_equipment_status,
             special_beds=special_beds
         )
 
@@ -167,26 +170,25 @@ async def _fetch_region_beds_async(
     matched: dict[str, dict[str, Any]],
 ) -> None:
     # 1. 정적(총 병상) 정보 먼저 호출
-    static_response = await client.get(
-        static_url,
-        params={
-            "serviceKey": service_key,
-            "STAGE1": REGION_STAGE1,
-            "pageNo": "1",
-            "numOfRows": "200",
-        },
-    )
-    
     static_rows = {}
-    if static_response.status_code == 200 and _is_api_response_ok(static_response.text):
-        try:
+    try:
+        static_response = await client.get(
+            static_url,
+            params={
+                "serviceKey": service_key,
+                "STAGE1": REGION_STAGE1,
+                "pageNo": "1",
+                "numOfRows": "200",
+            },
+        )
+        if static_response.status_code == 200 and _is_api_response_ok(static_response.text):
             from app.services.hospital_realtime import display_name
             for sr in _parse_xml_items(static_response.text):
                 api_name = _pick_field(sr, "dutyName", "dutyname")
                 if api_name:
                     static_rows[display_name(api_name)] = sr
-        except ET.ParseError:
-            logger.warning("[hospitals] XML parse error for static API")
+    except (httpx.HTTPError, ET.ParseError) as exc:
+        logger.warning("[hospitals] static bed metadata skipped: %s", type(exc).__name__)
 
     # 2. 실시간 병상 호출
     response = await client.get(

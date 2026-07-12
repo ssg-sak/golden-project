@@ -42,4 +42,16 @@ describe('calculateInfrastructureMetrics', () => {
     expect(hasSufficientInfrastructureData({ ...hospital, doctors_count: undefined, equipment_status: undefined })).toBe(true);
     expect(hasSufficientInfrastructureData({ ...hospital, doctors_count: undefined, equipment_status: undefined, hvec: undefined, total_hvec: undefined, special_beds: undefined })).toBe(false);
   });
+
+  it('응급장비 현재 가용 정보가 있으면 보유 스냅샷보다 우선한다', () => {
+    const [equipmentMetric] = calculateInfrastructureMetrics({
+      ...hospital,
+      emergency_equipment_status: { CT: true, MRI: true, 조영촬영기: false, 인공호흡기: true },
+    }).filter(({ label }) => label === '핵심장비 확인');
+    expect(equipmentMetric).toEqual({
+      label: '핵심장비 확인',
+      value: 75,
+      detail: '응급장비 3/4개 현재 가용',
+    });
+  });
 });

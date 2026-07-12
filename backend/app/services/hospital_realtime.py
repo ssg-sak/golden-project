@@ -73,9 +73,9 @@ async def fetch_all_beds_from_api_async(
             except (httpx.HTTPError, ValueError) as exc:
                 logger.warning("[hospitals] NEMC mediboard error: %s", exc)
 
-            unmatched = target_names.difference(matched)
-            if unmatched:
-                await fetch_data_go_kr_beds(client, service_key, unmatched, matched)
+            # 공식 응급의료 API의 CT·MRI·조영촬영기·인공호흡기 현재 가용 여부는
+            # 병상 원천과 별도로 모든 응급기관에 보강한다.
+            await fetch_data_go_kr_beds(client, service_key, target_names, matched)
             # 2단계: 응급실 특이사항 메시지 수집 (matched에 병합)
             if matched:
                 await fetch_data_go_kr_messages(client, service_key, target_names, matched)

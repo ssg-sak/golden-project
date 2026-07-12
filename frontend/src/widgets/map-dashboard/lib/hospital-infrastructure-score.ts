@@ -31,7 +31,9 @@ function specialBedScore(hospital: HospitalRecord): InfrastructureMetric {
 }
 
 export function calculateInfrastructureMetrics(hospital: HospitalRecord): InfrastructureMetric[] {
-  const equipment = Object.values(hospital.equipment_status ?? {});
+  const emergencyEquipment = Object.values(hospital.emergency_equipment_status ?? {});
+  const ownershipEquipment = Object.values(hospital.equipment_status ?? {});
+  const equipment = emergencyEquipment.length ? emergencyEquipment : ownershipEquipment;
   const doctorLimit = doctorReference(hospital);
   const doctorScore = typeof hospital.doctors_count === 'number'
     ? clampScore((hospital.doctors_count / doctorLimit) * 100)
@@ -56,7 +58,9 @@ export function calculateInfrastructureMetrics(hospital: HospitalRecord): Infras
       label: '핵심장비 확인',
       value: equipmentScore,
       detail: equipment.length
-        ? `확인 항목 ${equipment.filter(Boolean).length}/${equipment.length}개 보유`
+        ? emergencyEquipment.length
+          ? `응급장비 ${equipment.filter(Boolean).length}/${equipment.length}개 현재 가용`
+          : `확인 항목 ${equipment.filter(Boolean).length}/${equipment.length}개 보유`
         : '심평원 원천 미제공',
     },
     {
