@@ -150,6 +150,7 @@ export function AdminHospitalSidebar({
                         <span>{hospitalTierBadge(hospital.tier)}</span>
                         <AvailableBedsBadge
                           availableBeds={hospitalAvailableBeds(hospital)}
+                          totalBeds={hospital.total_hvec}
                           variant="default"
                         />
                       </span>

@@ -30,7 +30,7 @@ export function HospitalPopupCard({ hospital, onClose }: HospitalPopupCardProps)
             >
               [{badge}]
             </span>
-            <AvailableBedsBadge availableBeds={availableBeds} />
+            <AvailableBedsBadge availableBeds={availableBeds} totalBeds={hospital.total_hvec} />
           </div>
           {hospital.address && (
             <p className="mt-1.5 text-[11px] leading-relaxed text-slate-500">{hospital.address}</p>

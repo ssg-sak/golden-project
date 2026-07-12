@@ -16,27 +16,35 @@ export function HospitalMarkerOverlay({
   isSelected,
   onSelect,
 }: HospitalMarkerOverlayProps) {
-  const { status } = resolveBedStatus(hospital);
+  const { status, congestion } = resolveBedStatus(hospital);
+  const isCrowded = status === 'unavailable' || congestion === 'crowded';
+  const isModerate = congestion === 'moderate';
 
   const ringClass =
-    status === 'available'
-      ? 'border-green-500 ring-green-200'
-      : status === 'unavailable'
-        ? 'border-red-500 ring-red-200'
+    isCrowded
+      ? 'border-rose-500 ring-rose-200'
+      : isModerate
+        ? 'border-amber-500 ring-amber-200'
+        : status === 'available'
+          ? 'border-emerald-500 ring-emerald-200'
         : 'border-slate-400 ring-slate-200';
 
   const activeRingClass =
-    status === 'available'
-      ? 'ring-green-500'
-      : status === 'unavailable'
-        ? 'ring-red-500'
+    isCrowded
+      ? 'ring-rose-500'
+      : isModerate
+        ? 'ring-amber-500'
+        : status === 'available'
+          ? 'ring-emerald-500'
         : 'ring-slate-500';
 
   const dotClass =
-    status === 'available'
-      ? 'bg-green-500'
-      : status === 'unavailable'
-        ? 'bg-red-500'
+    isCrowded
+      ? 'bg-rose-500'
+      : isModerate
+        ? 'bg-amber-500'
+        : status === 'available'
+          ? 'bg-emerald-500'
         : 'bg-slate-400';
 
   return (
@@ -66,7 +74,7 @@ export function HospitalMarkerOverlay({
         role="button"
         tabIndex={0}
         aria-label={`${hospital.name} — ${
-          status === 'available' ? '진료 가능' : status === 'unavailable' ? '수용 불가' : '확인 중'
+          status === 'unavailable' ? '일반응급실 여유 없음' : congestion === 'crowded' ? '혼잡' : congestion === 'moderate' ? '보통' : status === 'available' ? '원활' : '확인 중'
         }`}
         aria-pressed={isSelected}
         title={hospital.name}

@@ -41,7 +41,7 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
           <span className="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-bold text-slate-600 ring-1 ring-slate-200">
             {tierLabel}
           </span>
-          <AvailableBedsBadge availableBeds={availableBeds} size="md" />
+          <AvailableBedsBadge availableBeds={availableBeds} totalBeds={hospital.total_hvec} size="md" />
         </div>
         <h2 className="mt-2 text-xl font-extrabold leading-snug text-slate-900">
           {hospitalDisplayName(hospital)}
