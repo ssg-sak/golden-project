@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import asyncio
 import logging
 
 from fastapi import APIRouter, HTTPException
@@ -22,6 +23,9 @@ async def get_hospitals() -> list[dict]:
     hospitals = load_static_hospitals()
     names = [str(row.get("name", "")) for row in hospitals if row.get("name")]
 
+    # 서로 독립적인 국립중앙의료원 병상 조회와 HIRA 인프라 조회를 동시에 시작한다.
+    hira_task = asyncio.create_task(fetch_hira_data_async(names))
+
     try:
         realtime = await resolve_realtime_beds_async(names)
     except HTTPException:
@@ -37,7 +41,7 @@ async def get_hospitals() -> list[dict]:
     merged = merge_realtime_into_hospitals(hospitals, realtime)
     
     # HIRA API 데이터 조회 및 병합 (에러 시 빈 딕셔너리로 방어됨)
-    hira_data = await fetch_hira_data_async(names)
+    hira_data = await hira_task
     merged_with_hira = merge_hira_into_hospitals(merged, hira_data)
     
     return merged_with_hira
