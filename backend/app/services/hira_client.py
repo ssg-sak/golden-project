@@ -81,8 +81,8 @@ def _items(xml_text: str) -> list[dict[str, str]]:
 
 def _integer(value: str | None) -> int | None:
     try:
-        return int(value) if value not in (None, "") else None
-    except ValueError:
+        return int(float(value)) if value not in (None, "") else None
+    except (TypeError, ValueError):
         return None
 
 
