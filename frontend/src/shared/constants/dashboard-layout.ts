@@ -29,7 +29,7 @@ export const DASHBOARD_MAP_COL_CLASS =
 
 /** 우측 패널 — 모바일 플로팅 팝업 / 바텀 시트 (z-20) */
 export const DASHBOARD_DETAIL_COL_CLASS =
-  'absolute inset-x-0 bottom-0 z-20 flex flex-col max-h-[65dvh] rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.2)] lg:relative lg:order-3 lg:z-auto lg:max-h-none lg:w-[22rem] lg:shrink-0 lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-96';
+  'absolute inset-x-0 bottom-0 z-20 flex flex-col max-h-[65dvh] rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.2)] lg:relative lg:order-3 lg:z-auto lg:h-[calc(100dvh-8.5rem)] lg:min-h-0 lg:max-h-[calc(100dvh-8.5rem)] lg:w-[22rem] lg:shrink-0 lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-96';
 
 export const DASHBOARD_DETAIL_INNER_CLASS =
-  'h-full lg:max-h-[calc(100dvh-8.5rem)]';
+  'h-full min-h-0 lg:max-h-[calc(100dvh-8.5rem)]';

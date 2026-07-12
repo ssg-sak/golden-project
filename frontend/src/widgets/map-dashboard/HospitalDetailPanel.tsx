@@ -11,6 +11,7 @@ import type { HospitalRecord } from '../../shared/types/hospital';
 import { CitizenBedLabel } from './CitizenBedLabel';
 import { CitizenHospitalTelLink } from './CitizenHospitalTelLink';
 import { HospitalLocationMeta } from './HospitalLocationMeta';
+import { HospitalMoonlightInfo } from './HospitalMoonlightInfo';
 
 const PANEL_SHELL =
   'glass-panel-strong flex h-full min-h-0 flex-col overflow-hidden';
@@ -82,16 +83,20 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           </p>
         </section>
 
-        {hospital.realtime_source === 'unavailable' ||
+        {hospital.tier === 3 ? (
+          <HospitalMoonlightInfo hospital={hospital} variant="citizen" />
+        ) : null}
+
+        {hospital.tier !== 3 && (hospital.realtime_source === 'unavailable' ||
         hospital.realtime_source === 'mock' ||
-        hospital.available_beds === null ? (
+        hospital.available_beds === null) ? (
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900 ring-1 ring-amber-200">
             병상 수치는 실시간 확인되지 않았습니다. 도착 전 119·1339·병원으로 재확인하세요.
           </p>
         ) : null}
 
         {/* 의료 인프라 현황 (심평원 데이터) */}
-        {(typeof hospital.doctors_count === 'number' || hospital.equipment_status) && (
+        {hospital.tier !== 3 && (typeof hospital.doctors_count === 'number' || hospital.equipment_status) && (
           <section className="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xl" aria-hidden>🏥</span>
@@ -125,6 +130,7 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           </section>
         )}
 
+        {hospital.tier !== 3 ? (
         <section className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
           <p className="mb-3 text-xs font-bold text-slate-500">실시간 병상 현황</p>
           {bedStatus.status === 'available' ? (
@@ -152,6 +158,7 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
             <p className="text-sm text-amber-800">병상 정보를 확인하고 있습니다.</p>
           )}
         </section>
+        ) : null}
 
         {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
           <section className="rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">

@@ -7,12 +7,15 @@ import {
   hospitalTotalBedsIsInvalid,
 } from '../../shared/types/hospital';
 import { HOSPITAL_TIER_VISUAL } from '../../shared/lib/hospital-tier-visual';
+import { useAppModeStore } from '../../shared/store/appModeStore';
 
 import { HospitalActionButtons } from './HospitalActionButtons';
 import { HospitalLocationMeta } from './HospitalLocationMeta';
 import { TierBadge } from './TierBadge';
 import { AvailableBedsBadge } from './AvailableBedsBadge';
 import { HospitalHiraInfo } from './HospitalHiraInfo';
+import { HospitalRadarChart } from './HospitalRadarChart';
+import { HospitalMoonlightInfo } from './HospitalMoonlightInfo';
 
 const PANEL_SHELL =
   'flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-[#fcfdff] shadow-[0_1px_0_rgba(15,23,42,0.03)]';
@@ -24,6 +27,8 @@ const TIER_HEADER: Record<1 | 2 | 3, string> = {
 };
 
 export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
+  const viewMode = useAppModeStore((state) => state.viewMode);
+
   const tierLabel = hospitalTierBadge(hospital.tier);
   const availableBeds = hospitalAvailableBeds(hospital);
   const totalBeds = hospitalTotalBeds(hospital);
@@ -50,7 +55,15 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-5">
         <HospitalLocationMeta hospital={hospital} />
 
-        {availableBeds !== undefined ? (
+        {viewMode === 'admin' ? (
+          hospital.tier === 3 ? (
+            <HospitalMoonlightInfo hospital={hospital} variant="admin" />
+          ) : (
+            <HospitalRadarChart hospital={hospital} />
+          )
+        ) : null}
+
+        {hospital.tier !== 3 && (availableBeds !== undefined ? (
           <section className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
             <p className="mb-3 text-xs font-bold text-slate-600">실시간 응급 병상</p>
             <div className="flex items-baseline gap-1.5">
@@ -77,8 +90,21 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
             {hospital.realtime_source === 'mock' ? (
               <p className="mt-2 text-[10px] text-slate-400">※ Mock 데이터 (API 승인 전)</p>
             ) : null}
+            {hospital.realtime_source === 'api' ? (
+              <div className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 ring-1 ring-emerald-200">
+                <p className="text-[10px] font-bold text-emerald-800">국립중앙의료원 실시간 정보</p>
+                <p className="mt-1 text-[10px] leading-relaxed text-emerald-700">
+                  조회 시점의 병상 현황입니다. 이동 중 변동될 수 있으므로 방문 전 병원 또는 119·1339에 확인하세요.
+                </p>
+              </div>
+            ) : null}
           </section>
-        ) : null}
+        ) : (
+          <section className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+            <p className="text-xs font-bold text-slate-600">실시간 응급 병상</p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-500">현재 병상 정보를 불러오지 못했습니다. 병원에 전화하거나 119·1339에 수용 가능 여부를 확인해 주세요.</p>
+          </section>
+        ))}
 
         {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
           <section className="rounded-2xl bg-amber-50 p-4 ring-1 ring-amber-200">
@@ -93,7 +119,13 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
           </section>
         ) : null}
 
-        <HospitalHiraInfo hospital={hospital} />
+        {viewMode !== 'admin' ? (
+          hospital.tier === 3 ? (
+            <HospitalMoonlightInfo hospital={hospital} variant="citizen" />
+          ) : (
+            <HospitalHiraInfo hospital={hospital} />
+          )
+        ) : null}
 
         <section className="rounded-2xl bg-[#f4f8ff] p-4 ring-1 ring-blue-200/60">
           <p className="mb-3 text-xs font-bold text-[#2457c5]">빠른 액션</p>

@@ -37,6 +37,8 @@ export interface HospitalRecord {
   equipment_status?: Record<string, boolean>;
   /** 심평원 지정/안내 특이사항 (예: 달빛어린이병원 지정, 등급 등) */
   hira_notices?: string[];
+  /** api일 때만 실제 HIRA 응답에서 취득한 값 */
+  hira_source?: 'api';
 }
 
 export function hospitalDisplayName(hospital: HospitalRecord): string {
