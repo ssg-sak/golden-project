@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion, useAnimation, useDragControls } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
 import { useEtaController } from './lib/useEtaController';
 import { useSortedHospitalsByDistance } from '../../shared/hooks/useSortedHospitalsByDistance';
@@ -43,6 +43,8 @@ export function MobileBottomSheet({
 }: MobileBottomSheetProps) {
   const { etas, hasFallback, fetchEtas } = useEtaController();
   const controls = useAnimation();
+  const dragControls = useDragControls();
+  const didDragRef = useRef(false);
   const [sheetState, setSheetState] = useState<'expanded' | 'half' | 'collapsed'>('half');
 
   const baseSortedHospitals = useSortedHospitalsByDistance(
@@ -97,6 +99,10 @@ export function MobileBottomSheet({
     } else {
       controls.start(sheetState);
     }
+
+    window.requestAnimationFrame(() => {
+      didDragRef.current = false;
+    });
   };
 
   const variants = {
@@ -112,18 +118,32 @@ export function MobileBottomSheet({
       variants={variants}
       transition={{ type: 'spring', damping: 30, stiffness: 400 }}
       drag="y"
+      dragControls={dragControls}
+      dragListener={false}
       dragConstraints={{ top: 0, bottom: 0 }}
       dragElastic={0.2}
+      onDragStart={() => {
+        didDragRef.current = true;
+      }}
       onDragEnd={handleDragEnd}
       className="fixed bottom-0 left-0 right-0 z-[100] flex h-[90dvh] flex-col overflow-hidden rounded-t-3xl bg-white/95 backdrop-blur-md shadow-[0_-8px_30px_rgba(0,0,0,0.12)]"
     >
       {/* 드래그 핸들 */}
-      <div 
-        className="flex w-full cursor-grab active:cursor-grabbing items-center justify-center pb-2 pt-3 shrink-0"
-        aria-label="시트 높이 조절"
+      <button
+        type="button"
+        className="flex min-h-11 w-full shrink-0 touch-none cursor-grab items-center justify-center pb-2 pt-3 active:cursor-grabbing"
+        aria-label="병원 목록 시트 높이 조절"
+        aria-expanded={sheetState === 'expanded'}
+        onPointerDown={(event) => dragControls.start(event)}
+        onClick={() => {
+          if (didDragRef.current) return;
+          setSheetState((current) =>
+            current === 'collapsed' ? 'half' : current === 'half' ? 'expanded' : 'half',
+          );
+        }}
       >
         <div className="h-1.5 w-12 rounded-full bg-slate-300" />
-      </div>
+      </button>
 
       {selectedHospital ? (
         // 선택된 병원이 있으면 상세 패널 렌더링
@@ -139,7 +159,7 @@ export function MobileBottomSheet({
               목록으로 돌아가기
             </button>
           </div>
-          <div className="flex-1 overscroll-contain overflow-y-auto pb-[max(5rem,env(safe-area-inset-bottom))]">
+          <div className="min-h-0 flex-1 overflow-hidden pb-[max(5rem,env(safe-area-inset-bottom))]">
             <HospitalDetailPanel hospital={selectedHospital} />
           </div>
         </div>
