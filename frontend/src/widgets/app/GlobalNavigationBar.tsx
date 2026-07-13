@@ -49,9 +49,8 @@ export function GlobalNavigationBar() {
   const setViewMode = useAppModeStore((state) => state.setViewMode);
   const [now, setNow] = useState(() => new Date());
 
-  const isListPage = location.pathname === '/list';
   const isAboutPage = location.pathname === '/about';
-  const showBackButton = isListPage || isAboutPage;
+  const showBackButton = isAboutPage;
   const activeMode: ViewMode = showBackButton ? 'citizen' : viewMode;
 
   useEffect(() => {
@@ -143,7 +142,7 @@ export function GlobalNavigationBar() {
                   공식 소개
                 </Link>
                 <Link
-                  to="/list"
+                  to="/"
                   onClick={() => setViewMode('citizen')}
                   className="rounded-md px-3 py-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-50 hover:text-slate-800 sm:text-sm"
                 >

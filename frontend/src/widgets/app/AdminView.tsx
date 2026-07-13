@@ -113,47 +113,46 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
         />
       </div>
 
-      <main className={DASHBOARD_MAIN_CLASS}>
-        <div className="block lg:hidden">
-          <AdminMobileBottomSheet
-            hospitals={filteredHospitals}
-            selectedHospital={adminState.selectedHospital}
-            onHospitalSelect={adminState.handleHospitalSelect}
-            loading={adminState.hospitalsLoading}
-            highlightedHospitalName={adminState.highlightedHospitalName}
-            currentMode={adminState.currentMode as 'all' | 'adult' | 'pediatric' | 'senior'}
-            onModeChange={(val) => {
-              adminState.setOptimalMode(val);
-              if (val === 'pediatric') setShowAvailableOnly(false);
-            }}
-            showAvailableOnly={showAvailableOnly}
-            onShowAvailableOnlyChange={setShowAvailableOnly}
-            isDetailOpen={adminState.isDetailOpen}
-            selectedVulnerability={adminState.selectedVulnerability}
-            vulnerabilitySummary={adminState.vulnerabilitySummary ?? undefined}
-            onDistrictSelect={adminState.handleDistrictSelect}
-            
-            // 추가 Props for Mobile PC-Info Overlay
-            districtCount={adminState.districtCount}
-            tier1Count={adminState.tier1Count}
-            tier2Count={adminState.tier2Count}
-            tier3Count={adminState.tier3Count}
-            highRiskDistrictCount={adminState.highRiskDistrictCount}
-            highRiskThreshold={adminState.riskThreshold}
-            statsLoading={adminState.statsLoading}
-            hospitalsUpdatedAt={adminState.hospitalsUpdatedAt}
-            vulnerabilityUpdatedAt={adminState.vulnerabilityUpdatedAt}
-            totalHospitalsDelta={adminState.totalHospitalsDelta}
-            highRiskDelta={adminState.highRiskDelta}
-            populationBaseMonth={adminState.populationBaseMonth}
-            adminAreaChangeText={adminState.adminAreaChangeText}
-            emergencyChangeText={adminState.emergencyChangeText}
-            highRiskChangeText={adminState.highRiskChangeText}
-            dataStale={adminState.dataStale}
-            policyStatus={adminState.policyStatus}
-          />
-        </div>
+      <div className="flex min-h-0 flex-1 flex-col lg:hidden">
+        <AdminMobileBottomSheet
+          staticMode
+          hospitals={filteredHospitals}
+          selectedHospital={adminState.selectedHospital}
+          onHospitalSelect={adminState.handleHospitalSelect}
+          loading={adminState.hospitalsLoading}
+          highlightedHospitalName={adminState.highlightedHospitalName}
+          currentMode={adminState.currentMode as 'all' | 'adult' | 'pediatric' | 'senior'}
+          onModeChange={(val) => {
+            adminState.setOptimalMode(val);
+            if (val === 'pediatric') setShowAvailableOnly(false);
+          }}
+          showAvailableOnly={showAvailableOnly}
+          onShowAvailableOnlyChange={setShowAvailableOnly}
+          isDetailOpen={adminState.isDetailOpen}
+          selectedVulnerability={adminState.selectedVulnerability}
+          vulnerabilitySummary={adminState.vulnerabilitySummary ?? undefined}
+          onDistrictSelect={adminState.handleDistrictSelect}
+          districtCount={adminState.districtCount}
+          tier1Count={adminState.tier1Count}
+          tier2Count={adminState.tier2Count}
+          tier3Count={adminState.tier3Count}
+          highRiskDistrictCount={adminState.highRiskDistrictCount}
+          highRiskThreshold={adminState.riskThreshold}
+          statsLoading={adminState.statsLoading}
+          hospitalsUpdatedAt={adminState.hospitalsUpdatedAt}
+          vulnerabilityUpdatedAt={adminState.vulnerabilityUpdatedAt}
+          totalHospitalsDelta={adminState.totalHospitalsDelta}
+          highRiskDelta={adminState.highRiskDelta}
+          populationBaseMonth={adminState.populationBaseMonth}
+          adminAreaChangeText={adminState.adminAreaChangeText}
+          emergencyChangeText={adminState.emergencyChangeText}
+          highRiskChangeText={adminState.highRiskChangeText}
+          dataStale={adminState.dataStale}
+          policyStatus={adminState.policyStatus}
+        />
+      </div>
 
+      <main className={`${DASHBOARD_MAIN_CLASS} max-lg:hidden`}>
         <div className={`hidden lg:flex ${DESKTOP_SIDEBAR_WRAPPER_CLASS}`}>
           <AdminHospitalSidebar
             hospitals={filteredHospitals}

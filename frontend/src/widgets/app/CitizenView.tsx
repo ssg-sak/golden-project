@@ -16,9 +16,9 @@ import { EmergencyBanner } from '../shared/EmergencyBanner';
 import { DegradedDataBanner } from '../shared/DegradedDataBanner';
 import { CitizenMapComponent } from '../map-dashboard/CitizenMapComponent';
 import { HospitalDetailPanel } from '../map-dashboard/HospitalDetailPanel';
-import { MobileBottomSheet } from '../map-dashboard/MobileBottomSheet';
 import { DesktopSidebar } from '../map-dashboard/DesktopSidebar';
 import { useOptimalLocationsStore } from '../map-dashboard/lib/useOptimalLocationsStore';
+import { MobileCitizenHospitalBrowser } from './MobileCitizenHospitalBrowser';
 
 interface KakaoState {
   configured: boolean;
@@ -111,7 +111,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
 
   return (
     <div className={`${DASHBOARD_VIEW_ROOT_CLASS} relative bg-[#eef2f3]`}>
-      <div className="absolute left-0 right-0 top-[110px] z-40 flex flex-col gap-1 px-2 lg:static lg:block lg:p-0 pointer-events-none [&>*]:pointer-events-auto">
+      <div className="hidden lg:static lg:block lg:p-0">
         <EmergencyBanner />
         
         {hospitalsDegraded ? (
@@ -128,25 +128,37 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
         ) : null}
       </div>
 
-      <main className={DASHBOARD_MAIN_CLASS}>
-        {/* 모바일 바텀 시트 (lg 미만에서만 렌더링, Framer Motion 자체 제어) */}
-        <div className="block lg:hidden">
-          <MobileBottomSheet
-            hospitals={hospitals}
-            selectedHospital={selectedHospital}
-            onHospitalSelect={handleHospitalSelect}
-            loading={hospitalsLoading}
-            userLocation={location}
-            isLocating={isLocating}
-            locationErrorReason={errorReason}
-            onRetryLocation={retry}
-            showAvailableOnly={showAvailableOnly}
-            onShowAvailableOnlyChange={setShowAvailableOnly}
-            careTarget={careTarget}
-            onCareTargetChange={handleCareTargetChange}
+      <div className="flex min-h-0 flex-1 flex-col lg:hidden">
+        <EmergencyBanner />
+        {hospitalsDegraded ? (
+          <DegradedDataBanner
+            compact
+            isRetrying={hospitalsLoading}
+            message={
+              hospitalsDegradedMode === 'stale-cache'
+                ? '네트워크 문제로 이전 병원 정보를 표시 중입니다. 병상 수는 최신이 아닐 수 있습니다.'
+                : '실시간 병상을 확인하지 못해 기본 병원 목록을 표시 중입니다.'
+            }
+            onRetry={onRetryHospitals}
           />
-        </div>
+        ) : null}
+        <MobileCitizenHospitalBrowser
+          hospitals={hospitals}
+          selectedHospital={selectedHospital}
+          onHospitalSelect={handleHospitalSelect}
+          loading={hospitalsLoading}
+          userLocation={location}
+          isLocating={isLocating}
+          locationErrorReason={errorReason}
+          onRetryLocation={retry}
+          showAvailableOnly={showAvailableOnly}
+          onShowAvailableOnlyChange={setShowAvailableOnly}
+          careTarget={careTarget}
+          onCareTargetChange={handleCareTargetChange}
+        />
+      </div>
 
+      <main className={`${DASHBOARD_MAIN_CLASS} max-lg:hidden`}>
         {/* 데스크톱 사이드바 (lg 이상에서만 렌더링) */}
         <div className={`hidden lg:flex ${DESKTOP_SIDEBAR_WRAPPER_CLASS}`}>
           <DesktopSidebar

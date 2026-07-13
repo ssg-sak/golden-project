@@ -93,16 +93,7 @@ export function HospitalSidebarList({
             return (
               <li key={hospital.name}>
                 <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => onHospitalSelect(hospital)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault();
-                      onHospitalSelect(hospital);
-                    }
-                  }}
-                  className={`flex w-full cursor-pointer flex-col gap-2 px-4 py-4 text-left transition-colors ${
+                  className={`flex w-full flex-col gap-2 px-4 py-4 text-left transition-colors ${
                     isActive
                       ? 'border-l-4 border-teal-800 bg-teal-50'
                       : 'border-l-4 border-transparent bg-white hover:bg-slate-50'
@@ -152,6 +143,14 @@ export function HospitalSidebarList({
                       lng={hospital.lng}
                     />
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => onHospitalSelect(hospital)}
+                    className="mt-1 flex min-h-11 w-full items-center justify-center rounded-lg border border-teal-800 bg-teal-50 px-4 text-sm font-extrabold text-teal-900 transition-colors hover:bg-teal-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                    aria-label={`${hospital.name} 상세 정보 보기`}
+                  >
+                    상세 보기
+                  </button>
                 </div>
               </li>
             );

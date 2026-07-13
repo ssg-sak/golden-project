@@ -25,6 +25,7 @@ import { MetricsGuide } from '../map-dashboard/MetricsGuide';
 import { PolicyStatusBanner } from './PolicyStatusBanner';
 
 interface AdminMobileBottomSheetProps {
+  staticMode?: boolean;
   hospitals: HospitalRecord[];
   selectedHospital: HospitalRecord | null;
   onHospitalSelect: (hospital: HospitalRecord | null) => void;
@@ -67,6 +68,7 @@ interface AdminMobileBottomSheetProps {
 }
 
 export function AdminMobileBottomSheet({
+  staticMode = false,
   hospitals,
   selectedHospital,
   onHospitalSelect,
@@ -102,7 +104,9 @@ export function AdminMobileBottomSheet({
   const controls = useAnimation();
   const dragControls = useDragControls();
   const didDragRef = useRef(false);
-  const [sheetState, setSheetState] = useState<'expanded' | 'half' | 'collapsed'>('half');
+  const [sheetState, setSheetState] = useState<'expanded' | 'half' | 'collapsed'>(
+    staticMode ? 'expanded' : 'half',
+  );
 
   const sortedHospitals = useMemo(
     () =>
@@ -171,11 +175,11 @@ export function AdminMobileBottomSheet({
 
   return (
     <motion.aside
-      initial="half"
+      initial={staticMode ? 'expanded' : 'half'}
       animate={controls}
       variants={variants}
       transition={{ type: 'spring', damping: 30, stiffness: 400 }}
-      drag="y"
+      drag={staticMode ? false : 'y'}
       dragControls={dragControls}
       dragListener={false}
       dragConstraints={{ top: 0, bottom: 0 }}
@@ -184,12 +188,16 @@ export function AdminMobileBottomSheet({
         didDragRef.current = true;
       }}
       onDragEnd={handleDragEnd}
-      className="fixed bottom-0 left-0 right-0 z-[100] flex h-[90dvh] flex-col overflow-hidden rounded-t-3xl bg-[#f5f8fc]/95 backdrop-blur-md shadow-[0_-8px_30px_rgba(0,0,0,0.12)]"
+      className={
+        staticMode
+          ? 'relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-[#f5f8fc]'
+          : 'fixed bottom-0 left-0 right-0 z-[100] flex h-[90dvh] flex-col overflow-hidden rounded-t-3xl bg-[#f5f8fc]/95 backdrop-blur-md shadow-[0_-8px_30px_rgba(0,0,0,0.12)]'
+      }
     >
       {/* 드래그 핸들 */}
       <button
         type="button"
-        className="flex min-h-11 w-full shrink-0 touch-none cursor-grab items-center justify-center pb-2 pt-3 active:cursor-grabbing"
+        className={`${staticMode ? 'hidden' : 'flex'} min-h-11 w-full shrink-0 touch-none cursor-grab items-center justify-center pb-2 pt-3 active:cursor-grabbing`}
         aria-label="정책 분석 시트 높이 조절"
         aria-expanded={sheetState === 'expanded'}
         onPointerDown={(event) => dragControls.start(event)}
@@ -205,20 +213,23 @@ export function AdminMobileBottomSheet({
 
       {isDetailOpen ? (
         <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="px-4 pb-2 pt-1 shrink-0 bg-white">
-            <button
-              onClick={() => {
-                onHospitalSelect(null);
-                onDistrictSelect(null);
-              }}
-              className="flex items-center gap-1 text-sm font-semibold text-slate-600 hover:text-slate-900"
+          <button
+            type="button"
+            onClick={() => {
+              onHospitalSelect(null);
+              onDistrictSelect(null);
+            }}
+            className="fixed left-3 top-[calc(var(--mobile-nav-height,0px)+0.75rem)] z-[200] inline-flex min-h-11 max-w-[calc(100vw-1.5rem)] items-center gap-2 rounded-full border border-slate-800 bg-white/95 px-3 py-2 text-sm font-extrabold text-slate-950 shadow-lg backdrop-blur transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 lg:hidden"
+            aria-label="정책 상세를 닫고 정책 목록으로 돌아가기"
+          >
+            <span
+              aria-hidden
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-800 text-lg font-bold text-white"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              목록으로 돌아가기
-            </button>
-          </div>
+              ←
+            </span>
+            <span className="truncate">정책 목록으로</span>
+          </button>
           <div className="min-h-0 flex-1 overflow-hidden bg-white pb-[max(5rem,env(safe-area-inset-bottom))]">
             <DetailPanel
               selectedHospital={selectedHospital}

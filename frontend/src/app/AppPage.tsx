@@ -34,7 +34,7 @@ export default function AppPage() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-slate-100">
+    <div className="flex min-h-dvh max-w-[100vw] flex-col overflow-x-hidden bg-slate-100">
       <DemoNoticeModal />
       
       {/* 모바일에서는 지도 위로 플로팅, 데스크톱에서는 정상 흐름 */}
