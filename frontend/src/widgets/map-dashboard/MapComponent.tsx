@@ -4,10 +4,9 @@ import { Map, MapMarker, ZoomControl } from 'react-kakao-maps-sdk';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { toAdmNmKey } from '../../shared/types/vulnerability';
 
-import { AdminHospitalMapMarker } from './AdminHospitalMapMarker';
 import { DistrictHoverTooltip } from './DistrictHoverTooltip';
 import { DistrictPolygon } from './DistrictPolygon';
-import { SelectedHospitalPin } from './SelectedHospitalPin';
+import { HospitalMarkersLayer } from './HospitalMarkersLayer';
 import { MapHud } from './MapHud';
 import { MapToolbar } from './MapToolbar';
 import { MapInteraction } from './MapInteraction';
@@ -26,7 +25,6 @@ import {
 const DAEGU_CENTER: KakaoLatLng = { lat: 35.8714, lng: 128.6014 };
 const DEFAULT_LEVEL = 7;
 const SELECTED_LEVEL = 5;
-const HOSPITAL_SELECTED_LEVEL = 3;
 
 interface MapComponentProps {
   hospitals: HospitalRecord[];
@@ -53,12 +51,6 @@ export function MapComponent(props: MapComponentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const { userLocation, locating, panMapTo, handleLocateMe } = useMapController(mapRef);
-
-  useEffect(() => {
-    if (props.selectedHospital) {
-      panMapTo(props.selectedHospital.lat, props.selectedHospital.lng, HOSPITAL_SELECTED_LEVEL, true, true);
-    }
-  }, [props.selectedHospital?.name, props.selectedHospital?.lat, props.selectedHospital?.lng, panMapTo]);
 
   useEffect(() => {
     if (mapState.selectedRecord?.adm_nm) {
@@ -92,7 +84,7 @@ export function MapComponent(props: MapComponentProps) {
       )}
       <div
         ref={containerRef}
-        className="relative min-h-0 flex-1 w-full touch-none"
+        className="relative min-h-0 w-full flex-1"
       >
         <Map
           center={DAEGU_CENTER}
@@ -161,23 +153,13 @@ export function MapComponent(props: MapComponentProps) {
             />
           )}
 
-          {mapState.filteredHospitals.map((hospital) => (
-            <AdminHospitalMapMarker
-              key={hospital.name}
-              hospital={hospital}
-              isSelected={props.selectedHospital?.name === hospital.name}
-              isHighlighted={props.highlightedHospitalName === hospital.name}
-              onSelect={mapState.handleHospitalSelectInternal}
-            />
-          ))}
-
-          {props.selectedHospital ? (
-            <SelectedHospitalPin
-              lat={props.selectedHospital.lat}
-              lng={props.selectedHospital.lng}
-              label={props.selectedHospital.name}
-            />
-          ) : null}
+          <HospitalMarkersLayer
+            hospitals={mapState.filteredHospitals}
+            selectedHospital={props.selectedHospital}
+            highlightedHospitalName={props.highlightedHospitalName}
+            onMarkerSelect={mapState.handleHospitalSelectInternal}
+            panMapTo={panMapTo}
+          />
 
           {userLocation && (
             <MapMarker

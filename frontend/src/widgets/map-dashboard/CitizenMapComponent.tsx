@@ -126,7 +126,7 @@ export function CitizenMapComponent({
     <div className="relative h-full min-h-0 w-full flex-1">
       <div
         ref={containerRef}
-        className="relative h-full min-h-[50vh] lg:min-h-0 w-full touch-none"
+        className="relative h-full min-h-[50vh] w-full lg:min-h-0"
       >
         <Map
           center={DAEGU_CENTER}

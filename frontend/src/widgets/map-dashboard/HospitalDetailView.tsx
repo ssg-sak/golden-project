@@ -11,10 +11,8 @@ import { HospitalActionButtons } from './HospitalActionButtons';
 import { HospitalLocationMeta } from './HospitalLocationMeta';
 import { TierBadge } from './TierBadge';
 import { AvailableBedsBadge } from './AvailableBedsBadge';
-import { HospitalHiraInfo } from './HospitalHiraInfo';
-import { HospitalRadarChart } from './HospitalRadarChart';
-import { HospitalMoonlightInfo } from './HospitalMoonlightInfo';
 import { HospitalGranularBeds } from './HospitalGranularBeds';
+import { HospitalInfrastructureSection } from './HospitalInfrastructureSection';
 
 const PANEL_SHELL =
   'flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-[#fcfdff] shadow-[0_1px_0_rgba(15,23,42,0.03)]';
@@ -51,12 +49,7 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-5">
         <HospitalLocationMeta hospital={hospital} />
 
-        {viewMode === 'admin' ? (
-          <>
-            {hospital.tier === 3 ? <HospitalMoonlightInfo hospital={hospital} variant="admin" /> : null}
-            <HospitalRadarChart hospital={hospital} />
-          </>
-        ) : null}
+        {viewMode === 'admin' ? <HospitalInfrastructureSection hospital={hospital} variant="admin" /> : null}
 
         {hospital.tier !== 3 ? (
           availableBeds !== undefined ? (
@@ -84,13 +77,7 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
           </section>
         ) : null}
 
-        {viewMode !== 'admin' ? (
-          hospital.tier === 3 ? (
-            <HospitalMoonlightInfo hospital={hospital} variant="citizen" />
-          ) : (
-            <HospitalHiraInfo hospital={hospital} />
-          )
-        ) : null}
+        {viewMode !== 'admin' ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
 
         <section className="rounded-2xl bg-[#f4f8ff] p-4 ring-1 ring-blue-200/60">
           <p className="mb-3 text-xs font-bold text-[#2457c5]">빠른 액션</p>

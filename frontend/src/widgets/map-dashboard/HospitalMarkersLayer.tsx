@@ -20,11 +20,15 @@ export function HospitalMarkersLayer({
   onMarkerSelect,
   panMapTo,
 }: HospitalMarkersLayerProps) {
+  const selectedName = selectedHospital?.name;
+  const selectedLat = selectedHospital?.lat;
+  const selectedLng = selectedHospital?.lng;
+
   useEffect(() => {
-    if (selectedHospital) {
-      panMapTo(selectedHospital.lat, selectedHospital.lng, HOSPITAL_SELECTED_LEVEL, true, true);
+    if (selectedLat !== undefined && selectedLng !== undefined) {
+      panMapTo(selectedLat, selectedLng, HOSPITAL_SELECTED_LEVEL, true, true);
     }
-  }, [selectedHospital?.name, selectedHospital?.lat, selectedHospital?.lng, panMapTo]);
+  }, [selectedName, selectedLat, selectedLng, panMapTo]);
 
   return (
     <>

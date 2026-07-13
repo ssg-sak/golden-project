@@ -9,9 +9,8 @@ import type { HospitalRecord } from '../../shared/types/hospital';
 import { CitizenBedLabel } from './CitizenBedLabel';
 import { CitizenHospitalTelLink } from './CitizenHospitalTelLink';
 import { HospitalLocationMeta } from './HospitalLocationMeta';
-import { HospitalMoonlightInfo } from './HospitalMoonlightInfo';
 import { HospitalGranularBeds } from './HospitalGranularBeds';
-import { HospitalHiraInfo } from './HospitalHiraInfo';
+import { HospitalInfrastructureSection } from './HospitalInfrastructureSection';
 
 const PANEL_SHELL =
   'glass-panel-strong flex h-full min-h-0 flex-col overflow-hidden';
@@ -80,9 +79,7 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           </p>
         </section>
 
-        {hospital.tier === 3 ? (
-          <HospitalMoonlightInfo hospital={hospital} variant="citizen" />
-        ) : null}
+        {hospital.tier === 3 ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
 
         {hospital.tier !== 3 && (hospital.realtime_source === 'unavailable' ||
         hospital.realtime_source === 'mock' ||
@@ -92,7 +89,7 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           </p>
         ) : null}
 
-        {hospital.tier !== 3 ? <HospitalHiraInfo hospital={hospital} /> : null}
+        {hospital.tier !== 3 ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
 
         {hospital.tier !== 3 ? (
           <HospitalGranularBeds hospital={hospital} />
