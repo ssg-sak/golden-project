@@ -132,13 +132,13 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    User[분석가 / 채용 담당자] --> UI[React 프론트엔드 (Kakao Map)]
-    UI --> API[FastAPI 백엔드]
-    API --> DB[(SQLite: hospitals.db)]
+    User["분석가 / 채용 담당자"] --> UI["React 프론트엔드 (Kakao Map)"]
+    UI --> API["FastAPI 백엔드"]
+    API --> DB[("SQLite: hospitals.db")]
     
-    Data[공공데이터 csv] --> Pipeline[Python: AI 거점 도출 모델]
-    Pipeline --> Simulator[Python: 자원 확충 시뮬레이터]
-    Simulator --> JSON[결과 JSON: optimal_locations.json 등]
+    Data["공공데이터 csv"] --> Pipeline["Python: AI 거점 도출 모델"]
+    Pipeline --> Simulator["Python: 자원 확충 시뮬레이터"]
+    Simulator --> JSON["결과 JSON: optimal_locations.json 등"]
     JSON --> UI
 ```
 
