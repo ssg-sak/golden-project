@@ -1,147 +1,284 @@
-# 대구 골든타임 (Daegu Golden Time)
+# 대구 골든타임: 골든 거버넌스
+Daegu Golden Time: Golden Governance
 
-## 개발 문서 바로가기
+대구광역시 행정동별 응급의료 접근성과 취약성을 분석해 의료자원 배치 우선순위를 제안하는 정책 데이터 분석 프로젝트
 
-- [프론트엔드·백엔드 전체 파일 트리](./docs/architecture/component_file_map_20260714.md): 전체 파일 역할, Zustand, API, Service, View를 찾는 안내서
-- [예외 처리 학습서](./docs/guides/exception_handling_study_20260714.md): 성공·부분 실패·폴백을 구분하는 기준과 이번 수정 사례
-- [예외 처리 개선 보고서](./docs/reports/exception_handling_improvement_report_20260714.md): 수정 범위와 검증 결과
-- [AI 모델 EDA 계획](./docs/plans/ai_model_eda_plan_20260713.md): AI 분석 데이터 탐색 및 검증 계획
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
+![Data Analysis](https://img.shields.io/badge/Data%20Analysis-FF6F00?style=flat-square)
 
-### 프런트엔드 상태·컴포넌트 구조
+---
 
-```text
-AppPage
-├─ CitizenView ─────────────── useHospitalStore, useOptimalLocationsStore
-│  ├─ MapComponent ────────── useMapComponentController
-│  │  ├─ VulnerabilityLayer ─ useVulnerabilityStore
-│  │  └─ OptimalLocationMarkers ─ useOptimalLocationsStore
-│  ├─ DesktopSidebar ──────── useEtaController
-│  └─ MobileBottomSheet ───── useEtaController
-└─ AdminView
-   └─ useAdminController
-      ├─ useHospitalStore
-      ├─ useVulnerabilityStore
-      ├─ useDashboardSummaryStore
-      └─ useOptimalLocationsStore
+## 프로젝트 요약
 
-AppDataBootstrap
-├─ useHospitalStore.fetchHospitals()
-└─ useVulnerabilityStore.fetchVulnerability()
+| 구분 | 내용 |
+| --- | --- |
+| **분석 지역** | 대구광역시 |
+| **분석 단위** | 수요 지점 (유치원, 취약 행정동 중심점) 및 5km 반경 의료 인프라 |
+| **주요 대상** | 소아(달빛어린이병원 수요), 고령층(권역/지역응급 수요) |
+| **핵심 방법** | GIS 3km 반경 공간 필터링, 3중 복합 가중치 산출, K-Means 군집분석 |
+| **결과물** | 최적 의료 거점 JSON 데이터, 자원 확충 권고 리포트, 시각화 대시보드 |
+| **현재 상태** | 분석 파이프라인 및 백엔드/프론트엔드 연동 구현 완료 |
+
+---
+
+## 프로젝트를 시작한 이유
+
+1. **병원의 개수와 실제 접근성의 괴리**  
+   단순히 행정동 내 의료기관 개수가 많다고 해서 실제 중증 응급상황 시 적절한 조치를 받을 수 있는 것은 아닙니다. 
+2. **계층별 차별화된 의료 수요**  
+   소아에게는 야간 진료가 가능한 달빛어린이병원이, 고령층에게는 중증 질환 대응이 가능한 권역/지역응급센터가 필요합니다. 
+3. **가짜 안전망 판별**  
+   지리적으로는 병원 반경 내에 있더라도 전문의가 부족하거나 필수 장비(MRI, CT)가 없다면 사실상 사각지대입니다.
+4. **정책적 의사결정 지원**  
+   막대한 예산이 드는 신규 병원 건립 이전에, 기존 인근 병원에 의사를 충원하거나 장비를 배치하는 효율적인 자원 확충(기능 재배치) 시나리오를 찾고자 했습니다.
+
+---
+
+## 핵심 질문
+
+* 대구에서 소아와 고령층의 실질적 응급의료 사각지대(3km 밖)는 각각 어디인가?
+* 병원과의 지리적 거리뿐만 아니라, 기존 병원의 전문의 수와 장비 부재를 종합적으로 고려할 때 가장 위험한 지역은 어디인가?
+* 사각지대 인구를 커버하기 위해 새로운 거점을 마련한다면 그 최적 위치는 어디인가?
+* 도출된 최적 위치 주변 병원의 인프라 상태를 볼 때, 의사 충원과 신규 시설 건립 중 어떤 조치가 더 우선적으로 필요한가?
+
+---
+
+## 주요 기능
+
+| 기능 | 설명 | 상태 |
+| --- | --- | --- |
+| **계층별 사각지대 도출** | 소아(Tier 3)와 고령층(Tier 1,2)을 분리해 병원 반경 3km 외부의 수요 지점을 필터링 | 구현 완료 |
+| **3중 복합 가중치 기반 군집분석** | 지리적 소외 지수(VDI), 인프라 패널티, 취약 인구 비율을 K-Means 가중치로 적용해 최적 거점 탐색 | 구현 완료 |
+| **자원 확충 시뮬레이션** | 도출된 거점 반경 5km 내 기존 병원 인프라를 분석해 필요 자원(의사, MRI/CT) 및 우선순위(HIGH/MED/LOW) 자동 계산 | 구현 완료 |
+| **AI 센터 시각화 대시보드** | React와 Kakao Maps SDK를 이용해 분석 파이프라인 결과물을 인터랙티브 지도로 제공 | 구현 완료 |
+| **교통망 기반 이동시간 적용** | 직선거리가 아닌 실제 내비게이션 기반 이동시간 분석 | 향후 개발 예정 |
+
+---
+
+## 분석 프레임워크
+
+```mermaid
+flowchart LR
+    A[공공데이터 수집] --> B[데이터 정제 및 지오코딩]
+    B --> C[소아 / 고령층 분리]
+    C --> D[GIS 기반 3km 사각지대 필터링]
+    D --> E[인프라 패널티 산출]
+    E --> F[3중 복합 가중치 적용]
+    F --> G[K-Means 군집분석 거점 도출]
+    G --> H[5km 반경 자원 확충 시뮬레이션]
+    H --> I[지도 대시보드 및 리포트 제공]
 ```
 
-전체 파일 트리와 Store별 상태·액션·구독 컴포넌트는 [프론트엔드·백엔드 전체 파일 트리](./docs/architecture/component_file_map_20260714.md)에서 확인할 수 있습니다.
-
-> **"응급 상황의 병원 탐색을 보조하고, 데이터로 지역 의료자원 배분 우선순위를 진단합니다."**
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
-[![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Zustand](https://img.shields.io/badge/Zustand-764ABC?style=flat&logo=react&logoColor=white)](https://github.com/pmndrs/zustand)
-[![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
-
-**대구 골든타임**은 시민의 응급 병원 탐색을 보조하고 권역응급센터 쏠림을 줄이는 선택지를 제시하며, 행정·정책 관리자에게는 의료 사각지대와 자원배분 우선순위를 보여주는 **투트랙(Two-Track) 응급의료 거버넌스 프로토타입**입니다.
-
-> 본 서비스는 119·1339를 대체하지 않습니다. 응급 상황에서는 반드시 119 또는 1339로 연락하세요. 의료 정보는 공공 API 응답 시점 기준이며 병원의 실제 상황과 다를 수 있으므로 이동 전에 확인이 필요합니다.
-
-📚 **문서 및 포트폴리오 스토리는 [docs/](docs/) 폴더를 참조하세요.**
-- [프로젝트 초기 기획 및 행정학적 배경 (Project Story)](./docs/reports/PROJECT_STORY_AND_BACKGROUND.md)
-- [코드 학습·설명서 (Code Explanation)](./CODE_EXPLANATION.md)
-- [기획서 전체 보기](./기획서.html)
+1. **데이터 셋업**: 유치원(소아 수요), 행정동 중심점(고령층 수요), 심평원 병원 덤프 데이터를 로드하고 EPSG:5179로 투영 변환.
+2. **사각지대 필터링**: 병원 위치를 기준으로 반경 3km 버퍼를 생성한 뒤, Spatial Join(`sjoin`)을 통해 버퍼 외부에 있는 진짜 사각지대 수요만 추출.
+3. **가중치 산출**: 각 사각지대 포인트 반경 5km 내 병원들의 전문의 수 및 장비(MRI, CT) 유무를 바탕으로 `인프라 부실 패널티` 산출.
+4. **군집분석**: 3중 복합 가중치를 K-Means 모델의 `sample_weight`로 전달. 단순 지리적 중심이 아닌 **의료 취약도가 가장 높은 곳**으로 군집 중심(거점)이 이동하도록 유도.
+5. **자원 역산**: 거점 주변 병원 데이터를 스캔하여 부족한 의사 수와 장비를 역산, 자연어 형태의 정책 추천문 생성.
 
 ---
 
-## 🎯 핵심 타겟과 듀얼 뷰 (Dual-View) 아키텍처
+## 핵심 지표와 분석 방법
 
-이 플랫폼은 **하나의 웹 앱 안에서 두 명의 완전히 다른 타겟을 위한 뷰(View)를 제공**합니다. 상단의 탭(Tab) 전환을 통해 모드가 완전히 분리됩니다.
+### 1. 3중 복합 가중치 공식
+거점 탐색의 핵심 지표로 사용되며 다음과 같이 계산됩니다.
 
-### 🚑 탭 A. 시민 (응급 상황) 모드
-- **목적:** "현재 공개된 병상 현황과 거리를 함께 보고 어느 병원에 먼저 연락할 것인가?"
-- **주요 기능:**
-  - **카카오내비 실시간 길안내 연동 (URL Scheme):** 응급 상황에서 지체 없이 병원으로 출발할 수 있도록, 클릭 한 번으로 카카오내비 앱을 호출하여 실제 도로 교통 상황이 반영된 경로를 안내합니다.
-  - **가용 병상 시각적 필터링:** 수용 불가(0) 병원은 붉게 표시되거나 밀려나 구급대원과 시민의 헛걸음을 방지합니다.
-  - **Nudge (넛지) 기반 분산 유도:** 병원 등급에 따라 마커 크기를 달리하여, 경증 환자가 권역응급센터로 쏠리는 현상을 자연스럽게 방지합니다.
+```text
+종합 가중치 = VDI (지리적 소외 지수) × (1 + 인프라 패널티) × 계층별 인구 배수
+인프라 패널티 평균 = Σ[ (1 / 전문의 수) × 장비 패널티 배수 ] / 주변 병원 수
+```
+* 장비 패널티 배수: MRI 부재 시 2.0배, CT 부재 시 1.5배 부과.
+* 이 공식에 따라 병원은 있지만 인프라가 부실한 지역의 가중치가 높아져 AI 모델의 우선순위가 올라갑니다.
 
-### 📊 탭 B. 정책 관리자 (관제) 모드
-- **목적:** "대구 지역의 권역별 응급 인프라는 탄탄한가? 의료 공백(사각지대)은 어디인가?"
-- **주요 기능:**
-  - **의료 인프라(전문의/장비) 팩트 관제:** 심평원(HIRA) 데이터를 바탕으로 각 병원의 CT/MRI 등 의료자원 현황을 즉각 표출합니다.
-  - **AI 기반 사각지대 지수(VDI) 분석:** K-Means 클러스터링 공간 분석을 통해 수요처 대비 병원이 먼 고립 구역의 최적 입지(Centroid)를 도출하고 히트맵으로 시각화합니다.
-
----
-
-## 🏗️ 화면 구조 및 프론트엔드 아키텍처 (FSD)
-
-### 3-Panel Layout
-한 화면에서 시선의 분산을 막고 정보의 밀도를 높이기 위해 3-Panel 구조를 사용합니다.
-1. **좌측 (Sidebar):** 시민/관리자 탭 전환 및 병원 리스트(ETA 순/티어 순 정렬)
-2. **중앙 (Canvas):** 카카오맵 API 기반 실시간 인터랙티브 지도
-3. **우측 (Detail):** 마커 클릭 시 나타나는 상세 정보 슬라이드 패널
-
-### Feature-Sliced Design (FSD)
-상태와 뷰의 엄격한 분리를 위해 FSD 구조를 차용했습니다. 데이터 패칭과 상태 변경은 `shared/store/`(Zustand)가 전담하며, View 영역(`widgets/`)은 데이터를 구독하여 렌더링에만 집중합니다. (세부 아키텍처는 [CODE_EXPLANATION.md](./CODE_EXPLANATION.md) 참고)
+### 2. K-Means 기반 정책 개입 군집 탐색
+* **사용 목적**: 사각지대 공간을 효율적으로 커버할 수 있는 가상의 신규 병원 거점 위치를 도출하기 위함.
+* **군집 수 결정**: SSE(오차제곱합) 추세를 분석하는 Elbow Point 함수를 자체 구현하여 최적의 거점 수 자동 탐색.
+* **가중치 반영**: `sklearn.cluster.KMeans` 훈련 시 산출한 종합 가중치를 반영하여 고위험군 클러스터링.
 
 ---
 
-## 🛠️ 기술 스택
+## 데이터
 
-이 프로젝트는 다음과 같은 기술로 구현되어 있습니다.
+| 데이터 | 주요 컬럼 | 활용 목적 | 출처 |
+| --- | --- | --- | --- |
+| **병원 인프라 데이터** | 위/경도, tier, doctors_count, MRI, CT | 병원 위치 확인 및 인프라 부실 패널티 산출 | 심평원 / 공공데이터포털(추정) |
+| **유치원 위치 정보** | 유치원명, latitude, longitude | 소아 응급의료 사각지대 수요 지점 역할 | 확인 필요 |
+| **취약성 지수 (VDI)** | vulnerability_index, geometry | 고령층 수요 지점 및 기본 가중치 | 확인 필요 |
 
-### 💻 프론트엔드
-- **리액트(React) & 타입스크립트(TypeScript)** (화면 및 로직 구현)
-- **주스탠드(Zustand)** (전역 상태 관리)
-- **테일윈드 CSS(Tailwind CSS)** (스타일링)
-- **카카오맵 SDK(react-kakao-maps-sdk)** (지도 정보 시각화)
-
-### ⚙️ 백엔드
-- **패스트API(FastAPI)** (API 서버 구축)
-- **SQLite & SQL알케미(SQLAlchemy)** (캐시 데이터베이스 및 데이터 관리)
-- **AP스케줄러(APScheduler)** (실시간 병상 정보 주기적 백그라운드 수집)
-
-### 📊 데이터 분석
-- **판다스(Pandas) & 지오판다스(GeoPandas)** (병원 자원 전처리 및 지리 공간 분석)
-- **사이킷런(Scikit-learn)** (K-Means 군집화 알고리즘 기반 의료 사각지대 입지 분석)
+> **데이터 참고사항**: 병원 전문의 수와 보유 장비 데이터는 AI 시뮬레이션을 위해 백엔드 오프라인 덤프(`hira_data_bridge.py`)로 재구성된 수치이며, 현장의 실시간 데이터와 시점 차이가 있을 수 있습니다.
 
 ---
 
-## 🛡️ 데이터 철학과 시스템 안정성 (System Reliability)
+## 프로젝트 화면
 
-서버 과부하를 방지하고 무중단(Zero-Downtime) 렌더링을 보장하기 위한 강력한 방어 기제를 탑재했습니다.
-
-- **백그라운드 비동기 캐시 폴링 (Graceful Degradation):** 사용자가 새로고침할 때마다 공공 API를 호출하지 않습니다. 백엔드에서 1~2분 주기로 데이터를 폴링하여 메모리에 캐싱하므로, 동시 접속자가 증가해도 끄떡없습니다.
-- **3초 서킷 브레이커:** 외부 API 응답이 3초를 초과하면 로컬 캐시 또는 안전한 폴백 화면("실시간 확인 중")을 띄워 시스템 셧다운을 방지합니다.
-- **시뮬레이션 스냅샷 모드:** 서버 없는 오프라인 시연을 위해 실제 공공데이터 캡처본(Snapshot)을 내장, 데이터 조작 없이 화려한 기능 동작을 보여줍니다.
+> 프로젝트 화면 스크린샷은 추후 `docs/images` 경로에 추가할 예정입니다. 대시보드를 통해 도출된 거점 위치(별표)와 행정동별 위험도를 지도에서 확인할 수 있습니다.
 
 ---
 
-## 🚀 빠른 시작 (Quick Start)
+## 기술 스택
 
-본 프로젝트는 Node.js 20+ 및 Python 3.11+ 환경을 권장합니다.
+| 영역 | 기술 | 사용 목적 |
+| --- | --- | --- |
+| **데이터 분석/공간** | Python, Pandas, Numpy, GeoPandas | 데이터 전처리, 거리 역산, 3km/5km 버퍼 생성 및 Spatial Join |
+| **머신러닝** | Scikit-learn (K-Means) | 복합 가중치를 고려한 최적 사각지대 거점 군집분석 |
+| **프론트엔드** | React 19, TypeScript, Vite, Zustand, TailwindCSS 4 | 카카오맵 기반 지리정보 시각화 및 UI 렌더링 |
+| **백엔드/DB** | FastAPI, Uvicorn, SQLAlchemy, SQLite | 분석 기반 병원 데이터 및 클러스터 메타데이터 제공 API |
 
-### 1. 환경 변수 설정
-`frontend/.env` 및 프로젝트 루트 `.env` 파일에 API 키를 기입하세요.
-- `VITE_KAKAO_MAP_APP_KEY`: 카카오맵 JavaScript API 키
-- `DATA_GO_KR_API_KEY`: 국립중앙의료원 API 키
+---
 
-### 2. 서버 실행
+## 시스템 구조
+
+```mermaid
+flowchart TD
+    User[분석가 / 채용 담당자] --> UI[React 프론트엔드 (Kakao Map)]
+    UI --> API[FastAPI 백엔드]
+    API --> DB[(SQLite: hospitals.db)]
+    
+    Data[공공데이터 csv] --> Pipeline[Python: AI 거점 도출 모델]
+    Pipeline --> Simulator[Python: 자원 확충 시뮬레이터]
+    Simulator --> JSON[결과 JSON: optimal_locations.json 등]
+    JSON --> UI
+```
+
+---
+
+## 폴더 구조
+
+```text
+project-root/
+├── ai-model/          # K-Means 군집분석 및 자원 시뮬레이션 파이프라인 (핵심 로직)
+├── backend/           # FastAPI 기반 API 서버 및 로컬 DB
+├── frontend/          # React + Vite 기반 사용자 대시보드 화면
+├── golden-data-lab/   # 기초 데이터 분석용 SQL/Jupyter Notebook 저장소
+├── data/              # 원시(raw) 및 가공(processed) 데이터셋 폴더
+├── scripts/           # DB 마이그레이션 등 편의 스크립트
+└── README.md
+```
+
+---
+
+## 설치 및 실행
+
+프로젝트를 로컬 환경에서 테스트하려면 아래 단계를 순서대로 실행하세요.
 
 ```bash
-# [터미널 1] 백엔드 (FastAPI) 실행
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+git clone <repository-url>
+cd <repository-name>
+```
 
-# [터미널 2] 프론트엔드 (Vite/React) 실행
-cd frontend
+### 1. 분석 파이프라인 실행 (결과 데이터 생성)
+```bash
+cd ai-model
+# 백엔드의 환경과 동일한 분석 라이브러리 설치
+pip install -r ../backend/requirements.txt
+# 계층별 최적 거점(클러스터) 추출
+python golden_governance_pipeline.py
+# 도출된 거점 기준 반경 5km 병원 인프라 시뮬레이션 가동
+python resource_simulator.py
+```
+
+### 2. 백엔드 실행
+```bash
+cd ../backend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 3. 프론트엔드 실행
+환경변수에 카카오맵 API 키를 설정한 후 실행합니다.
+```env
+VITE_KAKAO_MAP_API_KEY=your_kakao_api_key
+VITE_API_BASE_URL=http://localhost:8000
+```
+```bash
+cd ../frontend
 npm install
 npm run dev
 ```
 
-브라우저에서 `http://localhost:5173/` 로 접속하면 듀얼 뷰 대시보드가 구동됩니다.
+---
 
-현재는 로컬 개발 환경에서 국립중앙의료원/HIRA 실데이터 통신과 안정성을 검증하는 프로토타입 단계이며, 퍼블릭 클라우드 서비스로 운영 중인 상태가 아닙니다.
+## 분석 결과
+
+### 주요 발견
+* **가짜 안전망 현상 확인**: 지도상으로는 거리가 가까워 보이나, 실제 전문의 수 부족과 필수 장비(MRI 등) 부재로 인해 인프라 패널티가 치솟는 숨겨진 사각지대가 존재했습니다.
+* **소아와 고령층의 공간 분리**: 소아 진료(달빛어린이병원) 수요는 특정 행정구역에 밀집하는 반면, 고령층 중증 응급(권역/지역응급) 취약지는 지리적 외곽으로 넓게 퍼지는 군집 양상을 보였습니다.
+* **복합 가중치 쏠림 현상**: K-Means 시각화 결과, 군집의 중심(Center)이 단순한 거리 중심이 아닌 취약 지수와 장비 패널티가 높은 거점 쪽으로 뚜렷하게 이동함을 검증했습니다.
+
+### 해석
+* AI 파이프라인을 통해 인프라가 완전히 없는 오지(HIGH Priority)와, 인프라는 있으나 충원이 필요한 지역(MEDIUM Priority)을 명확히 구분할 수 있었습니다.
+* 이는 막대한 세금을 투입한 무조건적 '신규 병원 건립'보다 기존 의료 기관에 장비 지원금과 전문의 충원 예산을 배정하는 것이 예산 효율성 측면에서 우월한 대안임을 시사합니다.
 
 ---
 
-## 💼 포트폴리오 핵심 요약
+## 정책적 활용 가능성
 
-> 시민에게는 공개 병상 현황과 길찾기를 제공하고, 정책 관리자에게는 AI 공간 분석 기반 의료 사각지대와 자원배분 우선순위를 제시하는 **대구 골든타임 — 투트랙 응급의료 의사결정 보조 프로토타입**
+1. **응급의료 예산 집행 근거 보조**: 민원 중심의 인프라 배치가 아닌 데이터(의료진/장비 역산 결과) 기반의 예산 편성 지원.
+2. **달빛어린이병원 및 중증 응급 거점 우선순위 도출**: 시뮬레이션에서 '최우선(HIGH)'으로 분류된 클러스터 주변을 실제 행정 조사의 첫 타겟으로 지정.
+3. **자원 기능 재배치 시나리오**: 무조건적인 병원 신축이 불가능할 경우, 클러스터 5km 이내 기존 병원에 어떤 기능을 추가해야 사각지대를 해소할 수 있는지 파악.
+
+> **주의**: 이 분석은 정책 의사결정을 자동화하거나 대체하는 것이 아니라, 현장 조사와 의료/행정 전문가의 심도 있는 판단이 필요한 지역을 과학적으로 선별하는 **데이터 기반 보조자료**로 활용하는 것을 목표로 합니다.
+
+---
+
+## 검증 방법
+
+* **공간 연산 유효성 검증**: GeoPandas를 이용해 버퍼 생성 및 Spatial Join 전 원본 데이터의 좌표계를 한국 표준 투영 좌표계(EPSG:5179)로 변환해 거리 연산 오차 방지.
+* **단독 스크립트 테스트**: `hira_data_bridge.py` 파일 내에 경북대병원 인근(도심)과 오지 지역에 대한 가중치 산출 단독 테스트 코드를 작성해 설계한 공식의 정확도 사전 검증.
+* **K-Means 최적 K 검증**: 개발자가 임의로 K를 결정하지 않고, Elbow Method의 WCSS(Within-Cluster Sum of Square)를 산출해 통계적 근거에 기반하여 K값 선정.
+
+---
+
+## 한계
+
+* **이동거리의 한계**: Haversine 및 버퍼 중심의 직선거리를 사용하므로 실제 도로망 여건(산악 지형 등), 대중교통 노선, 특정 시간대의 교통 체증이 반영되지 않았습니다.
+* **자원 데이터의 실시간성 부재**: 사용된 전문의 수 및 장비 현황(hira dump)은 모델링을 위한 스냅샷 수치로, 병원의 당일 당직 시스템이나 실시간 응급실 혼잡도를 대변하지 않습니다.
+* **주관적 패널티 배수**: 장비 부재 시 곱해지는 패널티 배수(MRI 2.0배, CT 1.5배)는 프로젝트 과정에서 임의로 설계된 값이며, 실제 정책 도입 시 의료 전문가의 자문 파라미터 조정이 필수적입니다.
+
+---
+
+## 향후 개선 계획
+
+* **단기**: 산출된 AI 거점과 시뮬레이션 자연어 리포트를 프론트엔드 대시보드 화면상에 컴포넌트 단위로 연동.
+* **중기**: 카카오 모빌리티(Kakao Navi API) 또는 OSRM을 연동해 실측 주행 시간(Driving Time) 기반의 사각지대 필터링 모델 고도화.
+* **장기**: 자원 확충(예: 특정 병원 전문의 5명 추가) 데이터를 가상으로 입력했을 때, 전체 행정동의 사각지대 지수가 얼마나 감소하는지 시각적으로 보여주는 '양방향 정책 시뮬레이터' 기능 추가.
+
+---
+
+## 프로젝트에서 배운 점
+
+* 서로 다른 출처의 공공데이터(유치원, 병원, 행정동 GIS)를 다룰 때 **좌표계 통일(EPSG:4326 ↔ 5179)과 결측치 처리의 중요성**을 몸소 경험했습니다.
+* 지표 설계 과정에서 "병원과의 거리가 가깝다 = 무조건 안전하다"라는 가설의 오류를 발견하고, 이를 해결하고자 **3중 복합 가중치(VDI + 인프라 패널티 + 취약인구)**를 직접 고안하는 논리적 데이터 모델링 역량을 키웠습니다.
+* Scikit-learn의 K-Means 알고리즘이 단순 분류가 아닌, 정책적 `sample_weight`를 줌으로써 우선순위 도출의 훌륭한 도구가 됨을 확인했습니다.
+* 행정학적 마인드를 바탕으로, 백엔드/프론트엔드 시스템과 Python 데이터 파이프라인을 하나로 결합해 **단순 분석 보고서를 넘어 실제 의사결정자를 설득할 수 있는 대시보드 서비스**를 구축하는 법을 배웠습니다.
+
+---
+
+## AI 활용 및 기여 범위
+
+> 이 프로젝트에서는 생성형 AI를 코드 초안 작성, 오류 탐색, 리팩터링 및 문서 정리 보조 도구로 활용했습니다. 
+> 핵심이 되는 **문제 정의, 소아/고령층 지표 차별화, 3중 복합 가중치 공식 설계, 데이터 파이프라인 구조 설계, 분석 결과의 정책적 해석 여부는 작성자가 직접 판단하고 결정**했으며, 생성된 결과물은 단독 테스트 및 시각화 검증을 거쳐 최종 시스템에 반영했습니다.
+
+---
+
+## 작성자 역할
+
+* **문제 정의 및 지표 설계**: 단순 공간 분할의 한계를 극복하기 위해 인프라 패널티를 포함하는 3중 가중치 모델 기획.
+* **데이터 수집 및 전처리**: GeoPandas를 이용한 공간 데이터 병합 및 3km 외부 사각지대 수요 필터링 코드 구현.
+* **AI 모델링**: Scikit-learn 기반 K-Means에 복합 가중치를 접목하여 고위험 클러스터 도출 파이프라인 작성 (`ml_blind_spot_filtering.py` 등).
+* **시뮬레이션 개발**: 도출된 거점 기반으로 주변 인프라를 역산하여 병원 자원 권고안을 제시하는 모델 작성 (`resource_simulator.py`).
+* **서비스 구현**: 분석 결과를 제공하는 FastAPI 서버와 React 카카오맵 대시보드 연동 개발.
+
+---
+
+## 라이선스와 데이터 이용 조건
+
+> 소스코드 라이선스는 현재 별도로 지정되지 않았습니다. 공공데이터(심평원 병원 정보, 유치원 위치 정보, 행정동 등)의 이용 조건 및 지적재산권은 데이터 오픈 API를 제공하는 각 제공기관의 정책을 따릅니다.
+
+---
+
+## Contact
+
+- **Portfolio**: 추후 추가
+- **Email**: 추후 추가
