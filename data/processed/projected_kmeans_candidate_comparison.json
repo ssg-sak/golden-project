@@ -1,0 +1,153 @@
+[
+  {
+    "mode": "pediatric",
+    "k": 2,
+    "blind_spot_count": 385,
+    "current_candidates": [
+      {
+        "id": 1,
+        "lat": 35.89923227823275,
+        "lng": 128.63724659735632,
+        "demand": 320
+      },
+      {
+        "id": 2,
+        "lat": 35.7983586947844,
+        "lng": 128.46344525918232,
+        "demand": 65
+      }
+    ],
+    "wgs84_recomputed_candidates": [
+      {
+        "id": 1,
+        "lat": 35.887348682,
+        "lng": 128.621692089,
+        "demand": 321
+      },
+      {
+        "id": 2,
+        "lat": 35.796801041,
+        "lng": 128.462091017,
+        "demand": 64
+      }
+    ],
+    "projected_candidates": [
+      {
+        "id": 1,
+        "lat": 35.887311645,
+        "lng": 128.619891331,
+        "demand": 326
+      },
+      {
+        "id": 2,
+        "lat": 35.789387807,
+        "lng": 128.458504251,
+        "demand": 59
+      }
+    ],
+    "comparisons": [
+      {
+        "projected_id": 1,
+        "nearest_current_id": 1,
+        "distance_to_current_km": 2.05,
+        "nearest_wgs84_id": 1,
+        "distance_to_wgs84_km": 0.162
+      },
+      {
+        "projected_id": 2,
+        "nearest_current_id": 2,
+        "distance_to_current_km": 1.093,
+        "nearest_wgs84_id": 2,
+        "distance_to_wgs84_km": 0.886
+      }
+    ]
+  },
+  {
+    "mode": "senior",
+    "k": 3,
+    "blind_spot_count": 39,
+    "current_candidates": [
+      {
+        "id": 1,
+        "lat": 35.7469209743924,
+        "lng": 128.48769520285123,
+        "demand": 8
+      },
+      {
+        "id": 2,
+        "lat": 36.18933491436157,
+        "lng": 128.62286311108096,
+        "demand": 8
+      },
+      {
+        "id": 3,
+        "lat": 35.90190555485496,
+        "lng": 128.66409269828807,
+        "demand": 23
+      }
+    ],
+    "wgs84_recomputed_candidates": [
+      {
+        "id": 1,
+        "lat": 35.74764898,
+        "lng": 128.453087539,
+        "demand": 7
+      },
+      {
+        "id": 2,
+        "lat": 36.16169617,
+        "lng": 128.654424866,
+        "demand": 8
+      },
+      {
+        "id": 3,
+        "lat": 35.867634035,
+        "lng": 128.643103577,
+        "demand": 24
+      }
+    ],
+    "projected_candidates": [
+      {
+        "id": 1,
+        "lat": 35.74765515,
+        "lng": 128.453080999,
+        "demand": 7
+      },
+      {
+        "id": 2,
+        "lat": 36.161736951,
+        "lng": 128.654469239,
+        "demand": 8
+      },
+      {
+        "id": 3,
+        "lat": 35.867646122,
+        "lng": 128.643103964,
+        "demand": 24
+      }
+    ],
+    "comparisons": [
+      {
+        "projected_id": 1,
+        "nearest_current_id": 1,
+        "distance_to_current_km": 3.125,
+        "nearest_wgs84_id": 1,
+        "distance_to_wgs84_km": 0.001
+      },
+      {
+        "projected_id": 2,
+        "nearest_current_id": 2,
+        "distance_to_current_km": 4.179,
+        "nearest_wgs84_id": 2,
+        "distance_to_wgs84_km": 0.006
+      },
+      {
+        "projected_id": 3,
+        "nearest_current_id": 3,
+        "distance_to_current_km": 4.253,
+        "nearest_wgs84_id": 3,
+        "distance_to_wgs84_km": 0.001
+      }
+    ]
+  }
+]

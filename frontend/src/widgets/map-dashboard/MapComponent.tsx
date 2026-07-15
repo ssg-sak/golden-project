@@ -71,6 +71,7 @@ export function MapComponent(props: MapComponentProps) {
         onRiskThresholdChange={onRiskThresholdChange}
         onPresetSelect={mapState.handlePresetSelect}
         onExportCsv={mapState.handleExportCsv}
+        currentMode={props.currentMode}
       />
       {mapState.optimalError && mapState.showOptimalLocations && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-10 rounded-md bg-rose-50 px-4 py-2 text-sm text-rose-600 shadow-md ring-1 ring-rose-200">

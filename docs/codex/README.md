@@ -4,7 +4,10 @@ Codex가 작성하거나 작업 과정에서 갱신한 학습서와 보고서를
 
 ## 학습서
 
+- `guides/database`: SQLite·DBeaver 연결, 조회와 안전한 데이터 관리 학습서
+- `guides/mobile-ux`: 모바일 바텀시트, 스크롤·드래그 제스처와 실제 기기 검증 학습서
 - `guides/medical-infrastructure`: 심평원·국립중앙의료원 데이터, 의료 인프라 사용자 화면 학습서
+- `guides/testing`: 단위·통합·E2E 테스트 개념, 프로젝트 사례와 실행 방법
 - `guides/troubleshooting`: 서버·데이터·사용자 화면 문제 해결 학습서
 
 ## 보고서

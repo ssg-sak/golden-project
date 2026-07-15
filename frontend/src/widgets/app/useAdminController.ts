@@ -160,8 +160,8 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     if (useDynamicDashboard && dashboardError && !dashboardSummary) {
       return {
         tone: 'warning' as const,
-        message: `${dashboardError} 저장된 분석 데이터로 계속 진행합니다.`,
-        actionLabel: '요약 다시 시도',
+        message: `${dashboardError} 저장된 분석 데이터를 먼저 보여드리고 있습니다.`,
+        actionLabel: '정책 요약 다시 시도',
         onAction: () => void fetchDashboardSummary(),
         actionLoading: dashboardLoading,
       };

@@ -70,12 +70,9 @@ def geocode_with_cache(csv_path, geocoded_path):
                 df.at[idx, 'latitude'] = location.latitude
                 df.at[idx, 'longitude'] = location.longitude
             else:
-                df.at[idx, 'latitude'] = 35.871430 + (idx * 0.0001 % 0.05)
-                df.at[idx, 'longitude'] = 128.601445 + (idx * 0.0001 % 0.05)
+                print(f"[GEOCODING MISS] 주소 '{clean_addr}'의 좌표를 찾지 못해 분석에서 제외합니다.")
         except Exception as e:
-            print(f"[GEOCODING ERROR] 주소 '{clean_addr}' 변환 실패 (기본좌표 폴백). 사유: {e}")
-            df.at[idx, 'latitude'] = 35.871430
-            df.at[idx, 'longitude'] = 128.601445
+            print(f"[GEOCODING ERROR] 주소 '{clean_addr}' 변환 실패 (분석 제외). 사유: {e}")
             
         if idx % 50 == 0 and idx > 0:
             print(f"... {idx}/{total} 개 변환 완료")

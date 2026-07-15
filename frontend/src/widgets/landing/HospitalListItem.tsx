@@ -1,4 +1,5 @@
 import { formatDistanceKm, type HospitalWithDistance } from '../../shared/lib/distance';
+import { hospitalRecommendationReason } from '../../shared/lib/hospital-recommendation';
 import { hospitalTierLabel } from '../../shared/lib/hospital-tier-visual';
 import { hospitalDisplayAddress } from '../../shared/types/hospital';
 import { TierIcon } from '../map-dashboard/TierIcon';
@@ -17,7 +18,7 @@ export function HospitalListItem({ hospital, rank }: HospitalListItemProps) {
       <div className="flex items-start gap-3">
         <span
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-700"
-          aria-label={`${rank}번째로 가까운 병원`}
+          aria-label={`${rank}번째 추천 병원`}
         >
           {rank}
         </span>
@@ -41,6 +42,12 @@ export function HospitalListItem({ hospital, rank }: HospitalListItemProps) {
             </div>
             <BedStatusBadge hospital={hospital} />
           </div>
+
+          {rank === 1 ? (
+            <p className="rounded-lg bg-teal-50 px-3 py-2 text-xs font-semibold leading-relaxed text-teal-900">
+              병상 여유 우선 추천 · {hospitalRecommendationReason(hospital)} 실제 수용 여부는 출발 전 확인하세요.
+            </p>
+          ) : null}
 
           <p className="text-sm leading-relaxed text-slate-600">{hospitalDisplayAddress(hospital)}</p>
 

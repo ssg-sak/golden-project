@@ -38,7 +38,7 @@ function getCongestion({ available, total, isAvailable }: BedValue) {
     return { label: '혼잡', textColor: 'text-rose-700', ringColor: 'ring-rose-200', bg: 'bg-rose-50', ratio: `${available}/${total}` };
   }
   if (ratioValue < 0.8) {
-    return { label: '보통', textColor: 'text-amber-700', ringColor: 'ring-amber-200', bg: 'bg-amber-50', ratio: `${available}/${total}` };
+    return { label: '지연', textColor: 'text-amber-700', ringColor: 'ring-amber-200', bg: 'bg-amber-50', ratio: `${available}/${total}` };
   }
   return { label: '원활', textColor: 'text-emerald-700', ringColor: 'ring-emerald-200', bg: 'bg-emerald-50', ratio: `${available}/${total}` };
 }

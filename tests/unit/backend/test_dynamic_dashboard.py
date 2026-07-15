@@ -1,9 +1,27 @@
 # -*- coding: utf-8 -*-
-import pytest
+from datetime import datetime
 
+import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from app.api.routes.dashboard import get_dashboard_summary
+from app.db.database import Base
+from app.db.models import DashboardSnapshot, DataSourceStatus
 from app.services.analysis_metrics import compute_high_risk_metrics, format_change_text
 from app.services.fetchers.base import generate_hash, normalize_records_for_hash
 from app.services.hospital_category import apply_hospital_mapping, seed_facilities_from_static
+
+
+@pytest.fixture()
+def db_session(tmp_path):
+    db_file = tmp_path / "dashboard-test.db"
+    engine = create_engine(f"sqlite:///{db_file}", connect_args={"check_same_thread": False})
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    yield session
+    session.close()
 
 
 def test_hash_is_stable_for_same_payload():
@@ -70,3 +88,35 @@ def test_hospital_mapping_deduplicates_by_id():
     mapped = apply_hospital_mapping(rows)
     assert len(mapped) == 1
     assert mapped[0]["dashboard_category"] == "large"
+
+
+def test_dashboard_summary_normalizes_naive_datetimes(db_session):
+    db_session.add(
+        DashboardSnapshot(
+            admin_dong_count=150,
+            emergency_total=25,
+            large_emergency_count=6,
+            secondary_emergency_count=13,
+            moonlight_pediatric_count=6,
+            high_risk_admin_dong_count=12,
+            risk_threshold=10000.0,
+            population_base_month="2026.06",
+            analysis_version="test",
+        )
+    )
+    db_session.add(
+        DataSourceStatus(
+            source_name="static_population",
+            status="static",
+            record_count=150,
+            last_checked_at=datetime(2026, 7, 14, 3, 0, 0),
+            last_updated_at=datetime(2026, 7, 14, 3, 0, 0),
+        )
+    )
+    db_session.commit()
+
+    summary = get_dashboard_summary(db_session)
+
+    assert summary["status"]["lastCheckedAt"].endswith("+00:00")
+    assert summary["status"]["lastUpdatedAt"].endswith("+00:00")
+    assert isinstance(summary["status"]["stale"], bool)

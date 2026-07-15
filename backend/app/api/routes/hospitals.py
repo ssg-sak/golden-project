@@ -29,6 +29,11 @@ async def get_hospitals() -> list[dict]:
     try:
         realtime = await resolve_realtime_beds_async(names)
     except HTTPException:
+        hira_task.cancel()
+        try:
+            await hira_task
+        except asyncio.CancelledError:
+            pass
         raise
     except Exception as exc:
         logger.warning(

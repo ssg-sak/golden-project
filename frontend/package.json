@@ -9,6 +9,7 @@
     "build:demo": "tsc -b && vite build --mode demo",
     "preview": "vite preview",
     "test": "vitest run",
+    "typecheck:test": "tsc --noEmit -p ../tests/unit/frontend/tsconfig.json",
     "test:e2e": "playwright test",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"

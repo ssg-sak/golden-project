@@ -44,6 +44,7 @@ export function LandingPage() {
     hospitals,
     location?.lat,
     location?.lng,
+    { sortMode: 'recommendation' },
   );
 
   const showList = !isLoading && !error && location !== null;
@@ -74,8 +75,8 @@ export function LandingPage() {
             시민 구조망으로 돌아가기
           </Link>
           <div>
-            <h1 className="text-xl font-extrabold text-slate-900 sm:text-2xl">가까운 응급실</h1>
-            <p className="mt-1 text-sm text-slate-600">지도 없이 거리순으로 확인하고 바로 길찾기할 수 있습니다.</p>
+            <h1 className="text-xl font-extrabold text-slate-900 sm:text-2xl">응급실 병상 여유 추천</h1>
+            <p className="mt-1 text-sm text-slate-600">병상 상태를 먼저 보고, 같은 상태에서는 가까운 병원을 우선 안내합니다.</p>
           </div>
         </div>
 
@@ -109,11 +110,14 @@ export function LandingPage() {
         ) : null}
 
         {showList ? (
-          <section aria-label="가까운 응급실 목록" className="space-y-3">
+          <section aria-label="응급실 병상 여유 추천 목록" className="space-y-3">
             <p className="px-1 text-sm text-slate-600">
               {location?.source === 'device'
-                ? '현재 위치에서 가까운 순으로 정렬했습니다.'
-                : `${sortedHospitals.length}곳의 응급의료기관을 거리순으로 보여드립니다.`}
+                ? '일반응급실 병상 여유를 우선하고 같은 상태에서는 현재 위치와 가까운 순으로 정렬했습니다.'
+                : `${sortedHospitals.length}곳을 병상 상태와 거리 기준으로 보여드립니다.`}
+            </p>
+            <p className="px-1 text-xs leading-relaxed text-slate-500">
+              표시 상태는 가용 병상 비율을 이용한 추정이며 실제 대기시간이나 수용 확정을 뜻하지 않습니다.
             </p>
             <ul className="space-y-3">
               {sortedHospitals.map((hospital, index) => (

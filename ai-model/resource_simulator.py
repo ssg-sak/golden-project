@@ -42,10 +42,11 @@ BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_PATH  = os.path.join(BASE_DIR, "..", "frontend", "public", "data",
                             "resource_recommendations.json")
 
-# 파이프라인 출력 파일 경로
-PEDIATRIC_JSON = os.path.join(BASE_DIR, "..", "data", "processed",
+# 웹사이트 지도와 동일한 최적입지 파일을 입력으로 사용한다.
+# 지도와 시뮬레이션이 서로 다른 후보 수를 표시하지 않도록 공개 데이터 경로를 SSOT로 삼는다.
+PEDIATRIC_JSON = os.path.join(BASE_DIR, "..", "frontend", "public", "data",
                               "optimal_locations_pediatric.json")
-SENIOR_JSON    = os.path.join(BASE_DIR, "..", "data", "processed",
+SENIOR_JSON    = os.path.join(BASE_DIR, "..", "frontend", "public", "data",
                               "optimal_locations_senior.json")
 
 
@@ -213,5 +214,5 @@ if __name__ == "__main__":
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(all_recommendations, f, ensure_ascii=False, indent=2)
 
-    print(f"\n✅ 자원 추천 리포트 저장 완료: {OUTPUT_PATH}")
+    print(f"\n[OK] 자원 추천 리포트 저장 완료: {OUTPUT_PATH}")
     print(f"   총 {len(all_recommendations)}개 클러스터 분석 완료")

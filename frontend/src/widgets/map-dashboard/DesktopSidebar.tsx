@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { DESKTOP_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-layout';
 import { useEtaController } from './lib/useEtaController';
 import { useSortedHospitalsByDistance } from '../../shared/hooks/useSortedHospitalsByDistance';
+import { compareHospitalRecommendations } from '../../shared/lib/hospital-recommendation';
 import type { UserLocation } from '../../shared/hooks/useUserLocation';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { LocationNotice } from '../landing/LocationNotice';
@@ -45,7 +46,7 @@ export function DesktopSidebar({
     hospitals,
     userLocation?.lat,
     userLocation?.lng,
-    { availableOnly: showAvailableOnly, careTarget },
+    { availableOnly: showAvailableOnly, careTarget, sortMode: 'recommendation' },
   );
 
   useEffect(() => {
@@ -55,15 +56,7 @@ export function DesktopSidebar({
   }, [userLocation, hospitals, fetchEtas]);
 
   const sortedHospitals = useMemo(() => {
-    return [...baseSortedHospitals].sort((a, b) => {
-      const etaA = etas[a.name]?.eta_seconds;
-      const etaB = etas[b.name]?.eta_seconds;
-
-      if (etaA != null && etaB != null) return etaA - etaB;
-      if (etaA != null && etaB == null) return -1;
-      if (etaB != null && etaA == null) return 1;
-      return 0;
-    });
+    return [...baseSortedHospitals].sort((a, b) => compareHospitalRecommendations(a, b, etas));
   }, [baseSortedHospitals, etas]);
 
   return (

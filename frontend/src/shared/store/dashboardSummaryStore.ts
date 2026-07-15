@@ -47,6 +47,18 @@ interface DashboardSummaryStore {
 
 const REFRESH_MS = 60_000;
 
+function toDashboardSummaryErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    if (error.message === 'Failed to fetch') {
+      return '정책 요약 서버에 일시적으로 연결하지 못했습니다.';
+    }
+    if (error.message.trim()) {
+      return error.message;
+    }
+  }
+  return '정책 요약을 불러오지 못했습니다.';
+}
+
 export const useDashboardSummaryStore = create<DashboardSummaryStore>((set) => ({
   summary: null,
   isLoading: false,
@@ -67,7 +79,7 @@ export const useDashboardSummaryStore = create<DashboardSummaryStore>((set) => (
         lastFetchedAt: new Date().toISOString(),
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : '대시보드 요약 조회 실패';
+      const message = toDashboardSummaryErrorMessage(error);
       set({ isLoading: false, error: message });
     }
   },

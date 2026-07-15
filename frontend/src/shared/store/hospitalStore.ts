@@ -94,7 +94,6 @@ export const useHospitalStore = create<HospitalStore>((set, get) => ({
         error: null,
         isDegraded: true,
         degradedMode: usedPrevious ? 'stale-cache' : 'static-fallback',
-        lastUpdatedAt: new Date().toISOString(),
       });
 
       if (import.meta.env.DEV && usedPrevious) {

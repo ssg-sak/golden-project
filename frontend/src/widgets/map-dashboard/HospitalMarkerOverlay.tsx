@@ -74,7 +74,7 @@ export function HospitalMarkerOverlay({
         role="button"
         tabIndex={0}
         aria-label={`${hospital.name} — ${
-          status === 'unavailable' ? '일반응급실 여유 없음' : congestion === 'crowded' ? '혼잡' : congestion === 'moderate' ? '보통' : status === 'available' ? '원활' : '확인 중'
+          status === 'unavailable' ? '일반응급실 여유 없음' : congestion === 'crowded' ? '혼잡' : congestion === 'moderate' ? '지연' : status === 'available' ? '원활' : '확인 중'
         }`}
         aria-pressed={isSelected}
         title={hospital.name}

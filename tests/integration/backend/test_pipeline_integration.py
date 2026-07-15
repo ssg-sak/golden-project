@@ -30,7 +30,7 @@ def test_seed_creates_dashboard_snapshot(db_session, monkeypatch):
     result = ensure_seeded(db_session)
     assert result["dashboard_snapshot"] == 1
 
-    from app.db.models import DashboardSnapshot
+    from app.db.models import DashboardSnapshot, DataSourceStatus
 
     snap = db_session.query(DashboardSnapshot).one()
     assert snap.admin_dong_count == 150
@@ -39,6 +39,20 @@ def test_seed_creates_dashboard_snapshot(db_session, monkeypatch):
     assert snap.secondary_emergency_count == 13
     assert snap.moonlight_pediatric_count == 6
     assert snap.population_base_month == "2026.06"
+
+    sources = {
+        row.source_name: row
+        for row in db_session.query(DataSourceStatus).order_by(DataSourceStatus.source_name).all()
+    }
+    assert "static_hospitals" in sources
+    assert sources["static_hospitals"].record_count == 25
+    assert "static_vulnerability_geojson" in sources
+    assert sources["static_vulnerability_geojson"].record_count == 150
+    assert "static_population" in sources
+    assert sources["static_population"].source_version == "2026.06"
+    assert "static_optimal_locations_pediatric" in sources
+    assert "static_optimal_locations_senior" in sources
+    assert all(row.status == "static" for row in sources.values())
 
 
 def test_pipeline_idempotent_without_api(db_session, monkeypatch):

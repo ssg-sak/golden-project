@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime, timezone
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta, timezone
 
 from app.core.env import data_refresh_admin_token
 from app.db.database import get_db
@@ -12,6 +11,14 @@ from app.services.data_seed import ensure_seeded
 from app.services.pipeline import run_data_pipeline
 
 router = APIRouter(tags=["dashboard"])
+
+
+def _ensure_utc(dt: datetime | None) -> datetime | None:
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
 
 
 def _build_fallback_summary() -> dict:
@@ -69,14 +76,14 @@ def get_dashboard_summary(db: Session = Depends(get_db)) -> dict:
     )
 
     statuses = db.query(DataSourceStatus).all()
-    last_checked_at = max((s.last_checked_at for s in statuses if s.last_checked_at), default=None)
-    last_updated_at = max((s.last_updated_at for s in statuses if s.last_updated_at), default=None)
+    last_checked_at = max((_ensure_utc(s.last_checked_at) for s in statuses if s.last_checked_at), default=None)
+    last_updated_at = max((_ensure_utc(s.last_updated_at) for s in statuses if s.last_updated_at), default=None)
 
     is_stale = True
     if last_checked_at:
-        is_stale = datetime.now(timezone.utc) - last_checked_at > relativedelta(hours=24)
+        is_stale = datetime.now(timezone.utc) - last_checked_at > timedelta(hours=24)
 
-    failed_sources = [s.source_name for s in statuses if s.status == "failed"]
+    failed_sources = [s.source_name for s in statuses if s.status in {"failed", "degraded"}]
     data_state = "degraded" if failed_sources else "ok"
 
     return {
@@ -106,8 +113,8 @@ def get_dashboard_summary(db: Session = Depends(get_db)) -> dict:
         "sources": {
             s.source_name: {
                 "status": s.status,
-                "lastCheckedAt": s.last_checked_at.isoformat() if s.last_checked_at else None,
-                "lastUpdatedAt": s.last_updated_at.isoformat() if s.last_updated_at else None,
+                "lastCheckedAt": _ensure_utc(s.last_checked_at).isoformat() if s.last_checked_at else None,
+                "lastUpdatedAt": _ensure_utc(s.last_updated_at).isoformat() if s.last_updated_at else None,
                 "recordCount": s.record_count,
             }
             for s in statuses
@@ -134,9 +141,9 @@ def get_data_status(db: Session = Depends(get_db)) -> dict:
                 "sourceName": s.source_name,
                 "status": s.status,
                 "recordCount": s.record_count,
-                "lastCheckedAt": s.last_checked_at.isoformat() if s.last_checked_at else None,
-                "lastUpdatedAt": s.last_updated_at.isoformat() if s.last_updated_at else None,
-                "lastSuccessAt": s.last_success_at.isoformat() if s.last_success_at else None,
+                "lastCheckedAt": _ensure_utc(s.last_checked_at).isoformat() if s.last_checked_at else None,
+                "lastUpdatedAt": _ensure_utc(s.last_updated_at).isoformat() if s.last_updated_at else None,
+                "lastSuccessAt": _ensure_utc(s.last_success_at).isoformat() if s.last_success_at else None,
                 "errorMessage": s.error_message,
             }
             for s in statuses
@@ -157,6 +164,15 @@ async def force_refresh_dashboard(
     result = await run_data_pipeline(db)
     if result.error == "already_running":
         raise HTTPException(status_code=409, detail="Pipeline already running")
+    if result.error == "partial_failure":
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "message": "Data pipeline completed with source failures",
+                "failedSources": result.failed_sources or [],
+                "snapshotCreated": result.snapshot_created,
+            },
+        )
     return {
         "message": "Data pipeline executed",
         "adminChanged": result.admin_changed,

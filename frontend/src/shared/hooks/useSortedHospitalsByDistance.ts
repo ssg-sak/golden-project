@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { filterByCareTarget } from '../../widgets/map-dashboard/lib/hospital-filter';
 import { isHospitalAvailable } from '../lib/bed-status';
 import { calculateDistance, type HospitalWithDistance } from '../lib/distance';
+import { compareHospitalRecommendations } from '../lib/hospital-recommendation';
 import type { HospitalRecord } from '../types/hospital';
 
 export interface UseSortedHospitalsOptions {
@@ -10,6 +11,8 @@ export interface UseSortedHospitalsOptions {
   availableOnly?: boolean;
   /** 시민 진료 대상 필터 */
   careTarget?: 'all' | 'adult' | 'pediatric' | 'senior';
+  /** recommendation은 병상 여유를 우선하고 같은 상태에서 거리를 비교한다. */
+  sortMode?: 'distance' | 'recommendation';
 }
 
 /**
@@ -21,7 +24,7 @@ export function useSortedHospitalsByDistance(
   originLng?: number,
   options: UseSortedHospitalsOptions = {},
 ): HospitalWithDistance[] {
-  const { availableOnly = false, careTarget = 'all' } = options;
+  const { availableOnly = false, careTarget = 'all', sortMode = 'distance' } = options;
 
   return useMemo(() => {
     if (hospitals.length === 0 || !originLat || !originLng) {
@@ -42,8 +45,12 @@ export function useSortedHospitalsByDistance(
         ...h,
         distanceKm: calculateDistance(originLat, originLng, h.lat, h.lng),
       }))
-      .sort((a, b) => a.distanceKm - b.distanceKm);
+      .sort((a, b) =>
+        sortMode === 'recommendation'
+          ? compareHospitalRecommendations(a, b)
+          : a.distanceKm - b.distanceKm,
+      );
 
     return sorted;
-  }, [hospitals, originLat, originLng, availableOnly, careTarget]);
+  }, [hospitals, originLat, originLng, availableOnly, careTarget, sortMode]);
 }

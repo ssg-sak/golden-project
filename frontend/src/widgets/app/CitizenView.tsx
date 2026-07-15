@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   DASHBOARD_DETAIL_COL_CLASS,
@@ -17,7 +17,6 @@ import { DegradedDataBanner } from '../shared/DegradedDataBanner';
 import { CitizenMapComponent } from '../map-dashboard/CitizenMapComponent';
 import { HospitalDetailPanel } from '../map-dashboard/HospitalDetailPanel';
 import { DesktopSidebar } from '../map-dashboard/DesktopSidebar';
-import { useOptimalLocationsStore } from '../map-dashboard/lib/useOptimalLocationsStore';
 import { MobileCitizenHospitalBrowser } from './MobileCitizenHospitalBrowser';
 
 interface KakaoState {
@@ -72,16 +71,6 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [careTarget, setCareTarget] = useState<'all' | 'adult' | 'pediatric' | 'senior'>('all');
 
-  const showLocations = useOptimalLocationsStore((state) => state.showLocations);
-  const fetchLocations = useOptimalLocationsStore((state) => state.fetchLocations);
-  const setOptimalMode = useOptimalLocationsStore((state) => state.setMode);
-
-  // 대상 변경 혹은 AI 분석 패널 On 시 모드에 맞는 JSON 새로 로드
-  useEffect(() => {
-    if (showLocations) {
-      fetchLocations();
-    }
-  }, [careTarget, showLocations, fetchLocations]);
 
   const handleHospitalSelect = useCallback((hospital: HospitalRecord | null) => {
     setSelectedHospital(hospital);
@@ -90,7 +79,6 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
   const handleCareTargetChange = useCallback(
     (value: 'all' | 'adult' | 'pediatric' | 'senior') => {
       setCareTarget(value);
-      setOptimalMode(value);
       if (value === 'pediatric') {
         setShowAvailableOnly(false);
       }
@@ -104,7 +92,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
         setSelectedHospital(null);
       }
     },
-    [selectedHospital, setOptimalMode],
+    [selectedHospital],
   );
 
   const mapBlocked = hospitalsLoading || hospitalsError !== null;

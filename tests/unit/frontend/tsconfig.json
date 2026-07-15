@@ -1,0 +1,12 @@
+{
+  "extends": "../../../frontend/tsconfig.app.json",
+  "compilerOptions": {
+   
+    "lib": ["ES2023", "DOM"],
+    "paths": {
+      "vitest": ["../../../frontend/node_modules/vitest/dist/index.d.ts"]
+    },
+    "types": []
+  },
+  "include": ["./*.test.ts"]
+}

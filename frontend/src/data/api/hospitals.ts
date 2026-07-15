@@ -39,18 +39,22 @@ function isHospitalRecord(value: unknown): value is HospitalRecord {
 
 function parseHospitalPayload(payload: unknown): HospitalRecord[] {
   if (!Array.isArray(payload)) {
-    throw new Error('병원 정보 형식을 확인할 수 없습니다');
+    throw new Error('병원 정보가 예상과 달라 최근 확인된 정보를 먼저 보여드립니다');
   }
 
   const hospitals = payload.filter(isHospitalRecord);
   const dropped = payload.length - hospitals.length;
 
   if (import.meta.env.DEV && dropped > 0) {
-    console.warn(`[fetchHospitals] 스키마 불일치로 ${dropped}건 제외됨`);
+    console.warn(`[fetchHospitals] 병원 응답 데이터 검증 실패: ${dropped}건`);
+  }
+
+  if (dropped > 0) {
+    throw new Error('일부 병원 정보가 예상과 달라 최근 확인된 정보를 먼저 보여드립니다');
   }
 
   if (hospitals.length === 0) {
-    throw new Error('표시할 병원 정보가 없습니다');
+    throw new Error('표시할 병원 정보가 없어 기본 병원 목록을 보여드립니다');
   }
 
   return hospitals;
@@ -69,18 +73,18 @@ export async function fetchHospitals(signal?: AbortSignal): Promise<HospitalReco
     if (error instanceof Error && error.name === 'FetchTimeoutError') {
       throw error;
     }
-    throw new Error('지금은 병원 정보를 불러올 수 없습니다');
+    throw new Error('네트워크 연결이 불안정해 최근 병원 정보를 먼저 보여드립니다');
   }
 
   if (!response.ok) {
-    throw new Error('지금은 병원 정보를 불러올 수 없습니다');
+    throw new Error('병원 정보 서버 응답이 원활하지 않아 최근 병원 정보를 먼저 보여드립니다');
   }
 
   let payload: unknown;
   try {
     payload = await response.json();
   } catch {
-    throw new Error('병원 정보 응답 형식을 확인할 수 없습니다');
+    throw new Error('병원 정보 응답을 읽지 못해 최근 확인된 정보를 먼저 보여드립니다');
   }
 
   return normalizeHospitalLocations(parseHospitalPayload(payload));

@@ -21,7 +21,14 @@ scheduler = AsyncIOScheduler() if AsyncIOScheduler is not None else None
 async def _run_target(target: str) -> None:
     db = SessionLocal()
     try:
-        await run_data_pipeline(db, targets={target})
+        result = await run_data_pipeline(db, targets={target})
+        if result.error:
+            logger.error(
+                "Scheduled job '%s' completed with error=%s failed_sources=%s",
+                target,
+                result.error,
+                result.failed_sources or [],
+            )
     except Exception as exc:
         logger.error("Scheduled job '%s' failed: %s", target, exc)
     finally:

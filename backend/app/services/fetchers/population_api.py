@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 from app.core.env import get_env
 from app.db.models import PopulationSnapshot
 from app.services.data_validation import validate_population
-from app.services.fetchers.base import check_and_update_status, log_failure, mark_success
+from app.services.fetchers.base import check_and_update_status, log_failure, mark_degraded, mark_success
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
@@ -202,7 +202,7 @@ async def refresh_population(db: Session, client: PopulationAPIClient) -> tuple[
         has_changed, _, _ = check_and_update_status(db, SOURCE_NAME, parsed, version=base_month)
         if has_changed:
             _upsert_population(db, parsed)
-        mark_success(db, SOURCE_NAME)
+        mark_degraded(db, SOURCE_NAME, f"API failed; CSV fallback used: {exc}")
         return has_changed, base_month
 
 

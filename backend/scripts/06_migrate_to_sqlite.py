@@ -54,6 +54,7 @@ def migrate():
     except Exception as e:
         db.rollback()
         print(f"❌ DB 삽입 중 에러 발생: {e}")
+        raise
     finally:
         db.close()
 

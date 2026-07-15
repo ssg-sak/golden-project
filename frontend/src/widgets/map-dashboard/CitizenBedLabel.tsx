@@ -16,7 +16,7 @@ export function CitizenBedLabel({ hospital, size = 'list', inverted = false }: C
     const visual = congestion === 'crowded'
       ? { dot: 'bg-rose-500', text: inverted ? 'text-rose-100' : 'text-rose-700', label: '혼잡' }
       : congestion === 'moderate'
-        ? { dot: 'bg-amber-500', text: inverted ? 'text-amber-100' : 'text-amber-700', label: '보통' }
+        ? { dot: 'bg-amber-500', text: inverted ? 'text-amber-100' : 'text-amber-700', label: '지연' }
         : { dot: 'bg-emerald-500', text: inverted ? 'text-emerald-100' : 'text-emerald-700', label: '원활' };
     return (
       <span

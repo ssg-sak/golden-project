@@ -236,7 +236,7 @@ async def refresh_moonlight_facilities(db: Session, client: HospitalsAPIClient) 
     try:
         moon_rows = await client.fetch_moonlight_hospitals()
         if not moon_rows:
-            mark_success(db, SOURCE_MOONLIGHT)
+            log_failure(db, SOURCE_MOONLIGHT, "Moonlight facilities API returned no records")
             return False, 0
         mapped = apply_hospital_mapping(moon_rows)
         normalized = _normalize_facility_rows(mapped)

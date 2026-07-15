@@ -95,6 +95,25 @@ def log_failure(db: Session, source_name: str, error_message: str) -> None:
     db.commit()
 
 
+def mark_degraded(db: Session, source_name: str, reason: str) -> None:
+    """Record a usable fallback without disguising the upstream failure."""
+    status_record = db.query(DataSourceStatus).filter_by(source_name=source_name).first()
+    now = datetime.now(timezone.utc)
+    if status_record:
+        status_record.last_checked_at = now
+        status_record.status = "degraded"
+        status_record.error_message = str(reason)[:500]
+    else:
+        status_record = DataSourceStatus(
+            source_name=source_name,
+            last_checked_at=now,
+            status="degraded",
+            error_message=str(reason)[:500],
+        )
+        db.add(status_record)
+    db.commit()
+
+
 def mark_success(db: Session, source_name: str) -> None:
     status_record = db.query(DataSourceStatus).filter_by(source_name=source_name).first()
     if status_record:

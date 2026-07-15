@@ -12,6 +12,8 @@ export function KakaoNavButton({ hospitalName, lat, lng }: KakaoNavButtonProps) 
       href={kakaoDirectionsUrl(hospitalName, lat, lng)}
       target="_blank"
       rel="noopener noreferrer"
+      title="일반 차량용 카카오맵 경로입니다. 긴급차량 경로는 119 관제 지시를 따르세요."
+      aria-label={`${hospitalName} 일반 차량 길찾기 열기`}
       className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3.5 text-base font-bold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2"
     >
       <svg

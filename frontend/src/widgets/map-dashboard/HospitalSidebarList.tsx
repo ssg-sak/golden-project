@@ -1,5 +1,6 @@
 import { HOSPITALS_LOADING_MESSAGE } from '../../shared/constants/loading-messages';
 import { formatDistanceKm } from '../../shared/lib/distance';
+import { hospitalRecommendationReason } from '../../shared/lib/hospital-recommendation';
 import type { UserLocation } from '../../shared/hooks/useUserLocation';
 import type { HospitalRecord } from '../../shared/types/hospital';
 
@@ -38,6 +39,11 @@ export function HospitalSidebarList({
   return (
     <div className="flex flex-1 flex-col overflow-hidden lg:min-h-0">
       <ul className="flex-1 divide-y divide-slate-200 overflow-y-auto border-t border-slate-200 bg-white pb-6 lg:pb-3">
+        {!loading && userLocation ? (
+          <li className="bg-amber-50 px-4 py-2 text-xs leading-relaxed text-amber-900">
+            길찾기는 일반 차량 경로입니다. 긴급 이송 병원과 경로는 119 및 의료기관의 수용 확인을 따르세요.
+          </li>
+        ) : null}
         {loading ? (
           <li className="px-2 py-8 text-center text-base leading-relaxed text-slate-500">
             {HOSPITALS_LOADING_MESSAGE}
@@ -102,9 +108,9 @@ export function HospitalSidebarList({
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-xs font-bold text-slate-500">{String(index + 1).padStart(2, '0')}</span>
-                      {index < 3 ? (
+                      {index === 0 ? (
                         <span className="border border-teal-200 bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-800">
-                          가까운 병원
+                          병상 여유 우선 추천
                         </span>
                       ) : null}
                     </div>
@@ -130,6 +136,11 @@ export function HospitalSidebarList({
                   <div className="flex justify-between gap-2">
                     <CitizenBedLabel hospital={hospital} />
                   </div>
+                  {index === 0 ? (
+                    <p className="rounded-md bg-teal-50 px-2 py-1.5 text-xs font-semibold leading-relaxed text-teal-900">
+                      {hospitalRecommendationReason(hospital)} 실제 수용 여부는 출발 전 확인하세요.
+                    </p>
+                  ) : null}
                   <span
                     className="text-base font-bold leading-snug text-slate-900"
                   >

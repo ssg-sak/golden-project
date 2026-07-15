@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from datetime import datetime, timezone
@@ -11,7 +12,7 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy.orm import Session
 
-from app.db.models import AdminDong, DashboardSnapshot, MedicalFacility, PopulationSnapshot
+from app.db.models import AdminDong, DashboardSnapshot, DataSourceStatus, MedicalFacility, PopulationSnapshot
 from app.services.analysis_metrics import compute_high_risk_metrics
 from app.services.hospital_category import seed_facilities_from_static
 
@@ -21,6 +22,9 @@ PROJECT_DIR = Path(__file__).resolve().parents[3]
 GEOJSON_PATH = PROJECT_DIR / "data" / "processed" / "daegu_vulnerability.geojson"
 POPULATION_CSV = PROJECT_DIR / "data" / "raw" / "population" / "daegu_population_real.csv"
 KOSIS_CSV = PROJECT_DIR / "data" / "raw" / "population" / "kosis_dong_5yr_population_202606.csv"
+HOSPITALS_JSON = PROJECT_DIR / "data" / "processed" / "final_hospitals.json"
+OPTIMAL_PEDIATRIC_JSON = PROJECT_DIR / "frontend" / "public" / "data" / "optimal_locations_pediatric.json"
+OPTIMAL_SENIOR_JSON = PROJECT_DIR / "frontend" / "public" / "data" / "optimal_locations_senior.json"
 
 
 def _seed_admin_dongs_from_geojson(db: Session) -> int:
@@ -139,6 +143,98 @@ def _seed_dashboard_snapshot(db: Session, base_month: str = "2026.06") -> bool:
     return True
 
 
+def _file_hash(path: Path) -> str | None:
+    if not path.exists():
+        return None
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _upsert_source_status(
+    db: Session,
+    *,
+    source_name: str,
+    source_version: str,
+    path: Path,
+    record_count: int,
+) -> int:
+    if not path.exists():
+        return 0
+
+    stat = path.stat()
+    updated_at = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)
+    now = datetime.now(timezone.utc)
+    record = db.query(DataSourceStatus).filter_by(source_name=source_name).first()
+    created = 0
+    if record is None:
+        record = DataSourceStatus(source_name=source_name)
+        db.add(record)
+        created = 1
+
+    record.source_version = source_version
+    record.data_hash = _file_hash(path)
+    record.record_count = record_count
+    record.last_checked_at = now
+    record.last_updated_at = updated_at
+    record.last_success_at = updated_at
+    record.status = "static"
+    record.error_message = None
+    return created
+
+
+def _count_json_records(path: Path) -> int:
+    if not path.exists():
+        return 0
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(data, list):
+        return len(data)
+    if isinstance(data, dict) and isinstance(data.get("features"), list):
+        return len(data["features"])
+    return 1
+
+
+def _seed_data_source_status(db: Session, base_month: str = "2026.06") -> int:
+    """정적 정본 기반 실행에서도 데이터 출처 상태가 비어 있지 않게 한다."""
+    sources = [
+        {
+            "source_name": "static_hospitals",
+            "source_version": "final_hospitals.json",
+            "path": HOSPITALS_JSON,
+            "record_count": _count_json_records(HOSPITALS_JSON),
+        },
+        {
+            "source_name": "static_vulnerability_geojson",
+            "source_version": "daegu_vulnerability.geojson",
+            "path": GEOJSON_PATH,
+            "record_count": _count_json_records(GEOJSON_PATH),
+        },
+        {
+            "source_name": "static_population",
+            "source_version": base_month,
+            "path": POPULATION_CSV,
+            "record_count": max(pd.read_csv(POPULATION_CSV, encoding="utf-8-sig").shape[0], 0)
+            if POPULATION_CSV.exists()
+            else 0,
+        },
+        {
+            "source_name": "static_optimal_locations_pediatric",
+            "source_version": "optimal_locations_pediatric.json",
+            "path": OPTIMAL_PEDIATRIC_JSON,
+            "record_count": _count_json_records(OPTIMAL_PEDIATRIC_JSON),
+        },
+        {
+            "source_name": "static_optimal_locations_senior",
+            "source_version": "optimal_locations_senior.json",
+            "path": OPTIMAL_SENIOR_JSON,
+            "record_count": _count_json_records(OPTIMAL_SENIOR_JSON),
+        },
+    ]
+    created = 0
+    for source in sources:
+        created += _upsert_source_status(db, **source)
+    db.commit()
+    return created
+
+
 def ensure_seeded(db: Session) -> dict[str, int]:
     """DB가 비어 있거나 정적 정본과 불일치할 때 정본으로 동기화."""
     before = db.query(MedicalFacility).count()
@@ -147,6 +243,7 @@ def ensure_seeded(db: Session) -> dict[str, int]:
         "medical_facility": _seed_medical_facilities(db),
         "population": _seed_population(db),
         "dashboard_snapshot": 1 if _seed_dashboard_snapshot(db) else 0,
+        "data_source_status": _seed_data_source_status(db),
     }
     if before == 0 and any(result.values()):
         logger.info("Static seed applied: %s", result)

@@ -16,8 +16,7 @@ from app.db.models import Hospital
 def main():
     json_path = PROJECT_ROOT / "data" / "processed" / "final_hospitals.json"
     if not json_path.exists():
-        print(f"Error: {json_path} does not exist.")
-        return
+        raise FileNotFoundError(f"Error: {json_path} does not exist.")
 
     # 테이블 생성
     Base.metadata.create_all(bind=engine)
@@ -49,6 +48,7 @@ def main():
     except Exception as e:
         db.rollback()
         print(f"마이그레이션 실패: {e}")
+        raise
     finally:
         db.close()
 

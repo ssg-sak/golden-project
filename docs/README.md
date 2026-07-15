@@ -1,5 +1,12 @@
 # 📚 문서 모음 — 대구 골든타임
 
+## 최신 개발 안내
+
+- [아키텍처 및 컴포넌트 파일 지도](./architecture/component_file_map_20260714.md)
+- [예외 처리 학습서](./guides/exception_handling_study_20260714.md)
+- [예외 처리 개선 보고서](./reports/exception_handling_improvement_report_20260714.md)
+- [AI 모델 EDA 계획](./plans/ai_model_eda_plan_20260713.md)
+
 프로젝트(**대구 골든타임 · 응급의료 거버넌스 플랫폼**) 관련 **설명·기획·개발 참고 문서**를 이 폴더에 모아 두었습니다.  
 코드와 데이터 폴더와 분리해, 문서만 빠르게 찾을 수 있습니다.
 

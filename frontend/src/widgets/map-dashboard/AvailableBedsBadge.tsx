@@ -30,7 +30,7 @@ export function AvailableBedsBadge({
     : congestion === 'smooth'
       ? `원활 · ${availableBeds}개`
       : congestion === 'moderate'
-        ? `보통 · ${availableBeds}개`
+        ? `지연 · ${availableBeds}개`
         : congestion === 'crowded'
           ? `혼잡 · ${availableBeds}개`
           : `빈자리: ${availableBeds}개`;

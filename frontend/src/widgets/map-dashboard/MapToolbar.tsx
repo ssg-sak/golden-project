@@ -5,6 +5,7 @@ import { useVulnerabilityStore } from '../../shared/store/vulnerabilityStore';
 import { HeatmapToggle } from './HeatmapToggle';
 import { HospitalFilterBar } from './HospitalFilterBar';
 import type { HospitalFilter } from './lib/hospital-filter';
+import { useOptimalLocationsStore } from './lib/useOptimalLocationsStore';
 import { usePresetStore } from './lib/usePresetStore';
 import { getVulnerabilityRange } from './lib/vulnerability-choropleth-colors';
 
@@ -15,6 +16,7 @@ interface MapToolbarProps {
   onRiskThresholdChange?: (value: number) => void;
   onPresetSelect?: (preset: 'highRiskTop10' | 'pediatricPriority' | 'generalPriority') => void;
   onExportCsv?: () => void;
+  currentMode?: string;
 }
 
 const QUICK_LOOKUPS = [
@@ -30,12 +32,35 @@ export function MapToolbar({
   onRiskThresholdChange,
   onPresetSelect,
   onExportCsv,
+  currentMode = 'all',
 }: MapToolbarProps) {
   const showHeatmap = useVulnerabilityStore((state) => state.showHeatmap);
   const vulnerabilityRecords = useVulnerabilityStore((state) => state.records);
   const vulnerabilityLoading = useVulnerabilityStore((state) => state.isLoading);
   const activePreset = usePresetStore((state) => state.activePreset);
   const clearPreset = usePresetStore((state) => state.clearPreset);
+  const showOptimalLocations = useOptimalLocationsStore((state) => state.showLocations);
+  const toggleOptimalLocations = useOptimalLocationsStore((state) => state.toggleLocations);
+  const setOptimalMode = useOptimalLocationsStore((state) => state.setMode);
+
+  const canShowOptimalLocations = currentMode === 'pediatric' || currentMode === 'senior';
+  const optimalButtonLabel =
+    showOptimalLocations && canShowOptimalLocations
+      ? '최적입지 숨기기'
+      : canShowOptimalLocations
+        ? '최적입지 보기'
+        : '소아 최적입지 보기';
+
+  function handleOptimalLocationToggle() {
+    if (!canShowOptimalLocations) {
+      setOptimalMode('pediatric');
+      if (!showOptimalLocations) {
+        toggleOptimalLocations();
+      }
+      return;
+    }
+    toggleOptimalLocations();
+  }
 
   const { min: vulnerabilityMin, max: vulnerabilityMax } = useMemo(() => {
     return getVulnerabilityRange(vulnerabilityRecords.map((record) => record.vdi_log));
@@ -136,6 +161,30 @@ export function MapToolbar({
           ) : null}
 
           <HeatmapToggle />
+
+          <div className="flex items-center gap-2 rounded-md bg-white px-2 py-1.5 shadow-sm ring-1 ring-indigo-100">
+            <button
+              type="button"
+              onClick={handleOptimalLocationToggle}
+              title={
+                canShowOptimalLocations
+                  ? '소아 또는 어르신 최적입지 후보를 지도에 표시합니다.'
+                  : '소아 모드로 전환하고 최적입지 후보를 표시합니다.'
+              }
+              className={`rounded-md px-2.5 py-1.5 text-xs font-semibold ring-1 transition-colors ${
+                showOptimalLocations && canShowOptimalLocations
+                  ? 'bg-indigo-700 text-white ring-indigo-700'
+                  : canShowOptimalLocations
+                    ? 'bg-white text-indigo-700 ring-indigo-200 hover:bg-indigo-50'
+                    : 'bg-white text-indigo-700 ring-indigo-200 hover:bg-indigo-50'
+              }`}
+            >
+              {optimalButtonLabel}
+            </button>
+            <span className="hidden max-w-[13rem] text-[10px] font-medium leading-snug text-slate-500 md:inline">
+              병원이 아닌 분석상 우선 후보 표시. 원거리 저수요 후보는 별도 검토
+            </span>
+          </div>
 
           {vulnerabilityLoading ? (
             <span className="text-[10px] font-medium text-slate-400">분석 불러오는 중</span>

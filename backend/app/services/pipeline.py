@@ -49,6 +49,7 @@ class PipelineResult:
     snapshot_created: bool = False
     base_month: str | None = None
     error: str | None = None
+    failed_sources: list[str] | None = None
 
 
 async def run_data_pipeline(db: Session, targets: set[str] | None = None) -> PipelineResult:
@@ -117,6 +118,29 @@ async def run_data_pipeline(db: Session, targets: set[str] | None = None) -> Pip
             result.snapshot_created = snapshot_ok
         elif "rebuild-dashboard-summary" in selected:
             result.snapshot_created = _generate_dashboard_snapshot(db, result.base_month)
+
+        source_by_target = {
+            "admin-boundary": {"sgis_admin_dong"},
+            "emergency": {"emergency_facilities"},
+            "moonlight": {"moonlight_pediatric"},
+            "population": {"population"},
+        }
+        expected_sources = set().union(
+            *(source_by_target.get(target, set()) for target in selected)
+        )
+        failed_statuses = (
+            db.query(DataSourceStatus)
+            .filter(
+                DataSourceStatus.source_name.in_(expected_sources),
+                DataSourceStatus.status.in_({"failed", "degraded"}),
+            )
+            .all()
+            if expected_sources
+            else []
+        )
+        result.failed_sources = sorted(status.source_name for status in failed_statuses)
+        if result.failed_sources:
+            result.error = "partial_failure"
 
         return result
     finally:

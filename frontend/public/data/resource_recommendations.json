@@ -1,114 +1,251 @@
 [
   {
     "pipeline": "pediatric",
-    "cluster_id": 1,
+    "cluster_id": 4,
     "location": {
-      "lat": 35.89923227823275,
-      "lng": 128.63724659735632
+      "lat": 35.887682622,
+      "lng": 128.548218267
     },
-    "demand": 320,
+    "demand": 111,
+    "scenario_coverage_ratio": 0.75,
+    "candidate_group": "main_daegu",
+    "candidate_type": "stable_main",
     "nearby_hospitals": [
-      "강남종합병원",
-      "우리아이아동병원",
-      "구병원",
-      "경북대학교병원"
+      "대구의료원",
+      "계명대학교 동산병원",
+      "열린아동병원"
     ],
-    "nearby_count": 4,
+    "nearby_count": 3,
     "resource_gap": {
       "doctors_needed": 0,
       "mri_needed": false,
       "ct_needed": false,
-      "avg_doctors_nearby": 31.5,
-      "mri_coverage_ratio": 0.5,
+      "avg_doctors_nearby": 42.3,
+      "mri_coverage_ratio": 0.67,
+      "ct_coverage_ratio": 0.67,
       "priority_level": "LOW"
     },
-    "recommendation": "[LOW] 관찰 | 소아 클러스터 #1 (수요: 320개소) | → 현재 인프라 수준 양호. 지속적 모니터링 권고"
+    "recommendation": "소아 안정 후보입니다. 여러 K/seed/거리 조건에서 반복 등장해 정책 우선 검토 가치가 있습니다. 최근접 참조 병원은 대구의료원입니다. 반경 5km 인프라가 비교적 양호해 지속 모니터링 후보로 둡니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
   },
   {
     "pipeline": "pediatric",
-    "cluster_id": 2,
+    "cluster_id": 3,
     "location": {
-      "lat": 35.7983586947844,
-      "lng": 128.46344525918232
+      "lat": 35.705094431,
+      "lng": 128.431674535
     },
-    "demand": 65,
-    "nearby_hospitals": [],
-    "nearby_count": 0,
+    "demand": 26,
+    "scenario_coverage_ratio": 0.75,
+    "candidate_group": "main_daegu",
+    "candidate_type": "stable_main",
+    "nearby_hospitals": [
+      "우리허브병원"
+    ],
+    "nearby_count": 1,
     "resource_gap": {
-      "doctors_needed": 13,
+      "doctors_needed": 10,
       "mri_needed": true,
-      "ct_needed": true,
-      "avg_doctors_nearby": 0,
+      "ct_needed": false,
+      "avg_doctors_nearby": 5.0,
       "mri_coverage_ratio": 0.0,
+      "ct_coverage_ratio": 1.0,
       "priority_level": "HIGH"
     },
-    "recommendation": "[HIGH] 최우선 | 소아 클러스터 #2 (수요: 65개소) | → 반경 5km 내 기존 병원 전무(0개). 신규 공공의료센터 설립 및 전문의 13명 긴급 배치 강력 권고 | → 신규 센터에 MRI 1대 및 CT 필수 도입 권고"
+    "recommendation": "소아 안정 후보입니다. 여러 K/seed/거리 조건에서 반복 등장해 정책 우선 검토 가치가 있습니다. 최근접 참조 병원은 우리허브병원입니다. 반경 5km 평균 전문의가 5.0명으로 낮아 전문의 10명 보강을 검토합니다. MRI 커버리지가 낮아 장비 보강 또는 인접 병원 연계를 검토합니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
   },
   {
-    "pipeline": "senior",
+    "pipeline": "pediatric",
     "cluster_id": 1,
     "location": {
-      "lat": 35.877463126784384,
-      "lng": 128.65556749592622
+      "lat": 35.882777631,
+      "lng": 128.631817499
     },
-    "demand": 24,
+    "demand": 274,
+    "scenario_coverage_ratio": 0.5,
+    "candidate_group": "main_daegu",
+    "candidate_type": "stable_main",
     "nearby_hospitals": [
       "강남종합병원",
-      "율하연합소아청소년과의원",
       "구병원",
-      "대구보훈병원",
       "우리아이아동병원",
-      "경북대학교병원"
+      "경북대학교병원",
+      "대구보훈병원"
+    ],
+    "nearby_count": 5,
+    "resource_gap": {
+      "doctors_needed": 0,
+      "mri_needed": false,
+      "ct_needed": false,
+      "avg_doctors_nearby": 30.8,
+      "mri_coverage_ratio": 0.6,
+      "ct_coverage_ratio": 0.8,
+      "priority_level": "LOW"
+    },
+    "recommendation": "소아 안정 후보입니다. 여러 K/seed/거리 조건에서 반복 등장해 정책 우선 검토 가치가 있습니다. 최근접 참조 병원은 강남종합병원입니다. 반경 5km 인프라가 비교적 양호해 지속 모니터링 후보로 둡니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
+  },
+  {
+    "pipeline": "pediatric",
+    "cluster_id": 6,
+    "location": {
+      "lat": 35.848381544,
+      "lng": 128.630296647
+    },
+    "demand": 121,
+    "scenario_coverage_ratio": 0.5,
+    "candidate_group": "main_daegu",
+    "candidate_type": "stable_main",
+    "nearby_hospitals": [
+      "대구보훈병원",
+      "구병원",
+      "경북대학교병원",
+      "영남대학교병원",
+      "곽병원",
+      "강남종합병원"
     ],
     "nearby_count": 6,
     "resource_gap": {
       "doctors_needed": 0,
       "mri_needed": false,
       "ct_needed": false,
-      "avg_doctors_nearby": 26.0,
-      "mri_coverage_ratio": 0.5,
+      "avg_doctors_nearby": 39.8,
+      "mri_coverage_ratio": 0.83,
+      "ct_coverage_ratio": 1.0,
       "priority_level": "LOW"
     },
-    "recommendation": "[LOW] 관찰 | 어르신 클러스터 #1 (수요: 24개소) | → 현재 인프라 수준 양호. 지속적 모니터링 권고"
+    "recommendation": "소아 안정 후보입니다. 여러 K/seed/거리 조건에서 반복 등장해 정책 우선 검토 가치가 있습니다. 최근접 참조 병원은 대구보훈병원입니다. 반경 5km 인프라가 비교적 양호해 지속 모니터링 후보로 둡니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
   },
   {
-    "pipeline": "senior",
-    "cluster_id": 2,
+    "pipeline": "pediatric",
+    "cluster_id": 5,
     "location": {
-      "lat": 36.18103764676466,
-      "lng": 128.6267603145774
+      "lat": 35.914346302,
+      "lng": 128.650791846
     },
-    "demand": 8,
+    "demand": 117,
+    "scenario_coverage_ratio": 0.5,
+    "candidate_group": "main_daegu",
+    "candidate_type": "stable_main",
+    "nearby_hospitals": [
+      "강남종합병원",
+      "우리아이아동병원"
+    ],
+    "nearby_count": 2,
+    "resource_gap": {
+      "doctors_needed": 5,
+      "mri_needed": true,
+      "ct_needed": false,
+      "avg_doctors_nearby": 10.0,
+      "mri_coverage_ratio": 0.0,
+      "ct_coverage_ratio": 0.5,
+      "priority_level": "HIGH"
+    },
+    "recommendation": "소아 안정 후보입니다. 여러 K/seed/거리 조건에서 반복 등장해 정책 우선 검토 가치가 있습니다. 최근접 참조 병원은 강남종합병원입니다. 반경 5km 평균 전문의가 10.0명으로 낮아 전문의 5명 보강을 검토합니다. MRI 커버리지가 낮아 장비 보강 또는 인접 병원 연계를 검토합니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
+  },
+  {
+    "pipeline": "pediatric",
+    "cluster_id": 7,
+    "location": {
+      "lat": 36.212479694,
+      "lng": 128.617453798
+    },
+    "demand": 3,
+    "scenario_coverage_ratio": 0.042,
+    "candidate_group": "separate_region",
+    "candidate_type": "separate_region",
     "nearby_hospitals": [],
     "nearby_count": 0,
     "resource_gap": {
-      "doctors_needed": 10,
+      "doctors_needed": 5,
       "mri_needed": true,
       "ct_needed": true,
       "avg_doctors_nearby": 0,
       "mri_coverage_ratio": 0.0,
-      "priority_level": "HIGH"
+      "ct_coverage_ratio": 0.0,
+      "priority_level": "REVIEW"
     },
-    "recommendation": "[HIGH] 최우선 | 어르신 클러스터 #2 (수요: 8개소) | → 반경 5km 내 기존 병원 전무(0개). 신규 공공의료센터 설립 및 전문의 10명 긴급 배치 강력 권고 | → 신규 센터에 MRI 1대 및 CT 필수 도입 권고"
+    "recommendation": "소아 별도 권역 검토 후보입니다. 민감도 시나리오 커버율 0.042로 반복 등장했지만 메인 후보와 분리해 검토해야 합니다. 반경 5km 내 참조 병원이 없어 신규 거점, 전문의 배치, MRI/CT 도입 여부를 함께 검토해야 합니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
+  },
+  {
+    "pipeline": "senior",
+    "cluster_id": 8,
+    "location": {
+      "lat": 35.826276237,
+      "lng": 128.649295921
+    },
+    "demand": 12,
+    "scenario_coverage_ratio": 0.708,
+    "candidate_group": "main_daegu",
+    "candidate_type": "stable_main",
+    "nearby_hospitals": [
+      "대구보훈병원"
+    ],
+    "nearby_count": 1,
+    "resource_gap": {
+      "doctors_needed": 0,
+      "mri_needed": false,
+      "ct_needed": false,
+      "avg_doctors_nearby": 28.0,
+      "mri_coverage_ratio": 1.0,
+      "ct_coverage_ratio": 1.0,
+      "priority_level": "LOW"
+    },
+    "recommendation": "어르신 안정 후보입니다. 여러 K/seed/거리 조건에서 반복 등장해 정책 우선 검토 가치가 있습니다. 최근접 참조 병원은 대구보훈병원입니다. 반경 5km 인프라가 비교적 양호해 지속 모니터링 후보로 둡니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
   },
   {
     "pipeline": "senior",
     "cluster_id": 3,
     "location": {
-      "lat": 35.74408995943169,
-      "lng": 128.46630463284217
+      "lat": 35.749237386,
+      "lng": 128.470436813
     },
-    "demand": 7,
+    "demand": 5,
+    "scenario_coverage_ratio": 0.533,
+    "candidate_group": "hold",
+    "candidate_type": "hold_review",
     "nearby_hospitals": [],
     "nearby_count": 0,
     "resource_gap": {
-      "doctors_needed": 10,
+      "doctors_needed": 5,
       "mri_needed": true,
       "ct_needed": true,
       "avg_doctors_nearby": 0,
       "mri_coverage_ratio": 0.0,
+      "ct_coverage_ratio": 0.0,
       "priority_level": "HIGH"
     },
-    "recommendation": "[HIGH] 최우선 | 어르신 클러스터 #3 (수요: 7개소) | → 반경 5km 내 기존 병원 전무(0개). 신규 공공의료센터 설립 및 전문의 10명 긴급 배치 강력 권고 | → 신규 센터에 MRI 1대 및 CT 필수 도입 권고"
+    "recommendation": "어르신 보류 검토 후보입니다. 안정성은 있으나 수요가 낮아 정책 우선순위 재검토가 필요합니다. 반경 5km 내 참조 병원이 없어 신규 거점, 전문의 배치, MRI/CT 도입 여부를 함께 검토해야 합니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
+  },
+  {
+    "pipeline": "senior",
+    "cluster_id": 2,
+    "location": {
+      "lat": 36.161736951,
+      "lng": 128.654469239
+    },
+    "demand": 8,
+    "scenario_coverage_ratio": 0.125,
+    "candidate_group": "separate_region",
+    "candidate_type": "separate_region",
+    "nearby_hospitals": [],
+    "nearby_count": 0,
+    "resource_gap": {
+      "doctors_needed": 5,
+      "mri_needed": true,
+      "ct_needed": true,
+      "avg_doctors_nearby": 0,
+      "mri_coverage_ratio": 0.0,
+      "ct_coverage_ratio": 0.0,
+      "priority_level": "REVIEW"
+    },
+    "recommendation": "어르신 별도 권역 검토 후보입니다. 민감도 시나리오 커버율 0.125로 반복 등장했지만 메인 후보와 분리해 검토해야 합니다. 반경 5km 내 참조 병원이 없어 신규 거점, 전문의 배치, MRI/CT 도입 여부를 함께 검토해야 합니다.",
+    "disclaimer": "정책탭 전용 검토 자료이며 시민탭 행동 안내가 아닙니다."
   }
 ]

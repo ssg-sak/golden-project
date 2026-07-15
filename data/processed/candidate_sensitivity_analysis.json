@@ -1,0 +1,3194 @@
+[
+  {
+    "mode": "pediatric",
+    "total_scenarios": 240,
+    "completed_scenarios": 240,
+    "skipped_scenarios": 0,
+    "base_input_count": 385,
+    "stable_candidate_groups": [
+      {
+        "stability_group_id": 4,
+        "lat": 35.887682622,
+        "lng": 128.548218267,
+        "occurrence_count": 180,
+        "scenario_count": 180,
+        "scenario_coverage_ratio": 0.75,
+        "avg_demand": 110.54,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 3,
+        "lat": 35.705094431,
+        "lng": 128.431674535,
+        "occurrence_count": 180,
+        "scenario_count": 180,
+        "scenario_coverage_ratio": 0.75,
+        "avg_demand": 25.74,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 1,
+        "lat": 35.882777631,
+        "lng": 128.631817499,
+        "occurrence_count": 120,
+        "scenario_count": 120,
+        "scenario_coverage_ratio": 0.5,
+        "avg_demand": 274.43,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 6,
+        "lat": 35.848381544,
+        "lng": 128.630296647,
+        "occurrence_count": 120,
+        "scenario_count": 120,
+        "scenario_coverage_ratio": 0.5,
+        "avg_demand": 121.44,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 5,
+        "lat": 35.914346302,
+        "lng": 128.650791846,
+        "occurrence_count": 120,
+        "scenario_count": 120,
+        "scenario_coverage_ratio": 0.5,
+        "avg_demand": 117.2,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 2,
+        "lat": 35.788911225,
+        "lng": 128.458581773,
+        "occurrence_count": 60,
+        "scenario_count": 60,
+        "scenario_coverage_ratio": 0.25,
+        "avg_demand": 58.75,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 8,
+        "lat": 35.850953879,
+        "lng": 128.480630962,
+        "occurrence_count": 50,
+        "scenario_count": 50,
+        "scenario_coverage_ratio": 0.208,
+        "avg_demand": 41.7,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 7,
+        "lat": 36.212479694,
+        "lng": 128.617453798,
+        "occurrence_count": 10,
+        "scenario_count": 10,
+        "scenario_coverage_ratio": 0.042,
+        "avg_demand": 3.0,
+        "dominant_candidate_group": "separate_region"
+      }
+    ],
+    "scenarios": [
+      {
+        "scenario_key": "k=2|seed=0|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 385,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 381,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 382,
+        "candidate_count": 5
+      }
+    ]
+  },
+  {
+    "mode": "senior",
+    "total_scenarios": 240,
+    "completed_scenarios": 240,
+    "skipped_scenarios": 0,
+    "base_input_count": 39,
+    "stable_candidate_groups": [
+      {
+        "stability_group_id": 8,
+        "lat": 35.826276237,
+        "lng": 128.649295921,
+        "occurrence_count": 170,
+        "scenario_count": 170,
+        "scenario_coverage_ratio": 0.708,
+        "avg_demand": 12.39,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 3,
+        "lat": 35.749237386,
+        "lng": 128.470436813,
+        "occurrence_count": 128,
+        "scenario_count": 128,
+        "scenario_coverage_ratio": 0.533,
+        "avg_demand": 5.06,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 10,
+        "lat": 35.915409229,
+        "lng": 128.588038106,
+        "occurrence_count": 93,
+        "scenario_count": 93,
+        "scenario_coverage_ratio": 0.388,
+        "avg_demand": 8.86,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 4,
+        "lat": 35.866549975,
+        "lng": 128.648978262,
+        "occurrence_count": 58,
+        "scenario_count": 58,
+        "scenario_coverage_ratio": 0.242,
+        "avg_demand": 22.24,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 13,
+        "lat": 35.902099254,
+        "lng": 128.546500435,
+        "occurrence_count": 58,
+        "scenario_count": 58,
+        "scenario_coverage_ratio": 0.242,
+        "avg_demand": 6.1,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 15,
+        "lat": 35.889092794,
+        "lng": 128.721185365,
+        "occurrence_count": 56,
+        "scenario_count": 56,
+        "scenario_coverage_ratio": 0.233,
+        "avg_demand": 4.75,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 11,
+        "lat": 35.909572814,
+        "lng": 128.694221807,
+        "occurrence_count": 49,
+        "scenario_count": 49,
+        "scenario_coverage_ratio": 0.204,
+        "avg_demand": 7.59,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 2,
+        "lat": 36.161736951,
+        "lng": 128.654469239,
+        "occurrence_count": 30,
+        "scenario_count": 30,
+        "scenario_coverage_ratio": 0.125,
+        "avg_demand": 8.0,
+        "dominant_candidate_group": "separate_region"
+      },
+      {
+        "stability_group_id": 5,
+        "lat": 35.869519143,
+        "lng": 128.531906729,
+        "occurrence_count": 30,
+        "scenario_count": 30,
+        "scenario_coverage_ratio": 0.125,
+        "avg_demand": 7.9,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 9,
+        "lat": 35.722594964,
+        "lng": 128.456853935,
+        "occurrence_count": 30,
+        "scenario_count": 30,
+        "scenario_coverage_ratio": 0.125,
+        "avg_demand": 6.0,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 7,
+        "lat": 35.775509971,
+        "lng": 128.491936271,
+        "occurrence_count": 27,
+        "scenario_count": 27,
+        "scenario_coverage_ratio": 0.113,
+        "avg_demand": 3.78,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 12,
+        "lat": 35.939211375,
+        "lng": 128.642618962,
+        "occurrence_count": 18,
+        "scenario_count": 18,
+        "scenario_coverage_ratio": 0.075,
+        "avg_demand": 6.67,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 21,
+        "lat": 36.018858154,
+        "lng": 128.668775189,
+        "occurrence_count": 16,
+        "scenario_count": 16,
+        "scenario_coverage_ratio": 0.067,
+        "avg_demand": 2.0,
+        "dominant_candidate_group": "separate_region"
+      },
+      {
+        "stability_group_id": 14,
+        "lat": 35.81770168,
+        "lng": 128.473524098,
+        "occurrence_count": 15,
+        "scenario_count": 15,
+        "scenario_coverage_ratio": 0.062,
+        "avg_demand": 3.0,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 20,
+        "lat": 35.898012362,
+        "lng": 128.430397295,
+        "occurrence_count": 15,
+        "scenario_count": 15,
+        "scenario_coverage_ratio": 0.062,
+        "avg_demand": 1.0,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 1,
+        "lat": 35.840578724,
+        "lng": 128.600145822,
+        "occurrence_count": 10,
+        "scenario_count": 10,
+        "scenario_coverage_ratio": 0.042,
+        "avg_demand": 31.0,
+        "dominant_candidate_group": "main_daegu"
+      },
+      {
+        "stability_group_id": 16,
+        "lat": 35.943278167,
+        "lng": 128.671755513,
+        "occurrence_count": 10,
+        "scenario_count": 10,
+        "scenario_coverage_ratio": 0.042,
+        "avg_demand": 7.6,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 18,
+        "lat": 36.132368381,
+        "lng": 128.697573561,
+        "occurrence_count": 10,
+        "scenario_count": 10,
+        "scenario_coverage_ratio": 0.042,
+        "avg_demand": 6.0,
+        "dominant_candidate_group": "separate_region"
+      },
+      {
+        "stability_group_id": 17,
+        "lat": 36.249751916,
+        "lng": 128.524962364,
+        "occurrence_count": 10,
+        "scenario_count": 10,
+        "scenario_coverage_ratio": 0.042,
+        "avg_demand": 2.0,
+        "dominant_candidate_group": "separate_region"
+      },
+      {
+        "stability_group_id": 19,
+        "lat": 35.67623561,
+        "lng": 128.438843181,
+        "occurrence_count": 5,
+        "scenario_count": 5,
+        "scenario_coverage_ratio": 0.021,
+        "avg_demand": 3.0,
+        "dominant_candidate_group": "hold"
+      },
+      {
+        "stability_group_id": 6,
+        "lat": 35.880311935,
+        "lng": 128.644792765,
+        "occurrence_count": 2,
+        "scenario_count": 2,
+        "scenario_coverage_ratio": 0.008,
+        "avg_demand": 24.0,
+        "dominant_candidate_group": "main_daegu"
+      }
+    ],
+    "scenarios": [
+      {
+        "scenario_key": "k=2|seed=0|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=0|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=7|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=21|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=42|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=2|seed=100|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 2
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=0|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=7|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=21|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=42|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=3|seed=100|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 3
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=0|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=7|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=21|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=42|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=4|seed=100|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 4
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=0|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=7|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=21|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=42|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=none|gunwi=include",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=none|gunwi=separate",
+        "status": "completed",
+        "input_count": 39,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=none|gunwi=exclude",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=10.0|gunwi=include",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=10.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=10.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 26,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=15.0|gunwi=include",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=15.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=15.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 29,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=20.0|gunwi=include",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=20.0|gunwi=separate",
+        "status": "completed",
+        "input_count": 31,
+        "candidate_count": 5
+      },
+      {
+        "scenario_key": "k=5|seed=100|cap=20.0|gunwi=exclude",
+        "status": "completed",
+        "input_count": 30,
+        "candidate_count": 5
+      }
+    ]
+  }
+]
