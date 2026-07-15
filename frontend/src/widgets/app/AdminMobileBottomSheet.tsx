@@ -57,12 +57,7 @@ interface AdminMobileBottomSheetProps {
   statsLoading?: boolean;
   hospitalsUpdatedAt?: string | null;
   vulnerabilityUpdatedAt?: string | null;
-  totalHospitalsDelta?: number | null;
-  highRiskDelta?: number | null;
   populationBaseMonth?: string;
-  adminAreaChangeText?: string;
-  emergencyChangeText?: string;
-  highRiskChangeText?: string;
   dataStale?: boolean;
   policyStatus?: React.ComponentProps<typeof PolicyStatusBanner> | null;
 }
@@ -91,12 +86,7 @@ export function AdminMobileBottomSheet({
   statsLoading,
   hospitalsUpdatedAt,
   vulnerabilityUpdatedAt,
-  totalHospitalsDelta,
-  highRiskDelta,
   populationBaseMonth,
-  adminAreaChangeText,
-  emergencyChangeText,
-  highRiskChangeText,
   dataStale,
   policyStatus,
 }: AdminMobileBottomSheetProps) {
@@ -300,12 +290,7 @@ export function AdminMobileBottomSheet({
                 loading={statsLoading}
                 hospitalsUpdatedAt={hospitalsUpdatedAt}
                 vulnerabilityUpdatedAt={vulnerabilityUpdatedAt}
-                totalHospitalsDelta={totalHospitalsDelta}
-                highRiskDelta={highRiskDelta}
                 populationBaseMonth={populationBaseMonth}
-                adminAreaChangeText={adminAreaChangeText}
-                emergencyChangeText={emergencyChangeText}
-                highRiskChangeText={highRiskChangeText}
                 dataStale={dataStale}
               />
               <MetricsGuide />

@@ -12,6 +12,20 @@ export function CitizenBedLabel({ hospital, size = 'list', inverted = false }: C
   const isLarge = size === 'detail';
   const sizeClass = isLarge ? 'text-lg' : 'text-sm';
 
+  if (hospital.tier === 3) {
+    return (
+      <span
+        className={`inline-flex items-center gap-1.5 font-bold ${sizeClass} ${
+          inverted ? 'text-cyan-100' : 'text-cyan-700'
+        }`}
+        title="달빛어린이병원은 일반 응급실 병상 상태가 아니라 야간·휴일 소아 진료 가능 여부를 우선 확인해야 합니다."
+      >
+        <span className="h-3 w-3 rounded-full bg-cyan-500 ring-2 ring-cyan-100" aria-hidden />
+        야간·휴일 소아진료
+      </span>
+    );
+  }
+
   if (status === 'available') {
     const visual = congestion === 'crowded'
       ? { dot: 'bg-rose-500', text: inverted ? 'text-rose-100' : 'text-rose-700', label: '혼잡' }

@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react';
 import type { UserLocation } from '../../shared/hooks/useUserLocation';
 import { useSortedHospitalsByDistance } from '../../shared/hooks/useSortedHospitalsByDistance';
 import { compareHospitalRecommendations } from '../../shared/lib/hospital-recommendation';
+import type { SevereConditionId } from '../../shared/lib/severe-condition';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { LocationNotice } from '../landing/LocationNotice';
 import { HospitalDetailPanel } from '../map-dashboard/HospitalDetailPanel';
@@ -23,6 +24,8 @@ interface MobileCitizenHospitalBrowserProps {
   onShowAvailableOnlyChange: (value: boolean) => void;
   careTarget: 'all' | 'adult' | 'pediatric' | 'senior';
   onCareTargetChange: (value: 'all' | 'adult' | 'pediatric' | 'senior') => void;
+  severeCondition: SevereConditionId;
+  onSevereConditionChange: (value: SevereConditionId) => void;
 }
 
 export function MobileCitizenHospitalBrowser({
@@ -38,13 +41,15 @@ export function MobileCitizenHospitalBrowser({
   onShowAvailableOnlyChange,
   careTarget,
   onCareTargetChange,
+  severeCondition,
+  onSevereConditionChange,
 }: MobileCitizenHospitalBrowserProps) {
   const { etas, hasFallback, fetchEtas } = useEtaController();
   const baseSortedHospitals = useSortedHospitalsByDistance(
     hospitals,
     userLocation?.lat,
     userLocation?.lng,
-    { availableOnly: showAvailableOnly, careTarget, sortMode: 'recommendation' },
+    { availableOnly: showAvailableOnly, careTarget, severeCondition, sortMode: 'recommendation' },
   );
 
   useEffect(() => {
@@ -58,29 +63,29 @@ export function MobileCitizenHospitalBrowser({
   }, [baseSortedHospitals, etas]);
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col bg-white" aria-label="가까운 응급실 찾기">
+    <section className="flex min-h-0 flex-1 flex-col bg-white" aria-label="가까운 응급기관 찾기">
       <div className={selectedHospital ? 'hidden' : 'flex min-h-0 flex-1 flex-col'}>
         <header className="shrink-0 border-b border-teal-900 bg-teal-800 px-4 py-3 text-white">
-          <p className="text-xs font-semibold text-teal-100">지도 없이 목록으로 확인 · 내 위치와 이동시간 기준</p>
+          <p className="text-xs font-semibold text-teal-100">지도 없이 목록으로 확인 · 현재 위치 기준</p>
           <div className="mt-1 flex items-end justify-between gap-3">
-            <h1 className="text-xl font-extrabold">가까운 응급실</h1>
+            <h1 className="text-xl font-extrabold">가까운 응급기관</h1>
             <span className="text-sm font-bold text-teal-100">
               {loading ? '확인 중' : `${sortedHospitals.length}곳`}
             </span>
           </div>
           <p className="mt-1 text-xs leading-relaxed text-teal-100">
-            병상은 이동 중 바뀔 수 있으니 출발 전 병원이나 119에 확인하세요.
+            병상과 이동시간은 계속 바뀔 수 있습니다. 출발 전 병원이나 119에 확인하세요.
           </p>
         </header>
 
         {hasFallback ? (
-          <div className="shrink-0 border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-900">
-            실시간 교통 정보를 불러오지 못해 직선거리 순으로 안내합니다.
+          <div className="shrink-0 border-l-4 border-amber-400 bg-amber-50 px-4 py-2 text-xs leading-relaxed text-amber-900">
+            현재 차량 이동시간을 불러오지 못해 거리 기준으로 안내합니다.
           </div>
         ) : null}
 
         <HospitalSidebarControls
-          heading="진료 대상과 병상 조건"
+          heading="누가 진료받나요?"
           isLocating={isLocating}
           locationSource={userLocation?.source ?? null}
           locationErrorReason={locationErrorReason}
@@ -89,6 +94,8 @@ export function MobileCitizenHospitalBrowser({
           onShowAvailableOnlyChange={onShowAvailableOnlyChange}
           careTarget={careTarget}
           onCareTargetChange={onCareTargetChange}
+          severeCondition={severeCondition}
+          onSevereConditionChange={onSevereConditionChange}
         />
 
         <HospitalSidebarList
@@ -102,6 +109,7 @@ export function MobileCitizenHospitalBrowser({
           showAvailableOnly={showAvailableOnly}
           onShowAvailableOnlyChange={onShowAvailableOnlyChange}
           onCareTargetChange={onCareTargetChange}
+          severeCondition={severeCondition}
         />
       </div>
 
@@ -121,7 +129,9 @@ export function MobileCitizenHospitalBrowser({
           <span className="truncate">병원 목록으로</span>
         </button>
         <div className="min-h-0 flex-1 overflow-hidden">
-          {selectedHospital ? <HospitalDetailPanel hospital={selectedHospital} /> : null}
+          {selectedHospital ? (
+            <HospitalDetailPanel hospital={selectedHospital} severeCondition={severeCondition} />
+          ) : null}
         </div>
       </div>
     </section>

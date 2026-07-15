@@ -30,18 +30,18 @@ export function PresetDistrictListPanel({
   const presetMeta =
     activePreset === 'highRiskTop10'
       ? {
-          title: 'VDI 고위험 지역',
-          description: 'VDI Log가 높은 행정동을 우선순위로 보여줍니다.',
+          title: '응급 접근성 위험 지역',
+          description: '병원까지 멀고 보호 필요 인구가 많아 먼저 살펴볼 동네입니다.',
         }
       : activePreset === 'pediatricPriority'
         ? {
-            title: '소아 응급 취약지역',
-            description: '가까운 기관이 달빛·소아 진료기관인 지역 중 VDI Log가 높은 곳입니다.',
+            title: '소아 야간·휴일 취약 지역',
+            description: '가까운 기관이 달빛어린이병원 성격인지 함께 봐야 하는 동네입니다.',
           }
         : activePreset === 'generalPriority'
           ? {
-              title: '일반 응급 취약지역',
-              description: '권역·대형 또는 준종합 응급의료기관 접근성이 취약한 지역입니다.',
+              title: '응급기관 접근 취약 지역',
+              description: '권역·대형 또는 준종합 응급기관 접근성이 상대적으로 낮은 동네입니다.',
             }
           : {
               title: '빠른 지역 조회',
@@ -51,15 +51,11 @@ export function PresetDistrictListPanel({
   return (
     <aside className={PANEL_SHELL}>
       <div className="shrink-0 border-b border-slate-200 bg-rose-50 px-5 py-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-rose-600">
-          빠른 지역 조회
-        </p>
-        <h2 className="mt-1 text-xl font-extrabold leading-tight text-slate-900">
-          {presetMeta.title}
-        </h2>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-rose-600">빠른 지역 조회</p>
+        <h2 className="mt-1 text-xl font-extrabold leading-tight text-slate-900">{presetMeta.title}</h2>
         <p className="mt-1 text-xs leading-5 text-slate-600">{presetMeta.description}</p>
         <p className="mt-2 text-[11px] font-semibold text-rose-700">
-          VDI Log는 기본 위험 점수, VDI Norm은 0~100 비교 점수입니다.
+          위험 점수는 먼저 볼 지역을 좁히는 참고값입니다.
         </p>
       </div>
 
@@ -95,14 +91,14 @@ export function PresetDistrictListPanel({
                       <span className="truncate font-bold">{admNm}</span>
                     </div>
                     <span className={`shrink-0 text-xs font-semibold ${isSelected ? 'text-rose-100' : 'text-slate-500'}`}>
-                      VDI Log {formatScore(record?.vdi_log)}
+                      위험 {formatScore(record?.vdi_log)}
                     </span>
                   </div>
 
                   {record ? (
                     <div className={`grid grid-cols-2 gap-2 text-[11px] ${isSelected ? 'text-rose-50' : 'text-slate-500'}`}>
-                      <span>VDI Norm {record.vdi_norm.toFixed(1)}점</span>
-                      <span>취약인구 {record.vulnerable_pop.toLocaleString('ko-KR')}명</span>
+                      <span>비교 {record.vdi_norm.toFixed(1)}점</span>
+                      <span>보호 필요 {record.vulnerable_pop.toLocaleString('ko-KR')}명</span>
                       <span>최근접 {record.min_dist_to_hospital.toFixed(2)}km</span>
                       <span className="truncate">{record.nearest_hospital_name ?? '최근접 병원 확인 중'}</span>
                     </div>

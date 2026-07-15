@@ -19,11 +19,6 @@ export function useDashboardActions({
 }: UseDashboardActionsProps) {
   const setActivePreset = usePresetStore((state) => state.setActivePreset);
   const records = useVulnerabilityStore((state) => state.records);
-  const publicDataUrl = useCallback(
-    (filename: string) => `${import.meta.env.BASE_URL}data/${filename}`,
-    [],
-  );
-
   const handlePresetSelect = useCallback(
     (preset: 'highRiskTop10' | 'pediatricPriority' | 'generalPriority') => {
       const sorted = [...records].sort((a, b) => b.vdi_log - a.vdi_log);
@@ -64,17 +59,7 @@ export function useDashboardActions({
     [onDistrictSelect, records, setActiveFilter, setActivePreset],
   );
 
-  const handleExportCsv = useCallback(() => {
-    const link = document.createElement('a');
-    link.href = publicDataUrl('policy_monitoring_report.csv');
-    link.download = `policy-monitoring-${new Date().toISOString().slice(0, 10)}.csv`;
-    document.body.append(link);
-    link.click();
-    link.remove();
-  }, [publicDataUrl]);
-
   return {
     handlePresetSelect,
-    handleExportCsv,
   };
 }

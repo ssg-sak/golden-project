@@ -8,12 +8,7 @@ interface DashboardStatsBarProps {
   loading?: boolean;
   hospitalsUpdatedAt?: string | null;
   vulnerabilityUpdatedAt?: string | null;
-  totalHospitalsDelta?: number | null;
-  highRiskDelta?: number | null;
   populationBaseMonth?: string;
-  adminAreaChangeText?: string;
-  emergencyChangeText?: string;
-  highRiskChangeText?: string;
   dataStale?: boolean;
 }
 
@@ -29,13 +24,6 @@ function formatMetric(value: number | undefined, loading?: boolean): string {
   return value.toLocaleString('ko-KR');
 }
 
-function formatDelta(delta?: number | null, changeText?: string): string {
-  if (changeText) return changeText;
-  if (delta === null || delta === undefined) return '변화 확인 중';
-  if (delta === 0) return '변화 없음';
-  return delta > 0 ? `${delta} 증가` : `${Math.abs(delta)} 감소`;
-}
-
 export function DashboardStatsBar({
   districtCount,
   tier1Count,
@@ -46,34 +34,29 @@ export function DashboardStatsBar({
   loading,
   hospitalsUpdatedAt,
   vulnerabilityUpdatedAt,
-  totalHospitalsDelta,
-  highRiskDelta,
   populationBaseMonth = '2026.06',
-  adminAreaChangeText,
-  emergencyChangeText,
-  highRiskChangeText,
   dataStale = false,
 }: DashboardStatsBarProps) {
   const totalHospitals = tier1Count + tier2Count + tier3Count;
 
   const rows = [
     {
-      label: '분석 행정동',
+      label: '분석 동네',
       metric: formatMetric(districtCount, loading),
-      detail: `대구 읍·면·동 기준 · ${formatDelta(undefined, adminAreaChangeText)}`,
+      detail: '대구 행정동 기준',
     },
     {
-      label: '응급의료기관',
+      label: '응급 관련 기관',
       metric: formatMetric(totalHospitals, loading),
-      detail: `권역·대형 ${formatMetric(tier1Count, loading)} · 준종합 ${formatMetric(tier2Count, loading)} · 달빛소아 ${formatMetric(tier3Count, loading)} · ${formatDelta(totalHospitalsDelta, emergencyChangeText)}`,
+      detail: `대형 ${formatMetric(tier1Count, loading)} · 준종합 ${formatMetric(tier2Count, loading)} · 소아야간 ${formatMetric(tier3Count, loading)}`,
     },
     {
-      label: '고위험 행정동',
+      label: '위험 높은 동네',
       metric: formatMetric(highRiskDistrictCount, loading),
-      detail: `VDI Log ${Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')} 이상 · ${formatDelta(highRiskDelta, highRiskChangeText)}`,
+      detail: `위험 점수 ${Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')} 이상`,
     },
     {
-      label: '인구 기준월',
+      label: '인구 기준',
       metric: populationBaseMonth,
       detail: '주민등록인구 기준',
     },
@@ -86,11 +69,10 @@ export function DashboardStatsBar({
           <div>
             <p className="text-xs font-bold text-teal-800">정책 현황 요약</p>
             <h1 className="mt-0.5 text-lg font-extrabold text-slate-900">
-              대구 응급의료 접근성 모니터링
+              대구 응급의료 접근성 지도
             </h1>
             <p className="mt-1 text-xs leading-5 text-slate-600">
-              기본 지표는 <strong>VDI Log</strong>, 비교 보조 지표는 <strong>VDI Norm 0~100</strong>입니다.
-              병원 접근성과 취약인구를 함께 봅니다.
+              병원까지의 거리와 보호가 필요한 인구를 함께 보며, 먼저 살펴볼 동네를 좁힙니다.
             </p>
           </div>
           <div className="flex flex-wrap gap-2 text-[11px] font-bold">
@@ -120,7 +102,7 @@ export function DashboardStatsBar({
 
         <p className="border-t border-slate-200 pt-2 text-[11px] text-slate-500">
           병원 {formatUpdatedAt(hospitalsUpdatedAt)} 갱신 · 분석 {formatUpdatedAt(vulnerabilityUpdatedAt)} 갱신
-          {dataStale ? ' · 공공데이터 갱신 지연으로 마지막 정상 자료 표시 중' : ''}
+          {dataStale ? ' · 최신 자료 확인이 지연되어 저장된 자료를 표시 중' : ''}
         </p>
       </div>
     </section>

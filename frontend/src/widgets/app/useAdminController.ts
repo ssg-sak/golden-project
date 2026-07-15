@@ -180,7 +180,7 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
         tone: 'warning' as const,
         message:
           hospitalsDegradedMode === 'stale-cache'
-            ? '병원 API가 불안정해 이전 병상 데이터를 표시 중입니다.'
+            ? '병원 데이터 연결이 불안정해 이전 병상 데이터를 표시 중입니다.'
             : '병원 실시간 병상 연결 실패로 기본 병원 목록을 표시 중입니다.',
         actionLabel: '병원 다시 시도',
         onAction: onRetryHospitals,
@@ -199,7 +199,7 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     if (vulnerabilityDegraded) {
       return {
         tone: 'info' as const,
-        message: '동네 분석 API에 연결하지 못해 저장된 분석 데이터를 표시 중입니다.',
+        message: '동네 분석 데이터 연결에 실패해 저장된 분석 데이터를 표시 중입니다.',
       };
     }
     if (useDynamicDashboard && dashboardSummary?.status.stale) {
@@ -246,8 +246,6 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     handleHospitalSelect,
     riskThreshold,
     setRiskThreshold,
-    totalHospitalsDelta: useDynamicDashboard ? dashboardSummary?.emergencyFacilities.difference ?? null : null,
-    highRiskDelta: useDynamicDashboard ? dashboardSummary?.risk.difference ?? null : null,
     highRiskDistrictCount,
     vulnerabilitySummary,
     highlightedHospitalName,
@@ -262,9 +260,6 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     tier2Count,
     tier3Count,
     populationBaseMonth: dashboardSummary?.population.baseMonth ?? '2026.06',
-    adminAreaChangeText: dashboardSummary?.adminArea.changeText,
-    emergencyChangeText: dashboardSummary?.emergencyFacilities.changeText,
-    highRiskChangeText: dashboardSummary?.risk.changeText,
     dataStale: dashboardSummary?.status.stale ?? false,
     useDynamicDashboard,
   };

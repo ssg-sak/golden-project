@@ -11,6 +11,7 @@ import {
 import { HOSPITALS_LOADING_MESSAGE } from '../../shared/constants/loading-messages';
 import { useUserLocation } from '../../shared/hooks/useUserLocation';
 import { useHospitalStore } from '../../shared/store/hospitalStore';
+import type { SevereConditionId } from '../../shared/lib/severe-condition';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { EmergencyBanner } from '../shared/EmergencyBanner';
 import { DegradedDataBanner } from '../shared/DegradedDataBanner';
@@ -70,6 +71,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
   const [selectedHospital, setSelectedHospital] = useState<HospitalRecord | null>(null);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [careTarget, setCareTarget] = useState<'all' | 'adult' | 'pediatric' | 'senior'>('all');
+  const [severeCondition, setSevereCondition] = useState<SevereConditionId>('all');
 
 
   const handleHospitalSelect = useCallback((hospital: HospitalRecord | null) => {
@@ -91,9 +93,17 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
       if (selectedHospital && value === 'senior' && ![1, 2].includes(selectedHospital.tier)) {
         setSelectedHospital(null);
       }
+      if (value !== 'pediatric' && severeCondition === 'pediatric_night_holiday') {
+        setSevereCondition('all');
+      }
     },
-    [selectedHospital],
+    [selectedHospital, severeCondition],
   );
+
+  const handleSevereConditionChange = useCallback((value: SevereConditionId) => {
+    setSevereCondition(value);
+    setSelectedHospital(null);
+  }, []);
 
   const mapBlocked = hospitalsLoading || hospitalsError !== null;
 
@@ -143,6 +153,8 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
           onShowAvailableOnlyChange={setShowAvailableOnly}
           careTarget={careTarget}
           onCareTargetChange={handleCareTargetChange}
+          severeCondition={severeCondition}
+          onSevereConditionChange={handleSevereConditionChange}
         />
       </div>
 
@@ -162,6 +174,8 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
             onShowAvailableOnlyChange={setShowAvailableOnly}
             careTarget={careTarget}
             onCareTargetChange={handleCareTargetChange}
+            severeCondition={severeCondition}
+            onSevereConditionChange={handleSevereConditionChange}
           />
         </div>
 
@@ -201,6 +215,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
               userLocation={location}
               showAvailableOnly={showAvailableOnly}
               careTarget={careTarget}
+              severeCondition={severeCondition}
             />
           ) : null}
         </div>
@@ -212,7 +227,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
           }`}
         >
           <div className={DASHBOARD_DETAIL_INNER_CLASS}>
-            <HospitalDetailPanel hospital={selectedHospital} />
+            <HospitalDetailPanel hospital={selectedHospital} severeCondition={severeCondition} />
           </div>
         </div>
       </main>

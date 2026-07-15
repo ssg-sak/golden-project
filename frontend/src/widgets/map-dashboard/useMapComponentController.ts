@@ -62,7 +62,7 @@ export function useMapComponentController({
 
   const skipMapClearRef = useRef(false);
 
-  const { handlePresetSelect, handleExportCsv } = useDashboardActions({
+  const { handlePresetSelect } = useDashboardActions({
     onDistrictSelect,
     setActiveFilter,
   });
@@ -178,6 +178,5 @@ export function useMapComponentController({
     handleMapClick,
     handleHospitalSelectInternal,
     handlePresetSelect,
-    handleExportCsv,
   };
 }

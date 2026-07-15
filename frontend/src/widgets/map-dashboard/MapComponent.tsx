@@ -12,6 +12,7 @@ import { MapToolbar } from './MapToolbar';
 import { MapInteraction } from './MapInteraction';
 import { MapRelayout } from './MapRelayout';
 import { OptimalLocationMarkers } from './OptimalLocationMarkers';
+import { PolicyOptimizationSummary } from './PolicyOptimizationSummary';
 import { useMapController, MIN_LEVEL, MAX_LEVEL } from './lib/useMapController';
 import { enforceDaeguMapBounds } from './lib/daegu-map-bounds';
 import { type KakaoLatLng } from './lib/geojson-to-kakao';
@@ -70,7 +71,6 @@ export function MapComponent(props: MapComponentProps) {
         riskThreshold={riskThreshold}
         onRiskThresholdChange={onRiskThresholdChange}
         onPresetSelect={mapState.handlePresetSelect}
-        onExportCsv={mapState.handleExportCsv}
         currentMode={props.currentMode}
       />
       {mapState.optimalError && mapState.showOptimalLocations && (
@@ -174,6 +174,7 @@ export function MapComponent(props: MapComponentProps) {
         </Map>
 
         <MapHud onLocate={handleLocateMe} locating={locating} />
+        <PolicyOptimizationSummary />
       </div>
     </div>
   );

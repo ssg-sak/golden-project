@@ -66,6 +66,7 @@ async def fetch_all_beds_from_api_async(
             from app.services.api_clients.data_go_kr_client import (
                 fetch_data_go_kr_beds,
                 fetch_data_go_kr_messages,
+                fetch_data_go_kr_severe_acceptance,
             )
             # 1단계: 병상 데이터 수집
             try:
@@ -76,6 +77,9 @@ async def fetch_all_beds_from_api_async(
             # 공식 응급의료 API의 CT·MRI·조영촬영기·인공호흡기 현재 가용 여부는
             # 병상 원천과 별도로 모든 응급기관에 보강한다.
             await fetch_data_go_kr_beds(client, service_key, target_names, matched)
+            await fetch_data_go_kr_severe_acceptance(
+                client, service_key, target_names, matched
+            )
             # 2단계: 응급실 특이사항 메시지 수집 (matched에 병합)
             if matched:
                 await fetch_data_go_kr_messages(client, service_key, target_names, matched)

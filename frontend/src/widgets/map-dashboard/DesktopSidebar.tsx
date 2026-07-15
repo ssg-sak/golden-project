@@ -3,6 +3,7 @@ import { DESKTOP_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-la
 import { useEtaController } from './lib/useEtaController';
 import { useSortedHospitalsByDistance } from '../../shared/hooks/useSortedHospitalsByDistance';
 import { compareHospitalRecommendations } from '../../shared/lib/hospital-recommendation';
+import type { SevereConditionId } from '../../shared/lib/severe-condition';
 import type { UserLocation } from '../../shared/hooks/useUserLocation';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { LocationNotice } from '../landing/LocationNotice';
@@ -24,6 +25,8 @@ interface DesktopSidebarProps {
   onShowAvailableOnlyChange: (value: boolean) => void;
   careTarget: 'all' | 'adult' | 'pediatric' | 'senior';
   onCareTargetChange: (value: 'all' | 'adult' | 'pediatric' | 'senior') => void;
+  severeCondition: SevereConditionId;
+  onSevereConditionChange: (value: SevereConditionId) => void;
 }
 
 export function DesktopSidebar({
@@ -39,6 +42,8 @@ export function DesktopSidebar({
   onShowAvailableOnlyChange,
   careTarget,
   onCareTargetChange,
+  severeCondition,
+  onSevereConditionChange,
 }: DesktopSidebarProps) {
   const { etas, hasFallback, fetchEtas } = useEtaController();
 
@@ -46,7 +51,7 @@ export function DesktopSidebar({
     hospitals,
     userLocation?.lat,
     userLocation?.lng,
-    { availableOnly: showAvailableOnly, careTarget, sortMode: 'recommendation' },
+    { availableOnly: showAvailableOnly, careTarget, severeCondition, sortMode: 'recommendation' },
   );
 
   useEffect(() => {
@@ -84,6 +89,8 @@ export function DesktopSidebar({
         onShowAvailableOnlyChange={onShowAvailableOnlyChange}
         careTarget={careTarget}
         onCareTargetChange={onCareTargetChange}
+        severeCondition={severeCondition}
+        onSevereConditionChange={onSevereConditionChange}
       />
 
       <HospitalSidebarList
@@ -97,6 +104,7 @@ export function DesktopSidebar({
         showAvailableOnly={showAvailableOnly}
         onShowAvailableOnlyChange={onShowAvailableOnlyChange}
         onCareTargetChange={onCareTargetChange}
+        severeCondition={severeCondition}
       />
     </aside>
   );

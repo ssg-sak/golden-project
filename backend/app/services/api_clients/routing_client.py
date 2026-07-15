@@ -37,7 +37,12 @@ async def fetch_eta(
         
         routes = data.get("routes", [])
         if not routes:
-            return {"name": dest_name, "eta_seconds": None, "error": "No routes found"}
+            return {
+                "name": dest_name,
+                "eta_seconds": None,
+                "distance_meters": None,
+                "error": "No routes found",
+            }
             
         duration = routes[0].get("summary", {}).get("duration")
         distance = routes[0].get("summary", {}).get("distance")
@@ -50,10 +55,20 @@ async def fetch_eta(
         }
     except httpx.HTTPStatusError as exc:
         logger.warning(f"[routing] Kakao API HTTP error for {dest_name}: {exc.response.status_code} - {exc.response.text}")
-        return {"name": dest_name, "eta_seconds": None, "error": f"HTTP {exc.response.status_code}"}
+        return {
+            "name": dest_name,
+            "eta_seconds": None,
+            "distance_meters": None,
+            "error": f"HTTP {exc.response.status_code}",
+        }
     except Exception as exc:
         logger.warning(f"[routing] Kakao API fetch error for {dest_name}: {type(exc).__name__}: {exc}")
-        return {"name": dest_name, "eta_seconds": None, "error": str(exc)}
+        return {
+            "name": dest_name,
+            "eta_seconds": None,
+            "distance_meters": None,
+            "error": str(exc),
+        }
 
 
 async def fetch_multiple_etas(
@@ -70,7 +85,12 @@ async def fetch_multiple_etas(
     if not api_key:
         logger.info("[routing] KAKAO_REST_API_KEY is not set. Falling back to null ETAs.")
         return [
-            {"name": dest["name"], "eta_seconds": None, "error": "Missing API Key"}
+            {
+                "name": dest["name"],
+                "eta_seconds": None,
+                "distance_meters": None,
+                "error": "Missing API Key",
+            }
             for dest in destinations
         ]
 

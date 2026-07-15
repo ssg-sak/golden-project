@@ -84,7 +84,7 @@ export function DemoNoticeModal() {
               />
               <span className="text-[11px] leading-snug md:text-sm">
                 <strong className="mb-0.5 block text-slate-900">일부 기능은 실제 서버와 다를 수 있습니다</strong>
-                GitHub Pages 데모에서는 백엔드, 실시간 API, 지도 연동 조건에 따라 표시가 제한될 수 있습니다.
+                GitHub Pages 데모에서는 실제 서버, 외부 데이터 연결, 지도 연동 조건에 따라 표시가 제한될 수 있습니다.
               </span>
             </label>
 

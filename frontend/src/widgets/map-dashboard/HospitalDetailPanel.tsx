@@ -2,6 +2,12 @@ import { kakaoDirectionsUrl } from '../../shared/lib/kakao-navigation';
 import { resolveBedStatus } from '../../shared/lib/bed-status';
 import { hospitalTierLabel } from '../../shared/lib/hospital-tier-visual';
 import {
+  severeConditionOption,
+  severeConditionStatus,
+  severeConditionSummary,
+  type SevereConditionId,
+} from '../../shared/lib/severe-condition';
+import {
   hospitalDisplayName,
   isMoonlightHospital,
 } from '../../shared/types/hospital';
@@ -18,6 +24,7 @@ const PANEL_SHELL =
 
 interface HospitalDetailPanelProps {
   hospital: HospitalRecord | null;
+  severeCondition?: SevereConditionId;
 }
 
 function EmptyPanel() {
@@ -45,9 +52,17 @@ function EmptyPanel() {
   );
 }
 
-function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
+function HospitalDetailContent({
+  hospital,
+  severeCondition = 'all',
+}: {
+  hospital: HospitalRecord;
+  severeCondition?: SevereConditionId;
+}) {
   const bedStatus = resolveBedStatus(hospital);
   const isMoonlight = isMoonlightHospital(hospital);
+  const selectedCondition = severeConditionOption(severeCondition);
+  const selectedConditionStatus = severeConditionStatus(hospital, severeCondition);
   const headerClass = isMoonlight
     ? 'border-cyan-300 bg-cyan-50'
     : bedStatus.status === 'unavailable'
@@ -86,6 +101,25 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           <p className="rounded-lg bg-cyan-50 px-3 py-2 text-xs font-bold leading-relaxed text-cyan-900 ring-1 ring-cyan-200">
             소아 응급 접근성은 야간·휴일 소아진료 가능성을 중심으로 해석합니다.
           </p>
+        ) : null}
+
+        {severeCondition !== 'all' ? (
+          <section
+            className={`rounded-lg border px-3 py-3 text-xs leading-relaxed ${
+              selectedConditionStatus === 'available'
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+                : selectedConditionStatus === 'unavailable'
+                  ? 'border-rose-200 bg-rose-50 text-rose-900'
+                  : 'border-slate-200 bg-slate-50 text-slate-700'
+            }`}
+          >
+            <p className="font-extrabold">{selectedCondition.label}</p>
+            <p className="mt-1 font-semibold">{severeConditionSummary(hospital, severeCondition)}</p>
+            <p className="mt-2 text-[11px]">
+              중증질환 수용 가능 여부는 중앙응급의료센터 공식 데이터 기준의 참고값입니다.
+              출발 전 119, 1339 또는 병원에 반드시 확인하세요.
+            </p>
+          </section>
         ) : null}
 
         {isMoonlight ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
@@ -131,9 +165,9 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
   );
 }
 
-export function HospitalDetailPanel({ hospital }: HospitalDetailPanelProps) {
+export function HospitalDetailPanel({ hospital, severeCondition = 'all' }: HospitalDetailPanelProps) {
   if (!hospital) {
     return <EmptyPanel />;
   }
-  return <HospitalDetailContent hospital={hospital} />;
+  return <HospitalDetailContent hospital={hospital} severeCondition={severeCondition} />;
 }

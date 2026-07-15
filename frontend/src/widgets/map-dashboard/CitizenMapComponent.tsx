@@ -12,6 +12,7 @@ import { SelectedHospitalPin } from './SelectedHospitalPin';
 import { enforceDaeguMapBounds } from './lib/daegu-map-bounds';
 import { filterByCareTarget } from './lib/hospital-filter';
 import { isHospitalAvailable } from '../../shared/lib/bed-status';
+import type { SevereConditionId } from '../../shared/lib/severe-condition';
 import type { KakaoLatLng } from './lib/geojson-to-kakao';
 import { userLocationMarkerImage } from './lib/kakao-marker-images';
 
@@ -33,6 +34,7 @@ interface CitizenMapComponentProps {
   userLocation: UserLocation | null;
   showAvailableOnly: boolean;
   careTarget: 'all' | 'adult' | 'pediatric' | 'senior';
+  severeCondition: SevereConditionId;
 }
 
 export function CitizenMapComponent({
@@ -42,6 +44,7 @@ export function CitizenMapComponent({
   userLocation,
   showAvailableOnly,
   careTarget,
+  severeCondition,
 }: CitizenMapComponentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
@@ -58,8 +61,8 @@ export function CitizenMapComponent({
     }
 
     // 2) 진료대상(careTarget) 공통 필터 적용
-    return filterByCareTarget(filtered, careTarget);
-  }, [hospitals, showAvailableOnly, careTarget]);
+    return filterByCareTarget(filtered, careTarget, severeCondition);
+  }, [hospitals, showAvailableOnly, careTarget, severeCondition]);
 
   const panMapTo = useCallback((lat: number, lng: number, level: number, applyOffset: boolean = false) => {
     const map = mapRef.current;

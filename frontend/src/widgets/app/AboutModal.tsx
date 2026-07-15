@@ -19,11 +19,7 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
 
       <div
         className="relative flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200"
@@ -33,8 +29,7 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
       >
         <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
           <h2 id="modal-title" className="text-xl font-extrabold text-slate-800">
-            대구 골든타임
-            <span className="ml-2 text-sm font-medium text-blue-600">서비스 안내</span>
+            대구 골든타임 <span className="ml-2 text-sm font-medium text-blue-600">서비스 안내</span>
           </h2>
           <button
             onClick={onClose}
@@ -51,33 +46,31 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
           <div className="space-y-6">
             <section className="rounded-xl bg-blue-50/50 p-5 ring-1 ring-blue-100/50">
               <p className="text-[15px] leading-relaxed">
-                <strong>대구 골든타임</strong>은 시민에게 가까운 응급의료기관을 안내하고, 지역사회에는
-                응급의료 사각지대를 함께 살펴볼 수 있는 근거를 제공하는 공익 지도 서비스입니다.
+                <strong>대구 골든타임</strong>은 가까운 응급기관, 병상, 차량 이동시간, 중증질환 수용 가능 정보를
+                한 화면에서 확인하는 교육용 서비스입니다.
               </p>
             </section>
 
             <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
               <h3 className="mb-2 text-base font-bold text-slate-900">시민 화면</h3>
               <p className="text-sm leading-relaxed text-slate-600">
-                현재 위치 또는 대구광역시청 기준으로 가까운 응급의료기관을 보여 줍니다. 병상 정보는
-                참고용이므로 출발 전에는 전화 확인이 필요합니다.
+                현재 위치 기준으로 가까운 응급기관을 보여줍니다. 심근경색, 절단, 화상처럼 상황별로 확인해야 할
+                수용 가능 정보도 함께 볼 수 있습니다.
               </p>
             </section>
 
             <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-2 text-base font-bold text-slate-900">정책·분석 모니터링 화면</h3>
+              <h3 className="mb-2 text-base font-bold text-slate-900">정책 화면</h3>
               <p className="text-sm leading-relaxed text-slate-600">
-                이 화면은 정책관리자만을 위한 내부 도구가 아닙니다. 시민, 의료기관, 지역 관계자,
-                정책 담당자가 같은 지표와 지도를 보며 어느 지역에 지원이 더 필요한지 함께 논의하기
-                위한 공공 데이터 화면입니다.
+                행정동별로 응급기관 접근성과 보호 필요 인구를 함께 보여줍니다. 화면의 후보지는 확정안이 아니라
+                현장 확인 전에 먼저 살펴볼 참고 위치입니다.
               </p>
             </section>
 
             <section className="rounded-xl border border-teal-200 bg-teal-50 p-5">
-              <h3 className="mb-2 text-base font-bold text-slate-900">VDI를 한 문장으로 말하면</h3>
+              <h3 className="mb-2 text-base font-bold text-slate-900">주의</h3>
               <p className="text-sm leading-relaxed text-slate-700">
-                응급의료기관까지의 접근 부담과 보호가 필요한 주민 규모를 함께 계산해, 먼저 살펴볼
-                지역을 알려 주는 참고 점수입니다.
+                실제 응급·위급 상황에서는 화면을 해석하기보다 즉시 119 또는 1339 안내를 따르세요.
               </p>
             </section>
           </div>

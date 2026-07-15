@@ -1,6 +1,10 @@
 import type { HospitalRecord, HospitalTier } from '../../../shared/types/hospital';
 import { isEmergencyRelevantHospital, isMoonlightHospital } from '../../../shared/types/hospital';
 import {
+  hospitalMatchesSevereCondition,
+  type SevereConditionId,
+} from '../../../shared/lib/severe-condition';
+import {
   HOSPITAL_TIER_VISUAL,
   hospitalTierLabel,
 } from '../../../shared/lib/hospital-tier-visual';
@@ -55,11 +59,15 @@ export function hospitalMatchesFilter(
 export function filterByCareTarget(
   hospitals: HospitalRecord[],
   careTarget: 'all' | 'adult' | 'pediatric' | 'senior',
+  severeCondition: SevereConditionId = 'all',
 ): HospitalRecord[] {
   const emergencyHospitals = hospitals.filter(isEmergencyRelevantHospital);
-  if (careTarget === 'all') return emergencyHospitals;
+  const conditionFiltered = emergencyHospitals.filter((hospital) =>
+    hospitalMatchesSevereCondition(hospital, severeCondition),
+  );
+  if (careTarget === 'all') return conditionFiltered;
   
-  return emergencyHospitals.filter((h) => {
+  return conditionFiltered.filter((h) => {
     if (careTarget === 'adult') {
       // 일반 성인: 달빛어린이(Tier 3) 제외
       return !isMoonlightHospital(h);

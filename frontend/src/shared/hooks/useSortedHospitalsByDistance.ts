@@ -4,6 +4,7 @@ import { filterByCareTarget } from '../../widgets/map-dashboard/lib/hospital-fil
 import { isHospitalAvailable } from '../lib/bed-status';
 import { calculateDistance, type HospitalWithDistance } from '../lib/distance';
 import { compareHospitalRecommendations } from '../lib/hospital-recommendation';
+import type { SevereConditionId } from '../lib/severe-condition';
 import type { HospitalRecord } from '../types/hospital';
 
 export interface UseSortedHospitalsOptions {
@@ -11,6 +12,7 @@ export interface UseSortedHospitalsOptions {
   availableOnly?: boolean;
   /** 시민 진료 대상 필터 */
   careTarget?: 'all' | 'adult' | 'pediatric' | 'senior';
+  severeCondition?: SevereConditionId;
   /** recommendation은 병상 여유를 우선하고 같은 상태에서 거리를 비교한다. */
   sortMode?: 'distance' | 'recommendation';
 }
@@ -24,7 +26,12 @@ export function useSortedHospitalsByDistance(
   originLng?: number,
   options: UseSortedHospitalsOptions = {},
 ): HospitalWithDistance[] {
-  const { availableOnly = false, careTarget = 'all', sortMode = 'distance' } = options;
+  const {
+    availableOnly = false,
+    careTarget = 'all',
+    severeCondition = 'all',
+    sortMode = 'distance',
+  } = options;
 
   return useMemo(() => {
     if (hospitals.length === 0 || !originLat || !originLng) {
@@ -32,7 +39,7 @@ export function useSortedHospitalsByDistance(
     }
 
     // 1) 진료대상 필터
-    let filtered = filterByCareTarget(hospitals, careTarget);
+    let filtered = filterByCareTarget(hospitals, careTarget, severeCondition);
 
     // 2) 가용성 필터
     if (availableOnly) {
@@ -52,5 +59,5 @@ export function useSortedHospitalsByDistance(
       );
 
     return sorted;
-  }, [hospitals, originLat, originLng, availableOnly, careTarget, sortMode]);
+  }, [hospitals, originLat, originLng, availableOnly, careTarget, severeCondition, sortMode]);
 }

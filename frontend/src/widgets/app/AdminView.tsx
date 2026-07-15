@@ -83,12 +83,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
           loading={adminState.statsLoading}
           hospitalsUpdatedAt={adminState.hospitalsUpdatedAt}
           vulnerabilityUpdatedAt={adminState.vulnerabilityUpdatedAt}
-          totalHospitalsDelta={adminState.totalHospitalsDelta}
-          highRiskDelta={adminState.highRiskDelta}
           populationBaseMonth={adminState.populationBaseMonth}
-          adminAreaChangeText={adminState.adminAreaChangeText}
-          emergencyChangeText={adminState.emergencyChangeText}
-          highRiskChangeText={adminState.highRiskChangeText}
           dataStale={adminState.dataStale}
         />
 
@@ -141,12 +136,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
           statsLoading={adminState.statsLoading}
           hospitalsUpdatedAt={adminState.hospitalsUpdatedAt}
           vulnerabilityUpdatedAt={adminState.vulnerabilityUpdatedAt}
-          totalHospitalsDelta={adminState.totalHospitalsDelta}
-          highRiskDelta={adminState.highRiskDelta}
           populationBaseMonth={adminState.populationBaseMonth}
-          adminAreaChangeText={adminState.adminAreaChangeText}
-          emergencyChangeText={adminState.emergencyChangeText}
-          highRiskChangeText={adminState.highRiskChangeText}
           dataStale={adminState.dataStale}
           policyStatus={adminState.policyStatus}
         />

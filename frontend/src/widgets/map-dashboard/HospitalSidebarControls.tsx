@@ -1,4 +1,9 @@
 import type { LocationSource } from '../../shared/hooks/useUserLocation';
+import {
+  SEVERE_CONDITION_OPTIONS,
+  severeConditionOption,
+  type SevereConditionId,
+} from '../../shared/lib/severe-condition';
 import { LocationNotice } from '../landing/LocationNotice';
 
 interface HospitalSidebarControlsProps {
@@ -11,7 +16,16 @@ interface HospitalSidebarControlsProps {
   onShowAvailableOnlyChange: (value: boolean) => void;
   careTarget: 'all' | 'adult' | 'pediatric' | 'senior';
   onCareTargetChange: (value: 'all' | 'adult' | 'pediatric' | 'senior') => void;
+  severeCondition?: SevereConditionId;
+  onSevereConditionChange?: (value: SevereConditionId) => void;
 }
+
+const CARE_TARGET_OPTIONS = [
+  { key: 'all', label: '전체' },
+  { key: 'adult', label: '성인' },
+  { key: 'pediatric', label: '소아' },
+  { key: 'senior', label: '고령층' },
+] as const;
 
 export function HospitalSidebarControls({
   heading = '누가 진료받나요?',
@@ -23,63 +37,90 @@ export function HospitalSidebarControls({
   onShowAvailableOnlyChange,
   careTarget,
   onCareTargetChange,
+  severeCondition = 'all',
+  onSevereConditionChange,
 }: HospitalSidebarControlsProps) {
+  const selectedCondition = severeConditionOption(severeCondition);
+
   return (
-    <div className="shrink-0 flex flex-col gap-2 border-b border-slate-100 bg-white px-3 py-2">
-      {/* 1. 현재 위치 알림바 */}
+    <div className="shrink-0 border-b border-slate-100 bg-white px-3 py-2">
       <LocationNotice
         compact
         isLocating={isLocating}
         source={locationSource}
         errorReason={locationErrorReason}
         onRetry={onRetryLocation}
-        locatingMessage="위치 파악 중 📍"
+        locatingMessage="위치 확인 중"
       />
 
-      <p className="text-xs font-bold text-slate-700">{heading}</p>
-      {/* 2. 가로 스크롤 필터 목록 */}
-      <div 
-        className="flex w-full items-center gap-2 overflow-x-auto pb-1 scrollbar-hide"
-        onPointerDownCapture={(e) => e.stopPropagation()}
-      >
-        {/* 병상 보유 필터 칩 */}
-        <button
-          type="button"
-          onClick={() => onShowAvailableOnlyChange(!showAvailableOnly)}
-          className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors border ${
-            showAvailableOnly
-              ? 'border-teal-700 bg-teal-50 text-teal-800'
-              : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-          }`}
-        >
-          {showAvailableOnly ? '🛏️ 응급병상 보유만' : '응급병상 보유만'}
-        </button>
+      <div className="mt-2">
+        <p className="text-xs font-bold text-slate-700">{heading}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onShowAvailableOnlyChange(!showAvailableOnly)}
+            className={`min-h-9 rounded-full border px-3 text-xs font-semibold transition-colors ${
+              showAvailableOnly
+                ? 'border-teal-700 bg-teal-50 text-teal-800'
+                : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            응급병상 보유만
+          </button>
 
-        <div className="h-4 w-px shrink-0 bg-slate-200" /> {/* 구분선 */}
+          {CARE_TARGET_OPTIONS.map((option) => {
+            const active = careTarget === option.key;
+            return (
+              <button
+                key={option.key}
+                type="button"
+                onClick={() => onCareTargetChange(option.key)}
+                className={`min-h-9 rounded-full border px-3 text-xs font-semibold transition-colors ${
+                  active
+                    ? 'border-teal-800 bg-teal-800 text-white'
+                    : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-        {/* 진료 대상 필터 칩들 */}
-        {[
-          { key: 'all', label: '전체' },
-          { key: 'adult', label: '성인' },
-          { key: 'pediatric', label: '소아' },
-          { key: 'senior', label: '어르신' },
-        ].map((option) => {
-          const active = careTarget === option.key;
-          return (
-            <button
-              key={option.key}
-              type="button"
-              onClick={() => onCareTargetChange(option.key as 'all' | 'adult' | 'pediatric' | 'senior')}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors border ${
-                active
-                  ? 'border-teal-800 bg-teal-800 text-white'
-                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              {option.label}
-            </button>
-          );
-        })}
+      <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs font-extrabold text-slate-800">중증·응급 상황 필터</p>
+          <span className="text-[11px] font-bold text-teal-800">{selectedCondition.shortLabel}</span>
+        </div>
+        <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
+          {selectedCondition.description}
+        </p>
+        <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {SEVERE_CONDITION_OPTIONS.map((option) => {
+            const active = severeCondition === option.id;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => {
+                  onSevereConditionChange?.(option.id);
+                  if (option.id === 'pediatric_night_holiday') {
+                    onCareTargetChange('pediatric');
+                    onShowAvailableOnlyChange(false);
+                  }
+                }}
+                className={`min-h-9 rounded-full border px-2 text-xs font-semibold transition-colors ${
+                  active
+                    ? 'border-slate-900 bg-slate-900 text-white'
+                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                {option.shortLabel}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

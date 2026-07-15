@@ -18,7 +18,7 @@ interface EtaState {
 }
 
 // 상위 몇 개까지만 ETA를 요청할 것인가? (API 쿼터 방어)
-const MAX_ETA_HOSPITALS = 10;
+const MAX_ETA_HOSPITALS = 5;
 // 디바운스용 타이머 ID
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -81,7 +81,8 @@ export const useEtaController = create<EtaState>((set) => ({
         });
 
         if (!response.ok) {
-          throw new Error('ETA Fetch failed');
+          set({ isLoading: false, hasFallback: true });
+          return;
         }
 
         const data: EtaData[] = await response.json();

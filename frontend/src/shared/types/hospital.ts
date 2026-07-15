@@ -27,6 +27,11 @@ export interface HospitalRecord {
   realtime_source?: string;
   /** 응급실 특이사항 메시지 목록 (공공 API getEmrrmSrsillDissMsgInqire) */
   realtime_messages?: string[] | null;
+  /** Official NMC severe-condition acceptance response (MKioskTy1-28). */
+  severe_conditions?: Record<
+    string,
+    { status: 'available' | 'unavailable' | 'unknown'; message: string | null }
+  > | null;
   /** 특수 병상 현황 (가용/기준) */
   special_beds?: Record<
     string,

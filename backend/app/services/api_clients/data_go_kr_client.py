@@ -13,6 +13,7 @@ BED_API_BASE = "https://apis.data.go.kr/B552657/ErmctInfoInqireService"
 BED_OPERATION = "getEmrrmRltmUsefulSckbdInfoInqire"
 STATIC_BED_OPERATION = "getEmrrmSckbdInfoInqire"
 MSG_OPERATION = "getEmrrmSrsillDissMsgInqire"
+SEVERE_ACCEPTANCE_OPERATION = "getSrsillDissAceptncPosblInfoInqire"
 
 REGION_STAGE1 = "대구광역시"
 DAEGU_SIGUNGU = [
@@ -307,3 +308,69 @@ async def fetch_data_go_kr_messages(
         )
     except Exception as exc:
         logger.error("[hospitals] public API (messages) fetch error: %s: %s", type(exc).__name__, exc)
+
+
+def _normalize_acceptance(value: str) -> str:
+    normalized = value.strip().upper()
+    if normalized == "Y":
+        return "available"
+    if normalized in {"N", "불가"}:
+        return "unavailable"
+    return "unknown"
+
+
+def _merge_severe_acceptance(
+    rows: list[dict[str, Any]],
+    target_names: set[str],
+    matched: dict[str, dict[str, Any]],
+) -> None:
+    from app.services.hospital_realtime import display_name
+
+    for row in rows:
+        api_name = _pick_field(row, "dutyName", "dutyname")
+        if not api_name:
+            continue
+        name = display_name(api_name)
+        if name not in target_names:
+            continue
+
+        conditions: dict[str, dict[str, str | None]] = {}
+        for index in range(1, 29):
+            field = f"MKioskTy{index}"
+            raw_value = _pick_field(row, field)
+            conditions[f"ty{index}"] = {
+                "status": _normalize_acceptance(raw_value),
+                "message": _pick_field(row, f"{field}Msg") or None,
+            }
+
+        if name not in matched:
+            matched[name] = bed_payload(0, 0, "api")
+            matched[name]["hvec"] = None
+            matched[name]["hvoc"] = None
+            matched[name]["available_beds"] = None
+        matched[name]["severe_conditions"] = conditions
+
+
+async def fetch_data_go_kr_severe_acceptance(
+    client: httpx.AsyncClient,
+    service_key: str,
+    target_names: set[str],
+    matched: dict[str, dict[str, Any]],
+) -> None:
+    """Fetch official severe-condition acceptance without failing the bed pipeline."""
+    try:
+        response = await client.get(
+            f"{BED_API_BASE}/{SEVERE_ACCEPTANCE_OPERATION}",
+            params={
+                "serviceKey": service_key,
+                "STAGE1": "대구광역시",
+                "pageNo": "1",
+                "numOfRows": "200",
+            },
+        )
+        if response.status_code != 200 or not _is_api_response_ok(response.text):
+            logger.warning("[hospitals] severe acceptance API unavailable: HTTP %s", response.status_code)
+            return
+        _merge_severe_acceptance(_parse_xml_items(response.text), target_names, matched)
+    except (httpx.HTTPError, ET.ParseError) as exc:
+        logger.warning("[hospitals] severe acceptance fetch skipped: %s", type(exc).__name__)
