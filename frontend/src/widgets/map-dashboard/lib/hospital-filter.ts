@@ -66,22 +66,19 @@ export function filterByCareTarget(
     hospitalMatchesSevereCondition(hospital, severeCondition),
   );
   if (careTarget === 'all') return conditionFiltered;
-  
-  return conditionFiltered.filter((h) => {
+
+  return conditionFiltered.filter((hospital) => {
     if (careTarget === 'adult') {
-      // 일반 성인: 달빛어린이(Tier 3) 제외
-      return !isMoonlightHospital(h);
+      return !isMoonlightHospital(hospital);
     }
     if (careTarget === 'pediatric') {
-      // 소아 응급: 야간·휴일 소아진료 거점만 표시
-      return isMoonlightHospital(h);
+      return isMoonlightHospital(hospital);
     }
     if (careTarget === 'senior') {
-      // 어르신: 중증 골든타임 대응 대형거점(Tier 1) 및 공공/노인 거점(Tier 2 중 일부)으로 선별
-      if (h.tier === 1) return true;
-      if (h.tier === 2) {
-        const name = h.name.replace(/\s+/g, '');
-        return /보훈|적십자|의료원|가톨릭|기독|파티마|더블유|굿모닝|나사렛|보건|보강/.test(name);
+      if (hospital.tier === 1) return true;
+      if (hospital.tier === 2) {
+        const name = hospital.name.replace(/\s+/g, '');
+        return /보훈|요양|재활|기독|파티마|더블유|구병원|나사렛|보건|보강/.test(name);
       }
       return false;
     }

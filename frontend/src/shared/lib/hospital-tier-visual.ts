@@ -2,11 +2,11 @@ import type { HospitalTier } from '../types/hospital';
 
 export interface HospitalTierVisual {
   tier: HospitalTier;
-  /** 서비스 표시 명칭 — 중증 거점, 일반 응급, 달빛·소아 */
+  /** 화면에 표시되는 병원 분류명 */
   label: string;
-  /** 필터·범례용 짧은 설명 */
+  /** 필터와 범례에 쓰이는 짧은 설명 */
   description: string;
-  /** 지도 마커·아이콘 글리프 (+ / ★) */
+  /** 지도 마커와 목록 아이콘에 쓰이는 글리프 */
   glyph: string;
   chipClass: string;
   chipTextClass: string;
@@ -24,8 +24,8 @@ export interface HospitalTierVisual {
 export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
   1: {
     tier: 1,
-    label: '중증 거점',
-    description: '중증 응급 수용 가능한 대형 거점',
+    label: '중증 응급 거점',
+    description: '중증 응급환자 수용을 우선 확인할 대형 응급 거점',
     glyph: '+',
     chipClass: 'bg-rose-50 ring-rose-100',
     chipTextClass: 'text-rose-700',
@@ -42,8 +42,8 @@ export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
   },
   2: {
     tier: 2,
-    label: '일반 응급',
-    description: '웹에 등록된 일반 응급 진료기관',
+    label: '일반 응급기관',
+    description: '응급실 운영이 확인되는 지역 응급의료기관',
     glyph: '+',
     chipClass: 'bg-sky-50 ring-sky-100',
     chipTextClass: 'text-sky-700',
@@ -60,9 +60,9 @@ export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
   },
   3: {
     tier: 3,
-    label: '달빛·소아',
-    description: '야간·휴일 소아 응급 지정',
-    glyph: '★',
+    label: '소아 야간·휴일',
+    description: '달빛어린이병원 등 야간·휴일 소아진료 자원',
+    glyph: '소',
     chipClass: 'bg-amber-50 ring-amber-100',
     chipTextClass: 'text-amber-800',
     iconBgClass: 'bg-amber-400',

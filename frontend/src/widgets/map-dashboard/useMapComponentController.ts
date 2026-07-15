@@ -45,6 +45,7 @@ export function useMapComponentController({
 
   const filteredHospitals = useMemo(() => {
     const baseFiltered = filterHospitals(hospitals, activeFilter);
+    if (activeFilter !== 'all') return baseFiltered;
     return filterByCareTarget(baseFiltered, currentMode as 'all' | 'adult' | 'pediatric' | 'senior');
   }, [hospitals, activeFilter, currentMode]);
 

@@ -47,23 +47,23 @@ export function AboutModal({ isOpen, onClose }: AboutModalProps) {
             <section className="rounded-xl bg-blue-50/50 p-5 ring-1 ring-blue-100/50">
               <p className="text-[15px] leading-relaxed">
                 <strong>대구 골든타임</strong>은 가까운 응급기관, 병상, 차량 이동시간, 중증질환 수용 가능 정보를
-                한 화면에서 확인하는 교육용 서비스입니다.
+                한 화면에서 확인하는 응급의료 정보 서비스입니다.
               </p>
             </section>
 
             <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
               <h3 className="mb-2 text-base font-bold text-slate-900">시민 화면</h3>
               <p className="text-sm leading-relaxed text-slate-600">
-                현재 위치 기준으로 가까운 응급기관을 보여줍니다. 심근경색, 절단, 화상처럼 상황별로 확인해야 할
-                수용 가능 정보도 함께 볼 수 있습니다.
+                현재 위치 기준으로 가까운 응급기관을 보여줍니다. 심근경색, 뇌출혈, 외상, 절단, 화상, 야간·휴일
+                소아진료처럼 상황별로 확인해야 할 수용 정보를 함께 볼 수 있습니다.
               </p>
             </section>
 
             <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
               <h3 className="mb-2 text-base font-bold text-slate-900">정책 화면</h3>
               <p className="text-sm leading-relaxed text-slate-600">
-                행정동별로 응급기관 접근성과 보호 필요 인구를 함께 보여줍니다. 화면의 후보지는 확정안이 아니라
-                현장 확인 전에 먼저 살펴볼 참고 위치입니다.
+                행정동별 응급기관 접근성과 보호가 필요한 인구를 함께 보여줍니다. 화면의 후보지는 최종 결정이 아니라
+                현장 확인 전에 먼저 살펴볼 참고 자료입니다.
               </p>
             </section>
 
