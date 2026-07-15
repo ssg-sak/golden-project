@@ -2,7 +2,7 @@ const reportRows = [
   {
     label: '보고서 성격',
     value: '정책 확정안이 아닌 사전 검토 자료',
-    description: '응급의료 접근성 문제를 데이터로 먼저 살펴보기 위한 개인 프로젝트 산출물입니다.',
+    description: '응급의료 접근성 문제를 데이터로 먼저 살펴보기 위한 사전 검토용 분석 자료입니다.',
   },
   {
     label: '핵심 관점',
@@ -89,6 +89,29 @@ export function PolicyWelcomePanel() {
             </p>
             <p className="p-4">
               후보지는 실제 교통망, 부지 가능성, 예산, 병원별 역할을 함께 검토해야 합니다.
+            </p>
+          </div>
+        </section>
+
+        <section className="mb-7 border border-cyan-200 bg-cyan-50">
+          <div className="border-b border-cyan-200 px-4 py-3">
+            <p className="text-xs font-bold text-cyan-800">달빛어린이병원을 함께 보는 이유</p>
+            <h3 className="mt-1 text-base font-extrabold text-slate-950">
+              응급실 과밀과 야간·휴일 소아진료 공백은 분리해서 봐야 합니다
+            </h3>
+          </div>
+          <div className="grid divide-y divide-cyan-200 text-xs leading-5 text-cyan-950 md:grid-cols-3 md:divide-x md:divide-y-0">
+            <p className="p-4">
+              아이가 밤이나 휴일에 아플 때 모든 상황이 중증 응급실로 가야 하는 것은 아닙니다. 달빛어린이병원은
+              이런 시간대의 소아 진료 공백을 줄이는 보완 자원입니다.
+            </p>
+            <p className="p-4">
+              소아 경증·중등도 환자가 바로 응급실로 몰리면 중증 응급환자 대응 여력이 줄어듭니다. 그래서 응급실
+              접근성과 야간·휴일 소아진료 접근성을 함께 보되, 같은 지표로 평가하지 않습니다.
+            </p>
+            <p className="p-4">
+              이 화면의 달빛 표시는 병상 규모 평가가 아니라 “응급실로 가기 전 확인 가능한 소아 야간·휴일 진료
+              선택지가 지역에 있는가”를 보여주는 정책 해석 장치입니다.
             </p>
           </div>
         </section>

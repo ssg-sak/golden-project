@@ -7,7 +7,7 @@ interface HospitalMoonlightInfoProps {
 }
 
 export function HospitalMoonlightInfo({ hospital, variant }: HospitalMoonlightInfoProps) {
-  const equipment = Object.entries(hospital.equipment_status ?? {});
+  const tel = resolveHospitalTel(hospital);
 
   if (variant === 'admin') {
     return (
@@ -20,36 +20,34 @@ export function HospitalMoonlightInfo({ hospital, variant }: HospitalMoonlightIn
             </p>
           </div>
           <span className="rounded-full bg-violet-400/15 px-2 py-1 text-[9px] font-bold text-violet-200 ring-1 ring-violet-300/20">
-            Tier 3
+            야간·휴일 소아진료
           </span>
         </div>
         <p className="mt-3 rounded-xl bg-white/5 px-3 py-2 text-[10px] leading-relaxed text-violet-100/80 ring-1 ring-white/10">
-          달빛어린이병원은 일반 응급실처럼 병상 수만 보는 곳이 아닙니다. 운영 시간, 소아 진료 가능 여부, 의료진,
-          장비, 이동 시간을 함께 봐야 합니다.
+          이 기관은 응급실 병상이나 특수병상 규모를 평가하는 대상이 아니라, 밤·휴일에 소아 외래 진료 접근성을
+          보완하는 거점으로 해석합니다.
         </p>
         <dl className="mt-3 grid grid-cols-2 gap-2">
           <div className="rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10">
-            <dt className="text-[9px] text-violet-200/60">달빛어린이병원 여부</dt>
+            <dt className="text-[9px] text-violet-200/60">분석상 역할</dt>
             <dd className="mt-1 text-xs font-bold text-emerald-300">확인</dd>
           </div>
           <div className="rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10">
-            <dt className="text-[9px] text-violet-200/60">등록 의사 수</dt>
-            <dd className="mt-1 text-xs font-bold">
-              {hospital.doctors_count !== undefined ? `${hospital.doctors_count}명` : '확인 중'}
-            </dd>
-          </div>
-          <div className="rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10">
-            <dt className="text-[9px] text-violet-200/60">등록 장비 수</dt>
-            <dd className="mt-1 text-xs font-bold">{equipment.length > 0 ? `${equipment.length}종` : '확인 중'}</dd>
+            <dt className="text-[9px] text-violet-200/60">판단 기준</dt>
+            <dd className="mt-1 text-xs font-bold">운영시간</dd>
           </div>
           <div className="rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10">
             <dt className="text-[9px] text-violet-200/60">오늘 운영 시간</dt>
             <dd className="mt-1 text-xs font-bold">{hospital.operating_hours ?? '전화 확인 필요'}</dd>
           </div>
+          <div className="rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10">
+            <dt className="text-[9px] text-violet-200/60">연락처</dt>
+            <dd className="mt-1 text-xs font-bold">{tel ?? '확인 중'}</dd>
+          </div>
         </dl>
         <p className="mt-3 text-[9px] leading-relaxed text-violet-200/60">
-          달빛어린이병원은 일반 응급실과 다른 지표를 쓰는 것이 맞습니다. 병상 비교보다 소아 외래 접근성과 운영
-          시간을 함께 확인해 주세요.
+          달빛 기관에는 응급실 병상 수, 특수병상 수, 중증 장비 점수를 적용하지 않습니다. 응급실 대체재가 아니라
+          야간·휴일 소아진료 공백을 줄이는 보완 자원입니다.
         </p>
       </section>
     );
@@ -87,28 +85,9 @@ export function HospitalMoonlightInfo({ hospital, variant }: HospitalMoonlightIn
         </div>
         <div className="flex justify-between gap-3">
           <dt className="font-semibold text-slate-500">연락처</dt>
-          <dd className="font-bold text-slate-700">{resolveHospitalTel(hospital) ?? '정보 확인 중'}</dd>
+          <dd className="font-bold text-slate-700">{tel ?? '정보 확인 중'}</dd>
         </div>
       </dl>
-      {equipment.length > 0 ? (
-        <div className="mt-3">
-          <p className="mb-2 text-[10px] font-bold text-slate-500">등록 장비</p>
-          <div className="flex flex-wrap gap-1.5">
-            {equipment.map(([name, hasEquipment]) => (
-                <span
-                  key={name}
-                  className={`rounded-full px-2 py-1 text-[10px] font-bold ring-1 ${
-                    hasEquipment
-                      ? 'bg-white text-emerald-700 ring-emerald-200'
-                      : 'bg-slate-950 text-white ring-slate-950'
-                  }`}
-                >
-                  {name} · {hasEquipment ? '보유' : '미보유'}
-                </span>
-              ))}
-          </div>
-        </div>
-      ) : null}
       <p className="mt-3 text-[10px] leading-relaxed text-amber-800">
         현재 화면은 참고용입니다. 실제 이용 전에는 병원에 전화로 운영 여부를 다시 확인해 주세요. 증상에 따라서는
         119를 우선 이용하는 것이 안전합니다.

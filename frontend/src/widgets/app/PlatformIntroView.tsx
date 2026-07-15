@@ -104,6 +104,18 @@ export function PlatformIntroView() {
         </div>
       </div>
 
+      <div className="border-b border-cyan-200 bg-cyan-50">
+        <div className="mx-auto grid max-w-6xl gap-4 px-5 py-5 text-sm leading-6 text-cyan-950 md:grid-cols-[220px_1fr] md:px-8">
+          <strong className="text-cyan-900">달빛어린이병원이 필요한 이유</strong>
+          <p>
+            이 서비스는 의료기관 전체 분포가 아니라 응급환경을 봅니다. 소아의 밤·휴일 진료 공백을 줄이면
+            경증·중등도 소아 환자가 곧바로 응급실로 몰리는 부담을 낮추고, 응급실은 중증 환자 대응에 더 집중할
+            수 있습니다. 그래서 달빛어린이병원은 응급실 병상 평가가 아니라 야간·휴일 소아진료 접근성의 보완
+            자원으로 표시합니다.
+          </p>
+        </div>
+      </div>
+
       <main className="mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-14">
         <section className="grid border border-slate-300 bg-white lg:grid-cols-[1fr_340px]">
           <div className="p-6 md:p-9">

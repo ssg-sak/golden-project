@@ -1,4 +1,5 @@
 import type { HospitalRecord, HospitalTier } from '../../../shared/types/hospital';
+import { isEmergencyRelevantHospital, isMoonlightHospital } from '../../../shared/types/hospital';
 import {
   HOSPITAL_TIER_VISUAL,
   hospitalTierLabel,
@@ -36,15 +37,17 @@ export function filterHospitals(
   hospitals: HospitalRecord[],
   activeFilter: HospitalFilter,
 ): HospitalRecord[] {
-  if (activeFilter === 'all') return hospitals;
+  const emergencyHospitals = hospitals.filter(isEmergencyRelevantHospital);
+  if (activeFilter === 'all') return emergencyHospitals;
   const tier = FILTER_TIER[activeFilter];
-  return hospitals.filter((hospital) => hospital.tier === tier);
+  return emergencyHospitals.filter((hospital) => hospital.tier === tier);
 }
 
 export function hospitalMatchesFilter(
   hospital: HospitalRecord,
   activeFilter: HospitalFilter,
 ): boolean {
+  if (!isEmergencyRelevantHospital(hospital)) return false;
   if (activeFilter === 'all') return true;
   return hospital.tier === FILTER_TIER[activeFilter];
 }
@@ -53,16 +56,17 @@ export function filterByCareTarget(
   hospitals: HospitalRecord[],
   careTarget: 'all' | 'adult' | 'pediatric' | 'senior',
 ): HospitalRecord[] {
-  if (careTarget === 'all') return hospitals;
+  const emergencyHospitals = hospitals.filter(isEmergencyRelevantHospital);
+  if (careTarget === 'all') return emergencyHospitals;
   
-  return hospitals.filter((h) => {
+  return emergencyHospitals.filter((h) => {
     if (careTarget === 'adult') {
       // 일반 성인: 달빛어린이(Tier 3) 제외
-      return h.tier !== 3;
+      return !isMoonlightHospital(h);
     }
     if (careTarget === 'pediatric') {
-      // 소아: 달빛어린이(Tier 3)만 표시
-      return h.tier === 3;
+      // 소아 응급: 야간·휴일 소아진료 거점만 표시
+      return isMoonlightHospital(h);
     }
     if (careTarget === 'senior') {
       // 어르신: 중증 골든타임 대응 대형거점(Tier 1) 및 공공/노인 거점(Tier 2 중 일부)으로 선별

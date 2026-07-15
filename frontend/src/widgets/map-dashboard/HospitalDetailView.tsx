@@ -3,6 +3,7 @@ import {
   hospitalAvailableBeds,
   hospitalDisplayName,
   hospitalTierBadge,
+  isMoonlightHospital,
 } from '../../shared/types/hospital';
 import { HOSPITAL_TIER_VISUAL } from '../../shared/lib/hospital-tier-visual';
 import { useAppModeStore } from '../../shared/store/appModeStore';
@@ -27,6 +28,7 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
   const viewMode = useAppModeStore((state) => state.viewMode);
   const tierLabel = hospitalTierBadge(hospital.tier);
   const availableBeds = hospitalAvailableBeds(hospital);
+  const isMoonlight = isMoonlightHospital(hospital);
 
   return (
     <aside className={PANEL_SHELL}>
@@ -39,7 +41,13 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
           <span className="rounded-full bg-white px-2.5 py-0.5 text-[10px] font-bold text-slate-600 ring-1 ring-slate-200">
             {tierLabel}
           </span>
-          <AvailableBedsBadge availableBeds={availableBeds} totalBeds={hospital.total_hvec} size="md" />
+          {isMoonlight ? (
+            <span className="rounded-full bg-cyan-50 px-2.5 py-0.5 text-[10px] font-extrabold text-cyan-800 ring-1 ring-cyan-200">
+              야간·휴일 소아진료
+            </span>
+          ) : (
+            <AvailableBedsBadge availableBeds={availableBeds} totalBeds={hospital.total_hvec} size="md" />
+          )}
         </div>
         <h2 className="mt-2 text-xl font-extrabold leading-snug text-slate-900">
           {hospitalDisplayName(hospital)}
@@ -51,7 +59,16 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
 
         {viewMode === 'admin' ? <HospitalInfrastructureSection hospital={hospital} variant="admin" /> : null}
 
-        {hospital.tier !== 3 ? (
+        {isMoonlight ? (
+          <section className="rounded-2xl bg-cyan-50 p-4 ring-1 ring-cyan-200">
+            <p className="text-xs font-extrabold text-cyan-900">소아 응급 접근성 기준 기관</p>
+            <p className="mt-2 text-xs leading-relaxed text-cyan-900">
+              야간·휴일 소아진료 가능성을 확인하는 거점으로 표시합니다.
+            </p>
+          </section>
+        ) : null}
+
+        {!isMoonlight ? (
           availableBeds !== undefined ? (
             <HospitalGranularBeds hospital={hospital} />
           ) : (

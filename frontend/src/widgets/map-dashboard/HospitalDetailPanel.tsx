@@ -3,6 +3,7 @@ import { resolveBedStatus } from '../../shared/lib/bed-status';
 import { hospitalTierLabel } from '../../shared/lib/hospital-tier-visual';
 import {
   hospitalDisplayName,
+  isMoonlightHospital,
 } from '../../shared/types/hospital';
 import type { HospitalRecord } from '../../shared/types/hospital';
 
@@ -46,6 +47,12 @@ function EmptyPanel() {
 
 function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
   const bedStatus = resolveBedStatus(hospital);
+  const isMoonlight = isMoonlightHospital(hospital);
+  const headerClass = isMoonlight
+    ? 'border-cyan-300 bg-cyan-50'
+    : bedStatus.status === 'unavailable'
+      ? 'border-rose-300 bg-rose-50'
+      : 'border-teal-300 bg-teal-50';
   return (
     <aside className={PANEL_SHELL}>
       {/* 모바일 바텀 시트 드래그 핸들 */}
@@ -53,11 +60,7 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
         <div className="h-1.5 w-12 rounded-full bg-slate-300" />
       </div>
       <div
-        className={`shrink-0 border-b px-5 py-5 ${
-          bedStatus.status === 'unavailable'
-            ? 'border-rose-300 bg-rose-50'
-            : 'border-teal-300 bg-teal-50'
-        }`}
+        className={`shrink-0 border-b px-5 py-5 ${headerClass}`}
       >
         <CitizenBedLabel hospital={hospital} size="detail" />
         <h2 className="mt-3 text-xl font-extrabold leading-snug text-slate-900">
@@ -79,9 +82,15 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           </p>
         </section>
 
-        {hospital.tier === 3 ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
+        {isMoonlight ? (
+          <p className="rounded-lg bg-cyan-50 px-3 py-2 text-xs font-bold leading-relaxed text-cyan-900 ring-1 ring-cyan-200">
+            소아 응급 접근성은 야간·휴일 소아진료 가능성을 중심으로 해석합니다.
+          </p>
+        ) : null}
 
-        {hospital.tier !== 3 && (hospital.realtime_source === 'unavailable' ||
+        {isMoonlight ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
+
+        {!isMoonlight && (hospital.realtime_source === 'unavailable' ||
         hospital.realtime_source === 'mock' ||
         hospital.available_beds === null) ? (
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900 ring-1 ring-amber-200">
@@ -89,9 +98,9 @@ function HospitalDetailContent({ hospital }: { hospital: HospitalRecord }) {
           </p>
         ) : null}
 
-        {hospital.tier !== 3 ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
+        {!isMoonlight ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
 
-        {hospital.tier !== 3 ? (
+        {!isMoonlight ? (
           <HospitalGranularBeds hospital={hospital} />
         ) : null}
 

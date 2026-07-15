@@ -1,5 +1,5 @@
 import type { HospitalRecord } from '../../shared/types/hospital';
-import { hospitalAvailableBeds, hospitalTierBadge } from '../../shared/types/hospital';
+import { hospitalAvailableBeds, hospitalTierBadge, isMoonlightHospital } from '../../shared/types/hospital';
 
 import { AvailableBedsBadge } from './AvailableBedsBadge';
 import { HospitalActionButtons } from './HospitalActionButtons';
@@ -18,6 +18,7 @@ function badgeClassName(tier: HospitalRecord['tier']): string {
 export function HospitalPopupCard({ hospital, onClose }: HospitalPopupCardProps) {
   const badge = hospitalTierBadge(hospital.tier);
   const availableBeds = hospitalAvailableBeds(hospital);
+  const isMoonlight = isMoonlightHospital(hospital);
 
   return (
     <div className="min-w-[240px] rounded-xl border border-gray-100 bg-white p-3.5 shadow-lg">
@@ -30,7 +31,14 @@ export function HospitalPopupCard({ hospital, onClose }: HospitalPopupCardProps)
             >
               [{badge}]
             </span>
-            <AvailableBedsBadge availableBeds={availableBeds} totalBeds={hospital.total_hvec} />
+            {isMoonlight ? null : (
+              <AvailableBedsBadge availableBeds={availableBeds} totalBeds={hospital.total_hvec} />
+            )}
+            {isMoonlight ? (
+              <span className="inline-flex shrink-0 rounded-full bg-cyan-50 px-2 py-0.5 text-[10px] font-extrabold text-cyan-800 ring-1 ring-cyan-200">
+                야간·휴일 소아진료
+              </span>
+            ) : null}
           </div>
           {hospital.address && (
             <p className="mt-1.5 text-[11px] leading-relaxed text-slate-500">{hospital.address}</p>

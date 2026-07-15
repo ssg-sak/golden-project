@@ -52,6 +52,10 @@ export interface HospitalRecord {
   hira_equipment_status?: 'ok' | 'failed' | 'snapshot' | 'not_requested';
   /** HIRA 장비 상세 조회 실패 또는 폴백 안내 */
   hira_equipment_message?: string;
+  /** Night/holiday pediatric clinic designated for the Moonlight program. */
+  is_moonlight?: boolean;
+  /** Pediatric-capable facility flag. General pediatric clinics are not emergency anchors by default. */
+  is_pediatric_center?: boolean;
 }
 
 export function hospitalDisplayName(hospital: HospitalRecord): string {
@@ -132,6 +136,23 @@ export function hospitalTotalBedsIsInvalid(hospital: HospitalRecord): boolean {
 
   const available = hospitalAvailableBeds(hospital);
   return available !== undefined && total < available;
+}
+
+const MOONLIGHT_HOSPITAL_NAMES = new Set([
+  '바른연합소아청소년과의원',
+  '열린아동병원',
+  '우리아이아동병원',
+  '우리허브병원',
+  '율하연합소아청소년과의원',
+  '한영한마음아동병원',
+]);
+
+export function isMoonlightHospital(hospital: HospitalRecord): boolean {
+  return hospital.is_moonlight === true || MOONLIGHT_HOSPITAL_NAMES.has(hospital.name.trim());
+}
+
+export function isEmergencyRelevantHospital(hospital: HospitalRecord): boolean {
+  return hospital.tier === 1 || hospital.tier === 2 || isMoonlightHospital(hospital);
 }
 
 

@@ -2,6 +2,7 @@ import { CustomOverlayMap } from 'react-kakao-maps-sdk';
 
 import { resolveBedStatus } from '../../shared/lib/bed-status';
 import type { HospitalRecord } from '../../shared/types/hospital';
+import { isMoonlightHospital } from '../../shared/types/hospital';
 
 interface HospitalMarkerOverlayProps {
   hospital: HospitalRecord;
@@ -17,35 +18,55 @@ export function HospitalMarkerOverlay({
   onSelect,
 }: HospitalMarkerOverlayProps) {
   const { status, congestion } = resolveBedStatus(hospital);
+  const isMoonlight = isMoonlightHospital(hospital);
   const isCrowded = status === 'unavailable' || congestion === 'crowded';
   const isModerate = congestion === 'moderate';
+  const statusLabel =
+    status === 'unavailable'
+      ? '일반 응급실 병상 없음'
+      : congestion === 'crowded'
+        ? '혼잡'
+        : congestion === 'moderate'
+          ? '보통'
+          : status === 'available'
+            ? '여유'
+            : '확인 중';
+  const ariaLabel = isMoonlight
+    ? `${hospital.name} 야간·휴일 소아진료 기관`
+    : `${hospital.name} ${statusLabel}`;
 
   const ringClass =
-    isCrowded
-      ? 'border-rose-500 ring-rose-200'
-      : isModerate
-        ? 'border-amber-500 ring-amber-200'
-        : status === 'available'
-          ? 'border-emerald-500 ring-emerald-200'
-        : 'border-slate-400 ring-slate-200';
+    isMoonlight
+      ? 'border-cyan-500 ring-cyan-200'
+      : isCrowded
+        ? 'border-rose-500 ring-rose-200'
+        : isModerate
+          ? 'border-amber-500 ring-amber-200'
+          : status === 'available'
+            ? 'border-emerald-500 ring-emerald-200'
+            : 'border-slate-400 ring-slate-200';
 
   const activeRingClass =
-    isCrowded
-      ? 'ring-rose-500'
-      : isModerate
-        ? 'ring-amber-500'
-        : status === 'available'
-          ? 'ring-emerald-500'
-        : 'ring-slate-500';
+    isMoonlight
+      ? 'ring-cyan-500'
+      : isCrowded
+        ? 'ring-rose-500'
+        : isModerate
+          ? 'ring-amber-500'
+          : status === 'available'
+            ? 'ring-emerald-500'
+            : 'ring-slate-500';
 
   const dotClass =
-    isCrowded
-      ? 'bg-rose-500'
-      : isModerate
-        ? 'bg-amber-500'
-        : status === 'available'
-          ? 'bg-emerald-500'
-        : 'bg-slate-400';
+    isMoonlight
+      ? 'bg-cyan-500'
+      : isCrowded
+        ? 'bg-rose-500'
+        : isModerate
+          ? 'bg-amber-500'
+          : status === 'available'
+            ? 'bg-emerald-500'
+            : 'bg-slate-400';
 
   return (
     <CustomOverlayMap
@@ -73,9 +94,7 @@ export function HospitalMarkerOverlay({
         }}
         role="button"
         tabIndex={0}
-        aria-label={`${hospital.name} — ${
-          status === 'unavailable' ? '일반응급실 여유 없음' : congestion === 'crowded' ? '혼잡' : congestion === 'moderate' ? '지연' : status === 'available' ? '원활' : '확인 중'
-        }`}
+        aria-label={ariaLabel}
         aria-pressed={isSelected}
         title={hospital.name}
       >
