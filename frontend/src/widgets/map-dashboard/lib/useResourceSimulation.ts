@@ -38,7 +38,7 @@ export function useResourceSimulation() {
       try {
         const response = await fetch(`${import.meta.env.BASE_URL}data/resource_recommendations.json`);
         if (!response.ok) {
-          throw new Error('자원 확충 시뮬레이션 데이터를 불러오지 못했습니다.');
+          throw new Error('자원 보강 시나리오 데이터를 불러오지 못했습니다.');
         }
 
         const rawData = (await response.json()) as ResourceRecommendation[];
@@ -51,7 +51,7 @@ export function useResourceSimulation() {
                 geocoder.coord2RegionCode(rec.location.lng, rec.location.lat, (result, status) => {
                   if (status === window.kakao.maps.services.Status.OK) {
                     const adminRegion = result.find((row) => row.region_type === 'H') || result[0];
-                    resolve({ ...rec, regionName: adminRegion ? adminRegion.address_name : '대구광역시 세부 지역 미상' });
+                    resolve({ ...rec, regionName: adminRegion ? adminRegion.address_name : '대구광역시 내부 지역 미상' });
                     return;
                   }
                   resolve({ ...rec, regionName: '위치 확인 불가' });

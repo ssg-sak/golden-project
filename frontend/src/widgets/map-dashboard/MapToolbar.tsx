@@ -46,10 +46,10 @@ export function MapToolbar({
   const canShowOptimalLocations = currentMode === 'pediatric' || currentMode === 'senior';
   const optimalButtonLabel =
     showOptimalLocations && canShowOptimalLocations
-      ? '최적입지 숨기기'
+      ? '검토 후보 숨기기'
       : canShowOptimalLocations
-        ? '최적입지 보기'
-        : '소아 최적입지 보기';
+        ? '검토 후보 보기'
+        : '소아 검토 후보 보기';
 
   function handleOptimalLocationToggle() {
     if (!canShowOptimalLocations) {
@@ -168,8 +168,8 @@ export function MapToolbar({
               onClick={handleOptimalLocationToggle}
               title={
                 canShowOptimalLocations
-                  ? '소아 또는 어르신 최적입지 후보를 지도에 표시합니다.'
-                  : '소아 모드로 전환하고 최적입지 후보를 표시합니다.'
+                  ? '소아 또는 어르신 정책 우선 검토 후보를 지도에 표시합니다.'
+                  : '소아 모드로 전환하고 정책 우선 검토 후보를 표시합니다.'
               }
               className={`rounded-md px-2.5 py-1.5 text-xs font-semibold ring-1 transition-colors ${
                 showOptimalLocations && canShowOptimalLocations
@@ -181,8 +181,8 @@ export function MapToolbar({
             >
               {optimalButtonLabel}
             </button>
-            <span className="hidden max-w-[13rem] text-[10px] font-medium leading-snug text-slate-500 md:inline">
-              병원이 아닌 분석상 우선 후보 표시. 원거리 저수요 후보는 별도 검토
+            <span className="hidden max-w-[15rem] text-[10px] font-medium leading-snug text-slate-500 md:inline">
+              병원이 아닌 분석 후보입니다. 교통·부지·예산 검토 전 단계입니다.
             </span>
           </div>
 

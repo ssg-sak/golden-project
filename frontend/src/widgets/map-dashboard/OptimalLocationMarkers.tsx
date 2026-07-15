@@ -30,15 +30,15 @@ export function OptimalLocationMarkers() {
               onClick={() => setActiveLocation(loc)}
               onMouseEnter={() => setActiveLocation(loc)}
               onFocus={() => setActiveLocation(loc)}
-              aria-label={`우선 검토 후보 ${loc.id} 상세 보기`}
+              aria-label={`정책 우선 검토 후보 ${loc.id} 상세 보기`}
             >
               <div className="absolute bottom-full mb-2 hidden whitespace-nowrap rounded-full bg-gray-900 px-3 py-1.5 text-[11px] font-extrabold text-white shadow-lg group-hover:block group-focus:block">
                 후보 {loc.id} 상세 보기
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-600/90 shadow-xl ring-4 ring-purple-300/50 backdrop-blur-sm transition-transform group-hover:scale-110 group-focus:scale-110">
-                <span className="text-lg text-white">★</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-700/90 shadow-xl ring-4 ring-indigo-200/60 backdrop-blur-sm transition-transform group-hover:scale-110 group-focus:scale-110">
+                <span className="text-sm font-black text-white">검토</span>
               </div>
-              <div className="mt-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-extrabold text-purple-900 shadow">
+              <div className="mt-1 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-extrabold text-indigo-900 shadow">
                 후보 {loc.id}
               </div>
             </button>
@@ -67,9 +67,9 @@ function OptimalLocationDetailPanel({
     <aside className="fixed bottom-4 left-1/2 z-[1200] max-h-[min(70dvh,520px)] w-[calc(100vw-1.5rem)] max-w-md -translate-x-1/2 overflow-hidden rounded-2xl bg-gray-950 text-white shadow-2xl ring-1 ring-white/10 sm:bottom-6 sm:right-6 sm:left-auto sm:w-96 sm:translate-x-0">
       <div className="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
         <div>
-          <p className="text-sm font-black">우선 검토 후보 {location.id}</p>
-          <p className="mt-1 text-[11px] font-semibold text-purple-100/80">
-            확정 위치가 아닌 정책 우선 검토 후보입니다.
+          <p className="text-sm font-black">정책 우선 검토 후보 {location.id}</p>
+          <p className="mt-1 text-[11px] font-semibold text-indigo-100/80">
+            확정 입지가 아니라 수요 중심 후보를 좁힌 분석 결과입니다.
           </p>
         </div>
         <button
@@ -78,11 +78,11 @@ function OptimalLocationDetailPanel({
           onClick={onClose}
           aria-label="후보 상세 닫기"
         >
-          ×
+          x
         </button>
       </div>
 
-      <div className="max-h-[calc(min(70dvh,520px)-4rem)] overflow-y-auto px-4 py-3 text-xs font-semibold leading-relaxed text-purple-100">
+      <div className="max-h-[calc(min(70dvh,520px)-4rem)] overflow-y-auto px-4 py-3 text-xs font-semibold leading-relaxed text-indigo-100">
         <div className="space-y-1">
           <p>분석 수요: {location.demand.toLocaleString('ko-KR')}건</p>
           {location.accessibility_gain_km !== undefined ? (
@@ -93,7 +93,7 @@ function OptimalLocationDetailPanel({
           ) : null}
           {location.before_avg_distance_km !== undefined && location.after_avg_distance_km !== undefined ? (
             <p>
-              개선 전후: {formatKm(location.before_avg_distance_km)} → {formatKm(location.after_avg_distance_km)}
+              개선 전후: {formatKm(location.before_avg_distance_km)} - {formatKm(location.after_avg_distance_km)}
             </p>
           ) : null}
           {location.vulnerable_population !== undefined ? (
@@ -121,15 +121,12 @@ function OptimalLocationDetailPanel({
           </p>
         ) : null}
 
-        <div className="mt-3 border-t border-white/10 pt-3 text-[11px] text-purple-100/80">
-          <p className="font-black text-white">용어 해설</p>
-          <p>분석 수요: 후보 산출에 사용된 취약 수요 묶음의 규모</p>
-          <p>민감도 반복률: 조건을 바꿔도 다시 나온 비율</p>
-          <p>접근성 개선: 기존 병원 대비 가까워진 평균 거리</p>
-          <p>커버 취약인구: 개선 효과를 받는 추정 인구</p>
-          <p>설명용 점수: 접근성 개선과 커버 인구를 합친 보조점수</p>
-          <p className="mt-1 rounded-lg bg-white/10 p-2 text-purple-50">
-            계산식: 평균 접근성 개선 km × log(1 + 커버 취약인구). 최종 입지 결정 점수가 아니라 후보 설명용 참고값입니다.
+        <div className="mt-3 border-t border-white/10 pt-3 text-[11px] text-indigo-100/80">
+          <p className="font-black text-white">해석 주의</p>
+          <p>이 후보는 K-Means 기반 수요 중심 후보이며 p-median, MCLP 같은 실제 입지 최적화 모델과 비교가 필요합니다.</p>
+          <p>교통 시간, 부지 가능성, 병원별 역할, 예산, 법적 지정 요건은 아직 반영되지 않았습니다.</p>
+          <p className="mt-1 rounded-lg bg-white/10 p-2 text-indigo-50">
+            설명용 점수는 평균 접근성 개선 km x log(1 + 커버 취약인구)입니다. 최종 정책 결정 점수가 아닙니다.
           </p>
         </div>
       </div>

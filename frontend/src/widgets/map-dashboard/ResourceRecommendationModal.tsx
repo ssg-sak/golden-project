@@ -24,10 +24,10 @@ function modeLabel(pipeline: ResourceRecommendation['pipeline']) {
 }
 
 function groupLabel(group: ResourceRecommendation['candidate_group']) {
-  if (group === 'main_daegu') return '메인 안정 후보';
+  if (group === 'main_daegu') return '도시권 검토 후보';
   if (group === 'separate_region') return '별도 권역 후보';
   if (group === 'hold') return '보류 검토 후보';
-  return '후보';
+  return '검토 후보';
 }
 
 export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecommendationModalProps) {
@@ -42,10 +42,11 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
       <div className="relative flex max-h-[min(92dvh,760px)] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl ring-1 ring-slate-900/5 sm:max-h-[calc(100dvh-2rem)] sm:rounded-2xl lg:max-h-[calc(100dvh-3rem)]">
         <div className="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 px-4 py-4 sm:px-6">
           <div>
-            <h2 className="text-lg font-bold text-slate-800">AI 인프라 확충 시뮬레이션 결과</h2>
+            <h2 className="text-lg font-bold text-slate-800">정책 우선 검토 후보와 자원 보강 시나리오</h2>
             <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-500">
-              민감도 분석에서 살아남은 정책탭 우선검토후보를 기준으로 반경 5km 내 전문의·MRI·CT 보강 필요성을
-              1차 추정한 자료입니다. 시민탭 행동 안내가 아니라 정책 검토용입니다.
+              이 표는 민감도 분석에서 반복 등장한 후보를 기준으로 반경 5km 안의 병원 인프라를 1차로 살펴본
+              검증용 산출물입니다. 실제 입지 확정, 예산 배정, 의료기관 지정 근거가 아니라 현장 조사와 전문가
+              검토를 시작할 후보를 좁히는 참고 자료입니다.
             </p>
           </div>
           <button
@@ -60,17 +61,31 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
         </div>
 
         <div className="min-h-0 flex-1 overscroll-contain overflow-y-auto px-4 py-5 sm:p-6">
+          <div className="mb-5 grid gap-3 rounded-2xl bg-amber-50 p-4 text-xs leading-relaxed text-amber-950 ring-1 ring-amber-200 md:grid-cols-3">
+            <p>
+              <strong>데이터 상태:</strong> 일부 병원 전문의 수와 MRI/CT 정보는 오프라인 덤프와 추정치를 섞은
+              PoC 자료입니다.
+            </p>
+            <p>
+              <strong>모델 상태:</strong> K-Means는 최종 입지 최적화 모델이 아니라 수요 중심 후보를 찾는
+              후보 생성기입니다.
+            </p>
+            <p>
+              <strong>해석 범위:</strong> 교통, 부지, 예산, 법적 지정 요건은 아직 반영되지 않았습니다.
+            </p>
+          </div>
+
           <div className="mb-5 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
             <h3 className="text-sm font-extrabold text-slate-800">용어 해설</h3>
             <div className="mt-3 grid gap-3 text-xs leading-relaxed text-slate-600 md:grid-cols-2">
-              <p><strong>우선검토후보</strong>: 확정 입지가 아니라 정책적으로 먼저 검토할 후보입니다.</p>
+              <p><strong>우선 검토 후보</strong>: 확정 위치가 아니라 먼저 현장 확인할 분석 후보입니다.</p>
               <p><strong>분석 수요</strong>: 실제 환자 수가 아니라 후보 산출에 사용된 취약 수요 묶음의 규모입니다.</p>
-              <p><strong>민감도 반복률</strong>: K, seed, 거리상한, 군위 처리 조건을 바꿔도 다시 등장한 비율입니다.</p>
-              <p><strong>반경 5km</strong>: 후보 주변의 참조 병원 인프라를 보는 1차 탐색 범위입니다.</p>
-              <p><strong>전문의 보강</strong>: 주변 병원 평균 전문의 수가 낮을 때 필요한 보강 추정치입니다.</p>
-              <p><strong>MRI/CT 보강</strong>: 주변 병원 장비 커버리지가 낮을 때 검토할 장비 또는 연계 필요성입니다.</p>
-              <p><strong>별도 권역</strong>: 군위/원거리처럼 메인 대구권 후보와 분리해 봐야 하는 후보입니다.</p>
-              <p><strong>설명용 점수</strong>: 평균 접근성 개선 km × log(1 + 커버 취약인구)로 계산한 후보 설명용 참고값입니다.</p>
+              <p><strong>민감도 반복률</strong>: K, seed, 거리 상한, 군위 처리 조건을 바꿔도 다시 등장한 비율입니다.</p>
+              <p><strong>반경 5km</strong>: 후보 주변 병원 인프라를 보는 1차 탐색 범위입니다.</p>
+              <p><strong>전문의 보강</strong>: 공식 정원 산정이 아니라 주변 병원 평균을 이용한 보강 필요 추정치입니다.</p>
+              <p><strong>MRI/CT 보강</strong>: 장비 도입 확정이 아니라 진료 기능과 역할 분담을 검토할 신호입니다.</p>
+              <p><strong>별도 권역</strong>: 군위나 원거리처럼 메인 대구권 후보와 분리해 해석해야 하는 후보입니다.</p>
+              <p><strong>설명용 점수</strong>: 접근성 개선과 커버 인구를 결합한 후보 설명용 참고값입니다.</p>
             </div>
           </div>
 
@@ -84,7 +99,7 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
             </div>
           ) : recommendations.length === 0 ? (
             <div className="flex h-40 items-center justify-center text-sm text-slate-500">
-              시뮬레이션 결과가 없습니다.
+              표시할 검토 후보가 없습니다.
             </div>
           ) : (
             <div className="grid gap-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:grid-cols-2">
@@ -110,17 +125,17 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <Metric label="민감도 반복률" value={rec.scenario_coverage_ratio !== undefined ? `${(rec.scenario_coverage_ratio * 100).toFixed(1)}%` : '-'} />
+                      <Metric label="반복률" value={rec.scenario_coverage_ratio !== undefined ? `${(rec.scenario_coverage_ratio * 100).toFixed(1)}%` : '-'} />
                       <Metric label="분석 수요" value={`${rec.demand.toLocaleString('ko-KR')}건`} />
                       <Metric label="주변 병원" value={`${rec.nearby_count}곳`} />
                       <Metric label="평균 전문의" value={`${rec.resource_gap.avg_doctors_nearby}명`} />
-                      <Metric label="전문의 보강" value={`${rec.resource_gap.doctors_needed}명`} />
+                      <Metric label="보강 추정" value={`${rec.resource_gap.doctors_needed}명`} />
                       <Metric label="MRI 커버" value={`${Math.round(rec.resource_gap.mri_coverage_ratio * 100)}%`} />
                     </div>
 
                     <p className="mt-4 text-xs font-medium leading-relaxed text-slate-700">{rec.recommendation}</p>
                     <p className="mt-3 border-t border-slate-100 pt-3 text-[11px] leading-relaxed text-slate-400">
-                      {rec.disclaimer ?? '정책탭 전용 검토 자료입니다.'}
+                      {rec.disclaimer ?? '정책 검토용 참고 자료이며 실제 정책 결정에는 별도 검증이 필요합니다.'}
                     </p>
                   </article>
                 );
