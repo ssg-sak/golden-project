@@ -1,8 +1,8 @@
 const reportRows = [
   {
     label: '보고서 성격',
-    value: '정책 확정안이 아닌 PoC 분석 보고서',
-    description: 'K-Means와 공간 지표로 응급의료 접근성 문제를 탐색한 개인 프로젝트 산출물입니다.',
+    value: '정책 확정안이 아닌 사전 검토 자료',
+    description: '응급의료 접근성 문제를 데이터로 먼저 살펴보기 위한 개인 프로젝트 산출물입니다.',
   },
   {
     label: '핵심 관점',
@@ -30,7 +30,7 @@ const guideRows = [
   [
     '3',
     '검토 후보는 확정 입지가 아닙니다',
-    'K-Means는 수요 중심 후보 생성기로 사용했습니다. 실제 입지 최적화에는 교통, 부지, 예산, 병원 역할 검토가 추가로 필요합니다.',
+    '지도에 표시되는 후보는 수요가 몰리는 곳을 먼저 찾기 위한 참고 위치입니다. 실제 결정에는 교통, 부지, 예산, 병원 역할 검토가 추가로 필요합니다.',
   ],
   [
     '4',
@@ -77,18 +77,18 @@ export function PolicyWelcomePanel() {
           <div className="border-b border-amber-200 px-4 py-3">
             <p className="text-xs font-bold text-amber-900">먼저 확인할 한계</p>
             <h3 className="mt-1 text-base font-extrabold text-slate-950">
-              현재 결과는 검증용 산출물입니다
+              현재 결과는 사전 검토 자료입니다
             </h3>
           </div>
           <div className="grid divide-y divide-amber-200 text-xs leading-5 text-amber-950 md:grid-cols-3 md:divide-x md:divide-y-0">
             <p className="p-4">
-              병원 전문의 수와 MRI/CT 정보 일부는 오프라인 덤프와 추정치를 사용한 PoC 데이터입니다.
+              병원 전문의 수와 MRI/CT 정보 일부는 기준 시점이 다른 자료와 추정치를 함께 사용했습니다.
             </p>
             <p className="p-4">
               3km와 5km는 분석 시나리오 기준입니다. 실제 이송 시간과 생활권을 그대로 뜻하지 않습니다.
             </p>
             <p className="p-4">
-              후보지는 p-median, MCLP, location-allocation 같은 입지 최적화 모델과 비교 검증이 필요합니다.
+              후보지는 실제 교통망, 부지 가능성, 예산, 병원별 역할을 함께 검토해야 합니다.
             </p>
           </div>
         </section>

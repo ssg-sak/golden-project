@@ -54,6 +54,8 @@ def load_hira_snapshot(hospital_names: list[str]) -> dict[str, dict[str, Any]]:
             result[name] = {
                 "hira_source": "api",
                 "hira_reference_date": "2026.03",
+                "hira_equipment_status": "snapshot",
+                "hira_equipment_message": "심평원 장비 정보는 2026.03 오프라인 스냅샷 기준입니다.",
                 "equipment_status": {
                     "CT": (_integer(row.get("CT보유대수")) or 0) > 0,
                     "MRI": (_integer(row.get("MRI보유대수")) or 0) > 0,
@@ -118,15 +120,33 @@ async def _fetch_equipment(
     api_key: str,
     hospital_name: str,
     ykiho: str,
-) -> tuple[str, dict[str, bool]]:
+) -> tuple[str, dict[str, Any]]:
     async with semaphore:
         try:
             rows = await _request_rows(client, EQUIPMENT_LIST_URL, api_key, ykiho=ykiho)
-            return hospital_name, _equipment_status(rows)
+            return hospital_name, {
+                "equipment_status": _equipment_status(rows),
+                "hira_equipment_status": "ok",
+            }
+        except httpx.HTTPStatusError as exc:
+            response_text = exc.response.text[:160].replace("\n", " ").replace("\r", " ")
+            logger.warning(
+                "[hira] %s 장비 조회 실패: HTTP %s %s",
+                hospital_name,
+                exc.response.status_code,
+                response_text,
+            )
+            return hospital_name, {
+                "hira_equipment_status": "failed",
+                "hira_equipment_message": f"심평원 장비 조회 실패 HTTP {exc.response.status_code}",
+            }
         except (httpx.HTTPError, ET.ParseError, ValueError) as exc:
             # httpx 예외 문자열에는 인증키가 포함된 URL이 들어갈 수 있으므로 출력하지 않는다.
             logger.warning("[hira] %s 장비 조회 실패: %s", hospital_name, type(exc).__name__)
-            return hospital_name, {}
+            return hospital_name, {
+                "hira_equipment_status": "failed",
+                "hira_equipment_message": f"심평원 장비 조회 실패 {type(exc).__name__}",
+            }
 
 
 async def fetch_hira_data_async(hospital_names: list[str]) -> dict[str, dict[str, Any]]:
@@ -168,15 +188,15 @@ async def fetch_hira_data_async(hospital_names: list[str]) -> dict[str, dict[str
         tasks = [
             asyncio.create_task(_fetch_equipment(client, semaphore, api_key, name, ykiho))
             for name, ykiho in ykiho_by_name.items()
+            if "equipment_status" not in result.get(name, {})
         ]
         if tasks:
             done, pending = await asyncio.wait(tasks, timeout=EQUIPMENT_BUDGET_SEC)
             for task in pending:
                 task.cancel()
             for task in done:
-                name, equipment = task.result()
-                if equipment:
-                    result[name]["equipment_status"] = equipment
+                name, equipment_result = task.result()
+                result[name] = {**result.get(name, {}), **equipment_result}
 
     return result
 

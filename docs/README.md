@@ -4,6 +4,7 @@
 
 - [아키텍처 및 컴포넌트 파일 지도](./architecture/component_file_map_20260714.md)
 - [예외 처리 학습서](./guides/exception_handling_study_20260714.md)
+- [정책 데이터·모델 용어 학습서](./guides/policy_data_model_terms_study_20260715.md)
 - [예외 처리 개선 보고서](./reports/exception_handling_improvement_report_20260714.md)
 - [AI 모델 EDA 계획](./plans/ai_model_eda_plan_20260713.md)
 

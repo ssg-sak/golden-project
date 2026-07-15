@@ -123,8 +123,8 @@ function OptimalLocationDetailPanel({
 
         <div className="mt-3 border-t border-white/10 pt-3 text-[11px] text-indigo-100/80">
           <p className="font-black text-white">해석 주의</p>
-          <p>이 후보는 K-Means 기반 수요 중심 후보이며 p-median, MCLP 같은 실제 입지 최적화 모델과 비교가 필요합니다.</p>
-          <p>교통 시간, 부지 가능성, 병원별 역할, 예산, 법적 지정 요건은 아직 반영되지 않았습니다.</p>
+          <p>이 후보는 수요가 몰리는 곳을 먼저 찾기 위한 참고 위치입니다.</p>
+          <p>교통 시간, 부지 가능성, 병원별 역할, 예산, 법적 지정 요건은 아직 함께 확인해야 합니다.</p>
           <p className="mt-1 rounded-lg bg-white/10 p-2 text-indigo-50">
             설명용 점수는 평균 접근성 개선 km x log(1 + 커버 취약인구)입니다. 최종 정책 결정 점수가 아닙니다.
           </p>

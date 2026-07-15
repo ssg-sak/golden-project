@@ -45,7 +45,7 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
             <h2 className="text-lg font-bold text-slate-800">정책 우선 검토 후보와 자원 보강 시나리오</h2>
             <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-500">
               이 표는 민감도 분석에서 반복 등장한 후보를 기준으로 반경 5km 안의 병원 인프라를 1차로 살펴본
-              검증용 산출물입니다. 실제 입지 확정, 예산 배정, 의료기관 지정 근거가 아니라 현장 조사와 전문가
+              사전 검토 자료입니다. 실제 입지 확정, 예산 배정, 의료기관 지정 근거가 아니라 현장 조사와 전문가
               검토를 시작할 후보를 좁히는 참고 자료입니다.
             </p>
           </div>
@@ -63,12 +63,10 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
         <div className="min-h-0 flex-1 overscroll-contain overflow-y-auto px-4 py-5 sm:p-6">
           <div className="mb-5 grid gap-3 rounded-2xl bg-amber-50 p-4 text-xs leading-relaxed text-amber-950 ring-1 ring-amber-200 md:grid-cols-3">
             <p>
-              <strong>데이터 상태:</strong> 일부 병원 전문의 수와 MRI/CT 정보는 오프라인 덤프와 추정치를 섞은
-              PoC 자료입니다.
+              <strong>자료 기준:</strong> 일부 병원 전문의 수와 MRI/CT 정보는 기준 시점이 다른 자료와 추정치를 함께 사용했습니다.
             </p>
             <p>
-              <strong>모델 상태:</strong> K-Means는 최종 입지 최적화 모델이 아니라 수요 중심 후보를 찾는
-              후보 생성기입니다.
+              <strong>후보 의미:</strong> 지도에 표시된 위치는 최종 입지가 아니라 먼저 살펴볼 참고 후보입니다.
             </p>
             <p>
               <strong>해석 범위:</strong> 교통, 부지, 예산, 법적 지정 요건은 아직 반영되지 않았습니다.

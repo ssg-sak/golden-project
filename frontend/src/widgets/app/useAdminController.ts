@@ -205,7 +205,7 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     if (useDynamicDashboard && dashboardSummary?.status.stale) {
       return {
         tone: 'info' as const,
-        message: '공공데이터 갱신이 24시간 이상 지연되었습니다. 마지막 정상 스냅샷을 표시 중입니다.',
+        message: '공공데이터 갱신이 24시간 이상 지연되었습니다. 마지막 정상 자료를 표시 중입니다.',
       };
     }
     return null;

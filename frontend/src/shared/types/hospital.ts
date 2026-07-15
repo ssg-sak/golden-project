@@ -48,6 +48,10 @@ export interface HospitalRecord {
   hira_source?: 'api';
   /** 심평원 자료 기준 시점. 예: 2026.03 */
   hira_reference_date?: string;
+  /** HIRA 장비 상세 조회 상태 */
+  hira_equipment_status?: 'ok' | 'failed' | 'snapshot' | 'not_requested';
+  /** HIRA 장비 상세 조회 실패 또는 폴백 안내 */
+  hira_equipment_message?: string;
 }
 
 export function hospitalDisplayName(hospital: HospitalRecord): string {

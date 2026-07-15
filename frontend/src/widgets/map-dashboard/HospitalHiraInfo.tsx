@@ -11,6 +11,7 @@ export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
     hospital.doctors_count !== undefined ||
     equipment.length > 0 ||
     emergencyEquipment.length > 0 ||
+    hospital.hira_equipment_status === 'failed' ||
     Boolean(hospital.operating_hours || hospital.hira_notices?.length);
 
   if (!hasData) {
@@ -43,6 +44,27 @@ export function HospitalHiraInfo({ hospital }: { hospital: HospitalRecord }) {
       </div>
 
       <div className="space-y-3">
+        {hospital.hira_equipment_status === 'failed' ? (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-900">
+            <strong className="font-extrabold">심평원 장비 조회 실패</strong>
+            <p className="mt-1">
+              {hospital.hira_equipment_message ??
+                '장비 상세 조회가 일시적으로 응답하지 않아 등록 장비 보유 현황을 확인하지 못했습니다.'}
+            </p>
+            <p className="mt-1 text-amber-800">실제 CT/MRI 사용 가능 여부는 병원에 직접 확인해 주세요.</p>
+          </div>
+        ) : null}
+
+        {hospital.hira_equipment_status === 'snapshot' ? (
+          <div className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-[11px] leading-relaxed text-sky-900">
+            <strong className="font-extrabold">심평원 기준일 자료 표시 중</strong>
+            <p className="mt-1">
+              {hospital.hira_equipment_message ??
+                '실시간 장비 상세 조회 대신 기준일이 확인된 장비 보유 정보를 표시합니다.'}
+            </p>
+          </div>
+        ) : null}
+
         {emergencyEquipment.length > 0 ? (
           <div className="border-l-4 border-teal-700 bg-slate-50 p-3">
             <p className="text-xs font-extrabold text-slate-900">응급진료 핵심장비 4종 · 현재 가용 여부</p>

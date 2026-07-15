@@ -120,7 +120,7 @@ export function DashboardStatsBar({
 
         <p className="border-t border-slate-200 pt-2 text-[11px] text-slate-500">
           병원 {formatUpdatedAt(hospitalsUpdatedAt)} 갱신 · 분석 {formatUpdatedAt(vulnerabilityUpdatedAt)} 갱신
-          {dataStale ? ' · 공공데이터 갱신 지연으로 마지막 정상 스냅샷 표시 중' : ''}
+          {dataStale ? ' · 공공데이터 갱신 지연으로 마지막 정상 자료 표시 중' : ''}
         </p>
       </div>
     </section>
