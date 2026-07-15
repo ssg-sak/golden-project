@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "mode": "pediatric",
+    "candidate_type": "stable_main",
+    "candidate_group": "main_daegu",
+    "lat": 35.887682622,
+    "lng": 128.548218267,
+    "demand": 111,
+    "scenario_coverage_ratio": 0.75,
+    "score": 75.0,
+    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+  },
+  {
+    "id": 2,
+    "mode": "pediatric",
+    "candidate_type": "stable_main",
+    "candidate_group": "main_daegu",
+    "lat": 35.705094431,
+    "lng": 128.431674535,
+    "demand": 26,
+    "scenario_coverage_ratio": 0.75,
+    "score": 75.0,
+    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+  },
+  {
+    "id": 3,
+    "mode": "pediatric",
+    "candidate_type": "stable_main",
+    "candidate_group": "main_daegu",
+    "lat": 35.882777631,
+    "lng": 128.631817499,
+    "demand": 274,
+    "scenario_coverage_ratio": 0.5,
+    "score": 50.0,
+    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+  },
+  {
+    "id": 4,
+    "mode": "pediatric",
+    "candidate_type": "stable_main",
+    "candidate_group": "main_daegu",
+    "lat": 35.848381544,
+    "lng": 128.630296647,
+    "demand": 121,
+    "scenario_coverage_ratio": 0.5,
+    "score": 50.0,
+    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+  },
+  {
+    "id": 5,
+    "mode": "pediatric",
+    "candidate_type": "stable_main",
+    "candidate_group": "main_daegu",
+    "lat": 35.914346302,
+    "lng": 128.650791846,
+    "demand": 117,
+    "scenario_coverage_ratio": 0.5,
+    "score": 50.0,
+    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+  },
+  {
+    "id": 6,
+    "mode": "pediatric",
+    "candidate_type": "separate_region",
+    "candidate_group": "separate_region",
+    "lat": 36.212479694,
+    "lng": 128.617453798,
+    "demand": 3,
+    "scenario_coverage_ratio": 0.042,
+    "score": 4.2,
+    "interpretation": "군위/원거리 권역은 메인 후보가 아니라 별도 권역 검토 후보입니다."
+  },
+  {
+    "id": 1,
+    "mode": "senior",
+    "candidate_type": "stable_main",
+    "candidate_group": "main_daegu",
+    "lat": 35.826276237,
+    "lng": 128.649295921,
+    "demand": 12,
+    "scenario_coverage_ratio": 0.708,
+    "score": 70.8,
+    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+  },
+  {
+    "id": 2,
+    "mode": "senior",
+    "candidate_type": "hold_review",
+    "candidate_group": "hold",
+    "lat": 35.749237386,
+    "lng": 128.470436813,
+    "demand": 5,
+    "scenario_coverage_ratio": 0.533,
+    "score": 53.3,
+    "interpretation": "조건 변화에는 비교적 안정적이지만 수요가 낮아 보류 검토가 필요한 후보입니다."
+  },
+  {
+    "id": 3,
+    "mode": "senior",
+    "candidate_type": "separate_region",
+    "candidate_group": "separate_region",
+    "lat": 36.161736951,
+    "lng": 128.654469239,
+    "demand": 8,
+    "scenario_coverage_ratio": 0.125,
+    "score": 12.5,
+    "interpretation": "군위/원거리 권역은 메인 후보가 아니라 별도 권역 검토 후보입니다."
+  }
+]
