@@ -107,6 +107,8 @@ export function GlobalNavigationBar() {
                 aria-selected={isActive}
                 onClick={() => handleNavClick(item.id)}
                 className={`relative px-3 py-3 text-sm font-semibold transition-colors duration-200 sm:px-5 sm:text-[15px] ${
+                  item.id === 'admin' ? 'hidden lg:inline-flex' : ''
+                } ${
                   isActive
                     ? 'text-teal-800'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'

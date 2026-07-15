@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useLayoutEffect, useRef } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
 import { useKakaoLoader } from 'react-kakao-maps-sdk';
 
@@ -18,6 +18,7 @@ const PlatformIntroView = lazy(() => import('../widgets/app/PlatformIntroView').
 export default function AppPage() {
   const navigationRef = useRef<HTMLDivElement>(null);
   const viewMode = useAppModeStore((state) => state.viewMode);
+  const setViewMode = useAppModeStore((state) => state.setViewMode);
   const kakaoConfigured = isKakaoMapConfigured();
   const [kakaoLoading, kakaoError] = useKakaoLoader({
     appkey: KAKAO_MAP_APP_KEY,
@@ -55,6 +56,23 @@ export default function AppPage() {
       document.documentElement.style.removeProperty('--mobile-nav-height');
     };
   }, []);
+
+  useEffect(() => {
+    const desktopQuery = window.matchMedia('(min-width: 1024px)');
+
+    const keepMobileOnCitizenMode = () => {
+      if (!desktopQuery.matches && useAppModeStore.getState().viewMode === 'admin') {
+        setViewMode('citizen');
+      }
+    };
+
+    keepMobileOnCitizenMode();
+    desktopQuery.addEventListener('change', keepMobileOnCitizenMode);
+
+    return () => {
+      desktopQuery.removeEventListener('change', keepMobileOnCitizenMode);
+    };
+  }, [setViewMode]);
 
   return (
     <div className="flex min-h-dvh max-w-[100vw] flex-col overflow-x-hidden bg-slate-100">

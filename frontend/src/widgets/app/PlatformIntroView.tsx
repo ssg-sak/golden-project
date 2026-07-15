@@ -116,6 +116,17 @@ export function PlatformIntroView() {
         </div>
       </div>
 
+      <div className="border-b border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-6xl gap-4 px-5 py-5 text-sm leading-6 text-slate-700 md:grid-cols-[220px_1fr] md:px-8">
+          <strong className="text-slate-900">모바일 화면 구성</strong>
+          <p>
+            모바일에서는 정책 분석 지도를 줄이고 가까운 응급실, 야간·휴일 소아진료, 전화 확인과 길찾기처럼
+            현장에서 바로 필요한 행동을 우선합니다. 행정동별 취약도, 정책 우선 검토 후보, 보고서형 해석은 넓은
+            화면에서 비교해 보는 데 적합해 데스크톱 정책·분석 화면에 배치했습니다.
+          </p>
+        </div>
+      </div>
+
       <main className="mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-14">
         <section className="grid border border-slate-300 bg-white lg:grid-cols-[1fr_340px]">
           <div className="p-6 md:p-9">
