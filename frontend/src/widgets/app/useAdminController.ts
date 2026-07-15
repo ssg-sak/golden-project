@@ -52,7 +52,6 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
   const [selectedHospital, setSelectedHospital] = useState<HospitalRecord | null>(null);
   const [riskThreshold, setRiskThreshold] = useState(10000);
 
-  // 선택 이후 실제 API 응답이 도착해도 정적 폴백 객체가 남지 않도록 최신 store 레코드로 재결합한다.
   const resolvedSelectedHospital = useMemo(() => {
     if (!selectedHospital) return null;
     return hospitals.find((hospital) => hospital.name === selectedHospital.name) ?? selectedHospital;
@@ -160,8 +159,8 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     if (useDynamicDashboard && dashboardError && !dashboardSummary) {
       return {
         tone: 'warning' as const,
-        message: `${dashboardError} 저장된 분석 데이터를 먼저 보여드리고 있습니다.`,
-        actionLabel: '정책 요약 다시 시도',
+        message: `${dashboardError} 저장된 분석 자료를 먼저 표시합니다.`,
+        actionLabel: '정책 요약 다시 조회',
         onAction: () => void fetchDashboardSummary(),
         actionLoading: dashboardLoading,
       };
@@ -169,8 +168,8 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     if (hospitalsError) {
       return {
         tone: 'danger' as const,
-        message: `${hospitalsError} 다시 시도해 주세요.`,
-        actionLabel: '병원 다시 시도',
+        message: `${hospitalsError} 병원 목록을 다시 조회해 주세요.`,
+        actionLabel: '병원 다시 조회',
         onAction: onRetryHospitals,
         actionLoading: hospitalsLoading,
       };
@@ -180,9 +179,9 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
         tone: 'warning' as const,
         message:
           hospitalsDegradedMode === 'stale-cache'
-            ? '병원 데이터 연결이 불안정해 이전 병상 데이터를 표시 중입니다.'
-            : '병원 실시간 병상 연결 실패로 기본 병원 목록을 표시 중입니다.',
-        actionLabel: '병원 다시 시도',
+            ? '병원 데이터 연결이 불안정해 이전 기준 자료를 표시 중입니다.'
+            : '실시간 병상 연결 실패로 기본 병원 목록을 표시 중입니다.',
+        actionLabel: '병원 다시 조회',
         onAction: onRetryHospitals,
         actionLoading: hospitalsLoading,
       };
@@ -190,8 +189,8 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     if (vulnerabilityError) {
       return {
         tone: 'warning' as const,
-        message: `${vulnerabilityError} 저장된 분석 또는 병원 위치 정보로 계속 진행합니다.`,
-        actionLabel: '분석 다시 시도',
+        message: `${vulnerabilityError} 저장된 분석 자료와 병원 위치 정보로 계속 표시합니다.`,
+        actionLabel: '분석 다시 조회',
         onAction: handleRetryVulnerability,
         actionLoading: vulnerabilityLoading,
       };
@@ -199,13 +198,13 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     if (vulnerabilityDegraded) {
       return {
         tone: 'info' as const,
-        message: '동네 분석 데이터 연결에 실패해 저장된 분석 데이터를 표시 중입니다.',
+        message: '동네별 분석 데이터 연결이 실패해 저장된 분석 자료를 표시 중입니다.',
       };
     }
     if (useDynamicDashboard && dashboardSummary?.status.stale) {
       return {
         tone: 'info' as const,
-        message: '공공데이터 갱신이 24시간 이상 지연되었습니다. 마지막 정상 자료를 표시 중입니다.',
+        message: '공공데이터 갱신이 지연되어 마지막 정상 자료를 표시 중입니다.',
       };
     }
     return null;

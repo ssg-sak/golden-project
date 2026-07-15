@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import json
+from __future__ import annotations
+
 import logging
 from typing import Any
 
 from cachetools import TTLCache
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from app.services.api_clients.routing_client import fetch_multiple_etas
@@ -12,67 +13,88 @@ from app.services.api_clients.routing_client import fetch_multiple_etas
 router = APIRouter(prefix="/api/routing", tags=["Routing"])
 logger = logging.getLogger(__name__)
 
-# TTL 5분, 최대 1000개의 출발-도착 세트 캐싱
-eta_cache = TTLCache(maxsize=1000, ttl=300)
+MAX_ETA_DESTINATIONS = 5
+
+# 같은 출발지-목적지 조합을 반복 호출하지 않기 위한 단기 캐시입니다.
+eta_cache: TTLCache[str, dict[str, Any]] = TTLCache(maxsize=1000, ttl=600)
+
 
 class DestinationItem(BaseModel):
     name: str
     lat: float
     lng: float
 
+
 class EtaRequest(BaseModel):
     origin_lat: float
     origin_lng: float
-    destinations: list[DestinationItem] = Field(..., max_length=20, description="최대 20개까지만 허용")
+    destinations: list[DestinationItem] = Field(
+        ...,
+        max_length=MAX_ETA_DESTINATIONS,
+        description="실시간 재검증은 상위 5개 목적지만 허용합니다.",
+    )
+
 
 class EtaResponse(BaseModel):
     name: str
     eta_seconds: int | None
     distance_meters: int | None
     error: str | None
+    source: str | None = None
+
+
+def _route_cache_key(origin_lat: float, origin_lng: float, dest_lat: float, dest_lng: float) -> str:
+    origin_key = f"{round(origin_lat, 4)},{round(origin_lng, 4)}"
+    dest_key = f"{round(dest_lat, 4)},{round(dest_lng, 4)}"
+    return f"{origin_key}->{dest_key}"
+
 
 @router.post("/eta", response_model=list[EtaResponse])
 async def get_etas(req: EtaRequest) -> list[dict[str, Any]]:
     """
-    출발지에서 다중 목적지 병원까지의 실시간 ETA를 반환.
-    무료 쿼터 초과 방지를 위해 5분간 In-Memory 캐싱 적용.
-    에러 발생 시 빈 값 반환(Graceful Degradation).
+    병원 추천 정렬용 ETA를 반환합니다.
+    전체 병원을 실시간 호출하지 않고, 프론트가 보낸 상위 목적지만 재검증합니다.
     """
     if not req.destinations:
         return []
 
-    # 캐시 키 생성 (좌표 소수점 4자리 반올림으로 캐시 적중률 향상 - 약 10m 오차)
-    origin_key = f"{round(req.origin_lat, 4)},{round(req.origin_lng, 4)}"
-    
-    # 캐시된 결과와 새로 요청할 목적지 분류
-    results = []
-    destinations_to_fetch = []
-    
+    ordered_keys: list[str] = []
+    destinations_to_fetch: list[dict[str, Any]] = []
+    results_by_key: dict[str, dict[str, Any]] = {}
+
     for dest in req.destinations:
-        dest_key = f"{round(dest.lat, 4)},{round(dest.lng, 4)}"
-        cache_key = f"{origin_key}->{dest_key}"
-        
+        cache_key = _route_cache_key(req.origin_lat, req.origin_lng, dest.lat, dest.lng)
+        ordered_keys.append(cache_key)
+
         cached_val = eta_cache.get(cache_key)
         if cached_val is not None:
-            # 캐시에 있으면 바로 추가
-            results.append(cached_val)
-        else:
-            destinations_to_fetch.append({"name": dest.name, "lat": dest.lat, "lng": dest.lng, "cache_key": cache_key})
-            
-    # 새로 요청할 목적지가 있다면 카카오 API 호출
+            results_by_key[cache_key] = {**cached_val, "source": cached_val.get("source") or "cache"}
+            continue
+
+        destinations_to_fetch.append({
+            "name": dest.name,
+            "lat": dest.lat,
+            "lng": dest.lng,
+            "cache_key": cache_key,
+        })
+
     if destinations_to_fetch:
-        logger.info(f"[routing] Fetching {len(destinations_to_fetch)} new ETAs from Kakao Mobility...")
+        logger.info("[routing] Fetching %s ETA candidates from Kakao Mobility guard.", len(destinations_to_fetch))
         fetched_etas = await fetch_multiple_etas(
             origin_lat=req.origin_lat,
             origin_lng=req.origin_lng,
-            destinations=destinations_to_fetch
+            destinations=destinations_to_fetch,
         )
-        
-        # 결과 병합 및 캐싱
-        for i, fetched in enumerate(fetched_etas):
-            cache_key = destinations_to_fetch[i]["cache_key"]
-            # 정상적으로 가져왔거나 (None 포함), 에러라도 일단 캐시하여 짧은 시간 내 무한 재요청 방지
-            eta_cache[cache_key] = fetched
-            results.append(fetched)
 
-    return results
+        for fetched in fetched_etas:
+            matching = next(
+                (dest for dest in destinations_to_fetch if dest["name"] == fetched["name"]),
+                None,
+            )
+            if matching is None:
+                continue
+            cache_key = matching["cache_key"]
+            eta_cache[cache_key] = fetched
+            results_by_key[cache_key] = fetched
+
+    return [results_by_key[key] for key in ordered_keys if key in results_by_key]

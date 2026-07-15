@@ -56,10 +56,10 @@ export function MobileBottomSheet({
   );
 
   useEffect(() => {
-    if (userLocation && hospitals.length > 0) {
-      fetchEtas(userLocation.lat, userLocation.lng, hospitals);
+    if (userLocation && baseSortedHospitals.length > 0) {
+      fetchEtas(userLocation.lat, userLocation.lng, baseSortedHospitals);
     }
-  }, [userLocation, hospitals, fetchEtas]);
+  }, [userLocation, baseSortedHospitals, fetchEtas]);
 
   const sortedHospitals = useMemo(() => {
     return [...baseSortedHospitals].sort((a, b) => compareHospitalRecommendations(a, b, etas));
@@ -169,7 +169,7 @@ export function MobileBottomSheet({
           {hasFallback && (
             <div className="shrink-0 border-l-4 border-amber-400 bg-amber-50 p-2 text-xs text-amber-800">
               <p className="font-bold">⚠️ [안내] 실시간 교통 정보 연동 실패</p>
-              <p className="mt-0.5">실시간 길찾기를 불러올 수 없어 직선거리 우선으로 대체 표시됩니다.</p>
+              <p className="mt-0.5">실시간 교통 정보를 불러오지 못해 저장된 이동시간을 사용합니다.</p>
             </div>
           )}
 

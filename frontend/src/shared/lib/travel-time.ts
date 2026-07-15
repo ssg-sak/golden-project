@@ -4,6 +4,7 @@ export interface TravelTimeResult {
   etaSeconds: number | null;
   distanceMeters: number | null;
   error: string | null;
+  source?: string | null;
 }
 
 interface RoutingEtaResponse {
@@ -11,6 +12,31 @@ interface RoutingEtaResponse {
   eta_seconds: number | null;
   distance_meters: number | null;
   error: string | null;
+  source?: string | null;
+}
+
+const inFlightRequests = new Map<string, Promise<TravelTimeResult>>();
+
+function routeRequestKey({
+  originLat,
+  originLng,
+  hospitalName,
+  hospitalLat,
+  hospitalLng,
+}: {
+  originLat: number;
+  originLng: number;
+  hospitalName: string;
+  hospitalLat: number;
+  hospitalLng: number;
+}): string {
+  return [
+    originLat.toFixed(4),
+    originLng.toFixed(4),
+    hospitalName,
+    hospitalLat.toFixed(4),
+    hospitalLng.toFixed(4),
+  ].join('|');
 }
 
 export async function fetchTravelTimeToHospital({
@@ -19,7 +45,7 @@ export async function fetchTravelTimeToHospital({
   hospitalName,
   hospitalLat,
   hospitalLng,
-  signal,
+  signal: _signal,
 }: {
   originLat: number;
   originLng: number;
@@ -28,12 +54,15 @@ export async function fetchTravelTimeToHospital({
   hospitalLng: number;
   signal?: AbortSignal;
 }): Promise<TravelTimeResult> {
-  const response = await fetch(`${API_BASE_URL}/api/routing/eta`, {
+  const key = routeRequestKey({ originLat, originLng, hospitalName, hospitalLat, hospitalLng });
+  const existing = inFlightRequests.get(key);
+  if (existing) return existing;
+
+  const request = fetch(`${API_BASE_URL}/api/routing/eta`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    signal,
     body: JSON.stringify({
       origin_lat: originLat,
       origin_lng: originLng,
@@ -45,24 +74,32 @@ export async function fetchTravelTimeToHospital({
         },
       ],
     }),
-  });
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`ETA request failed: ${response.status}`);
+      }
 
-  if (!response.ok) {
-    throw new Error(`ETA request failed: ${response.status}`);
-  }
+      const data = (await response.json()) as RoutingEtaResponse[];
+      const first = data[0];
 
-  const data = (await response.json()) as RoutingEtaResponse[];
-  const first = data[0];
+      if (!first) {
+        return { etaSeconds: null, distanceMeters: null, error: '응답 없음', source: null };
+      }
 
-  if (!first) {
-    return { etaSeconds: null, distanceMeters: null, error: '응답 없음' };
-  }
+      return {
+        etaSeconds: first.eta_seconds,
+        distanceMeters: first.distance_meters,
+        error: first.error,
+        source: first.source,
+      };
+    })
+    .finally(() => {
+      inFlightRequests.delete(key);
+    });
 
-  return {
-    etaSeconds: first.eta_seconds,
-    distanceMeters: first.distance_meters,
-    error: first.error,
-  };
+  inFlightRequests.set(key, request);
+  return request;
 }
 
 export function formatEta(seconds: number): string {

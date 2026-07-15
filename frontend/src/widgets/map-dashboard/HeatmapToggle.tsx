@@ -18,12 +18,8 @@ export function HeatmapToggle() {
       disabled={disabled}
       aria-label="취약지구 히트맵 보기"
       onClick={toggleHeatmap}
-      title={
-        disabled
-          ? '동네 분석 데이터를 불러온 뒤 사용할 수 있습니다'
-          : undefined
-      }
-      className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 ${
+      title={disabled ? '동네 분석 데이터를 불러와야 사용할 수 있습니다.' : undefined}
+      className={`inline-flex min-h-8 min-w-[8.5rem] shrink-0 items-center justify-between gap-2 whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 ${
         showHeatmap
           ? 'bg-[#2b63d9] text-white ring-1 ring-[#1f4ea8]/30'
           : 'bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50'

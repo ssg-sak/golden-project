@@ -7,66 +7,125 @@ export interface EtaData {
   eta_seconds: number | null;
   distance_meters: number | null;
   error: string | null;
+  source?: 'realtime' | 'cache' | 'stored' | string | null;
 }
 
 interface EtaState {
   etas: Record<string, EtaData>;
   isLoading: boolean;
-  hasFallback: boolean; // API 키가 없거나 쿼터 초과 등
+  hasFallback: boolean;
   fetchEtas: (originLat: number, originLng: number, hospitals: HospitalRecord[]) => Promise<void>;
   clearEtas: () => void;
 }
 
-// 상위 몇 개까지만 ETA를 요청할 것인가? (API 쿼터 방어)
 const MAX_ETA_HOSPITALS = 5;
-// 디바운스용 타이머 ID
-let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+const QUOTA_CLIENT_BLOCK_MS = 60 * 60 * 1000;
 
-// Haversine 거리 계산 함수
-function getHaversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371; // km
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+let pendingRequestKey: string | null = null;
+let activeRequestKey: string | null = null;
+let quotaBlockedUntil = 0;
+
+function getHaversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const radiusKm = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  return radiusKm * c;
 }
 
-export const useEtaController = create<EtaState>((set) => ({
+function estimatedEta(originLat: number, originLng: number, hospital: HospitalRecord, error: string): EtaData {
+  const directKm = getHaversineDistance(originLat, originLng, hospital.lat, hospital.lng);
+  const roadKm = Math.max(directKm * 1.35, directKm);
+  const etaSeconds = Math.max(60, Math.round((roadKm / 38) * 3600 + 180));
+  return {
+    name: hospital.name,
+    eta_seconds: etaSeconds,
+    distance_meters: Math.round(roadKm * 1000),
+    error,
+    source: 'stored',
+  };
+}
+
+function selectRealtimeCandidates(originLat: number, originLng: number, hospitals: HospitalRecord[]): HospitalRecord[] {
+  return hospitals
+    .filter((hospital) => Number.isFinite(hospital.lat) && Number.isFinite(hospital.lng) && hospital.lat > 0 && hospital.lng > 0)
+    .map((hospital) => ({
+      hospital,
+      distanceKm: getHaversineDistance(originLat, originLng, hospital.lat, hospital.lng),
+    }))
+    .sort((a, b) => a.distanceKm - b.distanceKm)
+    .slice(0, MAX_ETA_HOSPITALS)
+    .map((item) => item.hospital);
+}
+
+function requestKey(originLat: number, originLng: number, hospitals: HospitalRecord[]): string {
+  const origin = `${originLat.toFixed(4)},${originLng.toFixed(4)}`;
+  const destinations = hospitals
+    .map((hospital) => `${hospital.name}:${hospital.lat.toFixed(4)},${hospital.lng.toFixed(4)}`)
+    .join('|');
+  return `${origin}->${destinations}`;
+}
+
+function quotaBlocked(): boolean {
+  return Date.now() < quotaBlockedUntil;
+}
+
+function markQuotaBlocked(): void {
+  quotaBlockedUntil = Date.now() + QUOTA_CLIENT_BLOCK_MS;
+}
+
+export const useEtaController = create<EtaState>((set, get) => ({
   etas: {},
   isLoading: false,
   hasFallback: false,
 
-  clearEtas: () => set({ etas: {}, isLoading: false, hasFallback: false }),
+  clearEtas: () => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+      debounceTimer = null;
+    }
+    pendingRequestKey = null;
+    activeRequestKey = null;
+    set({ etas: {}, isLoading: false, hasFallback: false });
+  },
 
   fetchEtas: async (originLat: number, originLng: number, hospitals: HospitalRecord[]) => {
-    // 디바운스 2초 적용
+    const targetHospitals = selectRealtimeCandidates(originLat, originLng, hospitals);
+    if (targetHospitals.length === 0) return;
+
+    const key = requestKey(originLat, originLng, targetHospitals);
+    const currentEtas = get().etas;
+    const hasEveryEta = targetHospitals.every((hospital) => currentEtas[hospital.name]);
+    if (pendingRequestKey === key || activeRequestKey === key || hasEveryEta) return;
+
+    if (quotaBlocked()) {
+      const fallbackEtas = Object.fromEntries(
+        targetHospitals.map((hospital) => [
+          hospital.name,
+          estimatedEta(originLat, originLng, hospital, 'quota_blocked'),
+        ]),
+      );
+      set({ etas: { ...currentEtas, ...fallbackEtas }, isLoading: false, hasFallback: true });
+      return;
+    }
+
     if (debounceTimer) {
       clearTimeout(debounceTimer);
     }
 
-    // 1. 직선거리 기반으로 상위 10개 병원만 추려내기 (단, 유효한 좌표를 가진 병원만)
-    const validHospitals = hospitals.filter(h => h.lat && h.lng && h.lat > 0 && h.lng > 0);
-    
-    const sortedHospitals = [...validHospitals].sort((a, b) => {
-      const distA = getHaversineDistance(originLat, originLng, a.lat, a.lng);
-      const distB = getHaversineDistance(originLat, originLng, b.lat, b.lng);
-      return distA - distB;
-    });
-
-    const targetHospitals = sortedHospitals.slice(0, MAX_ETA_HOSPITALS).map(h => ({
-      name: h.name,
-      lat: h.lat,
-      lng: h.lng,
-    }));
-
-    if (targetHospitals.length === 0) return;
-
+    pendingRequestKey = key;
     set({ isLoading: true, hasFallback: false });
 
     debounceTimer = setTimeout(async () => {
+      activeRequestKey = key;
+      pendingRequestKey = null;
+
       try {
         const response = await fetch(`${API_BASE_URL}/api/routing/eta`, {
           method: 'POST',
@@ -76,37 +135,57 @@ export const useEtaController = create<EtaState>((set) => ({
           body: JSON.stringify({
             origin_lat: originLat,
             origin_lng: originLng,
-            destinations: targetHospitals,
+            destinations: targetHospitals.map((hospital) => ({
+              name: hospital.name,
+              lat: hospital.lat,
+              lng: hospital.lng,
+            })),
           }),
         });
 
         if (!response.ok) {
-          set({ isLoading: false, hasFallback: true });
+          const fallbackEtas = Object.fromEntries(
+            targetHospitals.map((hospital) => [
+              hospital.name,
+              estimatedEta(originLat, originLng, hospital, `http_${response.status}`),
+            ]),
+          );
+          set({ etas: { ...get().etas, ...fallbackEtas }, isLoading: false, hasFallback: true });
           return;
         }
 
         const data: EtaData[] = await response.json();
-        
-        const newEtas: Record<string, EtaData> = {};
-        let successCount = 0;
+        if (data.some((item) => item.error === 'quota_exceeded' || item.error === 'quota_blocked')) {
+          markQuotaBlocked();
+        }
 
-        data.forEach(item => {
-          newEtas[item.name] = item;
-          // 에러가 없고 eta_seconds가 정상이면 성공 카운트 증가
-          if (!item.error && item.eta_seconds !== null) {
-            successCount++;
-          }
-        });
+        const responseEtas = Object.fromEntries(data.map((item) => [item.name, item]));
+        const fallbackForMissing = Object.fromEntries(
+          targetHospitals
+            .filter((hospital) => !responseEtas[hospital.name])
+            .map((hospital) => [
+              hospital.name,
+              estimatedEta(originLat, originLng, hospital, 'missing_response'),
+            ]),
+        );
+        const mergedEtas = { ...get().etas, ...responseEtas, ...fallbackForMissing };
+        const fallbackOccurred = data.some((item) => item.error !== null) || Object.keys(fallbackForMissing).length > 0;
 
-        // 하나라도 성공한 병원이 있다면 fallback(주황 배너)을 띄우지 않습니다.
-        const fallbackOccurred = (successCount === 0);
-
-        set({ etas: newEtas, isLoading: false, hasFallback: fallbackOccurred });
-        
+        set({ etas: mergedEtas, isLoading: false, hasFallback: fallbackOccurred });
       } catch (error) {
-        console.warn('[useEtaController] ETA Request Failed:', error);
-        set({ isLoading: false, hasFallback: true });
+        console.warn('[useEtaController] ETA request failed:', error);
+        const fallbackEtas = Object.fromEntries(
+          targetHospitals.map((hospital) => [
+            hospital.name,
+            estimatedEta(originLat, originLng, hospital, 'request_failed'),
+          ]),
+        );
+        set({ etas: { ...get().etas, ...fallbackEtas }, isLoading: false, hasFallback: true });
+      } finally {
+        if (activeRequestKey === key) {
+          activeRequestKey = null;
+        }
       }
-    }, 2000); // 2초 대기
+    }, 500);
   },
 }));

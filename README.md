@@ -104,6 +104,17 @@ python ai-model/run_integrated_policy_pipeline.py
 python ai-model/run_integrated_policy_pipeline.py --offline
 ```
 
+### 길찾기 호출 절감 구조
+
+카카오모빌리티 길찾기 API는 호출 제한이 있으므로 모든 병원과 후보지에 대해 실시간 요청을 반복하지 않습니다.
+
+| 단계 | 처리 방식 |
+| --- | --- |
+| 전체 후보 정렬 | 병상 상태, 진료 조건, 직선거리와 저장된 이동시간을 이용해 빠르게 1차 정렬 |
+| 실시간 재검증 | 최종 추천 대상인 상위 3~5개 병원만 길찾기 API로 재확인 |
+| 호출 제한 발생 | `code: -10`이 감지되면 이후 실시간 호출을 즉시 중단 |
+| 실패 시 안내 | 저장된 이동시간으로 자동 대체하고 “실시간 교통 정보를 불러오지 못해 저장된 이동시간을 사용합니다.”라고 표시 |
+
 ## 문서
 
 - [중증질환 수용 가능 정보 반영 계획서](./docs/projects/severe-condition-acceptance-20260715/01_plan.md)

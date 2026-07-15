@@ -12,6 +12,7 @@ import {
   hospitalTierBadge,
 } from '../../shared/types/hospital';
 import type { DistrictVulnerabilityRecord } from '../../shared/types/vulnerability';
+import type { SevereConditionId } from '../../shared/lib/severe-condition';
 
 import { AdminPolicyIcon, PanelSidebarHeader } from '../shared/PanelSidebarHeader';
 import { AvailableBedsBadge } from '../map-dashboard/AvailableBedsBadge';
@@ -35,6 +36,8 @@ interface AdminMobileBottomSheetProps {
   onModeChange?: (val: 'all' | 'adult' | 'pediatric' | 'senior') => void;
   showAvailableOnly?: boolean;
   onShowAvailableOnlyChange?: (value: boolean) => void;
+  severeCondition?: SevereConditionId;
+  onSevereConditionChange?: (value: SevereConditionId) => void;
   
   // Detail Props
   isDetailOpen: boolean;
@@ -73,6 +76,8 @@ export function AdminMobileBottomSheet({
   onModeChange,
   showAvailableOnly = false,
   onShowAvailableOnlyChange,
+  severeCondition = 'all',
+  onSevereConditionChange,
   isDetailOpen,
   selectedVulnerability,
   vulnerabilitySummary,
@@ -250,6 +255,8 @@ export function AdminMobileBottomSheet({
               onShowAvailableOnlyChange={onShowAvailableOnlyChange ?? (() => {})}
               careTarget={currentMode}
               onCareTargetChange={onModeChange}
+              severeCondition={severeCondition}
+              onSevereConditionChange={onSevereConditionChange}
             />
           )}
 

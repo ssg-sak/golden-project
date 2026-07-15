@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
 import { isHospitalAvailable } from '../../shared/lib/bed-status';
+import type { SevereConditionId } from '../../shared/lib/severe-condition';
+import { filterByCareTarget } from '../map-dashboard/lib/hospital-filter';
 
 import {
   DASHBOARD_DETAIL_COL_CLASS,
@@ -60,15 +62,58 @@ function HospitalsErrorState({ onRetry }: { onRetry: () => void }) {
 import { AdminMobileBottomSheet } from './AdminMobileBottomSheet';
 import { useAdminController } from './useAdminController';
 
+type CareTarget = 'all' | 'adult' | 'pediatric' | 'senior';
+
 export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
   const adminState = useAdminController(kakao, onRetryHospitals);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
+  const [severeCondition, setSevereCondition] = useState<SevereConditionId>('all');
   const [isSimulationModalOpen, setIsSimulationModalOpen] = useState(false);
 
   const filteredHospitals = useMemo(() => {
-    if (!showAvailableOnly) return adminState.hospitals;
-    return adminState.hospitals.filter(isHospitalAvailable);
-  }, [adminState.hospitals, showAvailableOnly]);
+    let filtered = filterByCareTarget(
+      adminState.hospitals,
+      adminState.currentMode as CareTarget,
+      severeCondition,
+    );
+    if (showAvailableOnly) {
+      filtered = filtered.filter(isHospitalAvailable);
+    }
+    return filtered;
+  }, [adminState.hospitals, adminState.currentMode, severeCondition, showAvailableOnly]);
+
+  function handleCareTargetChange(value: CareTarget) {
+    adminState.setOptimalMode(value);
+    adminState.handleHospitalSelect(null);
+
+    if (value === 'pediatric') {
+      setShowAvailableOnly(false);
+      if (severeCondition !== 'all' && severeCondition !== 'pediatric_night_holiday') {
+        setSevereCondition('pediatric_night_holiday');
+      }
+      return;
+    }
+
+    if (severeCondition === 'pediatric_night_holiday') {
+      setSevereCondition('all');
+    }
+  }
+
+  function handleSevereConditionChange(value: SevereConditionId) {
+    setSevereCondition(value);
+    adminState.handleHospitalSelect(null);
+
+    if (value === 'pediatric_night_holiday') {
+      adminState.setOptimalMode('pediatric');
+      setShowAvailableOnly(false);
+      return;
+    }
+
+    if (value !== 'all' && adminState.currentMode === 'pediatric') {
+      adminState.setOptimalMode('all');
+      setShowAvailableOnly(false);
+    }
+  }
 
   return (
     <div className={`${DASHBOARD_VIEW_ROOT_CLASS} bg-[#eef2f3]`}>
@@ -116,13 +161,12 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
           onHospitalSelect={adminState.handleHospitalSelect}
           loading={adminState.hospitalsLoading}
           highlightedHospitalName={adminState.highlightedHospitalName}
-          currentMode={adminState.currentMode as 'all' | 'adult' | 'pediatric' | 'senior'}
-          onModeChange={(val) => {
-            adminState.setOptimalMode(val);
-            if (val === 'pediatric') setShowAvailableOnly(false);
-          }}
+          currentMode={adminState.currentMode as CareTarget}
+          onModeChange={handleCareTargetChange}
           showAvailableOnly={showAvailableOnly}
           onShowAvailableOnlyChange={setShowAvailableOnly}
+          severeCondition={severeCondition}
+          onSevereConditionChange={handleSevereConditionChange}
           isDetailOpen={adminState.isDetailOpen}
           selectedVulnerability={adminState.selectedVulnerability}
           vulnerabilitySummary={adminState.vulnerabilitySummary ?? undefined}
@@ -150,13 +194,12 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
             onHospitalSelect={adminState.handleHospitalSelect}
             loading={adminState.hospitalsLoading}
             highlightedHospitalName={adminState.highlightedHospitalName}
-            currentMode={adminState.currentMode as 'all' | 'adult' | 'pediatric' | 'senior'}
-            onModeChange={(val) => {
-              adminState.setOptimalMode(val);
-              if (val === 'pediatric') setShowAvailableOnly(false);
-            }}
+            currentMode={adminState.currentMode as CareTarget}
+            onModeChange={handleCareTargetChange}
             showAvailableOnly={showAvailableOnly}
             onShowAvailableOnlyChange={setShowAvailableOnly}
+            severeCondition={severeCondition}
+            onSevereConditionChange={handleSevereConditionChange}
           />
         </div>
 

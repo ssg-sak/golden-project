@@ -79,7 +79,7 @@ export function HospitalSidebarControls({
               <button
                 type="button"
                 onClick={() => onShowAvailableOnlyChange(!showAvailableOnly)}
-                className={`min-h-9 rounded-full border px-3 text-xs font-semibold transition-colors ${
+                className={`min-h-9 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
                   showAvailableOnly
                     ? 'border-teal-700 bg-teal-50 text-teal-800'
                     : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
@@ -95,7 +95,7 @@ export function HospitalSidebarControls({
                     key={option.key}
                     type="button"
                     onClick={() => onCareTargetChange(option.key)}
-                    className={`min-h-9 rounded-full border px-3 text-xs font-semibold transition-colors ${
+                    className={`min-h-9 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
                       active
                         ? 'border-teal-800 bg-teal-800 text-white'
                         : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
@@ -111,12 +111,14 @@ export function HospitalSidebarControls({
           <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs font-extrabold text-slate-800">중증·응급 상황 필터</p>
-              <span className="text-[11px] font-bold text-teal-800">{selectedCondition.shortLabel}</span>
+              <span className="shrink-0 whitespace-nowrap text-[11px] font-bold text-teal-800">
+                {selectedCondition.shortLabel}
+              </span>
             </div>
             <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
               {selectedCondition.description}
             </p>
-            <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+            <div className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]">
               {SEVERE_CONDITION_OPTIONS.map((option) => {
                 const active = severeCondition === option.id;
                 return (
@@ -130,7 +132,7 @@ export function HospitalSidebarControls({
                         onShowAvailableOnlyChange(false);
                       }
                     }}
-                    className={`min-h-9 rounded-full border px-2 text-xs font-semibold transition-colors ${
+                    className={`min-h-9 shrink-0 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
                       active
                         ? 'border-slate-900 bg-slate-900 text-white'
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100'

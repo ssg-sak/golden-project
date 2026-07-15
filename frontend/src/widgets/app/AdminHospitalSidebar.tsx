@@ -10,6 +10,7 @@ import {
   hospitalAvailableBeds,
   hospitalTierBadge,
 } from '../../shared/types/hospital';
+import type { SevereConditionId } from '../../shared/lib/severe-condition';
 import { AdminPolicyIcon, PanelSidebarHeader } from '../shared/PanelSidebarHeader';
 import { AvailableBedsBadge } from '../map-dashboard/AvailableBedsBadge';
 import { TierBadge } from '../map-dashboard/TierBadge';
@@ -26,6 +27,8 @@ interface AdminHospitalSidebarProps {
   onModeChange?: (val: 'all' | 'adult' | 'pediatric' | 'senior') => void;
   showAvailableOnly?: boolean;
   onShowAvailableOnlyChange?: (value: boolean) => void;
+  severeCondition?: SevereConditionId;
+  onSevereConditionChange?: (value: SevereConditionId) => void;
 }
 
 export function AdminHospitalSidebar({
@@ -38,6 +41,8 @@ export function AdminHospitalSidebar({
   onModeChange,
   showAvailableOnly = false,
   onShowAvailableOnlyChange,
+  severeCondition = 'all',
+  onSevereConditionChange,
 }: AdminHospitalSidebarProps) {
   const rowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -86,6 +91,8 @@ export function AdminHospitalSidebar({
           onShowAvailableOnlyChange={onShowAvailableOnlyChange ?? (() => {})}
           careTarget={currentMode}
           onCareTargetChange={onModeChange}
+          severeCondition={severeCondition}
+          onSevereConditionChange={onSevereConditionChange}
         />
       )}
 

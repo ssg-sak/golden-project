@@ -19,6 +19,7 @@ export function PolicyStatusBanner({
       : tone === 'warning'
         ? 'border-amber-200/90 bg-amber-50/95 text-amber-900'
         : 'border-blue-200/90 bg-blue-50/95 text-blue-900';
+
   return (
     <div
       className={`flex shrink-0 flex-wrap items-center justify-center gap-2 border-b px-4 py-1.5 text-center text-xs font-medium sm:px-6 ${toneClasses}`}
@@ -37,7 +38,7 @@ export function PolicyStatusBanner({
                 : 'bg-[#2b63d9] hover:bg-[#2457c5]'
           } ${actionLoading ? 'cursor-not-allowed opacity-70' : ''}`}
         >
-          {actionLoading ? `${actionLabel} 중…` : actionLabel}
+          {actionLoading ? `${actionLabel} 중` : actionLabel}
         </button>
       ) : null}
     </div>
