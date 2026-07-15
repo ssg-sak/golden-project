@@ -9,7 +9,33 @@
     "demand": 111,
     "scenario_coverage_ratio": 0.75,
     "score": 75.0,
-    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+    "interpretation": "야간·휴일 소아 응급 접근성 개선을 검토하는 안정 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.31,
+    "after_avg_eta_minutes": 10.12,
+    "accessibility_gain_minutes": 0.19,
+    "p_median_weighted_eta_minutes": 10.12,
+    "mclp_15min_population": 17305,
+    "mclp_15min_coverage_ratio": 0.13681,
+    "mclp_30min_population": 89850,
+    "mclp_30min_coverage_ratio": 0.71034,
+    "time_improved_population": 6468,
+    "optimal_combinations": {
+      "mclp_15min": [
+        "p=1: 1",
+        "p=2: 1, 3",
+        "p=3: 1, 3, 4"
+      ],
+      "mclp_30min": [
+        "p=1: 1",
+        "p=2: 1, 3",
+        "p=3: 1, 2, 3"
+      ],
+      "p_median": [
+        "p=2: 1, 4",
+        "p=3: 1, 4, 5"
+      ]
+    }
   },
   {
     "id": 2,
@@ -21,7 +47,22 @@
     "demand": 26,
     "scenario_coverage_ratio": 0.75,
     "score": 75.0,
-    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+    "interpretation": "야간·휴일 소아 응급 접근성 개선을 검토하는 안정 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.31,
+    "after_avg_eta_minutes": 10.3,
+    "accessibility_gain_minutes": 0.01,
+    "p_median_weighted_eta_minutes": 10.3,
+    "mclp_15min_population": 3739,
+    "mclp_15min_coverage_ratio": 0.02956,
+    "mclp_30min_population": 21853,
+    "mclp_30min_coverage_ratio": 0.17277,
+    "time_improved_population": 168,
+    "optimal_combinations": {
+      "mclp_30min": [
+        "p=3: 1, 2, 3"
+      ]
+    }
   },
   {
     "id": 3,
@@ -33,7 +74,27 @@
     "demand": 274,
     "scenario_coverage_ratio": 0.5,
     "score": 50.0,
-    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+    "interpretation": "야간·휴일 소아 응급 접근성 개선을 검토하는 안정 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.31,
+    "after_avg_eta_minutes": 10.31,
+    "accessibility_gain_minutes": 0.01,
+    "p_median_weighted_eta_minutes": 10.31,
+    "mclp_15min_population": 15714,
+    "mclp_15min_coverage_ratio": 0.12423,
+    "mclp_30min_population": 61555,
+    "mclp_30min_coverage_ratio": 0.48664,
+    "time_improved_population": 1938,
+    "optimal_combinations": {
+      "mclp_15min": [
+        "p=2: 1, 3",
+        "p=3: 1, 3, 4"
+      ],
+      "mclp_30min": [
+        "p=2: 1, 3",
+        "p=3: 1, 2, 3"
+      ]
+    }
   },
   {
     "id": 4,
@@ -45,7 +106,27 @@
     "demand": 121,
     "scenario_coverage_ratio": 0.5,
     "score": 50.0,
-    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+    "interpretation": "야간·휴일 소아 응급 접근성 개선을 검토하는 안정 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.31,
+    "after_avg_eta_minutes": 9.93,
+    "accessibility_gain_minutes": 0.38,
+    "p_median_weighted_eta_minutes": 9.93,
+    "mclp_15min_population": 15572,
+    "mclp_15min_coverage_ratio": 0.12311,
+    "mclp_30min_population": 57901,
+    "mclp_30min_coverage_ratio": 0.45776,
+    "time_improved_population": 8993,
+    "optimal_combinations": {
+      "p_median": [
+        "p=1: 4",
+        "p=2: 1, 4",
+        "p=3: 1, 4, 5"
+      ],
+      "mclp_15min": [
+        "p=3: 1, 3, 4"
+      ]
+    }
   },
   {
     "id": 5,
@@ -57,7 +138,22 @@
     "demand": 117,
     "scenario_coverage_ratio": 0.5,
     "score": 50.0,
-    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+    "interpretation": "야간·휴일 소아 응급 접근성 개선을 검토하는 안정 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.31,
+    "after_avg_eta_minutes": 10.15,
+    "accessibility_gain_minutes": 0.16,
+    "p_median_weighted_eta_minutes": 10.15,
+    "mclp_15min_population": 3217,
+    "mclp_15min_coverage_ratio": 0.02543,
+    "mclp_30min_population": 57869,
+    "mclp_30min_coverage_ratio": 0.4575,
+    "time_improved_population": 2582,
+    "optimal_combinations": {
+      "p_median": [
+        "p=3: 1, 4, 5"
+      ]
+    }
   },
   {
     "id": 6,
@@ -69,7 +165,18 @@
     "demand": 3,
     "scenario_coverage_ratio": 0.042,
     "score": 4.2,
-    "interpretation": "군위/원거리 권역은 메인 후보가 아니라 별도 권역 검토 후보입니다."
+    "interpretation": "도시권 후보와 분리해 검토해야 하는 원거리 권역 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.31,
+    "after_avg_eta_minutes": 10.27,
+    "accessibility_gain_minutes": 0.05,
+    "p_median_weighted_eta_minutes": 10.27,
+    "mclp_15min_population": 263,
+    "mclp_15min_coverage_ratio": 0.00208,
+    "mclp_30min_population": 322,
+    "mclp_30min_coverage_ratio": 0.00255,
+    "time_improved_population": 349,
+    "optimal_combinations": {}
   },
   {
     "id": 1,
@@ -81,7 +188,34 @@
     "demand": 12,
     "scenario_coverage_ratio": 0.708,
     "score": 70.8,
-    "interpretation": "민감도 분석에서 반복 등장한 정책탭 우선 검토 후보입니다."
+    "interpretation": "고령층 중증 응급 접근성 개선을 검토하는 안정 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.9,
+    "after_avg_eta_minutes": 10.59,
+    "accessibility_gain_minutes": 0.31,
+    "p_median_weighted_eta_minutes": 10.59,
+    "mclp_15min_population": 53122,
+    "mclp_15min_coverage_ratio": 0.10034,
+    "mclp_30min_population": 263707,
+    "mclp_30min_coverage_ratio": 0.4981,
+    "time_improved_population": 36937,
+    "optimal_combinations": {
+      "p_median": [
+        "p=1: 1",
+        "p=2: 1, 3",
+        "p=3: 1, 2, 3"
+      ],
+      "mclp_15min": [
+        "p=1: 1",
+        "p=2: 1, 2",
+        "p=3: 1, 2, 3"
+      ],
+      "mclp_30min": [
+        "p=1: 1",
+        "p=2: 1, 2",
+        "p=3: 1, 2, 3"
+      ]
+    }
   },
   {
     "id": 2,
@@ -93,7 +227,30 @@
     "demand": 5,
     "scenario_coverage_ratio": 0.533,
     "score": 53.3,
-    "interpretation": "조건 변화에는 비교적 안정적이지만 수요가 낮아 보류 검토가 필요한 후보입니다."
+    "interpretation": "민감도 분석에서는 반복됐지만 수요 규모를 추가 확인해야 하는 보류 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.9,
+    "after_avg_eta_minutes": 10.89,
+    "accessibility_gain_minutes": 0.01,
+    "p_median_weighted_eta_minutes": 10.89,
+    "mclp_15min_population": 3301,
+    "mclp_15min_coverage_ratio": 0.00624,
+    "mclp_30min_population": 241165,
+    "mclp_30min_coverage_ratio": 0.45553,
+    "time_improved_population": 5687,
+    "optimal_combinations": {
+      "mclp_15min": [
+        "p=2: 1, 2",
+        "p=3: 1, 2, 3"
+      ],
+      "mclp_30min": [
+        "p=2: 1, 2",
+        "p=3: 1, 2, 3"
+      ],
+      "p_median": [
+        "p=3: 1, 2, 3"
+      ]
+    }
   },
   {
     "id": 3,
@@ -105,6 +262,28 @@
     "demand": 8,
     "scenario_coverage_ratio": 0.125,
     "score": 12.5,
-    "interpretation": "군위/원거리 권역은 메인 후보가 아니라 별도 권역 검토 후보입니다."
+    "interpretation": "도시권 후보와 분리해 검토해야 하는 원거리 권역 후보입니다.",
+    "accessibility_metric": "actual_road_time",
+    "before_avg_eta_minutes": 10.9,
+    "after_avg_eta_minutes": 10.71,
+    "accessibility_gain_minutes": 0.19,
+    "p_median_weighted_eta_minutes": 10.71,
+    "mclp_15min_population": 0,
+    "mclp_15min_coverage_ratio": 0.0,
+    "mclp_30min_population": 6021,
+    "mclp_30min_coverage_ratio": 0.01137,
+    "time_improved_population": 10149,
+    "optimal_combinations": {
+      "p_median": [
+        "p=2: 1, 3",
+        "p=3: 1, 2, 3"
+      ],
+      "mclp_15min": [
+        "p=3: 1, 2, 3"
+      ],
+      "mclp_30min": [
+        "p=3: 1, 2, 3"
+      ]
+    }
   }
 ]

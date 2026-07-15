@@ -16,44 +16,44 @@
     "covered_district_count": 4,
     "nearest_existing_hospital": "우리아이아동병원",
     "nearest_existing_hospital_distance_km": 1.836,
-    "before_avg_distance_km": 5.651,
+    "before_avg_distance_km": 5.79,
     "after_avg_distance_km": 4.466,
-    "accessibility_gain_km": 1.186,
+    "accessibility_gain_km": 1.324,
     "vulnerable_population": 19585,
-    "score": 11.717,
+    "score": 13.085,
     "interpretation": "소아 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
         "adm_nm": "동구 지저동",
-        "before_distance_km": 2.082,
+        "before_distance_km": 2.078,
         "after_distance_km": 0.266,
-        "gain_km": 1.816,
+        "gain_km": 1.812,
         "vulnerable_population": 4691,
-        "weighted_gain": 8517.59820755785
+        "weighted_gain": 8498.834207557851
       },
       {
         "adm_nm": "동구 공산동",
-        "before_distance_km": 10.343,
+        "before_distance_km": 10.367,
         "after_distance_km": 9.197,
-        "gain_km": 1.146,
+        "gain_km": 1.17,
         "vulnerable_population": 7265,
-        "weighted_gain": 8322.677402927993
+        "weighted_gain": 8497.037402928
       },
       {
         "adm_nm": "동구 불로·봉무동",
-        "before_distance_km": 3.731,
+        "before_distance_km": 3.734,
         "after_distance_km": 2.593,
-        "gain_km": 1.138,
+        "gain_km": 1.141,
         "vulnerable_population": 5483,
-        "weighted_gain": 6242.3875051941595
+        "weighted_gain": 6258.83650519416
       },
       {
         "adm_nm": "북구 검단동",
-        "before_distance_km": 2.477,
+        "before_distance_km": 3.66,
         "after_distance_km": 2.413,
-        "gain_km": 0.064,
+        "gain_km": 1.247,
         "vulnerable_population": 2146,
-        "weighted_gain": 138.00542131330764
+        "weighted_gain": 2676.7234213133083
       }
     ]
   },
@@ -72,28 +72,28 @@
     "covered_district_count": 2,
     "nearest_existing_hospital": "바른연합소아청소년과의원",
     "nearest_existing_hospital_distance_km": 5.272,
-    "before_avg_distance_km": 6.604,
+    "before_avg_distance_km": 8.48,
     "after_avg_distance_km": 3.99,
-    "accessibility_gain_km": 2.613,
+    "accessibility_gain_km": 4.489,
     "vulnerable_population": 8822,
-    "score": 23.742,
+    "score": 40.785,
     "interpretation": "소아 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
         "adm_nm": "달성군 옥포읍",
-        "before_distance_km": 6.54,
+        "before_distance_km": 8.838,
         "after_distance_km": 3.58,
-        "gain_km": 2.96,
+        "gain_km": 5.258,
         "vulnerable_population": 7191,
-        "weighted_gain": 21283.050076238258
+        "weighted_gain": 37807.96807623825
       },
       {
         "adm_nm": "달성군 논공읍",
-        "before_distance_km": 6.886,
+        "before_distance_km": 6.901,
         "after_distance_km": 5.8,
-        "gain_km": 1.086,
+        "gain_km": 1.101,
         "vulnerable_population": 1631,
-        "weighted_gain": 1771.570748439454
+        "weighted_gain": 1796.0357484394535
       }
     ]
   },
@@ -112,28 +112,28 @@
     "covered_district_count": 2,
     "nearest_existing_hospital": "우리허브병원",
     "nearest_existing_hospital_distance_km": 6.856,
-    "before_avg_distance_km": 6.604,
+    "before_avg_distance_km": 8.48,
     "after_avg_distance_km": 2.968,
-    "accessibility_gain_km": 3.636,
+    "accessibility_gain_km": 5.512,
     "vulnerable_population": 8822,
-    "score": 33.034,
+    "score": 50.077,
     "interpretation": "어르신 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
         "adm_nm": "달성군 옥포읍",
-        "before_distance_km": 6.54,
+        "before_distance_km": 8.838,
         "after_distance_km": 2.547,
-        "gain_km": 3.993,
+        "gain_km": 6.291,
         "vulnerable_population": 7191,
-        "weighted_gain": 28716.1949675932
+        "weighted_gain": 45241.112967593195
       },
       {
         "adm_nm": "달성군 논공읍",
-        "before_distance_km": 6.886,
+        "before_distance_km": 6.901,
         "after_distance_km": 4.825,
-        "gain_km": 2.061,
+        "gain_km": 2.076,
         "vulnerable_population": 1631,
-        "weighted_gain": 3361.117303113258
+        "weighted_gain": 3385.5823031132577
       }
     ]
   },
@@ -158,76 +158,76 @@
     "covered_district_count": 8,
     "nearest_existing_hospital": "칠곡경북대학교병원",
     "nearest_existing_hospital_distance_km": 26.409,
-    "before_avg_distance_km": 26.523,
+    "before_avg_distance_km": 26.569,
     "after_avg_distance_km": 9.712,
-    "accessibility_gain_km": 16.811,
+    "accessibility_gain_km": 16.857,
     "vulnerable_population": 11741,
-    "score": 157.531,
+    "score": 157.97,
     "interpretation": "군위 또는 원거리 권역은 메인 후보가 아니라 별도 권역 검토 후보",
     "top_improved_districts": [
       {
         "adm_nm": "군위군 군위읍",
-        "before_distance_km": 31.097,
+        "before_distance_km": 31.171,
         "after_distance_km": 6.938,
-        "gain_km": 24.159,
+        "gain_km": 24.233,
         "vulnerable_population": 3177,
-        "weighted_gain": 76753.21716255539
+        "weighted_gain": 76988.31516255537
       },
       {
         "adm_nm": "군위군 효령면",
-        "before_distance_km": 20.453,
+        "before_distance_km": 20.5,
         "after_distance_km": 6.05,
-        "gain_km": 14.403,
+        "gain_km": 14.45,
         "vulnerable_population": 2040,
-        "weighted_gain": 29381.52256467442
+        "weighted_gain": 29477.40256467442
       },
       {
         "adm_nm": "군위군 소보면",
-        "before_distance_km": 34.837,
+        "before_distance_km": 34.913,
         "after_distance_km": 15.403,
-        "gain_km": 19.434,
+        "gain_km": 19.51,
         "vulnerable_population": 1299,
-        "weighted_gain": 25244.928999290285
+        "weighted_gain": 25343.652999290276
       },
       {
         "adm_nm": "군위군 우보면",
-        "before_distance_km": 25.182,
+        "before_distance_km": 25.229,
         "after_distance_km": 3.951,
-        "gain_km": 21.231,
+        "gain_km": 21.278,
         "vulnerable_population": 1172,
-        "weighted_gain": 24882.41571693073
+        "weighted_gain": 24937.499716930728
       },
       {
         "adm_nm": "군위군 의흥면",
-        "before_distance_km": 28.438,
+        "before_distance_km": 28.468,
         "after_distance_km": 10.56,
-        "gain_km": 17.878,
+        "gain_km": 17.908,
         "vulnerable_population": 1353,
-        "weighted_gain": 24189.313659651525
+        "weighted_gain": 24229.903659651525
       },
       {
         "adm_nm": "군위군 삼국유사면",
-        "before_distance_km": 31.6,
+        "before_distance_km": 31.601,
         "after_distance_km": 18.208,
-        "gain_km": 13.392,
+        "gain_km": 13.393,
         "vulnerable_population": 806,
-        "weighted_gain": 10793.571421850465
+        "weighted_gain": 10794.377421850462
       },
       {
         "adm_nm": "군위군 산성면",
-        "before_distance_km": 20.688,
+        "before_distance_km": 20.701,
         "after_distance_km": 12.563,
-        "gain_km": 8.125,
+        "gain_km": 8.138,
         "vulnerable_population": 745,
-        "weighted_gain": 6053.271474588411
+        "weighted_gain": 6062.956474588413
       },
       {
         "adm_nm": "군위군 부계면",
-        "before_distance_km": 14.585,
+        "before_distance_km": 14.597,
         "after_distance_km": 14.519,
-        "gain_km": 0.066,
+        "gain_km": 0.078,
         "vulnerable_population": 1149,
-        "weighted_gain": 75.33861211080178
+        "weighted_gain": 89.12661211080025
       }
     ]
   },
@@ -251,28 +251,28 @@
     "covered_district_count": 7,
     "nearest_existing_hospital": "강남종합병원",
     "nearest_existing_hospital_distance_km": 2.128,
-    "before_avg_distance_km": 5.824,
+    "before_avg_distance_km": 5.833,
     "after_avg_distance_km": 4.843,
-    "accessibility_gain_km": 0.981,
+    "accessibility_gain_km": 0.989,
     "vulnerable_population": 29440,
-    "score": 10.091,
+    "score": 10.181,
     "interpretation": "어르신 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
         "adm_nm": "동구 공산동",
-        "before_distance_km": 10.343,
+        "before_distance_km": 10.367,
         "after_distance_km": 8.254,
-        "gain_km": 2.089,
+        "gain_km": 2.113,
         "vulnerable_population": 7265,
-        "weighted_gain": 15174.12883540482
+        "weighted_gain": 15348.488835404825
       },
       {
         "adm_nm": "동구 불로·봉무동",
-        "before_distance_km": 3.731,
+        "before_distance_km": 3.734,
         "after_distance_km": 2.992,
-        "gain_km": 0.739,
+        "gain_km": 0.742,
         "vulnerable_population": 5483,
-        "weighted_gain": 4052.589757832439
+        "weighted_gain": 4069.03875783244
       },
       {
         "adm_nm": "동구 해안동",
@@ -284,35 +284,35 @@
       },
       {
         "adm_nm": "동구 도평동",
-        "before_distance_km": 5.531,
+        "before_distance_km": 5.54,
         "after_distance_km": 3.673,
-        "gain_km": 1.858,
+        "gain_km": 1.867,
         "vulnerable_population": 1277,
-        "weighted_gain": 2373.0085039591418
+        "weighted_gain": 2384.501503959142
       },
       {
         "adm_nm": "동구 동촌동",
-        "before_distance_km": 1.516,
+        "before_distance_km": 1.518,
         "after_distance_km": 1.066,
-        "gain_km": 0.45,
+        "gain_km": 0.452,
         "vulnerable_population": 4897,
-        "weighted_gain": 2203.125156677496
+        "weighted_gain": 2212.9191566774957
       },
       {
         "adm_nm": "동구 안심2동",
-        "before_distance_km": 4.791,
+        "before_distance_km": 4.8,
         "after_distance_km": 4.496,
-        "gain_km": 0.295,
+        "gain_km": 0.304,
         "vulnerable_population": 4839,
-        "weighted_gain": 1426.514986863057
+        "weighted_gain": 1470.0659868630541
       },
       {
         "adm_nm": "군위군 삼국유사면",
-        "before_distance_km": 31.6,
+        "before_distance_km": 31.601,
         "after_distance_km": 31.091,
-        "gain_km": 0.509,
+        "gain_km": 0.51,
         "vulnerable_population": 806,
-        "weighted_gain": 410.19407138577384
+        "weighted_gain": 411.00007138577195
       }
     ]
   }
