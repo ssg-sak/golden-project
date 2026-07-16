@@ -68,11 +68,11 @@ export function HospitalGranularBeds({ hospital }: { hospital: HospitalRecord })
   ];
 
   return (
-    <section className="rounded-2xl bg-white p-4 ring-1 ring-slate-200 dark:bg-slate-800 dark:ring-slate-700">
+    <section className="shrink-0 rounded-2xl bg-white p-4 ring-1 ring-slate-200 dark:bg-slate-800 dark:ring-slate-700">
       <div className="mb-3 flex items-center justify-between">
         <div>
-          <p className="text-xs font-bold text-slate-700 dark:text-slate-200">실시간 응급 병상 현황</p>
-          <p className="mt-1 text-[10px] text-slate-500">국립중앙의료원 공개 현황 · 이동 전 병원에 확인해 주세요.</p>
+          <p className="text-sm font-extrabold text-slate-800 dark:text-slate-100">실시간 응급 병상 현황</p>
+          <p className="mt-1 text-xs leading-relaxed text-slate-500">국립중앙의료원 공개 현황 · 이동 전 병원에 확인해 주세요.</p>
         </div>
         {hospitalTotalBedsIsInvalid(hospital) ? <span className="text-[10px] font-bold text-amber-600">데이터 불일치 주의</span> : null}
       </div>
