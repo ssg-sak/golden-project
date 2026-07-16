@@ -93,7 +93,11 @@ export default function AppPage() {
   }, [setViewMode]);
 
   return (
-    <div className="flex h-[100dvh] max-h-[100dvh] max-w-[100vw] flex-col overflow-hidden bg-slate-100">
+    <div className={`flex max-w-[100vw] flex-col overflow-hidden bg-slate-100 ${
+      viewMode === 'citizen'
+        ? 'h-[100dvh] max-h-[100dvh]'
+        : 'h-[100dvh] max-h-[100dvh] lg:h-auto lg:max-h-none lg:min-h-dvh'
+    }`}>
       <DemoNoticeModal />
       
       {/* 모바일에서는 지도 위로 플로팅, 데스크톱에서는 정상 흐름 */}
@@ -106,7 +110,9 @@ export default function AppPage() {
         <DisclaimerBanner />
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-[var(--mobile-nav-height,0px)] lg:pt-0">
+      <div className={`flex min-h-0 flex-1 flex-col overflow-hidden pt-[var(--mobile-nav-height,0px)] ${
+        viewMode !== 'citizen' ? 'lg:overflow-visible lg:pt-0' : 'lg:pt-0'
+      }`}>
         {viewMode === 'citizen' && (
           <div key="citizen" className="flex min-h-0 flex-1 flex-col overflow-hidden transition-opacity duration-200">
             <CitizenView kakao={kakao} onRetryHospitals={handleRetryHospitals} />
