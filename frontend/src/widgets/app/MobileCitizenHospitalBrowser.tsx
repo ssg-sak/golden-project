@@ -70,10 +70,10 @@ function getPresetMapHeight(mode: MapListLayoutMode): number {
   }
 }
 
-/** 상세와 함께 보여 줄 지도 높이 — 하단 패널과 균형 */
+/** 상세 화면 지도는 작게 — 병상·전화 정보가 우선 */
 function getDetailMapHeight(): number {
   const vh = getViewportHeight();
-  return Math.min(Math.max(Math.round(vh * 0.38), MAP_HEIGHT_MIN), 360);
+  return Math.min(Math.max(Math.round(vh * 0.22), 140), 200);
 }
 
 function clampMapHeight(height: number): number {
@@ -246,11 +246,12 @@ export function MobileCitizenHospitalBrowser({
           </button>
         </div>
         {mapBlock(getDetailMapHeight(), '선택한 병원 카카오맵', true)}
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden" style={{ flex: '1 1 0%' }}>
           <HospitalDetailPanel
             hospital={selectedHospital}
             severeCondition={severeCondition}
             layout="panel"
+            compact
           />
         </div>
       </section>
@@ -280,11 +281,12 @@ export function MobileCitizenHospitalBrowser({
             <span className="truncate">병원 목록으로</span>
           </button>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden" style={{ flex: '1 1 0%' }}>
           <HospitalDetailPanel
             hospital={selectedHospital}
             severeCondition={severeCondition}
             layout="panel"
+            compact
           />
         </div>
       </section>
