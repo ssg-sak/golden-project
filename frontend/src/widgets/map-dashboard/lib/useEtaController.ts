@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { API_BASE_URL } from '../../../shared/config/api';
 import type { HospitalRecord } from '../../../shared/types/hospital';
+import { ENV } from '../../../shared/config/env';
 
 export interface EtaData {
   name: string;
@@ -127,6 +128,17 @@ export const useEtaController = create<EtaState>((set, get) => ({
       pendingRequestKey = null;
 
       try {
+        if (ENV.IS_SIMULATION_MODE) {
+          const fallbackEtas = Object.fromEntries(
+            targetHospitals.map((hospital) => [
+              hospital.name,
+              estimatedEta(originLat, originLng, hospital, 'simulation_fallback'),
+            ]),
+          );
+          set({ etas: { ...get().etas, ...fallbackEtas }, isLoading: false, hasFallback: true });
+          return;
+        }
+
         const response = await fetch(`${API_BASE_URL}/api/routing/eta`, {
           method: 'POST',
           headers: {
