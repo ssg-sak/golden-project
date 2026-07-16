@@ -110,8 +110,8 @@ function HospitalDetailContent({
         ref={isPage ? undefined : scrollRef}
         className={
           isPage
-            ? 'flex flex-col gap-4 p-5 pb-8'
-            : 'min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-5 [-webkit-overflow-scrolling:touch] touch-pan-y'
+            ? 'space-y-4 p-5 pb-8'
+            : 'min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-5 [-webkit-overflow-scrolling:touch] touch-pan-y'
         }
       >
         <HospitalLocationMeta hospital={hospital} variant="compact" />
