@@ -19,6 +19,7 @@ import { HospitalDetailPanel } from '../map-dashboard/HospitalDetailPanel';
 import { HospitalSidebarControls } from '../map-dashboard/HospitalSidebarControls';
 import { HospitalSidebarList } from '../map-dashboard/HospitalSidebarList';
 import { useEtaController } from '../map-dashboard/lib/useEtaController';
+import { MOBILE_SCROLL_Y_CLASS } from '../../shared/lib/mobile-scroll';
 
 type MapListLayoutMode = 'balanced' | 'mapFocus' | 'listFocus';
 
