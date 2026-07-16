@@ -23,10 +23,17 @@ import { HospitalInfrastructureSection } from './HospitalInfrastructureSection';
 
 const PANEL_SHELL =
   'glass-panel-strong flex h-full min-h-0 flex-col overflow-hidden bg-white';
+/** 부모가 스크롤할 때: 높이 고정·내부 스크롤 없이 본문만 흐르게 */
+const PANEL_SHELL_PAGE = 'glass-panel-strong flex flex-col bg-white';
 
 interface HospitalDetailPanelProps {
   hospital: HospitalRecord | null;
   severeCondition?: SevereConditionId;
+  /**
+   * panel: 사이드/임베드 — 내부 overflow-y-auto
+   * page: 모바일 전체 상세 — 부모 스크롤 (높이 체인 깨짐 방지)
+   */
+  layout?: 'panel' | 'page';
 }
 
 function EmptyPanel() {
@@ -56,11 +63,14 @@ function EmptyPanel() {
 function HospitalDetailContent({
   hospital,
   severeCondition = 'all',
+  layout = 'panel',
 }: {
   hospital: HospitalRecord;
   severeCondition?: SevereConditionId;
+  layout?: 'panel' | 'page';
 }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const isPage = layout === 'page';
   const bedStatus = resolveBedStatus(hospital);
   const isMoonlight = isMoonlightHospital(hospital);
   const selectedCondition = severeConditionOption(severeCondition);
@@ -72,19 +82,22 @@ function HospitalDetailContent({
       : 'border-teal-300 bg-teal-50';
 
   useEffect(() => {
+    if (isPage) return;
     const frame = window.requestAnimationFrame(() => {
       if (scrollRef.current) {
         scrollRef.current.scrollTop = 0;
       }
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [hospital.name]);
+  }, [hospital.name, isPage]);
 
   return (
-    <aside className={PANEL_SHELL}>
-      <div className="flex w-full shrink-0 items-center justify-center bg-white pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing">
-        <div className="h-1.5 w-12 rounded-full bg-slate-300" />
-      </div>
+    <aside className={isPage ? PANEL_SHELL_PAGE : PANEL_SHELL}>
+      {!isPage ? (
+        <div className="flex w-full shrink-0 cursor-grab items-center justify-center bg-white pt-3 pb-2 active:cursor-grabbing lg:hidden">
+          <div className="h-1.5 w-12 rounded-full bg-slate-300" />
+        </div>
+      ) : null}
       <div className={`shrink-0 border-b px-5 py-5 ${headerClass}`}>
         <CitizenBedLabel hospital={hospital} size="detail" />
         <h2 className="mt-3 text-xl font-extrabold leading-snug text-slate-900">
@@ -94,8 +107,12 @@ function HospitalDetailContent({
       </div>
 
       <div
-        ref={scrollRef}
-        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-5"
+        ref={isPage ? undefined : scrollRef}
+        className={
+          isPage
+            ? 'flex flex-col gap-4 p-5 pb-8'
+            : 'min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-5 [-webkit-overflow-scrolling:touch] touch-pan-y'
+        }
       >
         <HospitalLocationMeta hospital={hospital} variant="compact" />
 
@@ -177,9 +194,19 @@ function HospitalDetailContent({
   );
 }
 
-export function HospitalDetailPanel({ hospital, severeCondition = 'all' }: HospitalDetailPanelProps) {
+export function HospitalDetailPanel({
+  hospital,
+  severeCondition = 'all',
+  layout = 'panel',
+}: HospitalDetailPanelProps) {
   if (!hospital) {
     return <EmptyPanel />;
   }
-  return <HospitalDetailContent hospital={hospital} severeCondition={severeCondition} />;
+  return (
+    <HospitalDetailContent
+      hospital={hospital}
+      severeCondition={severeCondition}
+      layout={layout}
+    />
+  );
 }

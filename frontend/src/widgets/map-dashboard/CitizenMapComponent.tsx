@@ -60,13 +60,14 @@ export function CitizenMapComponent({
   const isMobileEmbed = variant === 'mobileEmbed';
 
   const focusHospital = selectedHospital ?? previewHospital;
+  const routeHospital = selectedHospital ?? previewHospital;
   const routePreviewPath = useMemo(() => {
-    if (!isMobileEmbed || !userLocation || !previewHospital) return null;
+    if (!isMobileEmbed || !userLocation || !routeHospital) return null;
     return [
       { lat: userLocation.lat, lng: userLocation.lng },
-      { lat: previewHospital.lat, lng: previewHospital.lng },
+      { lat: routeHospital.lat, lng: routeHospital.lng },
     ];
-  }, [isMobileEmbed, userLocation, previewHospital]);
+  }, [isMobileEmbed, userLocation, routeHospital]);
 
   // 진료대상 및 병상 여부에 따른 마커 필터링
   const visibleHospitals = useMemo(() => {
