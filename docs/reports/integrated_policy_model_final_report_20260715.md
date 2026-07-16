@@ -176,5 +176,8 @@ python ai-model\run_integrated_policy_pipeline.py --offline
 - **데모 안내 모달 및 경고 배너 완전 제거**: 실제 프로덕션 환경과의 혼선을 막기 위해 프론트엔드 UI상의 `DemoNoticeModal` 및 `DemoWarningBanner` 렌더링 코드를 안전하게 제거하였습니다.
 - **시뮬레이션 모드 전면 비활성화**: `useAppModeStore.ts` 및 `env.ts`에서 포트폴리오 데모 전용 모드인 `IS_SIMULATION_MODE` 플래그를 `false`로 상시 고정하여 항상 실제 서버의 데이터를 로드하도록 변경하였습니다.
 - **MOCK API 기본값 비활성화**: 백엔드 `env.py`에서 `USE_MOCK_API` 환경변수 기본값을 `True`에서 `False`로 변경하여, 명시적인 모킹 설정이 없는 한 항상 실시간 공공데이터 API를 직접 바라보도록 설정했습니다.
-
-
+### 11.5 CI/CD 파이프라인 에러 수정 및 안정화
+데모 기능을 프로덕션 사양에 맞게 제거하는 과정에서 발생한 ESLint 빌드 에러 및 노드 구버전 경고를 조치하여 자동 배포(GitHub Actions) 환경을 복구했습니다.
+- **ESLint 경고 제거**: `appModeStore.ts` 등에서 데모 분기가 사라지며 쓰이지 않게 된 환경변수(`ENV`) import 문을 정리하고, 미사용 파라미터에 언더스코어(`_on`)를 적용해 빌드 검증을 통과시켰습니다.
+- **Node.js 버전 업그레이드**: GitHub Actions 러너 구버전 지원 종료(deprecation) 경고에 대응해 `.github/workflows/deploy.yml` 파일 내 `actions/setup-node` 스텝의 대상을 Node.js `22`로 업데이트했습니다.
+- **빌드 스크립트 정규화**: 데모용 명령이었던 `npm run build:demo`를 일반 프로덕션 빌드 커맨드(`npm run build`)로 교체하여 GitHub Pages 연동 시 실제 서버 사양과 동일한 결과물이 컴파일되도록 수정했습니다.
