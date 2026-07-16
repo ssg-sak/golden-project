@@ -60,11 +60,17 @@ function parseHospitalPayload(payload: unknown): HospitalRecord[] {
   return hospitals;
 }
 
+import { ENV } from '../../shared/config/env';
+
 /**
  * GET /api/hospitals — 3초 서킷 브레이커 적용.
  * @throws 네트워크·HTTP·JSON·스키마·빈 배열·타임아웃 오류
  */
 export async function fetchHospitals(signal?: AbortSignal): Promise<HospitalRecord[]> {
+  if (ENV.IS_SIMULATION_MODE) {
+    throw new Error('네트워크 연결이 불안정해 최근 병원 정보를 먼저 보여드립니다');
+  }
+
   let response: Response;
 
   try {
