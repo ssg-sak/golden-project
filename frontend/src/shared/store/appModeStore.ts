@@ -13,11 +13,9 @@ interface AppModeStore {
   setSimulationMode: (on: boolean) => void;
 }
 
-import { ENV } from '../config/env';
-
 export const useAppModeStore = create<AppModeStore>()((set) => ({
   viewMode: 'citizen',
   setViewMode: (mode) => set({ viewMode: mode }),
   isSimulationMode: false,
-  setSimulationMode: (on) => set({ isSimulationMode: false }),
+  setSimulationMode: (_on) => set({ isSimulationMode: false }),
 }));
