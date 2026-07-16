@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { useAppModeStore } from '../../shared/store/appModeStore';
 
+import { MOBILE_SCROLL_Y_CLASS } from '../../shared/lib/mobile-scroll';
+
 export function DemoNoticeModal() {
   const isSimulationMode = useAppModeStore((state) => state.isSimulationMode);
   const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +49,7 @@ export function DemoNoticeModal() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 py-4 text-sm text-slate-700 md:px-6 md:py-6">
+        <div className={`flex-1 px-3 py-4 text-sm text-slate-700 md:px-6 md:py-6 ${MOBILE_SCROLL_Y_CLASS}`}>
           <p className="mb-3 border-l-4 border-rose-500 pl-2 text-xs font-bold leading-snug text-slate-900 md:mb-5 md:pl-3 md:text-base">
             이 페이지는 개발자와 검토자가 기능 흐름, UI, 데이터 표시 방식을 확인하기 위한{' '}
             <span className="text-rose-600">검증용 데모</span>입니다.

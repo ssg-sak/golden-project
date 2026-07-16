@@ -46,9 +46,11 @@ const analysisItems = [
   ],
 ] as const;
 
+import { MOBILE_SCROLL_Y_CLASS } from '../../shared/lib/mobile-scroll';
+
 export function PlatformIntroView() {
   return (
-    <div className="h-full w-full overflow-y-auto bg-[#f4f6f7] text-slate-900 selection:bg-teal-100">
+    <div className={`h-full w-full bg-[#f4f6f7] text-slate-900 selection:bg-teal-100 ${MOBILE_SCROLL_Y_CLASS}`}>
       <div className="border-b border-slate-300 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 text-xs text-slate-600 md:px-8">
           <p>대구 응급의료 접근성 안내</p>
