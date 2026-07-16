@@ -229,26 +229,24 @@ export function CitizenMapComponent({
         </Map>
       </div>
 
-      <div
-        className={`pointer-events-none absolute z-[800] flex gap-2 border border-slate-300 bg-white font-semibold shadow-sm ${
-          isMobileEmbed
-            ? 'bottom-2 left-2 px-2 py-1 text-[9px]'
-            : 'bottom-3 left-3 gap-3 px-3 py-2 text-[10px]'
-        }`}
-      >
-        <span className="flex items-center gap-1 text-green-700">
-          <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
-          진료 가능
-        </span>
-        <span className="flex items-center gap-1 text-red-700">
-          <span className="h-2 w-2 rounded-full bg-red-500" aria-hidden />
-          수용 불가
-        </span>
-        <span className="flex items-center gap-1 text-blue-700">
-          <span className="h-2 w-2 rounded-full bg-blue-500" aria-hidden />
-          내 위치
-        </span>
-      </div>
+      {!isMobileEmbed ? (
+        <div
+          className="pointer-events-none absolute bottom-3 left-3 z-[800] flex gap-3 border border-slate-300 bg-white px-3 py-2 text-[10px] font-semibold shadow-sm"
+        >
+          <span className="flex items-center gap-1 text-green-700">
+            <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
+            진료 가능
+          </span>
+          <span className="flex items-center gap-1 text-red-700">
+            <span className="h-2 w-2 rounded-full bg-red-500" aria-hidden />
+            수용 불가
+          </span>
+          <span className="flex items-center gap-1 text-blue-700">
+            <span className="h-2 w-2 rounded-full bg-blue-500" aria-hidden />
+            내 위치
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }

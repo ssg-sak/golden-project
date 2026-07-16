@@ -36,6 +36,28 @@ function getViewportHeight(): number {
   return window.visualViewport?.height ?? window.innerHeight;
 }
 
+function MobileMapLegend() {
+  return (
+    <div
+      className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold"
+      aria-label="지도 마커 범례"
+    >
+      <span className="flex items-center gap-1 text-green-700">
+        <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
+        진료 가능
+      </span>
+      <span className="flex items-center gap-1 text-red-700">
+        <span className="h-2 w-2 rounded-full bg-red-500" aria-hidden />
+        수용 불가
+      </span>
+      <span className="flex items-center gap-1 text-blue-700">
+        <span className="h-2 w-2 rounded-full bg-blue-500" aria-hidden />
+        내 위치
+      </span>
+    </div>
+  );
+}
+
 function getPresetMapHeight(mode: MapListLayoutMode): number {
   const vh = getViewportHeight();
   switch (mode) {
@@ -175,23 +197,26 @@ export function MobileCitizenHospitalBrowser({
     dragRef.current = null;
   }, []);
 
-  const mapBlock = (heightPx: number, ariaLabel: string) => (
-    <div
-      className="relative w-full shrink-0 overflow-hidden border-b border-slate-300 bg-slate-100"
-      style={{ height: heightPx, minHeight: MAP_HEIGHT_MIN }}
-      aria-label={ariaLabel}
-    >
-      <CitizenMapComponent
-        variant="mobileEmbed"
-        hospitals={hospitals}
-        selectedHospital={selectedHospital}
-        onHospitalSelect={handleMapHospitalSelect}
-        userLocation={userLocation}
-        showAvailableOnly={showAvailableOnly}
-        careTarget={careTarget}
-        severeCondition={severeCondition}
-      />
-    </div>
+  const mapBlock = (heightPx: number, ariaLabel: string, withLegend = false) => (
+    <>
+      <div
+        className="relative isolate w-full shrink-0 overflow-hidden border-b border-slate-300 bg-slate-100"
+        style={{ height: heightPx, minHeight: MAP_HEIGHT_MIN }}
+        aria-label={ariaLabel}
+      >
+        <CitizenMapComponent
+          variant="mobileEmbed"
+          hospitals={hospitals}
+          selectedHospital={selectedHospital}
+          onHospitalSelect={handleMapHospitalSelect}
+          userLocation={userLocation}
+          showAvailableOnly={showAvailableOnly}
+          careTarget={careTarget}
+          severeCondition={severeCondition}
+        />
+      </div>
+      {withLegend ? <MobileMapLegend /> : null}
+    </>
   );
 
   const detailShellClass =
@@ -220,7 +245,7 @@ export function MobileCitizenHospitalBrowser({
             <span className="truncate">병원 목록으로</span>
           </button>
         </div>
-        {mapBlock(getDetailMapHeight(), '선택한 병원 카카오맵')}
+        {mapBlock(getDetailMapHeight(), '선택한 병원 카카오맵', true)}
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <HospitalDetailPanel
             hospital={selectedHospital}
@@ -334,7 +359,7 @@ export function MobileCitizenHospitalBrowser({
               );
             })}
           </div>
-          {mapBlock(mapHeightPx, '주변 응급기관 카카오맵')}
+          {mapBlock(mapHeightPx, '주변 응급기관 카카오맵', true)}
           <button
             type="button"
             className="flex h-5 w-full shrink-0 cursor-row-resize touch-none items-center justify-center border-b border-slate-200 bg-slate-100"
