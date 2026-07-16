@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
 
 import {
-  DASHBOARD_DETAIL_COL_CLASS,
-  DASHBOARD_DETAIL_INNER_CLASS,
   DASHBOARD_MAIN_CLASS,
   DASHBOARD_MAP_COL_CLASS,
-  DESKTOP_SIDEBAR_WRAPPER_CLASS,
   DASHBOARD_VIEW_ROOT_CLASS,
+  CITIZEN_SIDEBAR_WRAPPER_CLASS,
+  CITIZEN_DETAIL_COL_CLASS,
+  CITIZEN_DETAIL_INNER_CLASS,
 } from '../../shared/constants/dashboard-layout';
 import { MOBILE_SCROLL_Y_CLASS } from '../../shared/lib/mobile-scroll';
 import { HOSPITALS_LOADING_MESSAGE } from '../../shared/constants/loading-messages';
@@ -162,7 +162,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
 
       <main className={`${DASHBOARD_MAIN_CLASS} max-lg:hidden`}>
         {/* 데스크톱 사이드바 (lg 이상에서만 렌더링) */}
-        <div className={`hidden lg:flex ${DESKTOP_SIDEBAR_WRAPPER_CLASS}`}>
+        <div className={`hidden lg:flex ${CITIZEN_SIDEBAR_WRAPPER_CLASS}`}>
           <DesktopSidebar
             hospitals={hospitals}
             selectedHospital={selectedHospital}
@@ -223,10 +223,8 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
         </div>
 
         {/* 데스크톱 DetailPanel (lg 이상에서만 렌더링) */}
-        <div
-          className={`${DASHBOARD_DETAIL_COL_CLASS} hidden lg:flex`}
-        >
-          <div className={DASHBOARD_DETAIL_INNER_CLASS}>
+        <div className={`${CITIZEN_DETAIL_COL_CLASS} hidden lg:flex`}>
+          <div className={CITIZEN_DETAIL_INNER_CLASS}>
             <HospitalDetailPanel hospital={selectedHospital} severeCondition={severeCondition} />
           </div>
         </div>
