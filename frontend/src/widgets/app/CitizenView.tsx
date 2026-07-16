@@ -224,9 +224,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
 
         {/* 데스크톱 DetailPanel (lg 이상에서만 렌더링) */}
         <div
-          className={`${DASHBOARD_DETAIL_COL_CLASS} hidden lg:block ${
-            selectedHospital ? 'lg:flex' : ''
-          }`}
+          className={`${DASHBOARD_DETAIL_COL_CLASS} hidden lg:flex`}
         >
           <div className={DASHBOARD_DETAIL_INNER_CLASS}>
             <HospitalDetailPanel hospital={selectedHospital} severeCondition={severeCondition} />

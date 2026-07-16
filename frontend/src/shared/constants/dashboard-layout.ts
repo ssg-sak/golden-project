@@ -17,19 +17,19 @@ export const MOBILE_BOTTOM_SHEET_PANEL_CLASS =
   'flex w-full h-full flex-col overflow-hidden';
 
 /** 데스크톱 좌측 병원 목록 */
-export const DESKTOP_SIDEBAR_WRAPPER_CLASS = `relative order-1 w-72 self-start xl:w-80 sticky ${DASHBOARD_STICKY_TOP_CLASS}`;
+export const DESKTOP_SIDEBAR_WRAPPER_CLASS = 'relative order-1 w-72 xl:w-80 flex flex-col min-h-0';
 
 /** 데스크톱 좌측 병원 목록 패널 */
 export const DESKTOP_SIDEBAR_PANEL_CLASS =
-  'flex w-full flex-col glass-panel-strong max-h-[calc(100dvh-8.5rem)] overflow-hidden';
+  'flex w-full flex-1 flex-col glass-panel-strong min-h-0 overflow-hidden';
 
 /** 지도 영역 */
 export const DASHBOARD_MAP_COL_CLASS =
-  'absolute inset-0 z-0 flex flex-col lg:glass-panel-strong lg:relative lg:order-2 lg:z-auto lg:min-h-[calc(100dvh-8.5rem)] lg:min-w-0 lg:flex-[1_1_auto] lg:rounded-sm lg:p-0.5';
+  'absolute inset-0 z-0 flex flex-col lg:glass-panel-strong lg:relative lg:order-2 lg:z-auto lg:min-h-0 lg:min-w-0 lg:flex-[1_1_auto] lg:rounded-sm lg:p-0.5';
 
 /** 우측 정책 안내/상세 패널 */
 export const DASHBOARD_DETAIL_COL_CLASS =
-  'absolute inset-x-0 bottom-0 z-20 flex flex-col max-h-[65dvh] rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.2)] lg:relative lg:order-3 lg:z-auto lg:h-[calc(100dvh-8.5rem)] lg:min-h-0 lg:max-h-[calc(100dvh-8.5rem)] lg:w-[23rem] lg:shrink-0 lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-[25rem]';
+  'absolute inset-x-0 bottom-0 z-20 flex flex-col max-h-[65dvh] rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.2)] lg:relative lg:order-3 lg:z-auto lg:flex lg:min-h-0 lg:w-[23rem] lg:shrink-0 lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-[25rem]';
 
 export const DASHBOARD_DETAIL_INNER_CLASS =
-  'h-full min-h-0 lg:max-h-[calc(100dvh-8.5rem)]';
+  'flex min-h-0 flex-1 flex-col overflow-hidden';
