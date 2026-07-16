@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATA_GO_KR_API_KEY=${DATA_GO_KR_API_KEY}
+      - KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}
+      - USE_MOCK_API=${USE_MOCK_API:-false}
+    restart: always
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
