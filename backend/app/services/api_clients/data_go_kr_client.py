@@ -4,6 +4,7 @@ from typing import Any
 from xml.etree import ElementTree as ET
 
 import httpx
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from app.services.bed_payload import bed_payload
 
@@ -20,6 +21,7 @@ DAEGU_SIGUNGU = [
     "중구",
     "동구",
     "서구",
+
     "남구",
     "북구",
     "수성구",
@@ -172,8 +174,15 @@ async def _fetch_region_beds_async(
 ) -> None:
     # 1. 정적(총 병상) 정보 먼저 호출
     static_rows = {}
-    try:
-        static_response = await client.get(
+    
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type((httpx.TimeoutException, httpx.NetworkError)),
+        reraise=True
+    )
+    async def fetch_static() -> httpx.Response:
+        return await client.get(
             static_url,
             params={
                 "serviceKey": service_key,
@@ -181,7 +190,11 @@ async def _fetch_region_beds_async(
                 "pageNo": "1",
                 "numOfRows": "200",
             },
+            timeout=10.0,
         )
+
+    try:
+        static_response = await fetch_static()
         if static_response.status_code == 200 and _is_api_response_ok(static_response.text):
             from app.services.hospital_realtime import display_name
             for sr in _parse_xml_items(static_response.text):
@@ -192,15 +205,29 @@ async def _fetch_region_beds_async(
         logger.warning("[hospitals] static bed metadata skipped: %s", type(exc).__name__)
 
     # 2. 실시간 병상 호출
-    response = await client.get(
-        url,
-        params={
-            "serviceKey": service_key,
-            "STAGE1": REGION_STAGE1,
-            "pageNo": "1",
-            "numOfRows": "200",  # 대구광역시 전체 병원을 여유있게 커버
-        },
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type((httpx.TimeoutException, httpx.NetworkError)),
+        reraise=True
     )
+    async def fetch_realtime() -> httpx.Response:
+        return await client.get(
+            url,
+            params={
+                "serviceKey": service_key,
+                "STAGE1": REGION_STAGE1,
+                "pageNo": "1",
+                "numOfRows": "200",  # 대구광역시 전체 병원을 여유있게 커버
+            },
+            timeout=10.0,
+        )
+
+    try:
+        response = await fetch_realtime()
+    except (httpx.HTTPError, ET.ParseError) as exc:
+        logger.warning("[hospitals] public API HTTP/Network error during realtime fetch: %s", type(exc).__name__)
+        return
 
     if response.status_code != 200:
         logger.warning(

@@ -99,3 +99,12 @@ docs/reports/**
 # =========================
 기획서.html
 frontend/src/widgets/map-dashboard/implementation_plan.md
+
+# 리포트 예외 추가 (추적 허용)
+!docs/reports/integrated_policy_model_final_report_20260715.md
+
+# 임시 파일 및 로컬 캐시 비활성화
+data/cache/
+tmp/
+tmp_hospitals.json
+

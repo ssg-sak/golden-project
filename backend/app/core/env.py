@@ -89,7 +89,7 @@ def bed_cache_poll_interval_sec() -> int:
         return 120
 
 def use_mock_api() -> bool:
-    return env_bool("USE_MOCK_API", default=True)
+    return env_bool("USE_MOCK_API", default=False)
 
 def should_use_mock_realtime() -> bool:
     if use_mock_api():

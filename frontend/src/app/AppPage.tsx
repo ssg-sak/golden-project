@@ -8,8 +8,6 @@ import { useHospitalStore } from '../shared/store/hospitalStore';
 import { CitizenView } from '../widgets/app/CitizenView';
 import { GlobalNavigationBar } from '../widgets/app/GlobalNavigationBar';
 import { DisclaimerBanner } from '../widgets/shared/DisclaimerBanner';
-import { DemoWarningBanner } from '../widgets/shared/DemoWarningBanner';
-import { DemoNoticeModal } from '../widgets/shared/DemoNoticeModal';
 import { GovernanceFooter } from '../widgets/shared/GovernanceFooter';
 
 const AdminView = lazy(() => import('../widgets/app/AdminView').then((module) => ({ default: module.AdminView })));
@@ -98,14 +96,12 @@ export default function AppPage() {
         ? 'h-[100dvh] max-h-[100dvh]'
         : 'h-[100dvh] max-h-[100dvh] lg:h-auto lg:max-h-none lg:min-h-dvh'
     }`}>
-      <DemoNoticeModal />
       
       {/* 모바일에서는 지도 위로 플로팅, 데스크톱에서는 정상 흐름 */}
       <div
         ref={navigationRef}
         className="fixed top-0 left-0 right-0 z-50 flex flex-col lg:relative lg:z-auto"
       >
-        <DemoWarningBanner />
         <GlobalNavigationBar />
         <DisclaimerBanner />
       </div>

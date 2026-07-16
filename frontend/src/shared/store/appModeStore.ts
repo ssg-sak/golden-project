@@ -18,6 +18,6 @@ import { ENV } from '../config/env';
 export const useAppModeStore = create<AppModeStore>()((set) => ({
   viewMode: 'citizen',
   setViewMode: (mode) => set({ viewMode: mode }),
-  isSimulationMode: ENV.IS_SIMULATION_MODE, // .env.demo 에 의해서만 켜짐
-  setSimulationMode: (on) => set({ isSimulationMode: on }),
+  isSimulationMode: false,
+  setSimulationMode: (on) => set({ isSimulationMode: false }),
 }));
