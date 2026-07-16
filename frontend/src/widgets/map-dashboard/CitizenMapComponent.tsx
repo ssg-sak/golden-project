@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Map, MapMarker, Polyline, ZoomControl } from 'react-kakao-maps-sdk';
 
@@ -54,10 +54,18 @@ export function CitizenMapComponent({
 }: CitizenMapComponentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
+  const [mapReady, setMapReady] = useState(false);
   const lastPannedUserRef = useRef<string | null>(null);
   const lastPannedHospitalRef = useRef<string | null>(null);
   const lastPannedPreviewRef = useRef<string | null>(null);
   const isMobileEmbed = variant === 'mobileEmbed';
+
+  const initialCenter = useMemo(() => {
+    if (selectedHospital) return { lat: selectedHospital.lat, lng: selectedHospital.lng };
+    if (previewHospital) return { lat: previewHospital.lat, lng: previewHospital.lng };
+    if (userLocation) return { lat: userLocation.lat, lng: userLocation.lng };
+    return DAEGU_CENTER;
+  }, [selectedHospital, previewHospital, userLocation]);
 
   const focusHospital = selectedHospital ?? previewHospital;
   const routeHospital = selectedHospital ?? previewHospital;
@@ -117,17 +125,17 @@ export function CitizenMapComponent({
   }, [isMobileEmbed]);
 
   useEffect(() => {
-    if (!userLocation) return;
+    if (!mapReady || !userLocation) return;
     const key = `${userLocation.lat},${userLocation.lng}`;
     if (lastPannedUserRef.current === key) return;
     lastPannedUserRef.current = key;
     // 내 위치는 바텀시트가 열리지 않으므로 offset 적용 안 함 (false)
     panMapTo(userLocation.lat, userLocation.lng, USER_LOCATION_LEVEL, false);
-  }, [userLocation, panMapTo]);
+  }, [mapReady, userLocation, panMapTo]);
 
 
   useEffect(() => {
-    if (!selectedHospital) {
+    if (!mapReady || !selectedHospital) {
       lastPannedHospitalRef.current = null;
       return;
     }
@@ -136,17 +144,17 @@ export function CitizenMapComponent({
     lastPannedPreviewRef.current = selectedHospital.name;
     // 병원 선택 시 모바일 바텀시트가 열리므로 offset 적용 (true)
     panMapTo(selectedHospital.lat, selectedHospital.lng, SELECTED_LEVEL, true);
-  }, [selectedHospital, panMapTo]);
+  }, [mapReady, selectedHospital, panMapTo]);
 
   useEffect(() => {
-    if (selectedHospital || !previewHospital) {
+    if (!mapReady || (selectedHospital || !previewHospital)) {
       if (!previewHospital) lastPannedPreviewRef.current = null;
       return;
     }
     if (lastPannedPreviewRef.current === previewHospital.name) return;
     lastPannedPreviewRef.current = previewHospital.name;
     panMapTo(previewHospital.lat, previewHospital.lng, SELECTED_LEVEL, false);
-  }, [previewHospital, selectedHospital, panMapTo]);
+  }, [mapReady, previewHospital, selectedHospital, panMapTo]);
 
   const handleHospitalSelect = useCallback(
     (hospital: HospitalRecord) => {
@@ -170,7 +178,7 @@ export function CitizenMapComponent({
         }
       >
         <Map
-          center={DAEGU_CENTER}
+          center={initialCenter}
           isPanto
           draggable
           zoomable
@@ -182,7 +190,10 @@ export function CitizenMapComponent({
             // 임베드 컨테이너 높이가 잡힌 뒤 타일·컨트롤을 다시 맞춘다.
             window.requestAnimationFrame(() => {
               map.relayout();
-              window.setTimeout(() => map.relayout(), 120);
+              window.setTimeout(() => {
+                map.relayout();
+                setMapReady(true);
+              }, 120);
             });
           }}
           onDragEnd={handleMapDragEnd}
