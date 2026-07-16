@@ -25,14 +25,14 @@ export const DESKTOP_SIDEBAR_PANEL_CLASS =
 
 /** 지도 영역 */
 export const DASHBOARD_MAP_COL_CLASS =
-  'absolute inset-0 z-0 flex flex-col lg:glass-panel-strong lg:relative lg:order-2 lg:z-auto lg:min-h-[calc(100dvh-8.5rem)] lg:min-w-0 lg:flex-[1_1_auto] lg:rounded-sm lg:p-0.5';
+  'absolute inset-0 z-0 flex flex-col lg:glass-panel-strong lg:relative lg:order-2 lg:z-auto lg:min-h-0 lg:min-w-0 lg:flex-[1_1_auto] lg:rounded-sm lg:p-0.5';
 
 /** 우측 정책 안내/상세 패널 */
 export const DASHBOARD_DETAIL_COL_CLASS =
-  'absolute inset-x-0 bottom-0 z-20 flex flex-col max-h-[65dvh] rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.2)] lg:relative lg:order-3 lg:z-auto lg:h-[calc(100dvh-8.5rem)] lg:min-h-0 lg:max-h-[calc(100dvh-8.5rem)] lg:w-[23rem] lg:shrink-0 lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-[25rem]';
+  'absolute inset-x-0 bottom-0 z-20 flex flex-col max-h-[65dvh] rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.2)] lg:relative lg:order-3 lg:z-auto lg:min-h-0 lg:w-[23rem] lg:shrink-0 lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-[25rem]';
 
 export const DASHBOARD_DETAIL_INNER_CLASS =
-  'h-full min-h-0 lg:max-h-[calc(100dvh-8.5rem)]';
+  'h-full min-h-0';
 
 // ─────────────────────────────────────────────────────────────────────
 // 시민 뷰 전용 — 네이버 지도 방식 (각 패널이 뷰포트에 고정, 내부 독립 스크롤)
