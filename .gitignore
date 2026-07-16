@@ -72,6 +72,7 @@ docs/**
 !docs/README.md
 !docs/PORTFOLIO.md
 !docs/CASE_STUDY_PORTFOLIO.md
+!docs/*.md
 !docs/**/*.csv
 
 # 피드백 반영 과정 공개 기록
