@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { DESKTOP_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-layout';
+import { CITIZEN_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-layout';
 import { useEtaController } from './lib/useEtaController';
 import { useSortedHospitalsByDistance } from '../../shared/hooks/useSortedHospitalsByDistance';
 import { compareHospitalRecommendations } from '../../shared/lib/hospital-recommendation';
@@ -65,7 +65,7 @@ export function DesktopSidebar({
   }, [baseSortedHospitals, etas]);
 
   return (
-    <aside className={DESKTOP_SIDEBAR_PANEL_CLASS}>
+    <aside className={CITIZEN_SIDEBAR_PANEL_CLASS}>
       <PanelSidebarHeader
         variant="citizen"
         icon={<CitizenLocationIcon />}
