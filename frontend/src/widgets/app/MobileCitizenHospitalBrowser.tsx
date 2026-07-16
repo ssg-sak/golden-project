@@ -294,7 +294,7 @@ export function MobileCitizenHospitalBrowser({
   }
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white" aria-label="가까운 응급기관 찾기">
+    <section className="flex flex-col bg-white lg:min-h-0 lg:flex-1 lg:overflow-hidden" aria-label="가까운 응급기관 찾기">
       <header className="shrink-0 border-b border-teal-900 bg-teal-800 px-4 py-3 text-white">
         <p className="text-xs font-semibold text-teal-100">
           {showMap
@@ -380,7 +380,7 @@ export function MobileCitizenHospitalBrowser({
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden" style={{ flex: '1 1 0%' }}>
+      <div className="flex flex-col lg:min-h-0 lg:flex-1 lg:overflow-hidden">
         <HospitalSidebarList
           sortedHospitals={sortedHospitals}
           selectedHospital={selectedHospital}

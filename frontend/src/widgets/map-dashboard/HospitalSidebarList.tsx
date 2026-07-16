@@ -46,8 +46,8 @@ export function HospitalSidebarList({
   const selectedCondition = severeConditionOption(severeCondition);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <ul className="min-h-0 flex-1 divide-y divide-slate-200 overflow-y-auto overscroll-y-contain border-t border-slate-200 bg-white pb-6 touch-pan-y [-webkit-overflow-scrolling:touch] lg:pb-3 lg:overscroll-auto">
+    <div className="flex flex-col lg:min-h-0 lg:flex-1 lg:overflow-hidden">
+      <ul className="divide-y divide-slate-200 border-t border-slate-200 bg-white pb-6 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-y-contain lg:pb-3 lg:touch-pan-y lg:[-webkit-overflow-scrolling:touch]">
         {!loading && userLocation ? (
           <li className="bg-amber-50 px-4 py-2 text-xs leading-relaxed text-amber-900">
             길찾기는 일반 차량 경로입니다. 긴급 이송 병원과 경로는 119 및 의료기관의 수용 확인을 따르세요.
