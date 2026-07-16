@@ -8,6 +8,7 @@ import {
   DESKTOP_SIDEBAR_WRAPPER_CLASS,
   DASHBOARD_VIEW_ROOT_CLASS,
 } from '../../shared/constants/dashboard-layout';
+import { MOBILE_SCROLL_Y_CLASS } from '../../shared/lib/mobile-scroll';
 import { HOSPITALS_LOADING_MESSAGE } from '../../shared/constants/loading-messages';
 import { useUserLocation } from '../../shared/hooks/useUserLocation';
 import { useHospitalStore } from '../../shared/store/hospitalStore';
@@ -126,7 +127,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
         ) : null}
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden">
+      <div className={`flex min-h-0 flex-1 flex-col lg:hidden ${MOBILE_SCROLL_Y_CLASS}`}>
         <EmergencyBanner />
         {hospitalsDegraded ? (
           <DegradedDataBanner
