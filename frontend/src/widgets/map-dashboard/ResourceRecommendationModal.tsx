@@ -1,4 +1,8 @@
 import { useResourceSimulation, type ResourceRecommendation } from './lib/useResourceSimulation';
+import {
+  candidateDistrictFromCoordinates,
+  type CandidateMode,
+} from './lib/candidate-location-labels';
 
 interface ResourceRecommendationModalProps {
   isOpen: boolean;
@@ -24,10 +28,19 @@ function modeLabel(pipeline: ResourceRecommendation['pipeline']) {
 }
 
 function groupLabel(group: ResourceRecommendation['candidate_group']) {
-  if (group === 'main_daegu') return '도시권 검토 후보';
-  if (group === 'separate_region') return '별도 권역 후보';
-  if (group === 'hold') return '보류 검토 후보';
+  if (group === 'main_daegu') return '도시권 검토';
+  if (group === 'separate_region') return '별도 권역';
+  if (group === 'hold') return '추가 확인';
   return '검토 후보';
+}
+
+function recommendationAreaLabel(rec: ResourceRecommendation): string {
+  const mode = rec.pipeline as CandidateMode;
+  return (
+    candidateDistrictFromCoordinates(mode, rec.location.lat, rec.location.lng) ??
+    rec.regionName ??
+    '대구 권역 미확인'
+  );
 }
 
 export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecommendationModalProps) {
@@ -103,6 +116,7 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
             <div className="grid gap-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:grid-cols-2">
               {recommendations.map((rec) => {
                 const priority = rec.resource_gap.priority_level;
+                const areaLabel = recommendationAreaLabel(rec);
                 return (
                   <article
                     key={`${rec.pipeline}-${rec.cluster_id}-${rec.location.lat}-${rec.location.lng}`}
@@ -111,10 +125,13 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
                     <div className="mb-3 flex items-start justify-between gap-3">
                       <div>
                         <p className="text-sm font-extrabold text-slate-800">
-                          {modeLabel(rec.pipeline)} {groupLabel(rec.candidate_group)} #{rec.cluster_id}
+                          {modeLabel(rec.pipeline)} {areaLabel} 권역
                         </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {rec.regionName ?? `위도 ${rec.location.lat.toFixed(4)}, 경도 ${rec.location.lng.toFixed(4)}`}
+                        <p className="mt-1 text-xs font-semibold text-slate-500">
+                          {groupLabel(rec.candidate_group)} · 내부번호 #{rec.cluster_id}
+                        </p>
+                        <p className="mt-1 text-[11px] leading-relaxed text-slate-400">
+                          좌표값 대신 후보가 속한 대략적인 행정권역으로 표시합니다.
                         </p>
                       </div>
                       <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-black ${priorityStyle[priority]}`}>

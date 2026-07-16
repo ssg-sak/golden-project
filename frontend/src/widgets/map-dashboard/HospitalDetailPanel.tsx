@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 import { kakaoDirectionsUrl } from '../../shared/lib/kakao-navigation';
 import { resolveBedStatus } from '../../shared/lib/bed-status';
 import { hospitalTierLabel } from '../../shared/lib/hospital-tier-visual';
@@ -20,7 +22,7 @@ import { HospitalGranularBeds } from './HospitalGranularBeds';
 import { HospitalInfrastructureSection } from './HospitalInfrastructureSection';
 
 const PANEL_SHELL =
-  'glass-panel-strong flex h-full min-h-0 flex-col overflow-hidden';
+  'glass-panel-strong flex h-full min-h-0 flex-col overflow-hidden bg-white';
 
 interface HospitalDetailPanelProps {
   hospital: HospitalRecord | null;
@@ -30,8 +32,7 @@ interface HospitalDetailPanelProps {
 function EmptyPanel() {
   return (
     <aside className={`${PANEL_SHELL} justify-center bg-white relative`}>
-      {/* 모바일 바텀 시트 드래그 핸들 */}
-      <div className="absolute top-0 left-0 right-0 flex w-full items-center justify-center pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing">
+      <div className="absolute top-0 left-0 right-0 flex w-full items-center justify-center bg-white pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing">
         <div className="h-1.5 w-12 rounded-full bg-slate-200" />
       </div>
       <div className="px-6 py-10 text-center">
@@ -59,6 +60,7 @@ function HospitalDetailContent({
   hospital: HospitalRecord;
   severeCondition?: SevereConditionId;
 }) {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const bedStatus = resolveBedStatus(hospital);
   const isMoonlight = isMoonlightHospital(hospital);
   const selectedCondition = severeConditionOption(severeCondition);
@@ -68,15 +70,22 @@ function HospitalDetailContent({
     : bedStatus.status === 'unavailable'
       ? 'border-rose-300 bg-rose-50'
       : 'border-teal-300 bg-teal-50';
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = 0;
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [hospital.name]);
+
   return (
     <aside className={PANEL_SHELL}>
-      {/* 모바일 바텀 시트 드래그 핸들 */}
-      <div className="flex w-full items-center justify-center pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing bg-white/50 backdrop-blur-md">
+      <div className="flex w-full shrink-0 items-center justify-center bg-white pt-3 pb-2 lg:hidden cursor-grab active:cursor-grabbing">
         <div className="h-1.5 w-12 rounded-full bg-slate-300" />
       </div>
-      <div
-        className={`shrink-0 border-b px-5 py-5 ${headerClass}`}
-      >
+      <div className={`shrink-0 border-b px-5 py-5 ${headerClass}`}>
         <CitizenBedLabel hospital={hospital} size="detail" />
         <h2 className="mt-3 text-xl font-extrabold leading-snug text-slate-900">
           {hospitalDisplayName(hospital)}
@@ -84,7 +93,10 @@ function HospitalDetailContent({
         <p className="mt-1 text-sm text-slate-600">{hospitalTierLabel(hospital.tier)}</p>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
+      <div
+        ref={scrollRef}
+        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain p-5"
+      >
         <HospitalLocationMeta hospital={hospital} variant="compact" />
 
         <section className="border border-teal-300 bg-teal-50 p-4">

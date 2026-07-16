@@ -5,7 +5,11 @@
 - [아키텍처 및 컴포넌트 파일 지도](./architecture/component_file_map_20260714.md)
 - [예외 처리 학습서](./guides/exception_handling_study_20260714.md)
 - [정책 데이터·모델 용어 학습서](./guides/policy_data_model_terms_study_20260715.md)
+- [모바일 브라우저 히스토리·상세 UX 학습서](./guides/mobile_browser_history_ux_study_20260716.md)
+- [카카오맵 모바일 임베드 학습서](./guides/kakao_mobile_map_embed_study_20260716.md)
 - [예외 처리 개선 보고서](./reports/exception_handling_improvement_report_20260714.md)
+- [모바일 병원 상세 UX 개선 보고서](./reports/mobile_hospital_detail_ux_report_20260716.md)
+- [모바일 시민용 지도+목록 계획·보고 통합본](./reports/mobile_citizen_map_list_integrated_20260716.md)
 - [AI 모델 EDA 계획](./plans/ai_model_eda_plan_20260713.md)
 
 프로젝트(**대구 골든타임 · 응급의료 거버넌스 플랫폼**) 관련 **설명·기획·개발 참고 문서**를 이 폴더에 모아 두었습니다.  
@@ -40,6 +44,8 @@
 - **개선 후 재감사·잔존 이슈** → [MAINTENANCE_AUDIT.md](./MAINTENANCE_AUDIT.md)
 - **라이브·엣지 케이스 테스트** → [LIVE_OPS_AND_EDGE_CASES.md](./LIVE_OPS_AND_EDGE_CASES.md)
 - **최근 UX/UI 개선 검증** → [UX_QA_CHECKLIST.md](./UX_QA_CHECKLIST.md)
+- **모바일 병원 상세 Back·스크롤 UX** → [학습서](./guides/mobile_browser_history_ux_study_20260716.md) · [보고서](./reports/mobile_hospital_detail_ux_report_20260716.md)
+- **모바일 지도+목록(카카오맵)** → [학습서](./guides/kakao_mobile_map_embed_study_20260716.md) · [계획·보고 통합본](./reports/mobile_citizen_map_list_integrated_20260716.md)
 - **테스트 실행·결과** → [tests/docs/TESTING.md](../tests/docs/TESTING.md) · [TEST_RESULTS.md](../tests/docs/TEST_RESULTS.md)
 - **서버 포트 꼬임 / 좀비 프로세스** → [DEV_SERVERS.md](./DEV_SERVERS.md)
 - **시작·종료 명령어 복붙** → [DEV_COMMANDS.md](./DEV_COMMANDS.md)

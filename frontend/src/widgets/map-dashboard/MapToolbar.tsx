@@ -47,7 +47,7 @@ export function MapToolbar({
       ? '후보 숨기기'
       : canShowCandidateLocations
         ? '후보 보기'
-        : '소아 후보 보기';
+        : '후보 보기';
 
   function handleCandidateToggle() {
     if (!canShowCandidateLocations) {
@@ -135,7 +135,7 @@ export function MapToolbar({
           title={
             canShowCandidateLocations
               ? '후보지를 지도에 표시하거나 숨깁니다.'
-              : '소아 야간·휴일 진료 후보지 보기로 전환합니다.'
+              : '후보 패널을 열고 소아 야간·휴일/고령층 응급 후보를 비교합니다.'
           }
           className={`min-h-8 whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold ring-1 transition-colors ${
             showOptimalLocations && canShowCandidateLocations

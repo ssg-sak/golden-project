@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { Map, MapMarker, ZoomControl } from 'react-kakao-maps-sdk';
+import { Map, MapMarker, Polyline, ZoomControl } from 'react-kakao-maps-sdk';
 
 import type { UserLocation } from '../../shared/hooks/useUserLocation';
 import type { HospitalRecord } from '../../shared/types/hospital';
@@ -30,26 +30,43 @@ function clampLevel(level: number): number {
 interface CitizenMapComponentProps {
   hospitals: HospitalRecord[];
   selectedHospital: HospitalRecord | null;
+  /** 상세 없이 지도에서만 강조·직선 경로 미리보기 (모바일 임베드) */
+  previewHospital?: HospitalRecord | null;
   onHospitalSelect: (hospital: HospitalRecord) => void;
   userLocation: UserLocation | null;
   showAvailableOnly: boolean;
   careTarget: 'all' | 'adult' | 'pediatric' | 'senior';
   severeCondition: SevereConditionId;
+  /** 모바일 목록+지도 임베드. 데스크톱 전체 지도는 default. */
+  variant?: 'default' | 'mobileEmbed';
 }
 
 export function CitizenMapComponent({
   hospitals,
   selectedHospital,
+  previewHospital = null,
   onHospitalSelect,
   userLocation,
   showAvailableOnly,
   careTarget,
   severeCondition,
+  variant = 'default',
 }: CitizenMapComponentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const lastPannedUserRef = useRef<string | null>(null);
   const lastPannedHospitalRef = useRef<string | null>(null);
+  const lastPannedPreviewRef = useRef<string | null>(null);
+  const isMobileEmbed = variant === 'mobileEmbed';
+
+  const focusHospital = selectedHospital ?? previewHospital;
+  const routePreviewPath = useMemo(() => {
+    if (!isMobileEmbed || !userLocation || !previewHospital) return null;
+    return [
+      { lat: userLocation.lat, lng: userLocation.lng },
+      { lat: previewHospital.lat, lng: previewHospital.lng },
+    ];
+  }, [isMobileEmbed, userLocation, previewHospital]);
 
   // 진료대상 및 병상 여부에 따른 마커 필터링
   const visibleHospitals = useMemo(() => {
@@ -79,7 +96,12 @@ export function CitizenMapComponent({
     if (applyOffset && window.innerWidth < 1024) {
       const proj = map.getProjection();
       if (proj) {
-        const pixelOffset = Math.min(160, Math.max(72, window.innerHeight * 0.18));
+        // 모바일 임베드는 하단 목록이 있어 오프셋을 줄인다. 상세 전환 직전 튐도 완화.
+        const ratio = isMobileEmbed ? 0.1 : 0.18;
+        const pixelOffset = Math.min(
+          isMobileEmbed ? 96 : 160,
+          Math.max(isMobileEmbed ? 48 : 72, window.innerHeight * ratio),
+        );
         const point = proj.pointFromCoords(targetLatLng);
         const offsetLatLng = proj.coordsFromPoint(new kakao.maps.Point(point.x, point.y + pixelOffset));
         map.panTo(offsetLatLng);
@@ -91,7 +113,7 @@ export function CitizenMapComponent({
     }
 
     
-  }, []);
+  }, [isMobileEmbed]);
 
   useEffect(() => {
     if (!userLocation) return;
@@ -110,9 +132,20 @@ export function CitizenMapComponent({
     }
     if (lastPannedHospitalRef.current === selectedHospital.name) return;
     lastPannedHospitalRef.current = selectedHospital.name;
+    lastPannedPreviewRef.current = selectedHospital.name;
     // 병원 선택 시 모바일 바텀시트가 열리므로 offset 적용 (true)
     panMapTo(selectedHospital.lat, selectedHospital.lng, SELECTED_LEVEL, true);
   }, [selectedHospital, panMapTo]);
+
+  useEffect(() => {
+    if (selectedHospital || !previewHospital) {
+      if (!previewHospital) lastPannedPreviewRef.current = null;
+      return;
+    }
+    if (lastPannedPreviewRef.current === previewHospital.name) return;
+    lastPannedPreviewRef.current = previewHospital.name;
+    panMapTo(previewHospital.lat, previewHospital.lng, SELECTED_LEVEL, false);
+  }, [previewHospital, selectedHospital, panMapTo]);
 
   const handleHospitalSelect = useCallback(
     (hospital: HospitalRecord) => {
@@ -126,10 +159,14 @@ export function CitizenMapComponent({
   }, []);
 
   return (
-    <div className="relative h-full min-h-0 w-full flex-1">
+    <div className={`relative w-full ${isMobileEmbed ? 'h-full min-h-0' : 'h-full min-h-0 flex-1'}`}>
       <div
         ref={containerRef}
-        className="relative h-full min-h-[50vh] w-full lg:min-h-0"
+        className={
+          isMobileEmbed
+            ? 'absolute inset-0'
+            : 'relative h-full min-h-[50vh] w-full lg:min-h-0'
+        }
       >
         <Map
           center={DAEGU_CENTER}
@@ -137,10 +174,15 @@ export function CitizenMapComponent({
           draggable
           zoomable
           scrollwheel
-          keyboardShortcuts
-          style={{ width: '100%', height: '100%', borderRadius: '2px' }}
+          keyboardShortcuts={!isMobileEmbed}
+          style={{ width: '100%', height: '100%', borderRadius: isMobileEmbed ? '0' : '2px' }}
           onCreate={(map) => {
             mapRef.current = map;
+            // 임베드 컨테이너 높이가 잡힌 뒤 타일·컨트롤을 다시 맞춘다.
+            window.requestAnimationFrame(() => {
+              map.relayout();
+              window.setTimeout(() => map.relayout(), 120);
+            });
           }}
           onDragEnd={handleMapDragEnd}
         >
@@ -148,21 +190,31 @@ export function CitizenMapComponent({
           <MapRelayout containerRef={containerRef} />
           <ZoomControl position="RIGHT" />
 
+          {routePreviewPath ? (
+            <Polyline
+              path={routePreviewPath}
+              strokeWeight={4}
+              strokeColor="#0f766e"
+              strokeOpacity={0.9}
+              strokeStyle="shortdash"
+            />
+          ) : null}
+
           {visibleHospitals.map((hospital) => (
             <HospitalMarkerOverlay
               key={hospital.name}
               hospital={hospital}
               position={{ lat: hospital.lat, lng: hospital.lng }}
-              isSelected={selectedHospital?.name === hospital.name}
+              isSelected={focusHospital?.name === hospital.name}
               onSelect={handleHospitalSelect}
             />
           ))}
 
-          {selectedHospital ? (
+          {focusHospital ? (
             <SelectedHospitalPin
-              lat={selectedHospital.lat}
-              lng={selectedHospital.lng}
-              label={selectedHospital.name}
+              lat={focusHospital.lat}
+              lng={focusHospital.lng}
+              label={focusHospital.name}
             />
           ) : null}
 
@@ -176,7 +228,13 @@ export function CitizenMapComponent({
         </Map>
       </div>
 
-      <div className="pointer-events-none absolute bottom-3 left-3 z-[800] flex gap-3 border border-slate-300 bg-white px-3 py-2 text-[10px] font-semibold shadow-sm">
+      <div
+        className={`pointer-events-none absolute z-[800] flex gap-2 border border-slate-300 bg-white font-semibold shadow-sm ${
+          isMobileEmbed
+            ? 'bottom-2 left-2 px-2 py-1 text-[9px]'
+            : 'bottom-3 left-3 gap-3 px-3 py-2 text-[10px]'
+        }`}
+      >
         <span className="flex items-center gap-1 text-green-700">
           <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
           진료 가능
