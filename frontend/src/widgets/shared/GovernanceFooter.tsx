@@ -1,12 +1,13 @@
 interface GovernanceFooterProps {
   variant?: 'default' | 'compact';
+  className?: string;
 }
 
-export function GovernanceFooter({ variant = 'default' }: GovernanceFooterProps) {
+export function GovernanceFooter({ variant = 'default', className = '' }: GovernanceFooterProps) {
   const isCompact = variant === 'compact';
 
   return (
-    <footer className="shrink-0 border-t-2 border-teal-800 bg-[#e7ecee]">
+    <footer className={`border-t-2 border-teal-800 bg-[#e7ecee] ${className}`.trim()}>
       <div
         className={`mx-auto w-full text-center ${
           isCompact ? 'max-w-none px-4 py-2 sm:px-6' : 'max-w-3xl px-4 py-6 sm:px-6'
