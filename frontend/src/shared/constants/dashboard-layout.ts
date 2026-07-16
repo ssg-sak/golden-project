@@ -40,9 +40,9 @@ export const DASHBOARD_DETAIL_INNER_CLASS =
 
 /**
  * 시민 뷰 전용 사이드바 래퍼.
- * sticky 대신 flex-col + min-h-0 으로 부모 높이를 꽉 채워 내부에서 스크롤.
+ * sticky 대신 self-stretch + flex-col + min-h-0 으로 부모 높이를 꽉 채워 내부에서 스크롤.
  */
-export const CITIZEN_SIDEBAR_WRAPPER_CLASS = 'relative order-1 w-72 xl:w-80 flex flex-col min-h-0';
+export const CITIZEN_SIDEBAR_WRAPPER_CLASS = 'relative order-1 w-72 xl:w-80 flex flex-col min-h-0 self-stretch';
 
 /**
  * 시민 뷰 전용 사이드바 패널.
