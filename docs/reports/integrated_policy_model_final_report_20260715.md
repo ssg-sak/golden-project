@@ -181,3 +181,10 @@ python ai-model\run_integrated_policy_pipeline.py --offline
 - **ESLint 경고 제거**: `appModeStore.ts` 등에서 데모 분기가 사라지며 쓰이지 않게 된 환경변수(`ENV`) import 문을 정리하고, 미사용 파라미터에 언더스코어(`_on`)를 적용해 빌드 검증을 통과시켰습니다.
 - **Node.js 버전 업그레이드**: GitHub Actions 러너 구버전 지원 종료(deprecation) 경고에 대응해 `.github/workflows/deploy.yml` 파일 내 `actions/setup-node` 스텝의 대상을 Node.js `22`로 업데이트했습니다.
 - **빌드 스크립트 정규화**: 데모용 명령이었던 `npm run build:demo`를 일반 프로덕션 빌드 커맨드(`npm run build`)로 교체하여 GitHub Pages 연동 시 실제 서버 사양과 동일한 결과물이 컴파일되도록 수정했습니다.
+
+### 11.6 클라우드(Render) 기반 백엔드 배포 및 실시간 데이터 파이프라인 연동
+로컬(Local) 환경에서만 작동하던 데모 형태를 벗어나, 실제 사용자가 깃허브 페이지에 접속했을 때 공공데이터 API의 실시간 정보를 받아볼 수 있도록 **완전한 클라우드 아키텍처(React ➔ FastAPI ➔ 공공데이터 API)** 연동을 완료했습니다.
+
+- **Render Web Service 구축 및 환경변수 은닉**: 준비된 `Dockerfile`을 통해 Render.com에 백엔드(FastAPI) 전용 서버를 구축했습니다. `DATA_GO_KR_API_KEY`, `KAKAO_REST_API_KEY` 등 보안상 깃허브에 올릴 수 없는 민감한 실제 API 키들은 철저히 Render의 **Environment Variables**로만 관리하여 소스코드 외부로 분리했습니다.
+- **백엔드 의존성(requirements.txt) 에러 패치**: Render 배포 초기 빌드 과정에서 `cachetools` 모듈(데이터 임시 캐싱 용도)이 누락되어 발생한 `ModuleNotFoundError` 에러를 즉각 식별하고, `requirements.txt`에 해당 의존성을 정식 추가 및 푸시하여 Auto-Deploy를 통해 서버를 정상화했습니다.
+- **GitHub Secrets를 활용한 엔드포인트(URL) 동기화**: 프론트엔드(React)가 깃허브 액션을 통해 빌드될 때 실제 라이브 백엔드 서버를 정확히 가리키도록, 발급된 Render 서버 주소(`https://golden-project-xxxx.onrender.com`)를 GitHub의 `VITE_API_BASE_URL` Secret으로 등록했습니다. 이를 통해 로컬 환경 의존(`http://localhost:8000`)을 완전히 끊어내고, 깃허브 배포본에서도 실시간 병상 정보 및 카카오 지도가 완벽히 렌더링되도록 파이프라인을 최종 완성했습니다.
