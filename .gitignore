@@ -55,6 +55,7 @@ backend/get_kakao_error.py
 *.sqlite3
 *.db
 *.db-journal
+!data/hospitals.db
 
 # OS 및 기타 IDE
 Thumbs.db
