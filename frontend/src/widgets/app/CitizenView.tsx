@@ -155,6 +155,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
           onCareTargetChange={handleCareTargetChange}
           severeCondition={severeCondition}
           onSevereConditionChange={handleSevereConditionChange}
+          kakao={kakao}
         />
       </div>
 

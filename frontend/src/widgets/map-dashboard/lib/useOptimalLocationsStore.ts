@@ -92,6 +92,23 @@ function isRemoteLowDemandCandidate(location: OptimalLocation): boolean {
   );
 }
 
+function collectReferencedCandidateIds(
+  optimization: PolicyOptimizationData,
+  mode: 'pediatric' | 'senior',
+): Set<number> {
+  const ids = new Set<number>();
+  optimization.results[mode].forEach((result) => {
+    [
+      result.p_median_optimum,
+      result.mclp_15min_optimum,
+      result.mclp_30min_optimum,
+    ].forEach((objective) => {
+      objective.candidate_ids.forEach((id) => ids.add(id));
+    });
+  });
+  return ids;
+}
+
 interface OptimalLocationsState {
   locations: OptimalLocation[];
   optimization: PolicyOptimizationData | null;
@@ -164,9 +181,16 @@ export const useOptimalLocationsStore = create<OptimalLocationsState>((set, get)
       const optimization = await fetchJson<PolicyOptimizationData>(
         `${dataBaseUrl}policy_location_optimization.json`,
       );
+      const referencedCandidateIds = collectReferencedCandidateIds(
+        optimization,
+        currentMode as 'pediatric' | 'senior',
+      );
 
       set({
-        locations: data.filter((location) => !isRemoteLowDemandCandidate(location)),
+        locations: data.filter(
+          (location) =>
+            !isRemoteLowDemandCandidate(location) || referencedCandidateIds.has(location.id),
+        ),
         optimization,
         isLoading: false,
       });

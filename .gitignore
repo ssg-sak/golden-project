@@ -80,10 +80,13 @@ docs/plans/**
 !docs/plans/emergency_room_feedback_implementation_plan_20260713.md
 !docs/plans/enterprise_demo_backlog_20260713.md
 !docs/plans/ai_model_eda_plan_20260713.md
+!docs/plans/mobile_citizen_map_list_plan_20260716.md
 !docs/guides/
 docs/guides/**
 !docs/guides/emergency_room_recommendation_study_20260713.md
 !docs/guides/exception_handling_study_20260714.md
+!docs/guides/mobile_browser_history_ux_study_20260716.md
+!docs/guides/kakao_mobile_map_embed_study_20260716.md
 !docs/architecture/
 docs/architecture/**
 !docs/architecture/component_file_map_20260714.md
@@ -93,6 +96,9 @@ docs/reports/**
 !docs/reports/friend_feedback_product_narrative_20260713.md
 !docs/reports/enterprise_demo_baseline_20260713.md
 !docs/reports/exception_handling_improvement_report_20260714.md
+!docs/reports/mobile_hospital_detail_ux_report_20260716.md
+!docs/reports/mobile_citizen_map_list_integrated_20260716.md
+!docs/reports/mobile_citizen_map_list_report_20260716.md
 
 # =========================
 # 기타 누락된 기밀 문서
