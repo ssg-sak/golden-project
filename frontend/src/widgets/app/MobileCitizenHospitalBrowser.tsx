@@ -380,7 +380,7 @@ export function MobileCitizenHospitalBrowser({
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden" style={{ flex: '1 1 0%' }}>
         <HospitalSidebarList
           sortedHospitals={sortedHospitals}
           selectedHospital={selectedHospital}

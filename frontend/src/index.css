@@ -24,7 +24,6 @@
 
 html {
   height: 100%;
-  overflow-y: scroll;
 }
 
 body,
@@ -35,6 +34,18 @@ body,
 body {
   margin: 0;
   background-color: var(--public-canvas);
+}
+
+/* 모바일 시민 앱: 바깥 스크롤 막고 내부 목록/상세만 스크롤 (갤럭시·아이폰 공통) */
+@media (max-width: 1023px) {
+  html,
+  body,
+  #root {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
 }
 
 h1,

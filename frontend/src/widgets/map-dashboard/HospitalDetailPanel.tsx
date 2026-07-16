@@ -20,6 +20,7 @@ import { CitizenHospitalTelLink } from './CitizenHospitalTelLink';
 import { HospitalLocationMeta } from './HospitalLocationMeta';
 import { HospitalGranularBeds } from './HospitalGranularBeds';
 import { HospitalInfrastructureSection } from './HospitalInfrastructureSection';
+import { MOBILE_SCROLL_Y_CLASS } from '../../shared/lib/mobile-scroll';
 
 const PANEL_SHELL =
   'glass-panel-strong flex h-full min-h-0 flex-col overflow-hidden bg-white';
@@ -121,9 +122,8 @@ function HospitalDetailContent({
         className={
           isPage
             ? 'space-y-4 p-5 pb-8'
-            : 'min-h-0 flex-1 space-y-4 overflow-y-scroll overscroll-contain p-4 pb-10 [-webkit-overflow-scrolling:touch] touch-pan-y'
+            : `${MOBILE_SCROLL_Y_CLASS} flex-1 space-y-4 p-4 pb-10`
         }
-        style={isPage ? undefined : { WebkitOverflowScrolling: 'touch' }}
       >
         <section className="border border-teal-300 bg-teal-50 p-4">
           <p className="text-xs font-bold text-teal-900">1. 출발 전 병원에 전화 확인</p>
