@@ -1,0 +1,1 @@
+var e=`min-h-0 overflow-y-auto overscroll-y-contain touch-pan-y [-webkit-overflow-scrolling:touch]`;export{e as t};
