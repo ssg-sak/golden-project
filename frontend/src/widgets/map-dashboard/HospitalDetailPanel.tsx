@@ -34,6 +34,8 @@ interface HospitalDetailPanelProps {
    * page: 모바일 전체 상세 — 부모 스크롤 (높이 체인 깨짐 방지)
    */
   layout?: 'panel' | 'page';
+  /** 모바일 상세+지도: 핸들 숨김·헤더 패딩 축소 */
+  compact?: boolean;
 }
 
 function EmptyPanel() {
@@ -64,10 +66,12 @@ function HospitalDetailContent({
   hospital,
   severeCondition = 'all',
   layout = 'panel',
+  compact = false,
 }: {
   hospital: HospitalRecord;
   severeCondition?: SevereConditionId;
   layout?: 'panel' | 'page';
+  compact?: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const isPage = layout === 'page';
@@ -93,14 +97,20 @@ function HospitalDetailContent({
 
   return (
     <aside className={isPage ? PANEL_SHELL_PAGE : PANEL_SHELL}>
-      {!isPage ? (
+      {!isPage && !compact ? (
         <div className="flex w-full shrink-0 cursor-grab items-center justify-center bg-white pt-3 pb-2 active:cursor-grabbing lg:hidden">
           <div className="h-1.5 w-12 rounded-full bg-slate-300" />
         </div>
       ) : null}
-      <div className={`shrink-0 border-b px-5 py-5 ${headerClass}`}>
+      <div
+        className={`shrink-0 border-b ${compact ? 'px-4 py-3' : 'px-5 py-5'} ${headerClass}`}
+      >
         <CitizenBedLabel hospital={hospital} size="detail" />
-        <h2 className="mt-3 text-xl font-extrabold leading-snug text-slate-900">
+        <h2
+          className={`mt-2 font-extrabold leading-snug text-slate-900 ${
+            compact ? 'text-lg' : 'mt-3 text-xl'
+          }`}
+        >
           {hospitalDisplayName(hospital)}
         </h2>
         <p className="mt-1 text-sm text-slate-600">{hospitalTierLabel(hospital.tier)}</p>
@@ -111,11 +121,10 @@ function HospitalDetailContent({
         className={
           isPage
             ? 'space-y-4 p-5 pb-8'
-            : 'min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain p-5 [-webkit-overflow-scrolling:touch] touch-pan-y'
+            : 'min-h-0 flex-1 space-y-4 overflow-y-scroll overscroll-contain p-4 pb-10 [-webkit-overflow-scrolling:touch] touch-pan-y'
         }
+        style={isPage ? undefined : { WebkitOverflowScrolling: 'touch' }}
       >
-        <HospitalLocationMeta hospital={hospital} variant="compact" />
-
         <section className="border border-teal-300 bg-teal-50 p-4">
           <p className="text-xs font-bold text-teal-900">1. 출발 전 병원에 전화 확인</p>
           <div className="mt-2">
@@ -125,6 +134,10 @@ function HospitalDetailContent({
             응급·위급 시 119 · 응급의료 정보센터 1339
           </p>
         </section>
+
+        {!isMoonlight ? <HospitalGranularBeds hospital={hospital} /> : null}
+
+        <HospitalLocationMeta hospital={hospital} variant="compact" />
 
         {isMoonlight ? (
           <p className="rounded-lg bg-cyan-50 px-3 py-2 text-xs font-bold leading-relaxed text-cyan-900 ring-1 ring-cyan-200">
@@ -163,10 +176,6 @@ function HospitalDetailContent({
 
         {!isMoonlight ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
 
-        {!isMoonlight ? (
-          <HospitalGranularBeds hospital={hospital} />
-        ) : null}
-
         {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
           <section className="rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
             <p className="mb-2 text-xs font-bold text-amber-800">⚠ 응급실 특이사항</p>
@@ -198,6 +207,7 @@ export function HospitalDetailPanel({
   hospital,
   severeCondition = 'all',
   layout = 'panel',
+  compact = false,
 }: HospitalDetailPanelProps) {
   if (!hospital) {
     return <EmptyPanel />;
@@ -207,6 +217,7 @@ export function HospitalDetailPanel({
       hospital={hospital}
       severeCondition={severeCondition}
       layout={layout}
+      compact={compact}
     />
   );
 }
