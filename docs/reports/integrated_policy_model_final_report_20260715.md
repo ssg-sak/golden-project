@@ -187,4 +187,5 @@ python ai-model\run_integrated_policy_pipeline.py --offline
 
 - **Render Web Service 구축 및 환경변수 은닉**: 준비된 `Dockerfile`을 통해 Render.com에 백엔드(FastAPI) 전용 서버를 구축했습니다. `DATA_GO_KR_API_KEY`, `KAKAO_REST_API_KEY` 등 보안상 깃허브에 올릴 수 없는 민감한 실제 API 키들은 철저히 Render의 **Environment Variables**로만 관리하여 소스코드 외부로 분리했습니다.
 - **백엔드 의존성(requirements.txt) 에러 패치**: Render 배포 초기 빌드 과정에서 `cachetools` 모듈(데이터 임시 캐싱 용도)이 누락되어 발생한 `ModuleNotFoundError` 에러를 즉각 식별하고, `requirements.txt`에 해당 의존성을 정식 추가 및 푸시하여 Auto-Deploy를 통해 서버를 정상화했습니다.
+- **Docker 환경 SQLite 데이터베이스 생성 에러 방어**: 로컬 환경과 달리 클린 상태로 띄워지는 Render(Docker) 컨테이너 특성상, `data/hospitals.db`를 저장할 `data` 폴더가 존재하지 않아 발생하는 `sqlite3.OperationalError`를 분석했습니다. 이를 해결하기 위해 `database.py` 엔진 초기화 직전에 `DB_PATH.parent.mkdir(parents=True, exist_ok=True)` 방어 로직을 삽입하여, 클라우드 환경에서도 런타임에 폴더를 자동 생성하도록 아키텍처 결함을 완벽히 보완했습니다.
 - **GitHub Secrets를 활용한 엔드포인트(URL) 동기화**: 프론트엔드(React)가 깃허브 액션을 통해 빌드될 때 실제 라이브 백엔드 서버를 정확히 가리키도록, 발급된 Render 서버 주소(`https://golden-project-xxxx.onrender.com`)를 GitHub의 `VITE_API_BASE_URL` Secret으로 등록했습니다. 이를 통해 로컬 환경 의존(`http://localhost:8000`)을 완전히 끊어내고, 깃허브 배포본에서도 실시간 병상 정보 및 카카오 지도가 완벽히 렌더링되도록 파이프라인을 최종 완성했습니다.
