@@ -116,7 +116,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
   }
 
   return (
-    <div className={`${DASHBOARD_VIEW_ROOT_CLASS} bg-[#eef2f3]`}>
+    <div className={`${DASHBOARD_VIEW_ROOT_CLASS} bg-[#eef2f3] lg:overflow-y-auto`}>
       <div className="hidden lg:block shrink-0">
         <DashboardStatsBar
           districtCount={adminState.districtCount}
