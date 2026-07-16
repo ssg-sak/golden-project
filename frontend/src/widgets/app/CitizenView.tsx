@@ -126,7 +126,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
         ) : null}
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col lg:hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden">
         <EmergencyBanner />
         {hospitalsDegraded ? (
           <DegradedDataBanner

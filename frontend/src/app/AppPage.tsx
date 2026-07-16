@@ -50,6 +50,7 @@ export default function AppPage() {
     updateMobileNavigationHeight();
     const resizeObserver = new ResizeObserver(updateMobileNavigationHeight);
     resizeObserver.observe(navigation);
+    // 아이폰 주소창 높이 변화에 대응
     window.visualViewport?.addEventListener('resize', updateMobileNavigationHeight);
     window.visualViewport?.addEventListener('scroll', updateMobileNavigationHeight);
 
@@ -60,23 +61,6 @@ export default function AppPage() {
       document.documentElement.style.removeProperty('--mobile-nav-height');
     };
   }, []);
-
-  useEffect(() => {
-    const mobileQuery = window.matchMedia('(max-width: 1023px)');
-    const lockPageScroll = () => {
-      const shouldLock = mobileQuery.matches && viewMode === 'citizen';
-      document.documentElement.style.overflow = shouldLock ? 'hidden' : '';
-      document.body.style.overflow = shouldLock ? 'hidden' : '';
-    };
-
-    lockPageScroll();
-    mobileQuery.addEventListener('change', lockPageScroll);
-    return () => {
-      mobileQuery.removeEventListener('change', lockPageScroll);
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    };
-  }, [viewMode]);
 
   useEffect(() => {
     const desktopQuery = window.matchMedia('(min-width: 1024px)');
@@ -96,7 +80,7 @@ export default function AppPage() {
   }, [setViewMode]);
 
   return (
-    <div className="flex h-dvh max-h-dvh max-w-[100vw] flex-col overflow-hidden bg-slate-100 lg:h-auto lg:max-h-none lg:min-h-dvh">
+    <div className="flex h-[100dvh] max-h-[100dvh] max-w-[100vw] flex-col overflow-hidden bg-slate-100 lg:h-auto lg:max-h-none lg:min-h-dvh">
       <DemoNoticeModal />
       
       {/* 모바일에서는 지도 위로 플로팅, 데스크톱에서는 정상 흐름 */}
@@ -111,18 +95,18 @@ export default function AppPage() {
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-[var(--mobile-nav-height,0px)] lg:overflow-visible lg:pt-0">
         {viewMode === 'citizen' && (
-          <div key="citizen" className="flex min-h-0 flex-1 flex-col transition-opacity duration-200">
+          <div key="citizen" className="flex min-h-0 flex-1 flex-col overflow-hidden transition-opacity duration-200">
             <CitizenView kakao={kakao} onRetryHospitals={handleRetryHospitals} />
           </div>
         )}
         <Suspense fallback={<div className="flex min-h-0 flex-1 items-center justify-center text-sm font-semibold text-slate-600">화면을 불러오는 중입니다.</div>}>
           {viewMode === 'admin' && (
-            <div key="admin" className="flex min-h-0 flex-1 flex-col transition-opacity duration-200">
+            <div key="admin" className="flex min-h-0 flex-1 flex-col overflow-hidden transition-opacity duration-200">
               <AdminView kakao={kakao} onRetryHospitals={handleRetryHospitals} />
             </div>
           )}
           {viewMode === 'intro' && (
-            <div key="intro" className="flex min-h-0 flex-1 flex-col transition-opacity duration-200 bg-[#eef2f0]">
+            <div key="intro" className="flex min-h-0 flex-1 flex-col overflow-y-auto transition-opacity duration-200 bg-[#eef2f0]">
               <PlatformIntroView />
             </div>
           )}
