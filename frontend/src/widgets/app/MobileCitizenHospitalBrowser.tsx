@@ -220,7 +220,7 @@ export function MobileCitizenHospitalBrowser({
   );
 
   const detailShellClass =
-    'fixed inset-x-0 bottom-0 z-[150] flex flex-col overflow-hidden bg-white';
+    `fixed inset-x-0 bottom-0 z-[150] flex flex-col bg-white ${MOBILE_SCROLL_Y_CLASS}`;
 
   if (detailWithMap && selectedHospital) {
     return (
@@ -246,11 +246,11 @@ export function MobileCitizenHospitalBrowser({
           </button>
         </div>
         {mapBlock(getDetailMapHeight(), '선택한 병원 카카오맵', true)}
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden" style={{ flex: '1 1 0%' }}>
+        <div className="flex flex-col">
           <HospitalDetailPanel
             hospital={selectedHospital}
             severeCondition={severeCondition}
-            layout="panel"
+            layout="page"
             compact
           />
         </div>
@@ -281,11 +281,11 @@ export function MobileCitizenHospitalBrowser({
             <span className="truncate">병원 목록으로</span>
           </button>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden" style={{ flex: '1 1 0%' }}>
+        <div className="flex flex-col">
           <HospitalDetailPanel
             hospital={selectedHospital}
             severeCondition={severeCondition}
-            layout="panel"
+            layout="page"
             compact
           />
         </div>
