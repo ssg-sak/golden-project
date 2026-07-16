@@ -36,14 +36,18 @@ export default function AppPage() {
     error: kakaoError ?? null,
   };
 
-  // 지도 앱이 마운트된 동안만 body에 app-mode 클래스를 추가하여
-  // index.css의 overflow:hidden이 소개 페이지 등 일반 라우트에 영향을 주지 않도록 한다.
+  // 지도 앱 모드(시민, 관리자)일 때만 body에 app-mode 클래스를 추가하여
+  // index.css의 overflow:hidden이 소개 페이지 등 일반 스크롤 뷰에 영향을 주지 않도록 한다.
   useEffect(() => {
-    document.body.classList.add('app-mode');
+    if (viewMode !== 'intro') {
+      document.body.classList.add('app-mode');
+    } else {
+      document.body.classList.remove('app-mode');
+    }
     return () => {
       document.body.classList.remove('app-mode');
     };
-  }, []);
+  }, [viewMode]);
 
   useLayoutEffect(() => {
     const navigation = navigationRef.current;
