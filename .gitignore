@@ -110,3 +110,10 @@ data/cache/
 tmp/
 tmp_hospitals.json
 
+# 루트의 과거 프론트 빌드·임시 산출물
+# GitHub Pages 배포 정본은 workflow가 생성하는 gh-pages 브랜치입니다.
+/assets/
+/index.html
+/404.html
+/runs.json
+/tmp_*.py
