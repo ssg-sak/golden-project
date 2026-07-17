@@ -16,7 +16,7 @@ import { HospitalGranularBeds } from './HospitalGranularBeds';
 import { HospitalInfrastructureSection } from './HospitalInfrastructureSection';
 
 const PANEL_SHELL =
-  'flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-[#fcfdff] shadow-[0_1px_0_rgba(15,23,42,0.03)]';
+  'flex max-h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-[#fcfdff] shadow-[0_1px_0_rgba(15,23,42,0.03)]';
 
 const TIER_HEADER: Record<1 | 2 | 3, string> = {
   1: HOSPITAL_TIER_VISUAL[1].panelHeaderClass,
@@ -54,8 +54,21 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
         </h2>
       </div>
 
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-5">
+      <div className="flex min-h-0 flex-col gap-4 overflow-y-auto p-5">
         <HospitalLocationMeta hospital={hospital} />
+
+        {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
+          <section className="rounded-2xl bg-amber-50 p-4 ring-1 ring-amber-200">
+            <p className="mb-2 text-xs font-bold text-amber-800">실시간 안내사항</p>
+            <ul className="space-y-1">
+              {hospital.realtime_messages.map((msg, i) => (
+                <li key={i} className="text-xs leading-relaxed text-amber-900">
+                  {msg}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         {viewMode === 'admin' ? <HospitalInfrastructureSection hospital={hospital} variant="admin" /> : null}
 
@@ -79,19 +92,6 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
               </p>
             </section>
           )
-        ) : null}
-
-        {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
-          <section className="rounded-2xl bg-amber-50 p-4 ring-1 ring-amber-200">
-            <p className="mb-2 text-xs font-bold text-amber-800">실시간 안내사항</p>
-            <ul className="space-y-1">
-              {hospital.realtime_messages.map((msg, i) => (
-                <li key={i} className="text-xs leading-relaxed text-amber-900">
-                  {msg}
-                </li>
-              ))}
-            </ul>
-          </section>
         ) : null}
 
         {viewMode !== 'admin' ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}

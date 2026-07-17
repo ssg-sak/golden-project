@@ -225,7 +225,7 @@ export function AdminMobileBottomSheet({
             </span>
             <span className="truncate">정책 목록으로</span>
           </button>
-          <div className="min-h-0 flex-1 overflow-hidden bg-white pb-[max(5rem,env(safe-area-inset-bottom))]">
+          <div className="min-h-0 flex-1 overflow-y-auto bg-white pb-[env(safe-area-inset-bottom)]">
             <DetailPanel
               selectedHospital={selectedHospital}
               vulnerabilityRecord={selectedVulnerability}

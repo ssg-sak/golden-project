@@ -29,10 +29,10 @@ export const DASHBOARD_MAP_COL_CLASS =
 
 /** 우측 정책 안내/상세 패널 */
 export const DASHBOARD_DETAIL_COL_CLASS =
-  'absolute inset-x-0 bottom-0 z-20 flex flex-col max-h-[65dvh] rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.2)] lg:relative lg:order-3 lg:z-auto lg:min-h-0 lg:w-[23rem] lg:shrink-0 lg:rounded-none lg:bg-transparent lg:shadow-none xl:w-[25rem]';
+  `absolute inset-x-0 bottom-0 z-20 flex max-h-[65dvh] flex-col rounded-t-3xl bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.2)] lg:relative lg:order-3 lg:z-auto lg:h-[calc(100dvh-8.5rem)] lg:max-h-[calc(100dvh-8.5rem)] lg:min-h-0 lg:w-[23rem] lg:shrink-0 lg:self-start lg:rounded-none lg:bg-transparent lg:shadow-none lg:sticky ${DASHBOARD_STICKY_TOP_CLASS} xl:w-[25rem]`;
 
 export const DASHBOARD_DETAIL_INNER_CLASS =
-  'h-full min-h-0';
+  'flex min-h-0 flex-1 flex-col overflow-hidden';
 
 // ─────────────────────────────────────────────────────────────────────
 // 시민 뷰 전용 — 네이버 지도 방식 (각 패널이 뷰포트에 고정, 내부 독립 스크롤)

@@ -135,6 +135,19 @@ function HospitalDetailContent({
           </p>
         </section>
 
+        {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
+          <section className="rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
+            <p className="mb-2 text-xs font-bold text-amber-800">실시간 안내사항</p>
+            <ul className="space-y-1">
+              {hospital.realtime_messages.map((msg, i) => (
+                <li key={i} className="text-xs leading-relaxed text-amber-900">
+                  {msg}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
         {!isMoonlight ? <HospitalGranularBeds hospital={hospital} /> : null}
 
         <HospitalLocationMeta hospital={hospital} variant="compact" />
@@ -175,19 +188,6 @@ function HospitalDetailContent({
         ) : null}
 
         {!isMoonlight ? <HospitalInfrastructureSection hospital={hospital} variant="citizen" /> : null}
-
-        {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
-          <section className="rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
-            <p className="mb-2 text-xs font-bold text-amber-800">⚠ 응급실 특이사항</p>
-            <ul className="space-y-1">
-              {hospital.realtime_messages.map((msg, i) => (
-                <li key={i} className="text-xs leading-relaxed text-amber-900">
-                  {msg}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
 
         <a
           href={kakaoDirectionsUrl(hospital.name, hospital.lat, hospital.lng)}
