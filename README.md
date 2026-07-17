@@ -96,7 +96,6 @@ python ai-model/run_integrated_policy_pipeline.py --offline
 프로젝트의 전체 폴더 트리 및 개별 파일들의 역할은 아래 문서에 상세히 주석과 함께 정리되어 있습니다.
 
 *   🗂️ **[프로젝트 파일 구조도 (Project Structure)](./docs/PROJECT_STRUCTURE.md)**: 디렉토리별 기능 명세서
-*   🛠️ **[통합 트러블슈팅 및 작업 보고서](./docs/03_Troubleshooting_and_Daily_Reports.md)**: 주요 장애 원인 및 해결 기록
 *   📊 **[모델 고도화 단계별 완료 보고서 (Step 1~7)](./docs/reports/accessibility_model_upgrade_step1_7_report_20260715.md)**: AI 알고리즘 개선 성과 기록
 
 ---
