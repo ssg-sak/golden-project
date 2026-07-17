@@ -2,6 +2,13 @@
 
 대구광역시 행정동별 응급의료 접근성과 보호가 필요한 인구를 함께 분석해, 응급환경 취약지를 지도와 데이터로 확인하는 프로젝트입니다. 일반 의료환경 전체가 아니라 응급실, 중증질환 수용 가능성, 야간·휴일 소아진료 공백에 초점을 둡니다.
 
+## 운영 화면과 공식 보고서
+
+- [GitHub Pages 서비스](https://ssg-sak.github.io/golden-project/#/)
+- [대구 골든타임 정책분석보고서 최종본](./data/reports/daegu-golden-time-policy-analysis-report.pdf)
+
+서비스의 `보고서` 버튼에서도 같은 최종본을 열 수 있습니다.
+
 ## 핵심 관점
 
 | 구분 | 내용 |
@@ -23,12 +30,22 @@
 
 - 현재 위치 기준 응급기관 목록과 지도 표시
 - 실시간 응급실 병상 정보와 병상 상태 배지
+- 병원 상세보기 상단에 의료진 부재, 진료 제한, 이송 문의 등 실시간 안내사항 표시
 - 차량 이동시간 보조 조회
 - 중앙응급의료센터 공식 중증질환 수용 가능 정보 표시
 - 심근경색, 뇌출혈, 외상/복부응급, 절단, 응급내시경, 중증화상, 야간·휴일 소아진료 필터
 - 달빛어린이병원을 일반 소아과와 분리해 응급실 부담 완화 자원으로 표시
 - 행정동 중심점에서 응급기관까지의 도로 이동시간 기반 접근성 분석
 - 새 거점 후보별 평균 이동 부담과 15분/30분 안 도착 비율 표시
+
+## 최근 개선 사항
+
+### 2026-07-17
+
+- 모바일 병원 상세보기에서 중요한 `실시간 안내사항`을 병상·장비 정보보다 먼저 확인할 수 있도록 정보 순서를 조정했습니다.
+- PC 정책 화면의 우측 상세 패널을 화면 높이에 맞추고, 패널 내부에서 독립적으로 스크롤되도록 수정해 하단의 불필요한 빈 공간을 제거했습니다.
+- 모바일과 PC 모두 동일한 `realtime_messages` 데이터를 사용하며, 화면 크기에 따라 의료 안내를 숨기지 않습니다.
+- 서비스의 `보고서` 버튼이 정책분석보고서 최종본을 열도록 반영했습니다.
 
 ## 중증·응급 상황 필터
 
@@ -117,6 +134,8 @@ python ai-model/run_integrated_policy_pipeline.py --offline
 
 ## 문서
 
+- [통합 트러블슈팅 및 일일 작업 보고서](./docs/03_Troubleshooting_and_Daily_Reports.md)
+- [대구 골든타임 정책분석보고서 최종본](./data/reports/daegu-golden-time-policy-analysis-report.pdf)
 - [중증질환 수용 가능 정보 반영 계획서](./docs/projects/severe-condition-acceptance-20260715/01_plan.md)
 - [중증질환 수용 가능 정보 반영 보고서](./docs/projects/severe-condition-acceptance-20260715/02_implementation_report.md)
 - [중증질환 수용 가능 정보 학습서](./docs/projects/severe-condition-acceptance-20260715/03_study_guide.md)
