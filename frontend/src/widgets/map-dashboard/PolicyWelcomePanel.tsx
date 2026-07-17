@@ -32,7 +32,7 @@ const examples = [
 
 export function PolicyWelcomePanel() {
   return (
-    <aside className="flex h-full flex-col overflow-y-auto border-l border-slate-300 bg-white">
+    <aside className="flex h-full min-h-0 flex-col overflow-y-auto border-l border-slate-300 bg-white">
       <header className="border-b-2 border-teal-800 bg-slate-50 px-5 py-5">
         <p className="text-xs font-bold text-teal-800">정책 분석 안내</p>
         <h2 className="mt-1 text-xl font-extrabold leading-snug text-slate-900">

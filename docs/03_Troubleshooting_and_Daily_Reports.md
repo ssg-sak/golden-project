@@ -3491,3 +3491,43 @@ Render 클라우드에 백엔드를 정상 배포하고 GitHub Secrets 연동까
 
 ### 💡 성과 및 교훈
 로컬에서 완벽하게 동작하더라도 클라우드 컨테이너 환경에서는 데이터 파일 누락(`.gitignore`), 경로 차이(`Dockerfile COPY`), 그리고 콜드 스타트 지연(Cold Start Timeout) 등 다양한 인프라 레벨의 변수가 존재함을 다시 한 번 증명하는 사례였습니다.
+
+---
+
+# PC 우측 상세 패널 하단 여백 트러블슈팅 (2026-07-17)
+
+## 문제 현상
+
+관리자 PC 화면에서 지도와 좌측 병원 목록은 아래로 계속 이어지지만, 우측의 `정책 분석 안내` 또는 병원 상세 패널만 화면 중간에서 끝나고 그 아래에 회색 빈 공간이 남았다. 우측 패널 내부에는 별도의 스크롤바가 표시되어 콘텐츠를 볼 수 있었지만, 패널 자체 높이가 지도 열보다 짧아 PC 3열 레이아웃의 균형이 깨졌다.
+
+## 원인 분석
+
+`DASHBOARD_DETAIL_COL_CLASS`에는 모바일 바텀시트 높이를 제한하기 위한 `max-h-[65dvh]`가 기본값으로 선언되어 있었다. 그러나 PC 브레이크포인트에서 데스크톱용 높이로 재정의하지 않아, 우측 열의 최대 높이가 뷰포트의 65%로 제한됐다.
+
+초기 대응에서 자식 패널의 `h-full`, `max-h-full`, `flex-1`만 조정했으나 최대 높이를 결정하는 상위 열의 `max-height`가 그대로였기 때문에 화면상 변화가 없었다. 이후 메인 영역에 `lg:min-h-dvh`를 부여한 시도와 PC에서 `lg:max-h-none`으로 제한을 완전히 해제한 시도는 우측 콘텐츠가 메인 행과 지도 높이까지 끌어내려 증상을 악화시켰으며 즉시 원복했다.
+
+## 최종 해결
+
+- `DASHBOARD_MAIN_CLASS`에 임시로 추가했던 `lg:min-h-dvh`를 제거했다.
+- `DASHBOARD_DETAIL_COL_CLASS`의 PC 높이와 최대 높이를 좌측 병원 목록과 동일한 `calc(100dvh - 8.5rem)` 기준으로 지정했다.
+- 모바일에서는 기존 `max-h-[65dvh]`를 유지하고, PC에서는 뷰포트 기준 고정 높이와 내부 스크롤을 사용한다.
+- PC 우측 열에 `self-start`, `sticky`, 공통 sticky 상단 기준을 적용해 콘텐츠가 메인 행 높이를 늘리지 않게 했다.
+- 우측 열과 내부 패널은 `flex`, `flex-1`, `min-h-0`, `overflow-hidden/auto`로 높이 및 내부 스크롤 체인을 유지했다.
+
+관련 파일:
+
+- `frontend/src/shared/constants/dashboard-layout.ts`
+- `frontend/src/widgets/app/AdminView.tsx`
+- `frontend/src/widgets/map-dashboard/PolicyWelcomePanel.tsx`
+
+## 검증 결과
+
+- `npm.cmd run build`: 성공
+- `npm.cmd test`: 테스트 파일 6개, 테스트 18개 전부 통과
+
+## 재발 방지
+
+1. 모바일 우선으로 선언한 `max-h`, `h`, `position`, `inset` 값은 PC 브레이크포인트에서 명시적으로 해제되는지 확인한다.
+2. 하단 여백이나 잘림 문제는 자식의 `height`를 먼저 바꾸기보다 가장 가까운 상위 요소부터 `height`, `max-height`, `align-stretch`, `overflow` 계산값을 추적한다.
+3. 공유 레이아웃 상수 수정 후 관리자·시민 화면과 모바일·PC 조합을 함께 확인한다.
+4. 화면 높이를 임의로 늘리는 수정은 전체 지도와 페이지 스크롤에 영향을 줄 수 있으므로 적용 전후 레이아웃 범위를 비교한다.

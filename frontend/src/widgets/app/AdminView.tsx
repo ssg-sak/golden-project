@@ -248,7 +248,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
         </div>
 
         <div
-          className={`${DASHBOARD_DETAIL_COL_CLASS} relative overflow-hidden hidden lg:block`}
+          className={`${DASHBOARD_DETAIL_COL_CLASS} relative hidden overflow-hidden lg:flex`}
         >
           <div
             className={`${DASHBOARD_DETAIL_INNER_CLASS} transition-transform duration-300 ease-in-out`}
