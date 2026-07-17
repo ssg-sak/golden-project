@@ -24,19 +24,6 @@ project/  # 최상위 프로젝트 루트
 |   |-- run_candidate_sensitivity_analysis.py  # AI/데이터 분석 파이썬 스크립트
 |   |-- run_integrated_policy_pipeline.py  # 통합 파이프라인 실행 유틸리티
 |   +-- visualize_stable_policy_candidates.py  # AI/데이터 분석 파이썬 스크립트
-|-- assets
-|   |-- daegu_vulnerability-BqOIXrXX.geojson
-|   |-- daegu_vulnerability-CeZcVQcv.geojson
-|   |-- index--saTqEni.js
-|   |-- index-BiIg6cxc.js
-|   |-- index-D4ajOlvz.css  # 스타일시트(CSS) 파일
-|   |-- index-DQJeRnK6.js
-|   |-- index-DWd1xlsD.js
-|   |-- index-DfKcvH3Z.css  # 스타일시트(CSS) 파일
-|   |-- index-HIHnLPtB.js
-|   |-- index-MYZJrJqE.js
-|   |-- index-jzh7RwMb.css  # 스타일시트(CSS) 파일
-|   +-- index-lxOrOx7W.css  # 스타일시트(CSS) 파일
 |-- backend  # FastAPI 기반 백엔드 서버 및 API 라우터
 |   |-- app  # 백엔드 애플리케이션 코어
 |   |   |-- api  # FastAPI 엔드포인트 라우터
@@ -431,18 +418,14 @@ project/  # 최상위 프로젝트 루트
 |-- .env.demo
 |-- .env.example
 |-- .gitignore
-|-- 404.html  # HTML 마크업 템플릿
 |-- AGENTS.md  # AI 개발 규칙 (코드 품질, 상태/뷰 분리 등 전역 규칙)
 |-- CODE_EXPLANATION.md  # 코드 베이스 전반의 흐름 및 로직 설명
 |-- Dockerfile  # 프로젝트 도커 이미지 빌드 파일
 |-- README.md  # 프로젝트 종합 소개 및 실행 가이드
 |-- docker-compose.yml  # 도커 기반 백엔드/인프라 실행 설정
 |-- golden_governance_clusters.png
-|-- index.html  # HTML 마크업 템플릿
 |-- package.json  # Node.js 프로젝트 의존성 및 스크립트 정의
-|-- runs.json  # 구조화된 JSON 데이터/설정 파일
 |-- tmp_hospitals.json  # 구조화된 JSON 데이터/설정 파일
-|-- tmp_rev_geo.py
 |-- update_db.py  # SQLite 데이터베이스 업데이트/마이그레이션 스크립트
 +-- 기획서.html  # HTML 마크업 템플릿
 ```
