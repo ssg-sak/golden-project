@@ -24,12 +24,16 @@ const TIER_MARKER: Record<HospitalTier, { fill: string; symbol: string; symbolCo
   3: { fill: '#ffc107', symbol: '★', symbolColor: '#f57f17', size: 30 },
 };
 
-export function markerImageForBedStatus(
-  status: 'available' | 'unavailable' | 'unknown',
+export function markerImageForBedReportStatus(
+  status: 'reported-bed-positive' | 'reported-bed-zero' | 'unknown',
   isSelected: boolean,
 ): KakaoMarkerImage {
   const fill =
-    status === 'available' ? '#16a34a' : status === 'unavailable' ? '#dc2626' : '#94a3b8';
+    status === 'reported-bed-positive'
+      ? '#16a34a'
+      : status === 'reported-bed-zero'
+        ? '#dc2626'
+        : '#94a3b8';
   const size = isSelected ? 38 : 30;
   const src = svgDataUrl(
     hospitalMarkerSvg(fill, size, '+', '#ffffff'),

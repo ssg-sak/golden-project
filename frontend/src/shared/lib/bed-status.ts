@@ -1,12 +1,12 @@
 import type { HospitalRecord } from '../types/hospital';
 import { hospitalAvailableBeds } from '../types/hospital';
 
-export type BedAvailabilityStatus = 'available' | 'unavailable' | 'unknown';
+export type BedReportStatus = 'reported-bed-positive' | 'reported-bed-zero' | 'unknown';
 
 export interface BedStatusInfo {
-  status: BedAvailabilityStatus;
+  status: BedReportStatus;
   congestion?: 'smooth' | 'moderate' | 'crowded';
-  /** 진료 가능 시 표시할 병상 수 */
+  /** 원천에서 보고된 일반응급실 가용 병상 수 */
   count?: number;
 }
 
@@ -21,9 +21,9 @@ export function resolveBedStatus(hospital: HospitalRecord): BedStatusInfo {
           ? hospital.hvec / hospital.total_hvec
           : null;
       const congestion = ratio === null ? 'smooth' : ratio >= 0.8 ? 'smooth' : ratio >= 0.5 ? 'moderate' : 'crowded';
-      return { status: 'available', count: hospital.hvec, congestion };
+      return { status: 'reported-bed-positive', count: hospital.hvec, congestion };
     }
-    return { status: 'unavailable' };
+    return { status: 'reported-bed-zero', count: 0 };
   }
 
   const beds = hospitalAvailableBeds(hospital);
@@ -31,20 +31,12 @@ export function resolveBedStatus(hospital: HospitalRecord): BedStatusInfo {
     return { status: 'unknown' };
   }
   if (beds > 0) {
-    return { status: 'available', count: beds };
+    return { status: 'reported-bed-positive', count: beds };
   }
-  return { status: 'unavailable' };
+  return { status: 'reported-bed-zero', count: 0 };
 }
 
-/** 지도·리스트 필터용 — 수용 불가로 확정된 경우만 true */
-export function isHospitalUnavailable(hospital: HospitalRecord): boolean {
-  return resolveBedStatus(hospital).status === 'unavailable';
-}
-
-export function isHospitalAvailable(hospital: HospitalRecord): boolean {
-  // 달빛어린이병원(Tier 3)은 응급실 병상 수가 없지만, 소아/야간 진료 기관이므로 '진료 가능' 필터에서 보이도록 예외 처리
-  if (hospital.tier === 3) return true;
-  
-  // Tier 1, 2 응급실은 실제 병상 수를 기반으로 진료 가능 여부 판별 (수용 불가면 필터링됨)
-  return resolveBedStatus(hospital).status === 'available';
+/** 지도·목록의 '응급병상 보유만' 필터용. 진료·수용 가능 여부를 뜻하지 않는다. */
+export function hasReportedGeneralErBed(hospital: HospitalRecord): boolean {
+  return resolveBedStatus(hospital).status === 'reported-bed-positive';
 }
