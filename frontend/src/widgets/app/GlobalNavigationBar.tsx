@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppModeStore, type ViewMode } from '../../shared/store/appModeStore';
 
 const NAV_ITEMS: { id: ViewMode; label: string; shortLabel: string }[] = [
-  { id: 'citizen', label: '시민 구조망', shortLabel: '시민' },
+  { id: 'citizen', label: '응급실 찾기', shortLabel: '시민' },
   { id: 'admin', label: '정책·분석 모니터링', shortLabel: '정책' },
 ];
 

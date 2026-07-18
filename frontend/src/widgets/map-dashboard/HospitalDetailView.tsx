@@ -59,7 +59,7 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
 
         {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
           <section className="rounded-2xl bg-amber-50 p-4 ring-1 ring-amber-200">
-            <p className="mb-2 text-xs font-bold text-amber-800">실시간 안내사항</p>
+            <p className="mb-2 text-xs font-bold text-amber-800">최근 조회 안내사항</p>
             <ul className="space-y-1">
               {hospital.realtime_messages.map((msg, i) => (
                 <li key={i} className="text-xs leading-relaxed text-amber-900">
@@ -86,7 +86,7 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
             <HospitalGranularBeds hospital={hospital} />
           ) : (
             <section className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
-              <p className="text-xs font-bold text-slate-600">실시간 병상 정보 없음</p>
+              <p className="text-xs font-bold text-slate-600">최근 조회 병상정보 없음</p>
               <p className="mt-2 text-xs leading-relaxed text-slate-500">
                 현재 병상 정보가 충분하지 않습니다. 실제 사용 가능 여부는 병원에 전화로 다시 확인해 주세요.
               </p>
@@ -102,7 +102,7 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
         </section>
 
         <p className="text-[10px] leading-relaxed text-slate-400">
-          실시간 상황은 119 또는 1339를 우선 확인해 주세요. 병원 운영 시간도 함께 확인하는 것이 안전합니다.
+          응급 상황은 119 또는 1339를 우선 확인해 주세요. 병원 운영 시간도 함께 확인하는 것이 안전합니다.
         </p>
       </div>
     </aside>

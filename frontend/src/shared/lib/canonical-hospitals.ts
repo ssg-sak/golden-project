@@ -8,7 +8,7 @@ const canonicalByName = new Map(canonicalHospitals.map((hospital) => [hospital.n
 
 /**
  * 서버별로 좌표가 달라도 지도·거리·길찾기는 검증된 기준 좌표를 사용한다.
- * 병상, 전화번호 등 실시간 필드는 서버 응답을 그대로 보존한다.
+ * 병상, 전화번호 등 최근 조회 필드는 서버 응답을 그대로 보존한다.
  */
 export function normalizeHospitalLocation(hospital: HospitalRecord): HospitalRecord {
   const canonical = canonicalByName.get(hospital.name.trim());

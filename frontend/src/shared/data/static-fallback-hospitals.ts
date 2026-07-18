@@ -5,7 +5,7 @@ type StaticHospitalRow = Pick<HospitalRecord, 'name' | 'lat' | 'lng' | 'tier' | 
 
 /**
  * API·네트워크 실패 시 Graceful Degradation용 내장 정적 병원 데이터.
- * 병상은 null — 「실시간 확인 중」만 표시 (허위 초록 병상 방지).
+ * 병상은 null — 「병상정보 미확인」만 표시 (허위 초록 병상 방지).
  */
 export const STATIC_FALLBACK_HOSPITAL_DATA: HospitalRecord[] = (
   getCanonicalHospitals() as StaticHospitalRow[]
