@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import sys
 from pathlib import Path
 
@@ -26,9 +25,9 @@ def test_policy_release_is_complete_and_uses_single_version():
     assert metadata["missing_route_count"] == 0
     assert metadata["population_base_month"] == "2026.06"
     assert len(metadata["population_source_sha256"]) == 64
-    assert metadata["population_manifest_sha256"] == hashlib.sha256(
-        build_policy_release.POPULATION_MANIFEST_PATH.read_bytes()
-    ).hexdigest()
+    assert metadata["population_manifest_sha256"] == build_policy_release.payload_hash(
+        build_policy_release.read_json(build_policy_release.POPULATION_MANIFEST_PATH)
+    )
     assert metadata["sensitivity_sha256"] == build_policy_release.payload_hash(
         build_policy_release.read_json(build_policy_release.SENSITIVITY_PATH)
     )

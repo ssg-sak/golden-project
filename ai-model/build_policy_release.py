@@ -208,7 +208,8 @@ def build_release() -> dict[str, Any]:
             "released_at": RELEASED_AT,
             "population_base_month": population_base_month,
             "population_source_sha256": str(population_manifest["source_sha256"]),
-            "population_manifest_sha256": file_hash(POPULATION_MANIFEST_PATH),
+            # JSON 의미 내용의 해시를 사용해 Git 줄바꿈 변환과 무관하게 재현한다.
+            "population_manifest_sha256": payload_hash(population_manifest),
             "district_count": len(vulnerability["features"]),
             "resource_count": len(hospitals),
             "resource_count_by_mode": resource_count_by_mode,
