@@ -26,14 +26,8 @@ export function AvailableBedsBadge({
   const ratio = typeof totalBeds === 'number' && totalBeds > 0 ? availableBeds / totalBeds : null;
   const congestion = isEmpty ? 'empty' : ratio === null ? 'unknown' : ratio >= 0.8 ? 'smooth' : ratio >= 0.5 ? 'moderate' : 'crowded';
   const label = congestion === 'empty'
-    ? '빈자리 없음'
-    : congestion === 'smooth'
-      ? `원활 · ${availableBeds}개`
-      : congestion === 'moderate'
-        ? `지연 · ${availableBeds}개`
-        : congestion === 'crowded'
-          ? `혼잡 · ${availableBeds}개`
-          : `빈자리: ${availableBeds}개`;
+    ? '가용병상 0 보고'
+    : `가용병상 ${availableBeds}개 보고`;
 
   const toneClass =
     variant === 'inverse'
@@ -55,7 +49,9 @@ export function AvailableBedsBadge({
   return (
     <span
       className={`inline-flex shrink-0 items-center rounded-full font-bold ring-1 ${SIZE_CLASS[size]} ${toneClass} ${className}`}
-      title={ratio === null ? '일반응급실 가용 병상 수' : `일반응급실 가용률 ${Math.round(ratio * 100)}%`}
+      title={ratio === null
+        ? '조회된 일반응급실 가용 병상 보고값'
+        : `조회된 일반응급실 가용 병상 비율 ${Math.round(ratio * 100)}% · 진료·수용 가능을 보장하지 않음`}
     >
       {label}
     </span>

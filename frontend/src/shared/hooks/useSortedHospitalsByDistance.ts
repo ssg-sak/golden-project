@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 
 import { filterByCareTarget } from '../../widgets/map-dashboard/lib/hospital-filter';
-import { isHospitalAvailable } from '../lib/bed-status';
+import { hasReportedGeneralErBed } from '../lib/bed-status';
 import { calculateDistance, type HospitalWithDistance } from '../lib/distance';
 import { compareHospitalRecommendations } from '../lib/hospital-recommendation';
 import type { SevereConditionId } from '../lib/severe-condition';
 import type { HospitalRecord } from '../types/hospital';
 
 export interface UseSortedHospitalsOptions {
-  /** true면 진료 가능(병상 ≥ 1) 병원만 */
+  /** true면 일반응급실 가용 병상이 1개 이상 보고된 기관만 */
   availableOnly?: boolean;
   /** 시민 진료 대상 필터 */
   careTarget?: 'all' | 'adult' | 'pediatric' | 'senior';
@@ -41,9 +41,9 @@ export function useSortedHospitalsByDistance(
     // 1) 진료대상 필터
     let filtered = filterByCareTarget(hospitals, careTarget, severeCondition);
 
-    // 2) 가용성 필터
+    // 2) 일반응급실 가용 병상 보고 필터
     if (availableOnly) {
-      filtered = filtered.filter((h) => isHospitalAvailable(h));
+      filtered = filtered.filter((h) => hasReportedGeneralErBed(h));
     }
 
     // 3) 거리 계산 및 정렬

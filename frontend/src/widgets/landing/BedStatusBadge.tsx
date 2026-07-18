@@ -11,13 +11,13 @@ export function BedStatusBadge({ hospital }: BedStatusBadgeProps) {
   const totalBeds = hospitalTotalBeds(hospital);
   const totalBedsInvalid = hospitalTotalBedsIsInvalid(hospital);
 
-  if (status === 'available' && count !== undefined) {
+  if (status === 'reported-bed-positive' && count !== undefined) {
     return (
-      <div className="flex flex-col items-end" title="현재 응급구역에 당장 수용 가능한 빈 베드 수입니다. (전체 입원실 아님)">
-        <span className="text-[10px] font-bold text-emerald-600 sm:text-xs">응급실 빈자리</span>
+      <div className="flex flex-col items-end" title="조회된 일반응급실 가용 병상 보고값이며 특정 환자의 진료·수용 가능을 보장하지 않습니다.">
+        <span className="text-[10px] font-bold text-emerald-600 sm:text-xs">가용병상 보고</span>
         <span className="inline-flex items-baseline gap-1 text-emerald-700">
           <span className="text-2xl font-black leading-none sm:text-3xl">{count}</span>
-          <span className="text-sm font-bold">개 가용</span>
+          <span className="text-sm font-bold">개</span>
         </span>
         {totalBeds !== undefined && (
           <span className="text-[10px] text-slate-400">전체 {totalBeds}개 중</span>
@@ -29,15 +29,15 @@ export function BedStatusBadge({ hospital }: BedStatusBadgeProps) {
     );
   }
 
-  if (status === 'unavailable') {
+  if (status === 'reported-bed-zero') {
     return (
-      <div className="flex flex-col items-end" title="현재 응급구역에 수용 가능한 베드가 없습니다.">
-        <span className="text-[10px] font-bold text-rose-600 sm:text-xs">응급실 빈자리</span>
+      <div className="flex flex-col items-end" title="조회된 일반응급실 가용 병상 보고값이 0이며 병원 전체의 실제 수용 상태를 뜻하지 않습니다.">
+        <span className="text-[10px] font-bold text-rose-600 sm:text-xs">가용병상 보고</span>
         <span className="inline-flex items-baseline gap-1 text-rose-700">
           <span className="text-2xl font-black leading-none sm:text-3xl">0</span>
           <span className="text-sm font-bold">개</span>
         </span>
-        <span className="mt-0.5 text-[10px] font-bold text-rose-500">수용 불가</span>
+        <span className="mt-0.5 text-[10px] font-bold text-rose-500">0개 보고</span>
         {totalBeds !== undefined && (
           <span className="text-[10px] text-slate-400">전체 {totalBeds}개 중</span>
         )}

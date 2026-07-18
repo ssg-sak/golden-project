@@ -17,20 +17,20 @@ export function HospitalMarkerOverlay({
   isSelected,
   onSelect,
 }: HospitalMarkerOverlayProps) {
-  const { status, congestion } = resolveBedStatus(hospital);
+  const { status, count, congestion } = resolveBedStatus(hospital);
   const isMoonlight = isMoonlightHospital(hospital);
-  const isCrowded = status === 'unavailable' || congestion === 'crowded';
+  const isCrowded = status === 'reported-bed-zero' || congestion === 'crowded';
   const isModerate = congestion === 'moderate';
   const statusLabel =
-    status === 'unavailable'
-      ? '일반 응급실 병상 없음'
+    status === 'reported-bed-zero'
+      ? '일반응급실 가용병상 0 보고'
       : congestion === 'crowded'
         ? '혼잡'
         : congestion === 'moderate'
           ? '보통'
-          : status === 'available'
-            ? '여유'
-            : '확인 중';
+          : status === 'reported-bed-positive'
+            ? `일반응급실 가용병상 ${count ?? 1}개 이상 보고`
+            : '일반응급실 병상정보 미확인';
   const ariaLabel = isMoonlight
     ? `${hospital.name} 야간·휴일 소아진료 기관`
     : `${hospital.name} ${statusLabel}`;
@@ -42,7 +42,7 @@ export function HospitalMarkerOverlay({
         ? 'border-rose-500 ring-rose-200'
         : isModerate
           ? 'border-amber-500 ring-amber-200'
-          : status === 'available'
+          : status === 'reported-bed-positive'
             ? 'border-emerald-500 ring-emerald-200'
             : 'border-slate-400 ring-slate-200';
 
@@ -53,7 +53,7 @@ export function HospitalMarkerOverlay({
         ? 'ring-rose-500'
         : isModerate
           ? 'ring-amber-500'
-          : status === 'available'
+          : status === 'reported-bed-positive'
             ? 'ring-emerald-500'
             : 'ring-slate-500';
 
@@ -64,7 +64,7 @@ export function HospitalMarkerOverlay({
         ? 'bg-rose-500'
         : isModerate
           ? 'bg-amber-500'
-          : status === 'available'
+          : status === 'reported-bed-positive'
             ? 'bg-emerald-500'
             : 'bg-slate-400';
 

@@ -119,7 +119,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
             isRetrying={hospitalsLoading}
             message={
               hospitalsDegradedMode === 'stale-cache'
-                ? '네트워크 문제로 이전에 불러온 병원 정보를 표시 중입니다. 병상 수는 최신이 아닐 수 있습니다.'
+                ? '원천 갱신 지연 또는 오류로 이전 병원 정보를 표시 중입니다. 병상 수는 최신이 아닐 수 있습니다.'
                 : '실시간 병상 정보를 확인하지 못해 기본 병원 목록을 표시 중입니다. 거리·전화·길찾기를 우선 참고해 주세요.'
             }
             onRetry={onRetryHospitals}
@@ -135,7 +135,7 @@ export function CitizenView({ kakao, onRetryHospitals }: CitizenViewProps) {
             isRetrying={hospitalsLoading}
             message={
               hospitalsDegradedMode === 'stale-cache'
-                ? '네트워크 문제로 이전 병원 정보를 표시 중입니다. 병상 수는 최신이 아닐 수 있습니다.'
+                ? '원천 갱신 지연 또는 오류로 이전 병원 정보를 표시 중입니다. 병상 수는 최신이 아닐 수 있습니다.'
                 : '실시간 병상을 확인하지 못해 기본 병원 목록을 표시 중입니다.'
             }
             onRetry={onRetryHospitals}
