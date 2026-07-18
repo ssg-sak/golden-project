@@ -6,7 +6,7 @@ interface DegradedDataBannerProps {
 }
 
 const DEFAULT_MESSAGE =
-  '실시간 병상 정보를 확인하지 못했습니다. 거리·전화·길찾기만 참고해 주세요.';
+  '최근 조회 병상정보를 확인하지 못했습니다. 거리·전화·길찾기만 참고해 주세요.';
 
 /** 서킷 브레이커·오프라인 폴백 시 시민·정책 공통 안내 */
 export function DegradedDataBanner({

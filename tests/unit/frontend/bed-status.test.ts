@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  bedReportMarkerTone,
   hasReportedGeneralErBed,
   resolveBedStatus,
 } from '../../../frontend/src/shared/lib/bed-status';
@@ -61,5 +62,13 @@ describe('resolveBedStatus', () => {
     expect(
       filterByCareTarget([moonlight], 'pediatric', 'pediatric_night_holiday'),
     ).toEqual([moonlight]);
+  });
+
+  it('지도 마커 색상 계약이 0과 양수 저비율을 구분한다', () => {
+    expect(bedReportMarkerTone({ ...base, hvec: 0, total_hvec: 10 })).toBe('zero');
+    expect(bedReportMarkerTone({ ...base, hvec: 2, total_hvec: 10 })).toBe('low-or-medium');
+    expect(bedReportMarkerTone({ ...base, hvec: 8, total_hvec: 10 })).toBe('positive');
+    expect(bedReportMarkerTone({ ...base, hvec: null })).toBe('unknown');
+    expect(bedReportMarkerTone({ ...base, tier: 3, is_moonlight: true })).toBe('moonlight');
   });
 });
