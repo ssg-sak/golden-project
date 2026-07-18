@@ -78,6 +78,16 @@ def download_daegu_geojson(dest: Path) -> gpd.GeoDataFrame:
     if not features:
         raise RuntimeError(f"{SIDO_NAME} 행정동을 찾지 못했습니다.")
 
+    deduped_features = {}
+    for feature in features:
+        properties = feature.get("properties", {})
+        key = str(properties.get("adm_nm") or properties.get("adm_cd") or "")
+        if key and key not in deduped_features:
+            deduped_features[key] = feature
+    if len(deduped_features) != len(features):
+        print(f"      deduped admin features: {len(features)} -> {len(deduped_features)}")
+    features = list(deduped_features.values())
+
     collection = {"type": "FeatureCollection", "features": features}
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(collection, ensure_ascii=False), encoding="utf-8")
@@ -171,7 +181,7 @@ def compute_distances_and_index(
     metric_gdf["nearest_hospital_address"] = nearest_addresses
 
     print("[4/4] vulnerability_index 산출")
-    print("      검증된 공식 적용 (Log-Scale & Min-Max Norm 두 가지 모두 도출)")
+    print("      설정된 공식 적용 (Log-Scale & Min-Max Norm 두 가지 모두 도출)")
     
     # 모델 1: Log-Scale 모델 (프론트엔드의 기존 15000, 30000 임계치 스케일과 가장 잘 맞음)
     metric_gdf["vdi_log"] = (

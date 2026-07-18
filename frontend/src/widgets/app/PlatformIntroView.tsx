@@ -53,7 +53,7 @@ export function PlatformIntroView() {
     <div className={`h-full w-full bg-[#f4f6f7] text-slate-900 selection:bg-teal-100 ${MOBILE_SCROLL_Y_CLASS}`}>
       <div className="border-b border-slate-300 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 text-xs text-slate-600 md:px-8">
-          <p>대구 응급의료 접근성 안내</p>
+          <p>대구 골든타임 서비스 소개</p>
           <button
             type="button"
             onClick={() => window.print()}
@@ -66,14 +66,14 @@ export function PlatformIntroView() {
 
       <header className="border-b-4 border-teal-700 bg-[#123c4a] text-white">
         <div className="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
-          <p className="mb-4 text-sm font-bold tracking-[0.18em] text-teal-200">대구 골든타임 서비스 안내</p>
+          <p className="mb-4 text-sm font-bold tracking-[0.18em] text-teal-200">대구 골든타임</p>
           <h1 className="max-w-4xl text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">
-            가까운 병원만이 아니라
-            <br className="hidden md:block" /> 지금 받을 수 있는 응급 자원을 봅니다
+            시민의 응급의료 탐색과
+            <br className="hidden md:block" /> 지역 의료 사각지대 분석을 한곳에
           </h1>
           <p className="mt-6 max-w-3xl border-l-4 border-teal-300 pl-5 text-base leading-7 text-slate-100 md:text-lg">
-            이 서비스는 시민이 응급기관을 빠르게 확인하고, 지역 관계자가 응급의료 공백을 함께 논의할 수 있도록 만든
-            응급의료 정보 서비스입니다.
+            시민용 응급의료 서비스는 가까운 기관과 병상·전화·길찾기 정보를 제공하고, 골든 거버넌스는
+            인구 수요와 의료 접근성을 분석해 우선 검토할 지역과 자원배치 후보를 보여줍니다.
           </p>
         </div>
       </header>
@@ -143,10 +143,10 @@ export function PlatformIntroView() {
 
         <section className="mt-12 border border-slate-300 bg-white">
           <div className="border-b-2 border-teal-800 px-6 py-5">
-            <p className="text-sm font-bold text-teal-800">정책 화면 안내</p>
-            <h2 className="mt-1 text-2xl font-extrabold">지역이 함께 읽는 응급의료 지도입니다</h2>
+            <p className="text-sm font-bold text-teal-800">골든 거버넌스</p>
+            <h2 className="mt-1 text-2xl font-extrabold">의료 사각지대와 자원배치 우선지역을 살펴봅니다</h2>
             <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-600">
-              정책 화면은 인구 수만 보는 관리 화면이 아닙니다. 시민과 지역 관계자가 같은 근거를 보고 대화하기 위한 화면입니다.
+              대구 행정동의 소아·고령층 수요, 응급기관 접근성, 거리와 이동 부담을 함께 보는 정책분석 화면입니다.
             </p>
           </div>
           <div className="grid divide-y divide-slate-300 md:grid-cols-3 md:divide-x md:divide-y-0">
@@ -175,15 +175,11 @@ export function PlatformIntroView() {
               </div>
             ))}
           </div>
-          <div className="border-t border-slate-200 bg-slate-50 px-6 py-4">
-            <a
-              href="/data/reports/daegu-golden-time-policy-analysis-report.pdf"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex rounded-full bg-teal-800 px-4 py-2 text-xs font-bold text-white hover:bg-teal-900"
-            >
-              정책 분석 보고서 열기
-            </a>
+          <div className="border-t border-slate-200 bg-emerald-50 px-6 py-4">
+            <strong className="text-sm text-emerald-900">현재 정책 화면은 25개 기관 기준입니다.</strong>
+            <p className="mt-2 text-xs leading-5 text-emerald-800">
+              150개 행정동, 소아 6개·어르신 19개 기관, 5,100개 도로 경로를 동일한 분석 버전으로 제공합니다.
+            </p>
           </div>
         </section>
       </main>
@@ -191,7 +187,7 @@ export function PlatformIntroView() {
       <footer className="border-t border-slate-300 bg-[#e9edef]">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-slate-600 md:px-8">
           <strong className="text-slate-900">대구 골든타임</strong>
-          <p>응급의료 이용과 지역 응급의료 논의를 돕는 정보 서비스</p>
+          <p>시민용 응급의료 탐색과 골든 거버넌스 정책분석을 함께 제공하는 서비스</p>
           <p className="mt-2 text-xs text-slate-500">실제 응급상황에서는 즉시 119에 연락하세요.</p>
         </div>
       </footer>

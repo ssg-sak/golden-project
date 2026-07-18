@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+import json
+from datetime import datetime, timedelta, timezone
+
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta, timezone
 
 from app.core.env import data_refresh_admin_token
 from app.db.database import get_db
 from app.db.models import DashboardSnapshot, DataSourceStatus
 from app.services.analysis_metrics import format_change_text
 from app.services.data_seed import ensure_seeded
-from app.services.pipeline import run_data_pipeline
+from app.services.pipeline import ACTUAL_ROAD_MATRIX_PATH, run_data_pipeline
 
 router = APIRouter(tags=["dashboard"])
 
@@ -135,6 +137,28 @@ def get_data_status(db: Session = Depends(get_db)) -> dict:
     ensure_seeded(db)
     statuses = db.query(DataSourceStatus).all()
     latest_snapshot = db.query(DashboardSnapshot).order_by(DashboardSnapshot.generated_at.desc()).first()
+    latest_snapshot_at = _ensure_utc(latest_snapshot.generated_at) if latest_snapshot else None
+    source_updated_at = max(
+        (
+            _ensure_utc(status.last_updated_at)
+            for status in statuses
+            if status.source_name
+            in {"sgis_admin_dong", "emergency_facilities", "moonlight_pediatric", "population"}
+            and status.last_updated_at
+        ),
+        default=None,
+    )
+    analysis_pending = latest_snapshot_at is None or (
+        source_updated_at is not None and source_updated_at > latest_snapshot_at
+    )
+    analysis_metadata = {}
+    if ACTUAL_ROAD_MATRIX_PATH.exists():
+        try:
+            analysis_metadata = json.loads(
+                ACTUAL_ROAD_MATRIX_PATH.read_text(encoding="utf-8")
+            ).get("metadata", {})
+        except (json.JSONDecodeError, OSError):
+            analysis_metadata = {}
     return {
         "sources": [
             {
@@ -148,7 +172,16 @@ def get_data_status(db: Session = Depends(get_db)) -> dict:
             }
             for s in statuses
         ],
-        "latestSnapshotAt": latest_snapshot.generated_at.isoformat() if latest_snapshot else None,
+        "latestSnapshotAt": latest_snapshot_at.isoformat() if latest_snapshot_at else None,
+        "analysis": {
+            "version": analysis_metadata.get("version"),
+            "resourceCount": analysis_metadata.get("resource_count"),
+            "resourceCountByMode": analysis_metadata.get("resource_count_by_mode", {}),
+            "requestedRouteCount": analysis_metadata.get("requested_route_count"),
+            "successfulRouteCount": analysis_metadata.get("successful_route_count"),
+            "missingRouteCount": analysis_metadata.get("missing_route_count"),
+            "pending": analysis_pending,
+        },
     }
 
 
@@ -173,12 +206,21 @@ async def force_refresh_dashboard(
                 "snapshotCreated": result.snapshot_created,
             },
         )
+    if result.error == "analysis_failed":
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "message": "Data refresh completed, but analysis validation failed",
+                "snapshotCreated": False,
+            },
+        )
     return {
         "message": "Data pipeline executed",
         "adminChanged": result.admin_changed,
         "hospitalsChanged": result.hospitals_changed,
         "populationChanged": result.population_changed,
         "analysisRerun": result.analysis_rerun,
+        "analysisPending": result.analysis_pending,
         "snapshotCreated": result.snapshot_created,
         "baseMonth": result.base_month,
     }

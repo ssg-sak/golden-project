@@ -100,6 +100,25 @@ export function DashboardStatsBar({
           ))}
         </dl>
 
+        <div
+          className="flex flex-wrap items-center gap-1.5 border-t border-slate-200 py-2 text-[10px] font-bold sm:text-[11px]"
+          aria-label="데이터 갱신 주기"
+        >
+          <span className="mr-1 text-slate-500">데이터 갱신 기준</span>
+          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-900 ring-1 ring-amber-200">
+            병상 변동 가능
+          </span>
+          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-800 ring-1 ring-blue-200">
+            인구 월간 기준
+          </span>
+          <span className="rounded-full bg-violet-50 px-2.5 py-1 text-violet-800 ring-1 ring-violet-200">
+            정책 분석 기준본
+          </span>
+          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-900 ring-1 ring-amber-200">
+            후보지·정책결과 수동 재분석
+          </span>
+        </div>
+
         <p className="border-t border-slate-200 pt-2 text-[11px] text-slate-500">
           병원 {formatUpdatedAt(hospitalsUpdatedAt)} 갱신 · 분석 {formatUpdatedAt(vulnerabilityUpdatedAt)} 갱신
           {dataStale ? ' · 최신 자료 확인이 지연되어 저장된 자료를 표시 중' : ''}
