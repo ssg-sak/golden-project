@@ -1,0 +1,3 @@
+# 정책 릴리스 manifest는 이 원본 CSV의 바이트 SHA-256을 검증한다.
+# 플랫폼별 줄바꿈 변환으로 해시가 달라지지 않도록 검증 당시 바이트를 그대로 보존한다.
+data/raw/population/daegu_population_real.csv binary
