@@ -45,7 +45,11 @@ function MobileMapLegend() {
     >
       <span className="flex items-center gap-1 text-green-700">
         <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
-        가용병상 1개 이상 보고
+        가용병상 양수 보고
+      </span>
+      <span className="flex items-center gap-1 text-orange-700">
+        <span className="h-2 w-2 rounded-full bg-orange-500" aria-hidden />
+        양수 보고·비율 낮음/중간
       </span>
       <span className="flex items-center gap-1 text-red-700">
         <span className="h-2 w-2 rounded-full bg-red-500" aria-hidden />
@@ -54,6 +58,14 @@ function MobileMapLegend() {
       <span className="flex items-center gap-1 text-blue-700">
         <span className="h-2 w-2 rounded-full bg-blue-500" aria-hidden />
         내 위치
+      </span>
+      <span className="flex items-center gap-1 text-slate-600">
+        <span className="h-2 w-2 rounded-full bg-slate-400" aria-hidden />
+        병상정보 미확인
+      </span>
+      <span className="flex items-center gap-1 text-cyan-700">
+        <span className="h-2 w-2 rounded-full bg-cyan-500" aria-hidden />
+        야간·휴일 소아진료
       </span>
     </div>
   );

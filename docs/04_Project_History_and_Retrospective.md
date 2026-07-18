@@ -1,5 +1,6 @@
 # Project History and Retrospective
 
+> **⚠️ 현재 구현과 다른 과거 기록 (2026-07-18):** 이 문서는 기획 변경, 회고, 향후 제안의 작성 당시 상태를 보존합니다. 본문의 과거 수치·기능명·정책 표현은 현행 구현 또는 확정 정책을 의미하지 않습니다. 현재 검증본과 분석 한계는 `README.md`, `docs/EDA_REPORT.md`, `docs/methodology.md`를 우선해 확인하세요.
 
 
 ---

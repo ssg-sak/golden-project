@@ -1,5 +1,5 @@
 import type { HospitalRecord } from '../types/hospital';
-import { hospitalAvailableBeds } from '../types/hospital';
+import { hospitalAvailableBeds, isMoonlightHospital } from '../types/hospital';
 
 export type BedReportStatus = 'reported-bed-positive' | 'reported-bed-zero' | 'unknown';
 
@@ -36,7 +36,24 @@ export function resolveBedStatus(hospital: HospitalRecord): BedStatusInfo {
   return { status: 'reported-bed-zero', count: 0 };
 }
 
+export type BedReportMarkerTone =
+  | 'moonlight'
+  | 'positive'
+  | 'low-or-medium'
+  | 'zero'
+  | 'unknown';
+
 /** 지도·목록의 '응급병상 보유만' 필터용. 진료·수용 가능 여부를 뜻하지 않는다. */
 export function hasReportedGeneralErBed(hospital: HospitalRecord): boolean {
   return resolveBedStatus(hospital).status === 'reported-bed-positive';
+}
+
+/** 지도 범례와 마커 색상이 같은 의미 계약을 사용하도록 중앙화한다. */
+export function bedReportMarkerTone(hospital: HospitalRecord): BedReportMarkerTone {
+  if (isMoonlightHospital(hospital)) return 'moonlight';
+  const { status, congestion } = resolveBedStatus(hospital);
+  if (status === 'reported-bed-zero') return 'zero';
+  if (status === 'unknown') return 'unknown';
+  if (congestion === 'crowded' || congestion === 'moderate') return 'low-or-medium';
+  return 'positive';
 }

@@ -183,7 +183,7 @@ function HospitalDetailContent({
         hospital.realtime_source === 'mock' ||
         hospital.available_beds === null) ? (
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900 ring-1 ring-amber-200">
-            병상 수치는 실시간 확인되지 않았습니다. 도착 전 119·1339·병원으로 재확인하세요.
+            최근 조회 병상정보가 확인되지 않았습니다. 도착 전 119·1339·병원으로 재확인하세요.
           </p>
         ) : null}
 
