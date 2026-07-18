@@ -55,7 +55,7 @@ export function useAdminController() {
 
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [selectedHospital, setSelectedHospital] = useState<HospitalRecord | null>(null);
-  const [riskThreshold, setRiskThreshold] = useState(10000);
+  const [riskThreshold, setRiskThreshold] = useState(0);
 
   useEffect(() => {
     if (policyRelease) setRiskThreshold(policyRelease.metadata.risk_threshold);
@@ -151,8 +151,8 @@ export function useAdminController() {
     if (policyReleaseError || (!policyRelease && !policyReleaseLoading)) {
       return {
         tone: 'danger' as const,
-        message: policyReleaseError ?? '검증된 정책 분석 릴리스를 불러오지 못했습니다.',
-        actionLabel: '정책 릴리스 다시 조회',
+        message: policyReleaseError ?? '검증된 정책 분석 결과를 불러오지 못했습니다.',
+        actionLabel: '정책 분석 다시 조회',
         onAction: (): void => { void fetchPolicyRelease(); },
         actionLoading: policyReleaseLoading,
       };
@@ -197,7 +197,7 @@ export function useAdminController() {
     vulnerabilityError: policyReleaseError,
     vulnerabilityUpdatedAt: useDynamicDashboard
       ? (dashboardSummary?.status.lastUpdatedAt ?? dashboardFetchedAt)
-      : vulnerabilityUpdatedAt,
+      : (policyRelease?.metadata.released_at ?? vulnerabilityUpdatedAt),
     currentMode,
     setOptimalMode,
     selectedDistrict,
@@ -220,7 +220,7 @@ export function useAdminController() {
     tier2Count,
     tier3Count,
     populationBaseMonth: policyRelease?.metadata.population_base_month ?? '확인 중',
-    dataStale: false,
+    dataStale: useDynamicDashboard ? (dashboardSummary?.status.stale ?? true) : false,
     useDynamicDashboard,
   };
 }

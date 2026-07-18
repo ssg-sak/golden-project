@@ -32,5 +32,5 @@ class TTLCache:
         async with self._lock:
             self._cache.clear()
 
-# 글로벌 캐시 인스턴스 (예: HIRA API 등 범용 데이터 로드용)
+# 외부 공공 API 응답에 공통으로 사용할 수 있는 글로벌 캐시 인스턴스
 global_cache = TTLCache(ttl_seconds=600)  # 기본 10분 TTL

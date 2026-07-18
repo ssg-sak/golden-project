@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import asyncio
 import logging
+import time
 
 try:
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -19,6 +20,8 @@ scheduler = AsyncIOScheduler() if AsyncIOScheduler is not None else None
 
 
 async def _run_target(target: str) -> None:
+    started_at = time.perf_counter()
+    logger.info("Scheduled job '%s' started", target)
     db = SessionLocal()
     try:
         result = await run_data_pipeline(db, targets={target})
@@ -29,8 +32,26 @@ async def _run_target(target: str) -> None:
                 result.error,
                 result.failed_sources or [],
             )
+        else:
+            logger.info(
+                "Scheduled job '%s' succeeded duration_sec=%.2f "
+                "admin_changed=%s hospitals_changed=%s population_changed=%s "
+                "analysis_pending=%s snapshot_created=%s",
+                target,
+                time.perf_counter() - started_at,
+                result.admin_changed,
+                result.hospitals_changed,
+                result.population_changed,
+                result.analysis_pending,
+                result.snapshot_created,
+            )
     except Exception as exc:
-        logger.error("Scheduled job '%s' failed: %s", target, exc)
+        logger.error(
+            "Scheduled job '%s' failed duration_sec=%.2f error=%s",
+            target,
+            time.perf_counter() - started_at,
+            exc,
+        )
     finally:
         db.close()
 
@@ -51,24 +72,36 @@ def start_public_data_scheduler() -> None:
         CronTrigger(hour=3, minute=0, timezone=tz),
         id="refresh_emergency",
         replace_existing=True,
+        coalesce=True,
+        max_instances=1,
+        misfire_grace_time=3600,
     )
     scheduler.add_job(
         lambda: asyncio.create_task(_run_target("moonlight")),
         CronTrigger(hour=3, minute=15, timezone=tz),
         id="refresh_moonlight",
         replace_existing=True,
+        coalesce=True,
+        max_instances=1,
+        misfire_grace_time=3600,
     )
     scheduler.add_job(
         lambda: asyncio.create_task(_run_target("population")),
-        CronTrigger(hour=4, minute=0, timezone=tz),
+        CronTrigger(day=10, hour=4, minute=0, timezone=tz),
         id="refresh_population",
         replace_existing=True,
+        coalesce=True,
+        max_instances=1,
+        misfire_grace_time=86400,
     )
     scheduler.add_job(
         lambda: asyncio.create_task(_run_target("admin-boundary")),
         CronTrigger(day=1, hour=5, minute=0, timezone=tz),
         id="refresh_admin_boundary",
         replace_existing=True,
+        coalesce=True,
+        max_instances=1,
+        misfire_grace_time=86400,
     )
 
     if scheduler is not None and not scheduler.running:

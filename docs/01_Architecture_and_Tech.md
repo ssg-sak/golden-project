@@ -1,5 +1,6 @@
 # Architecture and Tech
 
+> **보관 문서 안내 (2026-07-18):** 이 문서는 과거 개발 기록을 합친 자료라 제거된 HIRA 연동·자원추천·구형 24개 기관 산출물의 파일명이 남아 있습니다. 현재 운영 구조는 `README.md`, `docs/PROJECT_STRUCTURE.md`, `ai-model/run_integrated_policy_pipeline.py`를 기준으로 확인하세요.
 
 
 ---

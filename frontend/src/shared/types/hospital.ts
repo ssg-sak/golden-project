@@ -38,7 +38,7 @@ export interface HospitalRecord {
     { available: number | null; total: number | null; is_available?: boolean | null }
   > | null;
 
-  // --- HIRA API Data ---
+  // --- 정적 병원·달빛어린이병원 보조 정보 ---
   /** 병원 운영 시간 */
   operating_hours?: string;
   /** 전문의 등 의료진 수 */
@@ -47,16 +47,6 @@ export interface HospitalRecord {
   equipment_status?: Record<string, boolean>;
   /** 국립중앙의료원 응급 핵심장비 현재 가용 여부 */
   emergency_equipment_status?: Record<string, boolean>;
-  /** 심평원 지정/안내 특이사항 (예: 달빛어린이병원 지정, 등급 등) */
-  hira_notices?: string[];
-  /** api일 때만 실제 HIRA 응답에서 취득한 값 */
-  hira_source?: 'api';
-  /** 심평원 자료 기준 시점. 예: 2026.03 */
-  hira_reference_date?: string;
-  /** HIRA 장비 상세 조회 상태 */
-  hira_equipment_status?: 'ok' | 'failed' | 'snapshot' | 'not_requested';
-  /** HIRA 장비 상세 조회 실패 또는 폴백 안내 */
-  hira_equipment_message?: string;
   /** Night/holiday pediatric clinic designated for the Moonlight program. */
   is_moonlight?: boolean;
   /** Pediatric-capable facility flag. General pediatric clinics are not emergency anchors by default. */

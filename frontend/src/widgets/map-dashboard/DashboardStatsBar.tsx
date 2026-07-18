@@ -53,7 +53,7 @@ export function DashboardStatsBar({
     {
       label: '위험 높은 동네',
       metric: formatMetric(highRiskDistrictCount, loading),
-      detail: `위험 점수 ${Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')} 이상`,
+      detail: `상위 25% 상대 경계 ${Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}`,
     },
     {
       label: '인구 기준',
@@ -77,13 +77,13 @@ export function DashboardStatsBar({
           </div>
           <div className="flex flex-wrap gap-2 text-[11px] font-bold">
             <span className="rounded-md bg-red-50 px-2.5 py-1 text-red-700 ring-1 ring-red-200">
-              매우 높음 10,000+
+              상위 25% 우선 확인
             </span>
-            <span className="rounded-md bg-orange-50 px-2.5 py-1 text-orange-700 ring-1 ring-orange-200">
-              높음 5,000+
+            <span className="rounded-md bg-blue-50 px-2.5 py-1 text-blue-800 ring-1 ring-blue-200">
+              상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}
             </span>
-            <span className="rounded-md bg-amber-50 px-2.5 py-1 text-amber-700 ring-1 ring-amber-200">
-              관찰 1,500+
+            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-slate-700 ring-1 ring-slate-200">
+              절대 의료 기준 아님
             </span>
           </div>
         </div>

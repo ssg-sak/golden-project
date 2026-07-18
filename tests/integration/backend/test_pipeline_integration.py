@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from app.db.database import Base
 from app.services.data_seed import ensure_seeded
 from app.db.models import PopulationSnapshot
-from app.services.pipeline import _export_population_csv, run_data_pipeline
+from app.services.pipeline import _export_population_csv, _restore_file, run_data_pipeline
 
 
 @pytest.fixture()
@@ -40,6 +40,7 @@ def test_seed_creates_dashboard_snapshot(db_session, monkeypatch):
     assert snap.secondary_emergency_count == 13
     assert snap.moonlight_pediatric_count == 6
     assert snap.population_base_month == "2026.06"
+    assert snap.analysis_version == "2026-07-18-r2"
 
     sources = {
         row.source_name: row
@@ -51,8 +52,8 @@ def test_seed_creates_dashboard_snapshot(db_session, monkeypatch):
     assert sources["static_vulnerability_geojson"].record_count == 150
     assert "static_population" in sources
     assert sources["static_population"].source_version == "2026.06"
-    assert "static_optimal_locations_pediatric" in sources
-    assert "static_optimal_locations_senior" in sources
+    assert sources["static_policy_candidates"].record_count == 9
+    assert sources["static_policy_release"].source_version == "2026-07-18-r2"
     assert all(row.status == "static" for row in sources.values())
 
 
@@ -86,3 +87,51 @@ def test_population_export_rejects_incomplete_month(db_session, monkeypatch, tmp
 
     assert _export_population_csv(db_session, "2026.06") is False
     assert not (tmp_path / "population.csv").exists()
+
+
+def test_population_export_never_estimates_age_groups(db_session, monkeypatch, tmp_path):
+    project_dir = Path(__file__).resolve().parents[3]
+    source = project_dir / "data" / "raw" / "population" / "daegu_population_real.csv"
+    target = tmp_path / "population.csv"
+    target.write_bytes(source.read_bytes())
+    original = target.read_bytes()
+    monkeypatch.setattr("app.services.pipeline.RAW_POP_CSV", target)
+    monkeypatch.setattr(
+        "app.services.pipeline._current_population_base_month",
+        lambda: "2026.06",
+    )
+
+    ensure_seeded(db_session)
+
+    assert _export_population_csv(db_session, "2026.06") is True
+    assert target.read_bytes() == original
+
+
+def test_population_export_rejects_unverified_new_month(db_session, monkeypatch):
+    monkeypatch.setattr(
+        "app.services.pipeline._current_population_base_month",
+        lambda: "2026.05",
+    )
+    ensure_seeded(db_session)
+
+    assert _export_population_csv(db_session, "2026.06") is False
+
+
+def test_restore_file_recovers_previous_analysis_input(tmp_path):
+    target = tmp_path / "hospitals.json"
+    original = b'{"version":"verified"}'
+    target.write_bytes(b'{"version":"unverified"}')
+
+    _restore_file(target, original)
+
+    assert target.read_bytes() == original
+    assert not (tmp_path / "hospitals.json.restore.tmp").exists()
+
+
+def test_restore_file_removes_new_input_when_no_previous_file(tmp_path):
+    target = tmp_path / "hospitals.json"
+    target.write_bytes(b'{"version":"unverified"}')
+
+    _restore_file(target, None)
+
+    assert not target.exists()

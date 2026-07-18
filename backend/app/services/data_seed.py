@@ -23,8 +23,12 @@ GEOJSON_PATH = PROJECT_DIR / "data" / "processed" / "daegu_vulnerability.geojson
 POPULATION_CSV = PROJECT_DIR / "data" / "raw" / "population" / "daegu_population_real.csv"
 KOSIS_CSV = PROJECT_DIR / "data" / "raw" / "population" / "kosis_dong_5yr_population_202606.csv"
 HOSPITALS_JSON = PROJECT_DIR / "data" / "processed" / "final_hospitals.json"
-OPTIMAL_PEDIATRIC_JSON = PROJECT_DIR / "frontend" / "public" / "data" / "optimal_locations_pediatric.json"
-OPTIMAL_SENIOR_JSON = PROJECT_DIR / "frontend" / "public" / "data" / "optimal_locations_senior.json"
+STABLE_CANDIDATES_JSON = PROJECT_DIR / "frontend" / "public" / "data" / "stable_policy_candidates.json"
+POLICY_RELEASE_JSON = PROJECT_DIR / "data" / "processed" / "policy_release.json"
+DEPRECATED_STATIC_SOURCES = {
+    "static_optimal_locations_pediatric",
+    "static_optimal_locations_senior",
+}
 
 
 def _seed_admin_dongs_from_geojson(db: Session) -> int:
@@ -115,6 +119,9 @@ def _seed_dashboard_snapshot(db: Session, base_month: str = "2026.06") -> bool:
     large = sum(1 for f in facilities if f["dashboard_category"] == "large")
     secondary = sum(1 for f in facilities if f["dashboard_category"] == "secondary")
     moonlight = sum(1 for f in facilities if f["dashboard_category"] == "moonlightPediatric")
+    release_metadata = _policy_release_metadata()
+    analysis_base_month = str(release_metadata.get("population_base_month") or base_month)
+    analysis_version = str(release_metadata.get("version") or "unversioned")
 
     latest = db.query(DashboardSnapshot).order_by(DashboardSnapshot.generated_at.desc()).first()
     if latest and (
@@ -123,6 +130,10 @@ def _seed_dashboard_snapshot(db: Session, base_month: str = "2026.06") -> bool:
         and latest.large_emergency_count == large
         and latest.secondary_emergency_count == secondary
         and latest.moonlight_pediatric_count == moonlight
+        and latest.high_risk_admin_dong_count == high_risk
+        and abs(float(latest.risk_threshold) - threshold) < 1e-6
+        and latest.population_base_month == analysis_base_month
+        and latest.analysis_version == analysis_version
     ):
         return False
 
@@ -135,8 +146,8 @@ def _seed_dashboard_snapshot(db: Session, base_month: str = "2026.06") -> bool:
             moonlight_pediatric_count=moonlight,
             high_risk_admin_dong_count=high_risk,
             risk_threshold=threshold,
-            population_base_month=base_month,
-            analysis_version="1.0",
+            population_base_month=analysis_base_month,
+            analysis_version=analysis_version,
         )
     )
     db.commit()
@@ -147,6 +158,17 @@ def _file_hash(path: Path) -> str | None:
     if not path.exists():
         return None
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _policy_release_metadata() -> dict:
+    if not POLICY_RELEASE_JSON.exists():
+        return {}
+    try:
+        release = json.loads(POLICY_RELEASE_JSON.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return {}
+    metadata = release.get("metadata", {}) if isinstance(release, dict) else {}
+    return metadata if isinstance(metadata, dict) else {}
 
 
 def _upsert_source_status(
@@ -194,6 +216,10 @@ def _count_json_records(path: Path) -> int:
 
 def _seed_data_source_status(db: Session, base_month: str = "2026.06") -> int:
     """정적 정본 기반 실행에서도 데이터 출처 상태가 비어 있지 않게 한다."""
+    db.query(DataSourceStatus).filter(
+        DataSourceStatus.source_name.in_(DEPRECATED_STATIC_SOURCES)
+    ).delete(synchronize_session=False)
+    release_metadata = _policy_release_metadata()
     sources = [
         {
             "source_name": "static_hospitals",
@@ -216,16 +242,16 @@ def _seed_data_source_status(db: Session, base_month: str = "2026.06") -> int:
             else 0,
         },
         {
-            "source_name": "static_optimal_locations_pediatric",
-            "source_version": "optimal_locations_pediatric.json",
-            "path": OPTIMAL_PEDIATRIC_JSON,
-            "record_count": _count_json_records(OPTIMAL_PEDIATRIC_JSON),
+            "source_name": "static_policy_candidates",
+            "source_version": "stable_policy_candidates.json",
+            "path": STABLE_CANDIDATES_JSON,
+            "record_count": _count_json_records(STABLE_CANDIDATES_JSON),
         },
         {
-            "source_name": "static_optimal_locations_senior",
-            "source_version": "optimal_locations_senior.json",
-            "path": OPTIMAL_SENIOR_JSON,
-            "record_count": _count_json_records(OPTIMAL_SENIOR_JSON),
+            "source_name": "static_policy_release",
+            "source_version": str(release_metadata.get("version") or "unversioned"),
+            "path": POLICY_RELEASE_JSON,
+            "record_count": 1,
         },
     ]
     created = 0

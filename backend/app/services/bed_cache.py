@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.services.bed_payload import null_bed_payload
+from app.core.env import bed_cache_poll_interval_sec
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +59,12 @@ async def get_cache_status() -> dict[str, Any]:
         age_sec: float | None = None
         if _snapshot.updated_at is not None:
             age_sec = (datetime.now(timezone.utc) - _snapshot.updated_at).total_seconds()
+        stale_after_sec = max(bed_cache_poll_interval_sec() * 3, 300)
         return {
             "hospital_count": len(_snapshot.data),
             "updated_at": _snapshot.updated_at.isoformat() if _snapshot.updated_at else None,
             "age_seconds": age_sec,
             "last_error": _snapshot.last_error,
+            "stale": age_sec is None or age_sec > stale_after_sec or _snapshot.last_error is not None,
+            "stale_after_seconds": stale_after_sec,
         }

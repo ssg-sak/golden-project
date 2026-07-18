@@ -6,7 +6,6 @@ import type {
   OptimalLocation,
   PolicyOptimizationData,
 } from '../../widgets/map-dashboard/lib/useOptimalLocationsStore';
-import type { ResourceRecommendation } from '../../widgets/map-dashboard/lib/useResourceSimulation';
 
 export interface PolicyReleaseMetadata {
   version: string;
@@ -22,6 +21,7 @@ export interface PolicyReleaseMetadata {
   successful_route_count: number;
   missing_route_count: number;
   source_sha256: string;
+  route_result_sha256: string;
 }
 
 export interface PolicyReleaseBundle {
@@ -31,7 +31,6 @@ export interface PolicyReleaseBundle {
   candidates: OptimalLocation[];
   candidate_trace: OptimalLocation[];
   optimization: PolicyOptimizationData;
-  recommendations: ResourceRecommendation[];
 }
 
 interface PolicyReleaseState {
@@ -43,25 +42,37 @@ interface PolicyReleaseState {
 
 function validateRelease(release: PolicyReleaseBundle): void {
   const { metadata } = release;
+  const candidateKeys = new Set(
+    release.candidates.map((candidate) =>
+      `${candidate.mode}:${candidate.id}:${candidate.lat.toFixed(7)}:${candidate.lng.toFixed(7)}`,
+    ),
+  );
+  const traceKeys = new Set(
+    release.candidate_trace.map((candidate) =>
+      `${candidate.mode}:${candidate.id}:${candidate.lat.toFixed(7)}:${candidate.lng.toFixed(7)}`,
+    ),
+  );
+  const expectedRouteCount =
+    metadata.district_count * (metadata.resource_count + metadata.candidate_count);
   const valid =
-    metadata.version === '2026-07-18-r2' &&
-    metadata.district_count === 150 &&
-    metadata.resource_count === 25 &&
-    metadata.resource_count_by_mode.pediatric === 6 &&
-    metadata.resource_count_by_mode.senior === 19 &&
-    metadata.candidate_count === 9 &&
-    metadata.route_count === 5100 &&
-    metadata.successful_route_count === 5100 &&
+    Boolean(metadata.version) &&
+    metadata.district_count === release.vulnerability.features.length &&
+    metadata.resource_count === release.hospitals.length &&
+    metadata.resource_count_by_mode.pediatric + metadata.resource_count_by_mode.senior ===
+      metadata.resource_count &&
+    metadata.candidate_count === release.candidates.length &&
+    metadata.route_count === expectedRouteCount &&
+    metadata.successful_route_count === metadata.route_count &&
     metadata.missing_route_count === 0 &&
-    release.hospitals.length === 25 &&
-    release.vulnerability.features.length === 150 &&
-    release.candidates.length === 9 &&
-    release.recommendations.length === 9 &&
+    release.candidate_trace.length === release.candidates.length &&
+    candidateKeys.size === traceKeys.size &&
+    [...candidateKeys].every((key) => traceKeys.has(key)) &&
     release.optimization.metadata.version === metadata.version &&
-    release.optimization.metadata.matrix_source_sha256 === metadata.source_sha256;
+    release.optimization.metadata.matrix_source_sha256 === metadata.source_sha256 &&
+    release.optimization.metadata.matrix_route_result_sha256 === metadata.route_result_sha256;
 
   if (!valid) {
-    throw new Error('정책 분석 릴리스의 기관·경로·버전 검증에 실패했습니다.');
+    throw new Error('정책 분석 결과의 기관·경로·기준 검증에 실패했습니다.');
   }
 }
 
@@ -79,14 +90,14 @@ export const usePolicyReleaseStore = create<PolicyReleaseState>((set, get) => ({
     set({ isLoading: true, error: null });
     inFlight = fetch(`${import.meta.env.BASE_URL}data/policy_release.json`)
       .then(async (response) => {
-        if (!response.ok) throw new Error(`정책 분석 릴리스 조회 실패 (${response.status})`);
+        if (!response.ok) throw new Error(`정책 분석 결과 조회 실패 (${response.status})`);
         const release = (await response.json()) as PolicyReleaseBundle;
         validateRelease(release);
         set({ release, isLoading: false, error: null });
         return release;
       })
       .catch((error: unknown) => {
-        const message = error instanceof Error ? error.message : '정책 분석 릴리스를 불러오지 못했습니다.';
+        const message = error instanceof Error ? error.message : '정책 분석 결과를 불러오지 못했습니다.';
         set({ release: null, isLoading: false, error: message });
         throw error;
       })

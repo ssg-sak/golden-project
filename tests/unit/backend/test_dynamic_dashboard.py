@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+import asyncio
 import json
 from datetime import datetime
 
 import pytest
+from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.api.routes.dashboard import get_dashboard_summary, get_data_status
+from app.api.routes.dashboard import force_refresh_dashboard, get_dashboard_summary, get_data_status
 from app.db.database import Base
 from app.db.models import DashboardSnapshot, DataSourceStatus
 from app.services.analysis_metrics import compute_high_risk_metrics, format_change_text
@@ -131,6 +133,7 @@ def test_data_status_exposes_analysis_version_and_pending_state(
     monkeypatch,
     tmp_path,
 ):
+    monkeypatch.setattr("app.api.routes.dashboard.ensure_seeded", lambda _db: {})
     matrix_path = tmp_path / "actual_road_accessibility_matrix.json"
     matrix_path.write_text(
         json.dumps(
@@ -187,3 +190,23 @@ def test_data_status_exposes_analysis_version_and_pending_state(
         "missingRouteCount": 0,
         "pending": True,
     }
+    assert result["status"]["lastCheckedAt"].endswith("+00:00")
+    assert result["status"]["lastUpdatedAt"].endswith("+00:00")
+
+
+def test_dashboard_refresh_is_disabled_without_server_token(db_session, monkeypatch):
+    monkeypatch.setattr("app.api.routes.dashboard.data_refresh_admin_token", lambda: None)
+
+    with pytest.raises(HTTPException) as exc_info:
+        asyncio.run(force_refresh_dashboard(db=db_session, x_admin_token=None))
+
+    assert exc_info.value.status_code == 503
+
+
+def test_dashboard_refresh_rejects_invalid_token(db_session, monkeypatch):
+    monkeypatch.setattr("app.api.routes.dashboard.data_refresh_admin_token", lambda: "expected")
+
+    with pytest.raises(HTTPException) as exc_info:
+        asyncio.run(force_refresh_dashboard(db=db_session, x_admin_token="wrong"))
+
+    assert exc_info.value.status_code == 401

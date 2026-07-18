@@ -79,6 +79,7 @@ export interface PolicyOptimizationData {
   metadata: {
     version: string;
     matrix_source_sha256: string;
+    matrix_route_result_sha256: string;
     matrix_method: 'actual_road_route_api';
     optimization: 'exact_enumeration';
     max_facilities: number;

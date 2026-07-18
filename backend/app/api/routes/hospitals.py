@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-import asyncio
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 
 from app.services.bed_cache import get_cache_status
 from app.services.hospital_realtime import (
@@ -11,29 +10,20 @@ from app.services.hospital_realtime import (
     resolve_realtime_beds_async,
 )
 from app.services.hospital_static import load_static_hospitals
-from app.services.hira_client import fetch_hira_data_async, merge_hira_into_hospitals
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["hospitals"])
 
 
 @router.get("/api/hospitals")
-async def get_hospitals() -> list[dict]:
+async def get_hospitals(response: Response) -> list[dict]:
     """대구 응급의료기관 + 달빛어린이병원 (정적 JSON + 캐시된 실시간 병상, 항상 200 OK)."""
     hospitals = load_static_hospitals()
     names = [str(row.get("name", "")) for row in hospitals if row.get("name")]
 
-    # 서로 독립적인 국립중앙의료원 병상 조회와 HIRA 인프라 조회를 동시에 시작한다.
-    hira_task = asyncio.create_task(fetch_hira_data_async(names))
-
     try:
         realtime = await resolve_realtime_beds_async(names)
     except HTTPException:
-        hira_task.cancel()
-        try:
-            await hira_task
-        except asyncio.CancelledError:
-            pass
         raise
     except Exception as exc:
         logger.warning(
@@ -43,13 +33,11 @@ async def get_hospitals() -> list[dict]:
         )
         realtime = get_null_realtime_data(names)
 
-    merged = merge_realtime_into_hospitals(hospitals, realtime)
-    
-    # HIRA API 데이터 조회 및 병합 (에러 시 빈 딕셔너리로 방어됨)
-    hira_data = await hira_task
-    merged_with_hira = merge_hira_into_hospitals(merged, hira_data)
-    
-    return merged_with_hira
+    cache_status = await get_cache_status()
+    response.headers["X-Bed-Cache-Stale"] = str(bool(cache_status["stale"])).lower()
+    if cache_status["updated_at"]:
+        response.headers["X-Bed-Cache-Updated-At"] = str(cache_status["updated_at"])
+    return merge_realtime_into_hospitals(hospitals, realtime)
 
 
 
