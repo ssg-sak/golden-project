@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import sys
 from pathlib import Path
 
@@ -23,6 +24,25 @@ def test_policy_release_is_complete_and_uses_single_version():
     assert metadata["route_count"] == 5100
     assert metadata["successful_route_count"] == 5100
     assert metadata["missing_route_count"] == 0
+    assert metadata["population_base_month"] == "2026.06"
+    assert len(metadata["population_source_sha256"]) == 64
+    assert metadata["population_manifest_sha256"] == hashlib.sha256(
+        build_policy_release.POPULATION_MANIFEST_PATH.read_bytes()
+    ).hexdigest()
+    assert metadata["sensitivity_sha256"] == hashlib.sha256(
+        build_policy_release.SENSITIVITY_PATH.read_bytes()
+    ).hexdigest()
+    assert metadata["sensitivity_scenario_count_per_mode"] == {
+        "pediatric": 240,
+        "senior": 240,
+    }
+    assert metadata["sensitivity_completed_count_per_mode"] == {
+        "pediatric": 240,
+        "senior": 240,
+    }
+    assert metadata["coordinate_snap_route_count"] == 460
+    assert metadata["coordinate_snap_average_distance_km"] > 0
+    assert metadata["coordinate_snap_max_distance_km"] <= 0.75
     assert len(release["hospitals"]) == 25
     assert len(release["vulnerability"]["features"]) == 150
     assert len(release["candidates"]) == 9
@@ -35,6 +55,7 @@ def test_policy_release_is_complete_and_uses_single_version():
         for row in release["candidate_trace"]
     }
     assert "candidate_trace" in metadata["content_sha256"]
+    assert "sensitivity" in metadata["content_sha256"]
     assert "recommendations" not in release
     assert release["optimization"]["metadata"]["version"] == metadata["version"]
     assert (

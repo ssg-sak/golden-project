@@ -10,6 +10,7 @@ from pathlib import Path
 
 from build_actual_road_accessibility import (
     ANALYSIS_VERSION,
+    CACHE_PATH,
     MATRIX_PATH,
     OPTIMIZATION_PATH,
     load_inputs,
@@ -28,6 +29,8 @@ PUBLIC_HOSPITAL_OUTPUTS = [
     PROJECT_ROOT / "frontend" / "src" / "assets" / "final_hospitals.json",
 ]
 ROLLBACK_OUTPUTS = [
+    PROCESSED_HOSPITALS_PATH,
+    CACHE_PATH,
     PROJECT_ROOT / "data" / "processed" / "candidate_sensitivity_analysis.json",
     PROJECT_ROOT / "docs" / "reports" / "candidate_sensitivity_analysis_report_20260715.md",
     PROJECT_ROOT / "data" / "processed" / "accessibility_candidate_trace.json",

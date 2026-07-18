@@ -75,7 +75,7 @@ function sourceLabel(source?: DataSourceStatusRecord): string {
   if (!source) return '확인 중';
   if (source.status === 'failed' || source.status === 'degraded') return '기존 자료 유지';
   if (source.status === 'updated') return '새 자료 반영';
-  if (source.status === 'unchanged') return '최신 확인 완료';
+  if (source.status === 'unchanged') return '변경 없음 확인';
   if (source.status === 'static') return '저장된 기준 자료';
   return '확인 중';
 }
@@ -107,7 +107,7 @@ export function PolicyDataPipeline({
   hospitalCount,
   highRiskDistrictCount,
   highRiskThreshold,
-  populationBaseMonth = '2026.06',
+  populationBaseMonth = '확인 중',
 }: PolicyDataPipelineProps) {
   const [dataStatus, setDataStatus] = useState<DataStatusResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);

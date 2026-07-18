@@ -38,6 +38,8 @@ EXPECTED_DISTRICT_COUNT = 150
 EXPECTED_HOSPITAL_COUNT = 25
 EXPECTED_CANDIDATE_COUNT = 9
 REQUIRED_HOSPITAL_NAMES = {"계명대학교대구동산병원"}
+SNAP_DELTAS = (0.0005, 0.001, 0.002, 0.004)
+MAX_ALLOWED_SNAP_DISTANCE_KM = 0.75
 MODE_HOSPITAL_TIERS = {
     "pediatric": {3},
     "senior": {1, 2},
@@ -183,7 +185,7 @@ def coordinate_retry_pairs(
     snap_destination: bool,
 ) -> list[tuple[tuple[float, float], tuple[float, float]]]:
     offsets = []
-    for delta in (0.0005, 0.001, 0.002, 0.004, 0.008, 0.015):
+    for delta in SNAP_DELTAS:
         offsets.extend(
             [
                 (delta, 0.0),
@@ -203,6 +205,76 @@ def coordinate_retry_pairs(
     if snap_destination and not snap_origin:
         return exact + destination_pairs + origin_pairs
     return exact + origin_pairs + destination_pairs
+
+
+def snap_offset_distance_km(offset: list[float] | tuple[float, float]) -> float:
+    latitude_delta = float(offset[0]) if len(offset) > 0 else 0.0
+    longitude_delta = float(offset[1]) if len(offset) > 1 else 0.0
+    longitude_scale = math.cos(math.radians(35.9))
+    return 111.32 * math.hypot(latitude_delta, longitude_delta * longitude_scale)
+
+
+def build_coordinate_snap_audit(requested_routes: list[dict[str, Any] | None]) -> dict[str, Any]:
+    details: list[dict[str, Any]] = []
+    snapped_origin_ids: set[str] = set()
+    snapped_destination_ids: set[str] = set()
+    origin_route_count = 0
+    destination_route_count = 0
+
+    for route in requested_routes:
+        if not route:
+            continue
+        origin_offset = [float(value) for value in route.get("origin_snap_offset", [0.0, 0.0])]
+        destination_offset = [
+            float(value) for value in route.get("destination_snap_offset", [0.0, 0.0])
+        ]
+        origin_distance = snap_offset_distance_km(origin_offset)
+        destination_distance = snap_offset_distance_km(destination_offset)
+        if origin_distance == 0 and destination_distance == 0:
+            continue
+
+        origin_id = str(route.get("origin_id") or "")
+        destination_id = str(route.get("destination_id") or "")
+        if origin_distance > 0:
+            origin_route_count += 1
+            snapped_origin_ids.add(origin_id)
+        if destination_distance > 0:
+            destination_route_count += 1
+            snapped_destination_ids.add(destination_id)
+        details.append(
+            {
+                "origin_id": origin_id,
+                "destination_id": destination_id,
+                "origin_snap_offset": origin_offset,
+                "destination_snap_offset": destination_offset,
+                "origin_snap_distance_km": round(origin_distance, 6),
+                "destination_snap_distance_km": round(destination_distance, 6),
+                "max_snap_distance_km": round(max(origin_distance, destination_distance), 6),
+            }
+        )
+
+    route_distances = [float(row["max_snap_distance_km"]) for row in details]
+    max_distance = max(route_distances, default=0.0)
+    if max_distance > MAX_ALLOWED_SNAP_DISTANCE_KM:
+        raise RuntimeError(
+            "좌표 보정 거리가 허용 한도를 초과했습니다: "
+            f"max={max_distance:.3f}km, limit={MAX_ALLOWED_SNAP_DISTANCE_KM:.3f}km"
+        )
+    return {
+        "route_count": len(details),
+        "origin_snap_route_count": origin_route_count,
+        "destination_snap_route_count": destination_route_count,
+        "unique_snapped_origin_count": len(snapped_origin_ids),
+        "unique_snapped_destination_count": len(snapped_destination_ids),
+        "snapped_origin_ids": sorted(snapped_origin_ids),
+        "snapped_destination_ids": sorted(snapped_destination_ids),
+        "average_snap_distance_km": round(
+            sum(route_distances) / len(route_distances), 6
+        ) if route_distances else 0.0,
+        "max_snap_distance_km": round(max_distance, 6),
+        "allowed_max_snap_distance_km": MAX_ALLOWED_SNAP_DISTANCE_KM,
+        "route_details": details,
+    }
 
 
 def load_cache() -> dict[str, Any]:
@@ -403,14 +475,7 @@ def build_matrix(
         for origin in districts
         for destination in destinations
     ]
-    snap_route_count = sum(
-        bool(route)
-        and (
-            any(float(value) != 0 for value in route.get("origin_snap_offset", []))
-            or any(float(value) != 0 for value in route.get("destination_snap_offset", []))
-        )
-        for route in requested_routes
-    )
+    coordinate_snap_audit = build_coordinate_snap_audit(requested_routes)
 
     def route_for(origin: dict[str, Any], destination: dict[str, Any]) -> dict[str, Any] | None:
         route = routes.get(coordinate_key(origin, destination)) or {}
@@ -509,7 +574,8 @@ def build_matrix(
                 "execution_mode": "cache_only",
                 "cached_route_count": len(requested_routes),
                 "fetched_route_count": 0,
-                "coordinate_snap_route_count": snap_route_count,
+                "coordinate_snap_route_count": coordinate_snap_audit["route_count"],
+                "coordinate_snap_audit": coordinate_snap_audit,
                 "cache_updated_at_epoch": cache.get("updated_at_epoch"),
                 **(provenance or {}),
             },
