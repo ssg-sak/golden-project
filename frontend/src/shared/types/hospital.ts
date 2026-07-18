@@ -41,10 +41,6 @@ export interface HospitalRecord {
   // --- 정적 병원·달빛어린이병원 보조 정보 ---
   /** 병원 운영 시간 */
   operating_hours?: string;
-  /** 전문의 등 의료진 수 */
-  doctors_count?: number;
-  /** 장비 보유 여부 (예: CT: true, MRI: false) */
-  equipment_status?: Record<string, boolean>;
   /** 국립중앙의료원 응급 핵심장비 현재 가용 여부 */
   emergency_equipment_status?: Record<string, boolean>;
   /** Night/holiday pediatric clinic designated for the Moonlight program. */

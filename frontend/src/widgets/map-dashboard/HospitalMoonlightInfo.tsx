@@ -78,12 +78,6 @@ export function HospitalMoonlightInfo({ hospital, variant }: HospitalMoonlightIn
           <dd className="text-right font-bold text-slate-700">{hospital.operating_hours ?? '전화 확인 필요'}</dd>
         </div>
         <div className="flex justify-between gap-3">
-          <dt className="font-semibold text-slate-500">등록 의사 수</dt>
-          <dd className="font-bold text-slate-700">
-            {hospital.doctors_count !== undefined ? `${hospital.doctors_count}명` : '확인 중'}
-          </dd>
-        </div>
-        <div className="flex justify-between gap-3">
           <dt className="font-semibold text-slate-500">연락처</dt>
           <dd className="font-bold text-slate-700">{tel ?? '정보 확인 중'}</dd>
         </div>

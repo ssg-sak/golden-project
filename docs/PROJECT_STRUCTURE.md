@@ -132,14 +132,10 @@ project/  # 최상위 프로젝트 루트
 |   |   |   |-- daegu_population_real.csv
 |   |   |   +-- kosis_dong_5yr_population_202606.csv
 |   |   +-- daegu_kindergartens.csv
-|   |-- reports  # 최종 정책 분석 보고서 등 배포용 파일
-|   |   |-- 2026-07-11-policy-tab-cache-env-resolution.md
-|   |   +-- daegu-golden-time-policy-analysis-report.pdf  # 분석이 완료된 배포용 PDF 보고서
 |   |-- hospitals.db
 |   |-- optimal_locations.json  # 구조화된 JSON 데이터/설정 파일
 |   |-- policy_monitoring_report.csv
 |   |-- priority_targets.json  # 구조화된 JSON 데이터/설정 파일
-|   +-- 사회과학_분석_보고서.pdf
 |-- docs  # 아키텍처, 가이드, 트러블슈팅, 각종 완료 보고서 문서
 |   |-- 01_Architecture_and_Tech.md  # 개발 마크다운 문서
 |   |-- 02_AI_and_Data_Pipeline.md  # 개발 마크다운 문서
@@ -153,8 +149,7 @@ project/  # 최상위 프로젝트 루트
 |   |-- public
 |   |   |-- data  # 원본 데이터(Raw), 정제 데이터(Processed) 및 리포트 파일 보관
 |   |   |   |-- reports
-|   |   |   |   |-- 2026-07-11-policy-tab-cache-env-resolution.md
-|   |   |   |   +-- daegu-golden-time-policy-analysis-report.pdf  # 분석이 완료된 배포용 PDF 보고서
+|   |   |   |   +-- daegu-golden-time-policy-analysis-report.pdf  # 공개하는 유일한 최종 정책보고서
 |   |   |   |-- accessibility_candidate_trace.json  # 구조화된 JSON 데이터/설정 파일
 |   |   |   |-- actual_road_accessibility_matrix.json  # 구조화된 JSON 데이터/설정 파일
 |   |   |   |-- optimal_locations.json  # 구조화된 JSON 데이터/설정 파일
@@ -167,7 +162,6 @@ project/  # 최상위 프로젝트 루트
 |   |   |   |-- priority_targets.json  # 구조화된 JSON 데이터/설정 파일
 |   |   |   |-- stable_policy_candidates.json  # 구조화된 JSON 데이터/설정 파일
 |   |   |   |-- policy_release.json  # 검증된 단일 정책 릴리스
-|   |   |   +-- 사회과학_분석_보고서.pdf
 |   |   |-- favicon.svg
 |   |-- src  # 프론트엔드 소스코드 루트
 |   |   |-- app
