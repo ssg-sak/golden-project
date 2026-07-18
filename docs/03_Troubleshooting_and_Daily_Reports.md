@@ -1,5 +1,6 @@
 # Troubleshooting and Daily Reports
 
+> **⚠️ 현재 구현과 다른 과거 기록 (2026-07-18):** 이 문서는 장애 대응과 일일 작업 당시의 표현을 원문 중심으로 보존합니다. 현재는 제거된 기능·경로·데이터 계약과 `진료 가능`, `수용 불가`, `이동 금지` 같은 과거 문구가 남아 있을 수 있습니다. 현재 시민 안전 문구와 운영 계약은 `README.md`, `docs/methodology.md`, `docs/DATA_INTEGRITY_AND_REFRESH_HARDENING_20260718.md`를 기준으로 확인하세요.
 
 
 ---

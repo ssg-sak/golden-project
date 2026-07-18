@@ -1,6 +1,6 @@
 import { CustomOverlayMap } from 'react-kakao-maps-sdk';
 
-import { resolveBedStatus } from '../../shared/lib/bed-status';
+import { bedReportMarkerTone, resolveBedStatus } from '../../shared/lib/bed-status';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { isMoonlightHospital } from '../../shared/types/hospital';
 
@@ -19,8 +19,7 @@ export function HospitalMarkerOverlay({
 }: HospitalMarkerOverlayProps) {
   const { status, count, congestion } = resolveBedStatus(hospital);
   const isMoonlight = isMoonlightHospital(hospital);
-  const isCrowded = status === 'reported-bed-zero' || congestion === 'crowded';
-  const isModerate = congestion === 'moderate';
+  const markerTone = bedReportMarkerTone(hospital);
   const statusLabel =
     status === 'reported-bed-zero'
       ? '일반응급실 가용병상 0 보고'
@@ -36,35 +35,35 @@ export function HospitalMarkerOverlay({
     : `${hospital.name} ${statusLabel}`;
 
   const ringClass =
-    isMoonlight
+    markerTone === 'moonlight'
       ? 'border-cyan-500 ring-cyan-200'
-      : isCrowded
+      : markerTone === 'zero'
         ? 'border-rose-500 ring-rose-200'
-        : isModerate
-          ? 'border-amber-500 ring-amber-200'
-          : status === 'reported-bed-positive'
+        : markerTone === 'low-or-medium'
+          ? 'border-orange-500 ring-orange-200'
+          : markerTone === 'positive'
             ? 'border-emerald-500 ring-emerald-200'
             : 'border-slate-400 ring-slate-200';
 
   const activeRingClass =
-    isMoonlight
+    markerTone === 'moonlight'
       ? 'ring-cyan-500'
-      : isCrowded
+      : markerTone === 'zero'
         ? 'ring-rose-500'
-        : isModerate
-          ? 'ring-amber-500'
-          : status === 'reported-bed-positive'
+        : markerTone === 'low-or-medium'
+          ? 'ring-orange-500'
+          : markerTone === 'positive'
             ? 'ring-emerald-500'
             : 'ring-slate-500';
 
   const dotClass =
-    isMoonlight
+    markerTone === 'moonlight'
       ? 'bg-cyan-500'
-      : isCrowded
+      : markerTone === 'zero'
         ? 'bg-rose-500'
-        : isModerate
-          ? 'bg-amber-500'
-          : status === 'reported-bed-positive'
+        : markerTone === 'low-or-medium'
+          ? 'bg-orange-500'
+          : markerTone === 'positive'
             ? 'bg-emerald-500'
             : 'bg-slate-400';
 
