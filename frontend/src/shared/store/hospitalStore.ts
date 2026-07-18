@@ -50,16 +50,16 @@ export const useHospitalStore = create<HospitalStore>((set, get) => ({
     set({ isLoading: true, error: null, isDegraded: false, degradedMode: null });
 
     try {
-      const data = await fetchHospitals(signal);
+      const result = await fetchHospitals(signal);
       if (fetchId !== hospitalFetchSeq) return;
 
       set({
-        hospitals: data,
+        hospitals: result.hospitals,
         isLoading: false,
         error: null,
-        isDegraded: false,
-        degradedMode: null,
-        lastUpdatedAt: new Date().toISOString(),
+        isDegraded: result.cacheStale,
+        degradedMode: result.cacheStale ? 'stale-cache' : null,
+        lastUpdatedAt: result.cacheUpdatedAt,
       });
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') return;

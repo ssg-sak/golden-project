@@ -16,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import hospitals, indicators, vulnerability, optimal_locations, routing
 
 from app.core.env import load_dotenv
+from app.core.env import get_env
 from app.services.bed_poller import start_bed_poller, stop_bed_poller
 from app.services.scheduler import start_public_data_scheduler, stop_public_data_scheduler
 from app.db.database import Base, engine
@@ -46,6 +47,7 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Bed-Cache-Stale", "X-Bed-Cache-Updated-At"],
 )
 app.include_router(indicators.router)
 app.include_router(hospitals.router)
@@ -68,4 +70,17 @@ def root() -> dict:
         "optimal_locations": "/api/optimal-locations",
         "dashboard_summary": "/api/dashboard/summary",
         "dashboard_data_status": "/api/dashboard/data-status",
+    }
+
+
+@app.get("/health")
+def health() -> dict:
+    return {
+        "status": "ok",
+        "service": "daegu-golden-time-api",
+        "publicDataSchedulerEnabled": get_env(
+            "ENABLE_PUBLIC_DATA_SCHEDULER",
+            "false",
+        ).lower()
+        == "true",
     }

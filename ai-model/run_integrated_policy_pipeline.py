@@ -33,9 +33,7 @@ ROLLBACK_OUTPUTS = [
     PROJECT_ROOT / "data" / "processed" / "accessibility_candidate_trace.json",
     PROJECT_ROOT / "frontend" / "public" / "data" / "accessibility_candidate_trace.json",
     PROJECT_ROOT / "docs" / "reports" / "accessibility_candidate_trace_report_20260715.md",
-    PROJECT_ROOT / "frontend" / "public" / "data" / "resource_recommendations.json",
     PROJECT_ROOT / "frontend" / "public" / "data" / "stable_policy_candidates.json",
-    PROJECT_ROOT / "docs" / "reports" / "stable_resource_recommendation_report_20260715.md",
     PROJECT_ROOT / "data" / "processed" / "actual_road_accessibility_matrix.json",
     PROJECT_ROOT / "frontend" / "public" / "data" / "actual_road_accessibility_matrix.json",
     PROJECT_ROOT / "data" / "processed" / "policy_location_optimization.json",
@@ -111,6 +109,26 @@ def validate_final_outputs() -> None:
         raise RuntimeError("입지 최적화 결과의 분석 버전이 현재 릴리스와 다릅니다.")
     if optimization_metadata.get("matrix_source_sha256") != metadata.get("source_sha256"):
         raise RuntimeError("입지 최적화 결과가 현재 도로 경로 행렬에서 생성되지 않았습니다.")
+    if optimization_metadata.get("matrix_route_result_sha256") != metadata.get(
+        "route_result_sha256"
+    ):
+        raise RuntimeError("입지 최적화 결과의 도로 경로 결과 해시가 현재 행렬과 다릅니다.")
+
+    trace = read_json(
+        PROJECT_ROOT / "frontend" / "public" / "data" / "accessibility_candidate_trace.json"
+    )
+    if len(trace) != len(candidates):
+        raise RuntimeError("정책 후보 정본과 후보 추적 데이터의 개수가 다릅니다.")
+    candidate_keys = {
+        (str(row["mode"]), int(row["candidate_id"]), round(float(row["lat"]), 7), round(float(row["lng"]), 7))
+        for row in candidates
+    }
+    trace_keys = {
+        (str(row["mode"]), int(row["id"]), round(float(row["lat"]), 7), round(float(row["lng"]), 7))
+        for row in trace
+    }
+    if candidate_keys != trace_keys:
+        raise RuntimeError("정책 후보 정본과 후보 추적 데이터의 ID 또는 좌표가 다릅니다.")
 
 
 def parse_args() -> argparse.Namespace:
@@ -134,10 +152,15 @@ def main() -> None:
     with tempfile.TemporaryDirectory(prefix="golden-policy-backup-") as temporary_dir:
         backups = backup_outputs(Path(temporary_dir))
         try:
-            run_step("1/7 행정동·인구·병원 공간 전처리", "../backend/scripts/spatial_analysis.py")
+            spatial_arguments = ["--offline"] if args.offline else []
+            run_step(
+                "1/7 행정동·인구·병원 공간 전처리",
+                "../backend/scripts/spatial_analysis.py",
+                *spatial_arguments,
+            )
             run_step("2/7 후보 민감도 분석", "run_candidate_sensitivity_analysis.py")
-            run_step("3/7 후보 추적 데이터", "build_accessibility_candidate_trace.py")
-            run_step("4/7 안정 후보 및 자원 시나리오", "build_stable_resource_recommendations.py")
+            run_step("3/7 안정 후보 정본 생성", "build_stable_policy_candidates.py")
+            run_step("4/7 후보 추적 데이터", "build_accessibility_candidate_trace.py")
 
             road_arguments = ["--cache-only"] if args.offline else ["--concurrency", str(max(1, args.concurrency))]
             run_step("5/7 실제 도로망 및 입지 최적화", "build_actual_road_accessibility.py", *road_arguments)

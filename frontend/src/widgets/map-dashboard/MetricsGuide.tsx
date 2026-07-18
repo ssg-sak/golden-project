@@ -17,12 +17,6 @@ const GUIDE_ITEMS = [
   },
 ] as const;
 
-const THRESHOLDS = [
-  { label: '관찰', value: '1,500+', className: 'bg-amber-50 text-amber-800 ring-amber-200' },
-  { label: '높음', value: '5,000+', className: 'bg-orange-50 text-orange-800 ring-orange-200' },
-  { label: '매우 높음', value: '10,000+', className: 'bg-red-50 text-red-800 ring-red-200' },
-] as const;
-
 const EXAMPLES = [
   ['A동', '병원은 가깝지만 보호 필요 인구가 많음', '안내와 수요 관리가 필요할 수 있습니다.'],
   ['B동', '인구는 적지만 병원까지 멂', '교통이나 이송 보완을 먼저 볼 수 있습니다.'],
@@ -56,20 +50,12 @@ export function MetricsGuide() {
           <aside className="border border-teal-200 bg-teal-50 p-4">
             <p className="text-xs font-bold text-teal-800">위험 기준</p>
             <h3 className="mt-1 text-base font-extrabold text-slate-950">어느 정도면 먼저 볼까요?</h3>
-            <div className="mt-4 space-y-2">
-              {THRESHOLDS.map((item) => (
-                <div
-                  key={item.label}
-                  className={`flex items-center justify-between rounded-md px-3 py-2 text-sm font-bold ring-1 ${item.className}`}
-                >
-                  <span>{item.label}</span>
-                  <span className="tabular-nums">{item.value}</span>
-                </div>
-              ))}
+            <div className="mt-4 rounded-md bg-white px-3 py-3 text-sm leading-6 text-slate-700 ring-1 ring-teal-200">
+              150개 행정동의 점수를 높은 순서로 정렬한 뒤, 현재 분석본의 상위 25%를 먼저 확인할 지역으로 표시합니다.
             </div>
             <p className="mt-4 text-xs leading-5 text-slate-600">
-              이 기준은 결론이 아니라 먼저 확인할 신호입니다. 실제 판단에는 도로 상황, 병원 수용 가능 여부,
-              예산과 인력 검토가 필요합니다.
+              화면의 경계값은 분석본이 바뀌면 함께 달라지는 상대값입니다. 질병 위험이나 병원 설치를 확정하는
+              절대 기준이 아니며, 실제 판단에는 도로 상황, 병원 수용 가능 여부, 예산과 인력 검토가 필요합니다.
             </p>
           </aside>
         </div>

@@ -178,7 +178,7 @@ export function PlatformIntroView() {
           <div className="border-t border-slate-200 bg-emerald-50 px-6 py-4">
             <strong className="text-sm text-emerald-900">현재 정책 화면은 25개 기관 기준입니다.</strong>
             <p className="mt-2 text-xs leading-5 text-emerald-800">
-              150개 행정동, 소아 6개·어르신 19개 기관, 5,100개 도로 경로를 동일한 분석 버전으로 제공합니다.
+              150개 행정동, 소아 6개·어르신 19개 기관, 5,100개 도로 경로를 같은 기준으로 분석합니다.
             </p>
           </div>
         </section>

@@ -15,7 +15,16 @@
     "successful_route_count": 5100,
     "unavailable_route_count": 0,
     "missing_route_count": 0,
-    "source_sha256": "a40ccedd0a1180916ac45fa8e73f79734716a8cf0080a17b93eb1bb567854e45"
+    "source_sha256": "a40ccedd0a1180916ac45fa8e73f79734716a8cf0080a17b93eb1bb567854e45",
+    "route_result_sha256": "d0e9d3b21b4e9c5070cb647f8e77565f72f4c2f4352179bda4de2dfc5af61824",
+    "generated_at": "2026-07-18T11:38:41.044746+00:00",
+    "route_provenance": {
+      "execution_mode": "cache_only",
+      "cached_route_count": 5100,
+      "fetched_route_count": 0,
+      "coordinate_snap_route_count": 460,
+      "cache_updated_at_epoch": 1784365539
+    }
   },
   "districts": [
     {

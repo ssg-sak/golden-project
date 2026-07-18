@@ -45,7 +45,7 @@ export async function fetchTravelTimeToHospital({
   hospitalName,
   hospitalLat,
   hospitalLng,
-  signal: _signal,
+  signal,
 }: {
   originLat: number;
   originLng: number;
@@ -60,6 +60,7 @@ export async function fetchTravelTimeToHospital({
 
   const request = fetch(`${API_BASE_URL}/api/routing/eta`, {
     method: 'POST',
+    signal,
     headers: {
       'Content-Type': 'application/json',
     },

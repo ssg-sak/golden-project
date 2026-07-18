@@ -62,11 +62,17 @@ function parseHospitalPayload(payload: unknown): HospitalRecord[] {
 
 import { ENV } from '../../shared/config/env';
 
+export interface HospitalFetchResult {
+  hospitals: HospitalRecord[];
+  cacheUpdatedAt: string | null;
+  cacheStale: boolean;
+}
+
 /**
  * GET /api/hospitals — 3초 서킷 브레이커 적용.
  * @throws 네트워크·HTTP·JSON·스키마·빈 배열·타임아웃 오류
  */
-export async function fetchHospitals(signal?: AbortSignal): Promise<HospitalRecord[]> {
+export async function fetchHospitals(signal?: AbortSignal): Promise<HospitalFetchResult> {
   if (ENV.IS_SIMULATION_MODE) {
     throw new Error('네트워크 연결이 불안정해 최근 병원 정보를 먼저 보여드립니다');
   }
@@ -93,5 +99,9 @@ export async function fetchHospitals(signal?: AbortSignal): Promise<HospitalReco
     throw new Error('병원 정보 응답을 읽지 못해 최근 확인된 정보를 먼저 보여드립니다');
   }
 
-  return normalizeHospitalLocations(parseHospitalPayload(payload));
+  return {
+    hospitals: normalizeHospitalLocations(parseHospitalPayload(payload)),
+    cacheUpdatedAt: response.headers.get('X-Bed-Cache-Updated-At'),
+    cacheStale: response.headers.get('X-Bed-Cache-Stale') === 'true',
+  };
 }

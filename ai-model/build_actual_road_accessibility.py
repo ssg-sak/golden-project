@@ -7,7 +7,9 @@ import itertools
 import json
 import math
 import os
+import shutil
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -55,7 +57,12 @@ def write_json(path: Path, payload: Any, *, compact: bool = False) -> None:
         else json.dumps(payload, ensure_ascii=False, indent=2)
     )
     temporary_path.write_text(serialized, encoding="utf-8")
-    temporary_path.replace(path)
+    json.loads(temporary_path.read_text(encoding="utf-8"))
+    try:
+        temporary_path.replace(path)
+    except PermissionError:
+        shutil.copyfile(temporary_path, path)
+        temporary_path.unlink()
 
 
 def read_api_key() -> str:
@@ -221,6 +228,14 @@ def input_source_hash(
     ).hexdigest()
 
 
+def payload_sha256(payload: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
+    ).hexdigest()
+
+
 def validate_matrix_route_coverage(matrix: dict[str, Any]) -> None:
     missing_route_count = int(matrix.get("metadata", {}).get("missing_route_count", 0))
     if missing_route_count:
@@ -326,6 +341,7 @@ async def collect_routes(concurrency: int, checkpoint_size: int) -> dict[str, An
         for destination in destinations
         if routes.get(coordinate_key(origin, destination), {}).get("status") != "ok"
     ]
+    cached_success_count = len(districts) * len(destinations) - len(pending)
     print(f"전체 경로 {len(districts) * len(destinations):,}건, 캐시 {len(routes):,}건, 요청 {len(pending):,}건")
 
     semaphore = asyncio.Semaphore(concurrency)
@@ -358,7 +374,17 @@ async def collect_routes(concurrency: int, checkpoint_size: int) -> dict[str, An
             completed = min(start + len(batch), len(pending))
             failures = sum(1 for result in results if result.get("status") != "ok")
             print(f"요청 진행 {completed:,}/{len(pending):,}, 이번 구간 실패 {failures}건")
-    matrix = build_matrix(districts, hospitals, candidates, cache)
+    matrix = build_matrix(
+        districts,
+        hospitals,
+        candidates,
+        cache,
+        provenance={
+            "execution_mode": "api_and_cache",
+            "cached_route_count": cached_success_count,
+            "fetched_route_count": len(pending),
+        },
+    )
     validate_matrix_route_coverage(matrix)
     return matrix
 
@@ -368,6 +394,7 @@ def build_matrix(
     hospitals: list[dict[str, Any]],
     candidates: list[dict[str, Any]],
     cache: dict[str, Any],
+    provenance: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     routes = cache["routes"]
     destinations = hospitals + candidates
@@ -376,6 +403,14 @@ def build_matrix(
         for origin in districts
         for destination in destinations
     ]
+    snap_route_count = sum(
+        bool(route)
+        and (
+            any(float(value) != 0 for value in route.get("origin_snap_offset", []))
+            or any(float(value) != 0 for value in route.get("destination_snap_offset", []))
+        )
+        for route in requested_routes
+    )
 
     def route_for(origin: dict[str, Any], destination: dict[str, Any]) -> dict[str, Any] | None:
         route = routes.get(coordinate_key(origin, destination)) or {}
@@ -468,6 +503,16 @@ def build_matrix(
             ),
             "missing_route_count": sum(not route for route in requested_routes),
             "source_sha256": source_hash,
+            "route_result_sha256": payload_sha256(district_rows),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "route_provenance": {
+                "execution_mode": "cache_only",
+                "cached_route_count": len(requested_routes),
+                "fetched_route_count": 0,
+                "coordinate_snap_route_count": snap_route_count,
+                "cache_updated_at_epoch": cache.get("updated_at_epoch"),
+                **(provenance or {}),
+            },
         },
         "districts": district_rows,
         "candidates": candidates,
@@ -563,6 +608,7 @@ def evaluate_combinations(matrix: dict[str, Any]) -> dict[str, Any]:
             "version": ANALYSIS_VERSION,
             "matrix_method": matrix["metadata"]["method"],
             "matrix_source_sha256": matrix["metadata"]["source_sha256"],
+            "matrix_route_result_sha256": matrix["metadata"]["route_result_sha256"],
             "resource_count": matrix["metadata"]["resource_count"],
             "resource_count_by_mode": matrix["metadata"]["resource_count_by_mode"],
             "optimization": "exact_enumeration",

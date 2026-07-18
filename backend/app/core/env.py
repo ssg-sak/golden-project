@@ -64,10 +64,6 @@ def has_data_go_kr_api_key() -> bool:
     key = (env_str("DATA_GO_KR_API_KEY") or "").strip()
     return key not in _PLACEHOLDER_KEYS
 
-def has_hira_api_key() -> bool:
-    key = (env_str("HIRA_API_KEY") or "").strip()
-    return key not in _PLACEHOLDER_KEYS
-
 def get_kakao_rest_api_key() -> str | None:
     key = env_str("KAKAO_REST_API_KEY")
     if not key or key in _PLACEHOLDER_KEYS:

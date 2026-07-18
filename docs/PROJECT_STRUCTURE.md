@@ -1,26 +1,21 @@
 # 프로젝트 파일 구조도 (Project File Structure)
 
-이 문서는 `Daegu Golden Time Governance` 프로젝트의 전체 디렉토리 및 개별 파일의 역할을 나타냅니다. (자동 생성됨)
+이 문서는 `Daegu Golden Time Governance` 프로젝트의 전체 디렉토리 및 개별 파일의 역할을 나타냅니다. (2026-07-18 레거시 정리 반영)
 
 ```text
 project/  # 최상위 프로젝트 루트
 |-- .github
 |   +-- workflows
 |       +-- deploy.yml  # YAML 기반 설정 파일
-|-- ai-model  # 최적 입지 및 인프라 확충 분석 파이프라인 (AI 시뮬레이션)
+|-- ai-model  # 정책 후보와 실제 도로 접근성 분석 파이프라인
 |   |-- build_accessibility_candidate_trace.py  # 접근성 개선량 분석 스크립트
 |   |-- build_actual_road_accessibility.py  # 접근성 개선량 분석 스크립트
-|   |-- build_stable_resource_recommendations.py  # 의료 인프라 확충 추천 시뮬레이션
-|   |-- build_travel_time_accessibility.py  # 접근성 개선량 분석 스크립트
+|   |-- build_policy_release.py  # 검증된 정책 산출물을 단일 릴리스로 묶는 스크립트
+|   |-- build_stable_policy_candidates.py  # 민감도 결과에서 안정 후보 정본 생성
 |   |-- compare_projected_kmeans_candidates.py  # K-Means 최적 입지 모델 스크립트
 |   |-- generate_policy_reports.py  # 자동 보고서 생성 스크립트
-|   |-- golden_governance_pipeline.py  # 통합 파이프라인 실행 유틸리티
-|   |-- golden_pediatric.py  # AI/데이터 분석 파이썬 스크립트
-|   |-- golden_senior.py  # AI/데이터 분석 파이썬 스크립트
-|   |-- hira_data_bridge.py  # AI/데이터 분석 파이썬 스크립트
 |   |-- ml_blind_spot_filtering.py  # AI/데이터 분석 파이썬 스크립트
 |   |-- pipeline_utils.py  # 통합 파이프라인 실행 유틸리티
-|   |-- resource_simulator.py  # AI/데이터 분석 파이썬 스크립트
 |   |-- run_candidate_sensitivity_analysis.py  # AI/데이터 분석 파이썬 스크립트
 |   |-- run_integrated_policy_pipeline.py  # 통합 파이프라인 실행 유틸리티
 |   +-- visualize_stable_policy_candidates.py  # AI/데이터 분석 파이썬 스크립트
@@ -65,7 +60,6 @@ project/  # 최상위 프로젝트 루트
 |   |   |   |-- bed_poller.py  # 백엔드 파이썬 로직
 |   |   |   |-- data_seed.py  # 백엔드 파이썬 로직
 |   |   |   |-- data_validation.py  # 백엔드 파이썬 로직
-|   |   |   |-- hira_client.py  # 백엔드 파이썬 로직
 |   |   |   |-- hospital_category.py  # 백엔드 파이썬 로직
 |   |   |   |-- hospital_mapping.py  # 백엔드 파이썬 로직
 |   |   |   |-- hospital_realtime.py  # 백엔드 파이썬 로직
@@ -93,7 +87,6 @@ project/  # 최상위 프로젝트 루트
 |   |-- hospitals.db
 |   |-- main.py  # FastAPI 서버 진입점 (Entrypoint)
 |   |-- requirements.txt
-|   |-- test_hira_api.py  # 백엔드 파이썬 로직
 |   +-- test_kakao_navi.py  # 백엔드 파이썬 로직
 |-- data  # 원본 데이터(Raw), 정제 데이터(Processed) 및 리포트 파일 보관
 |   |-- analysis
@@ -111,7 +104,6 @@ project/  # 최상위 프로젝트 루트
 |   |   |-- daegu-dong.geojson
 |   |   |-- daegu_administrative_codes.csv
 |   |   |-- daegu_er_hospitals.json  # 파이프라인 처리 완료된 JSON 데이터
-|   |   |-- daegu_hira_infrastructure.csv
 |   |   |-- daegu_kindergartens_geocoded.csv
 |   |   |-- daegu_medical_facilities.csv
 |   |   |-- daegu_population.csv
@@ -120,9 +112,6 @@ project/  # 최상위 프로젝트 루트
 |   |   |-- er_hospital_coord_supplement_fixed.json  # 파이프라인 처리 완료된 JSON 데이터
 |   |   |-- extraction_report.md
 |   |   |-- final_hospitals.json  # 파이프라인 처리 완료된 JSON 데이터
-|   |   |-- golden_governance_clusters.png
-|   |   |-- golden_governance_clusters_pediatric.png
-|   |   |-- golden_governance_clusters_senior.png
 |   |   |-- mock_hospitals.json  # 파이프라인 처리 완료된 JSON 데이터
 |   |   |-- mock_medical_data.json  # 파이프라인 처리 완료된 JSON 데이터
 |   |   |-- optimal_locations.json  # 파이프라인 처리 완료된 JSON 데이터
@@ -134,7 +123,7 @@ project/  # 최상위 프로젝트 루트
 |   |   |-- projected_kmeans_candidate_comparison.json  # 파이프라인 처리 완료된 JSON 데이터
 |   |   |-- region_indicators.csv
 |   |   |-- stable_policy_candidates_overview_20260715.png
-|   |   +-- travel_time_accessibility_matrix.json  # 파이프라인 처리 완료된 JSON 데이터
+|   |   +-- policy_release.json  # 검증된 단일 정책 릴리스
 |   |-- raw
 |   |   |-- geo
 |   |   |   +-- daegu_dong.geojson
@@ -150,7 +139,6 @@ project/  # 최상위 프로젝트 루트
 |   |-- optimal_locations.json  # 구조화된 JSON 데이터/설정 파일
 |   |-- policy_monitoring_report.csv
 |   |-- priority_targets.json  # 구조화된 JSON 데이터/설정 파일
-|   |-- resource_recommendations.json  # 구조화된 JSON 데이터/설정 파일
 |   +-- 사회과학_분석_보고서.pdf
 |-- docs  # 아키텍처, 가이드, 트러블슈팅, 각종 완료 보고서 문서
 |   |-- 01_Architecture_and_Tech.md  # 개발 마크다운 문서
@@ -177,12 +165,10 @@ project/  # 최상위 프로젝트 루트
 |   |   |   |-- policy_location_optimization.json  # 구조화된 JSON 데이터/설정 파일
 |   |   |   |-- policy_monitoring_report.csv
 |   |   |   |-- priority_targets.json  # 구조화된 JSON 데이터/설정 파일
-|   |   |   |-- resource_recommendations.json  # 구조화된 JSON 데이터/설정 파일
 |   |   |   |-- stable_policy_candidates.json  # 구조화된 JSON 데이터/설정 파일
-|   |   |   |-- travel_time_accessibility_matrix.json  # 구조화된 JSON 데이터/설정 파일
+|   |   |   |-- policy_release.json  # 검증된 단일 정책 릴리스
 |   |   |   +-- 사회과학_분석_보고서.pdf
 |   |   |-- favicon.svg
-|   |   +-- golden_governance_clusters.png
 |   |-- src  # 프론트엔드 소스코드 루트
 |   |   |-- app
 |   |   |   |-- App.tsx  # React 기반 UI 컴포넌트 파일
@@ -310,14 +296,12 @@ project/  # 최상위 프로젝트 루트
 |   |   |   |   |-- HospitalEquipmentStatus.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- HospitalFilterBar.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- HospitalGranularBeds.tsx  # 지도 대시보드 UI 컴포넌트
-|   |   |   |   |-- HospitalHiraInfo.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- HospitalInfrastructureSection.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- HospitalLocationMeta.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- HospitalMarkerOverlay.tsx  # 지도 렌더링/오버레이 컴포넌트
 |   |   |   |   |-- HospitalMarkersLayer.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- HospitalMoonlightInfo.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- HospitalPopupCard.tsx  # 지도 대시보드 UI 컴포넌트
-|   |   |   |   |-- HospitalRadarChart.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- HospitalSidebarControls.tsx  # 사이드바 및 패널 UI 컴포넌트
 |   |   |   |   |-- HospitalSidebarList.tsx  # 사이드바 및 패널 UI 컴포넌트
 |   |   |   |   |-- HospitalSpecialBeds.tsx  # 지도 대시보드 UI 컴포넌트
@@ -333,7 +317,6 @@ project/  # 최상위 프로젝트 루트
 |   |   |   |   |-- PolicyOptimizationSummary.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- PolicyWelcomePanel.tsx  # 사이드바 및 패널 UI 컴포넌트
 |   |   |   |   |-- PresetDistrictListPanel.tsx  # 사이드바 및 패널 UI 컴포넌트
-|   |   |   |   |-- ResourceRecommendationModal.tsx  # 팝업 및 모달 UI 컴포넌트
 |   |   |   |   |-- SelectedHospitalPin.tsx  # 지도 대시보드 UI 컴포넌트
 |   |   |   |   |-- TierBadge.tsx  # 시각적 뱃지/아이콘 UI 컴포넌트
 |   |   |   |   |-- TierIcon.tsx  # 시각적 뱃지/아이콘 UI 컴포넌트
@@ -392,7 +375,6 @@ project/  # 최상위 프로젝트 루트
 |   |   |-- start-backend.ps1  # 개발 환경 자동화 쉘 스크립트
 |   |   +-- stop-dev-servers.ps1  # 개발 환경 자동화 쉘 스크립트
 |   |-- extract_daegu_data.py  # 데이터 추출 및 관리용 파이썬 스크립트
-|   +-- extract_daegu_hira_fallback.py  # 데이터 추출 및 관리용 파이썬 스크립트
 |-- tests  # 단위(Unit) / E2E 테스트 모음
 |   |-- e2e  # Playwright 기반 프론트엔드 E2E 테스트
 |   |-- integration  # 백엔드/프론트엔드 통합 테스트
@@ -402,14 +384,11 @@ project/  # 최상위 프로젝트 루트
 |       |-- backend  # FastAPI 기반 백엔드 서버 및 API 라우터
 |       |   |-- test_dynamic_dashboard.py  # 백엔드 파이썬 로직
 |       |   |-- test_emergency_equipment_merge.py  # 백엔드 파이썬 로직
-|       |   |-- test_hira_client.py  # 백엔드 파이썬 로직
-|       |   |-- test_hira_snapshot.py  # 백엔드 파이썬 로직
 |       |   +-- test_nemc_mediboard_client.py  # 백엔드 파이썬 로직
 |       +-- frontend  # React + Vite 프론트엔드 웹 앱
 |           |-- bed-status.test.ts  # 프론트엔드 테스트 코드
 |           |-- canonical-hospitals.test.ts  # 프론트엔드 테스트 코드
 |           |-- daegu-bounds.test.ts  # 프론트엔드 테스트 코드
-|           |-- hospital-infrastructure-score.test.ts  # 프론트엔드 테스트 코드
 |           |-- hospital-recommendation.test.ts  # 프론트엔드 테스트 코드
 |           |-- mobile-hospital-detail-history.test.ts  # 프론트엔드 테스트 코드
 |           +-- tsconfig.json  # TypeScript 기본 컴파일러 설정
@@ -423,7 +402,6 @@ project/  # 최상위 프로젝트 루트
 |-- Dockerfile  # 프로젝트 도커 이미지 빌드 파일
 |-- README.md  # 프로젝트 종합 소개 및 실행 가이드
 |-- docker-compose.yml  # 도커 기반 백엔드/인프라 실행 설정
-|-- golden_governance_clusters.png
 |-- package.json  # Node.js 프로젝트 의존성 및 스크립트 정의
 |-- tmp_hospitals.json  # 구조화된 JSON 데이터/설정 파일
 |-- update_db.py  # SQLite 데이터베이스 업데이트/마이그레이션 스크립트
