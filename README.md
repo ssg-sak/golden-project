@@ -10,6 +10,7 @@
 - [프로젝트 구조도](./docs/PROJECT_STRUCTURE.md)
 - [정책분석 방법론](./docs/methodology.md)
 - [탐색적 데이터 분석(EDA)](./docs/EDA_REPORT.md)
+- [최종 개선·검증 및 프로젝트 동결 보고서](./docs/FINAL_PORTFOLIO_FREEZE_REPORT_20260718.md)
 - [데이터 사전](./docs/data_dictionary.md)
 
 > 이 서비스는 응급의료기관·119의 공식 관제나 진료예약 시스템이 아닙니다. 화면의 병상 숫자와 필터 결과는 실제 수용 확정을 뜻하지 않습니다. 위급한 상황에서는 119, 응급의료 상담은 1339, 방문 전에는 해당 의료기관의 안내를 우선하세요.
