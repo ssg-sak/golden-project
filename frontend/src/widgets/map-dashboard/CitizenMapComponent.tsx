@@ -11,7 +11,7 @@ import { MapRelayout } from './MapRelayout';
 import { SelectedHospitalPin } from './SelectedHospitalPin';
 import { enforceDaeguMapBounds } from './lib/daegu-map-bounds';
 import { filterByCareTarget } from './lib/hospital-filter';
-import { isHospitalAvailable } from '../../shared/lib/bed-status';
+import { hasReportedGeneralErBed } from '../../shared/lib/bed-status';
 import type { SevereConditionId } from '../../shared/lib/severe-condition';
 import type { KakaoLatLng } from './lib/geojson-to-kakao';
 import { userLocationMarkerImage } from './lib/kakao-marker-images';
@@ -77,13 +77,13 @@ export function CitizenMapComponent({
     ];
   }, [isMobileEmbed, userLocation, routeHospital]);
 
-  // 진료대상 및 병상 여부에 따른 마커 필터링
+  // 진료대상 및 보고된 일반응급실 병상 수에 따른 마커 필터링
   const visibleHospitals = useMemo(() => {
     let filtered = hospitals;
 
-    // 1) 병상(available) 필터
+    // 1) 일반응급실 가용 병상이 1개 이상 보고된 기관 필터
     if (showAvailableOnly) {
-      filtered = filtered.filter((h) => isHospitalAvailable(h));
+      filtered = filtered.filter((h) => hasReportedGeneralErBed(h));
     }
 
     // 2) 진료대상(careTarget) 공통 필터 적용
@@ -246,11 +246,11 @@ export function CitizenMapComponent({
         >
           <span className="flex items-center gap-1 text-green-700">
             <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
-            진료 가능
+            가용병상 1개 이상 보고
           </span>
           <span className="flex items-center gap-1 text-red-700">
             <span className="h-2 w-2 rounded-full bg-red-500" aria-hidden />
-            수용 불가
+            가용병상 0 보고
           </span>
           <span className="flex items-center gap-1 text-blue-700">
             <span className="h-2 w-2 rounded-full bg-blue-500" aria-hidden />

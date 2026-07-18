@@ -82,7 +82,7 @@ function HospitalDetailContent({
   const selectedConditionStatus = severeConditionStatus(hospital, severeCondition);
   const headerClass = isMoonlight
     ? 'border-cyan-300 bg-cyan-50'
-    : bedStatus.status === 'unavailable'
+    : bedStatus.status === 'reported-bed-zero'
       ? 'border-rose-300 bg-rose-50'
       : 'border-teal-300 bg-teal-50';
 

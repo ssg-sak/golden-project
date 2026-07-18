@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import asyncio
 import logging
 import time
 
@@ -27,9 +26,10 @@ async def _run_target(target: str) -> None:
         result = await run_data_pipeline(db, targets={target})
         if result.error:
             logger.error(
-                "Scheduled job '%s' completed with error=%s failed_sources=%s",
+                "Scheduled job '%s' completed with error=%s duration_sec=%.2f failed_sources=%s",
                 target,
                 result.error,
+                time.perf_counter() - started_at,
                 result.failed_sources or [],
             )
         else:
@@ -68,8 +68,9 @@ def start_public_data_scheduler() -> None:
     logger.info("Starting public data scheduler (timezone=%s)...", tz)
 
     scheduler.add_job(
-        lambda: asyncio.create_task(_run_target("emergency")),
+        _run_target,
         CronTrigger(hour=3, minute=0, timezone=tz),
+        args=["emergency"],
         id="refresh_emergency",
         replace_existing=True,
         coalesce=True,
@@ -77,8 +78,9 @@ def start_public_data_scheduler() -> None:
         misfire_grace_time=3600,
     )
     scheduler.add_job(
-        lambda: asyncio.create_task(_run_target("moonlight")),
+        _run_target,
         CronTrigger(hour=3, minute=15, timezone=tz),
+        args=["moonlight"],
         id="refresh_moonlight",
         replace_existing=True,
         coalesce=True,
@@ -86,8 +88,9 @@ def start_public_data_scheduler() -> None:
         misfire_grace_time=3600,
     )
     scheduler.add_job(
-        lambda: asyncio.create_task(_run_target("population")),
+        _run_target,
         CronTrigger(day=10, hour=4, minute=0, timezone=tz),
+        args=["population"],
         id="refresh_population",
         replace_existing=True,
         coalesce=True,
@@ -95,8 +98,9 @@ def start_public_data_scheduler() -> None:
         misfire_grace_time=86400,
     )
     scheduler.add_job(
-        lambda: asyncio.create_task(_run_target("admin-boundary")),
+        _run_target,
         CronTrigger(day=1, hour=5, minute=0, timezone=tz),
+        args=["admin-boundary"],
         id="refresh_admin_boundary",
         replace_existing=True,
         coalesce=True,

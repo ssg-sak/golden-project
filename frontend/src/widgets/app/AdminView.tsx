@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { isHospitalAvailable } from '../../shared/lib/bed-status';
+import { hasReportedGeneralErBed } from '../../shared/lib/bed-status';
 import type { SevereConditionId } from '../../shared/lib/severe-condition';
 import { filterByCareTarget } from '../map-dashboard/lib/hospital-filter';
 
@@ -76,7 +76,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
       severeCondition,
     );
     if (showAvailableOnly) {
-      filtered = filtered.filter(isHospitalAvailable);
+      filtered = filtered.filter(hasReportedGeneralErBed);
     }
     return filtered;
   }, [adminState.hospitals, adminState.currentMode, severeCondition, showAvailableOnly]);
