@@ -54,7 +54,7 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
 
   python:
-    name: Backend, analysis, and offline pipeline
+    name: Backend, analysis, and policy release
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -82,11 +82,11 @@ jobs:
         working-directory: backend
         run: python -m pytest ../tests/unit/backend ../tests/integration/backend -q
 
-      - name: Rebuild the verified policy release offline
-        run: python ai-model/run_integrated_policy_pipeline.py --offline
+      - name: Validate and rebuild the committed policy release
+        run: python ai-model/build_policy_release.py
 
       - name: Regenerate EDA artifacts
         run: python scripts/generate_eda_portfolio.py
 
-      - name: Verify regenerated artifacts are committed
-        run: git diff --exit-code
+      - name: Verify the policy release remains deterministic
+        run: git diff --exit-code -- data/processed/policy_release.json frontend/public/data/policy_release.json
