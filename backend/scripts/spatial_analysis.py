@@ -24,6 +24,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import sys
@@ -54,6 +55,7 @@ GEOJSON_URL = (
 SIDO_NAME = "대구광역시"
 METRIC_CRS = "EPSG:5179"
 OUTPUT_FRONTEND = FRONTEND_DATA_DIR / "daegu_vulnerability.geojson"
+POPULATION_MANIFEST_PATH = RAW_DAEGU_POPULATION_REAL_CSV.with_suffix(".manifest.json")
 
 
 def normalize_join_key(name: str) -> str:
@@ -122,6 +124,35 @@ def load_population(csv_path: Path) -> pd.DataFrame:
     pop["join_key"] = pop["동이름"].astype(str).map(normalize_join_key)
     pop["취약인구"] = pop["65세이상_인구"] + pop["0~9세_인구"]
     return pop
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_population_manifest(csv_path: Path, manifest_path: Path) -> dict[str, object]:
+    if not manifest_path.exists():
+        raise FileNotFoundError(f"인구 입력 manifest 없음: {manifest_path}")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    required = {
+        "population_base_month",
+        "district_count",
+        "source_file",
+        "source_sha256",
+    }
+    missing = required - set(manifest)
+    if missing:
+        raise ValueError(f"인구 입력 manifest 필수 필드 누락: {sorted(missing)}")
+    if str(manifest["source_file"]) != csv_path.name:
+        raise ValueError("인구 입력 manifest의 source_file이 실제 CSV와 다릅니다.")
+    actual_hash = file_sha256(csv_path)
+    if str(manifest["source_sha256"]) != actual_hash:
+        raise ValueError("인구 입력 CSV 해시가 manifest와 다릅니다.")
+    return manifest
 
 
 def load_hospitals(path: Path) -> gpd.GeoDataFrame:
@@ -223,7 +254,7 @@ def compute_distances_and_index(
     return metric_gdf.to_crs("EPSG:4326")
 
 
-def export_geojson(gdf: gpd.GeoDataFrame) -> None:
+def export_geojson(gdf: gpd.GeoDataFrame, population_manifest: dict[str, object]) -> None:
     ensure_data_dirs()
     FRONTEND_DATA_DIR.mkdir(parents=True, exist_ok=True)
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
@@ -251,6 +282,12 @@ def export_geojson(gdf: gpd.GeoDataFrame) -> None:
     collection = {
         "type": generated["type"],
         "name": "daegu_vulnerability",
+        "metadata": {
+            "population_base_month": population_manifest["population_base_month"],
+            "population_district_count": population_manifest["district_count"],
+            "population_source_file": population_manifest["source_file"],
+            "population_source_sha256": population_manifest["source_sha256"],
+        },
         "crs": {
             "type": "name",
             "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"},
@@ -317,10 +354,19 @@ def main() -> int:
         if args.offline
         else download_daegu_geojson(RAW_DAEGU_DONG_GEOJSON)
     )
+    population_manifest = load_population_manifest(
+        RAW_DAEGU_POPULATION_REAL_CSV,
+        POPULATION_MANIFEST_PATH,
+    )
     pop = load_population(RAW_DAEGU_POPULATION_REAL_CSV)
+    if len(pop) != int(population_manifest["district_count"]):
+        raise RuntimeError(
+            "인구 입력 행 수가 manifest와 다릅니다: "
+            f"rows={len(pop)}, manifest={population_manifest['district_count']}"
+        )
     merged = merge_population(gdf, pop)
     result = compute_distances_and_index(merged, FINAL_HOSPITALS_JSON)
-    export_geojson(result)
+    export_geojson(result, population_manifest)
 
     print("=" * 60)
     return 0

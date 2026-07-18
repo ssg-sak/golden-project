@@ -114,10 +114,52 @@ def test_coordinate_retry_pairs_try_exact_then_origin_and_destination_offsets():
     pairs = road_accessibility.coordinate_retry_pairs(False, False)
 
     assert pairs[0] == ((0.0, 0.0), (0.0, 0.0))
-    assert len(pairs) == 97
+    assert len(pairs) == 65
     assert len(set(pairs)) == len(pairs)
+    assert max(
+        road_accessibility.snap_offset_distance_km(offset)
+        for pair in pairs
+        for offset in pair
+    ) <= road_accessibility.MAX_ALLOWED_SNAP_DISTANCE_KM
     assert any(origin != (0.0, 0.0) and destination == (0.0, 0.0) for origin, destination in pairs)
     assert any(origin == (0.0, 0.0) and destination != (0.0, 0.0) for origin, destination in pairs)
+
+
+def test_coordinate_snap_audit_records_route_details_and_rejects_excess():
+    audit = road_accessibility.build_coordinate_snap_audit(
+        [
+            {
+                "origin_id": "district:1",
+                "destination_id": "hospital:1",
+                "origin_snap_offset": [0.002, 0.0],
+                "destination_snap_offset": [0.0, 0.0],
+            },
+            {
+                "origin_id": "district:2",
+                "destination_id": "hospital:2",
+                "origin_snap_offset": [0.0, 0.0],
+                "destination_snap_offset": [0.0, -0.004],
+            },
+        ]
+    )
+
+    assert audit["route_count"] == 2
+    assert audit["origin_snap_route_count"] == 1
+    assert audit["destination_snap_route_count"] == 1
+    assert len(audit["route_details"]) == 2
+    assert audit["max_snap_distance_km"] <= audit["allowed_max_snap_distance_km"]
+
+    with pytest.raises(RuntimeError, match="허용 한도"):
+        road_accessibility.build_coordinate_snap_audit(
+            [
+                {
+                    "origin_id": "district:3",
+                    "destination_id": "hospital:3",
+                    "origin_snap_offset": [0.02, 0.0],
+                    "destination_snap_offset": [0.0, 0.0],
+                }
+            ]
+        )
 
 
 def test_release_validation_rejects_missing_required_hospital():
