@@ -74,6 +74,9 @@ docs/**
 !docs/CASE_STUDY_PORTFOLIO.md
 !docs/*.md
 !docs/**/*.csv
+!docs/images/
+!docs/images/eda/
+!docs/images/eda/*.png
 
 # 피드백 반영 과정 공개 기록
 !docs/plans/

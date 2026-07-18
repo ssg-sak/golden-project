@@ -8,11 +8,22 @@ interface DataSourceStatusRecord {
   sourceName: string;
   status: string;
   recordCount: number;
+  lastCheckedAt?: string | null;
+  lastUpdatedAt?: string | null;
+  lastSuccessAt?: string | null;
+  errorMessage?: string | null;
 }
 
 interface DataStatusResponse {
   sources: DataSourceStatusRecord[];
   latestSnapshotAt: string | null;
+  status?: {
+    lastCheckedAt: string | null;
+    lastUpdatedAt: string | null;
+    stale: boolean;
+    dataState: string;
+    failedSources: string[];
+  };
   analysis?: {
     version: string | null;
     resourceCount: number | null;
@@ -25,10 +36,6 @@ interface DataStatusResponse {
     missingRouteCount: number | null;
     pending: boolean;
   };
-}
-
-interface ResourceRecommendationSummary {
-  pipeline: 'pediatric' | 'senior';
 }
 
 interface PolicyDataPipelineProps {
@@ -85,6 +92,16 @@ function formatSnapshotTime(value: string | null): string {
   })} 확인`;
 }
 
+function formatAnalysisEdition(releasedAt?: string, version?: string | null): string {
+  const releasedDate = releasedAt ? new Date(releasedAt) : null;
+  if (releasedDate && !Number.isNaN(releasedDate.getTime())) {
+    return `${releasedDate.getFullYear()}.${String(releasedDate.getMonth() + 1).padStart(2, '0')}.${String(releasedDate.getDate()).padStart(2, '0')} 검증본`;
+  }
+  const versionDate = version?.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (versionDate) return `${versionDate[1]}.${versionDate[2]}.${versionDate[3]} 검증본`;
+  return '검증된 분석본';
+}
+
 export function PolicyDataPipeline({
   districtCount,
   hospitalCount,
@@ -93,7 +110,6 @@ export function PolicyDataPipeline({
   populationBaseMonth = '2026.06',
 }: PolicyDataPipelineProps) {
   const [dataStatus, setDataStatus] = useState<DataStatusResponse | null>(null);
-  const [recommendations, setRecommendations] = useState<ResourceRecommendationSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const policyRelease = usePolicyReleaseStore((state) => state.release);
@@ -103,8 +119,7 @@ export function PolicyDataPipeline({
     setIsLoading(true);
     setError(null);
     try {
-      const release = await fetchPolicyRelease();
-      setRecommendations(release.recommendations);
+      await fetchPolicyRelease();
       const statusResponse = await fetchWithTimeout(
         DASHBOARD_DATA_STATUS_API_URL,
         { signal },
@@ -112,6 +127,8 @@ export function PolicyDataPipeline({
       );
       if (statusResponse.ok) {
         setDataStatus((await statusResponse.json()) as DataStatusResponse);
+      } else {
+        throw new Error(`정책 데이터 상태 조회 실패 (${statusResponse.status})`);
       }
     } catch (caught) {
       if (caught instanceof Error && caught.name === 'AbortError') return;
@@ -134,11 +151,12 @@ export function PolicyDataPipeline({
     const pick = (...names: string[]) => names.map((name) => byName.get(name)).find(Boolean);
     const populationSource = pick('population', 'static_population');
     const hospitalSource = pick('emergency_facilities', 'static_hospitals');
-    const pediatricCount = recommendations.filter(
-      (recommendation) => recommendation.pipeline === 'pediatric',
+    const candidates = policyRelease?.candidates ?? [];
+    const pediatricCount = candidates.filter(
+      (candidate) => candidate.mode === 'pediatric',
     ).length;
-    const seniorCount = recommendations.filter(
-      (recommendation) => recommendation.pipeline === 'senior',
+    const seniorCount = candidates.filter(
+      (candidate) => candidate.mode === 'senior',
     ).length;
     const analysis = policyRelease?.metadata
       ? {
@@ -148,7 +166,7 @@ export function PolicyDataPipeline({
           requestedRouteCount: policyRelease.metadata.route_count,
           successfulRouteCount: policyRelease.metadata.successful_route_count,
           missingRouteCount: policyRelease.metadata.missing_route_count,
-          pending: false,
+          pending: dataStatus?.analysis?.pending ?? false,
         }
       : dataStatus?.analysis;
     const routeProgress =
@@ -157,12 +175,16 @@ export function PolicyDataPipeline({
         : '도로 경로 결과 확인 중';
     const analysisTone: StageTone =
       analysis?.pending || (analysis?.missingRouteCount ?? 0) > 0 ? 'warning' : 'stable';
+    const analysisEdition = formatAnalysisEdition(
+      policyRelease?.metadata.released_at,
+      analysis?.version,
+    );
 
     return [
       {
         title: '병상 정보',
         metric: '변동 가능',
-        detail: `분석 기준 기관 ${analysis?.resourceCount ?? 25}곳 · 병상은 출발 전 전화 확인`,
+        detail: `분석 기준 기관 ${analysis?.resourceCount ?? hospitalCount}곳 · 병상은 출발 전 전화 확인`,
         statusLabel: sourceLabel(hospitalSource),
         tone: sourceTone(hospitalSource),
       },
@@ -176,21 +198,21 @@ export function PolicyDataPipeline({
       {
         title: '동네별 위험도',
         metric: `${policyRelease?.metadata.district_count ?? districtCount}개 동네`,
-        detail: `위험지역 ${highRiskDistrictCount ?? 0}개 · 기준 ${Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}`,
+        detail: `상위 25% ${policyRelease?.metadata.high_risk_district_count ?? highRiskDistrictCount ?? 0}개 · 상대 경계 ${Math.round(policyRelease?.metadata.risk_threshold ?? highRiskThreshold ?? 0).toLocaleString('ko-KR')}`,
         statusLabel: analysis?.pending ? '재분석 대기' : '기준자료 기반 분석',
         tone: analysisTone,
       },
       {
-        title: '정책 후보와 자원 시나리오',
-        metric: recommendations.length > 0 ? `${recommendations.length}개 후보` : '저장된 분석본',
+        title: '정책 후보와 접근성 비교',
+        metric: candidates.length > 0 ? `${candidates.length}개 후보` : '저장된 분석본',
         detail: `소아 ${pediatricCount}개 · 어르신 ${seniorCount}개 · ${routeProgress}`,
-        statusLabel: analysis?.version ?? '버전 확인 중',
+        statusLabel: analysis?.pending ? '재분석 대기' : '분석 결과',
         tone: analysisTone,
       },
       {
         title: '현재 정책 분석',
-        metric: analysis?.version ?? '검증 중',
-        detail: `기관 ${analysis?.resourceCount ?? 25}곳 · 소아 ${analysis?.resourceCountByMode.pediatric ?? 6} · 어르신 ${analysis?.resourceCountByMode.senior ?? 19}`,
+        metric: analysisEdition,
+        detail: `기관 ${analysis?.resourceCount ?? hospitalCount}곳 · 소아 ${analysis?.resourceCountByMode.pediatric ?? 6} · 어르신 ${analysis?.resourceCountByMode.senior ?? 19}`,
         statusLabel: analysis?.missingRouteCount === 0 ? '검증 완료' : '표시 보류',
         tone: analysis?.missingRouteCount === 0 ? 'success' : 'warning',
       },
@@ -203,11 +225,40 @@ export function PolicyDataPipeline({
     hospitalCount,
     populationBaseMonth,
     policyRelease,
-    recommendations,
   ]);
+
+  const statusNotice = useMemo(() => {
+    if (error) {
+      return {
+        tone: 'border-amber-200 bg-amber-50 text-amber-900',
+        message: '최신 상태를 확인하지 못해 현재 저장된 검증 분석본을 표시합니다.',
+      };
+    }
+    if (dataStatus?.analysis?.pending) {
+      return {
+        tone: 'border-amber-200 bg-amber-50 text-amber-900',
+        message: '원천자료 변경이 확인되어 재분석 대기 중입니다. 현재 화면은 이전 검증 분석본입니다.',
+      };
+    }
+    if (dataStatus?.status?.dataState === 'degraded' || dataStatus?.status?.stale) {
+      return {
+        tone: 'border-amber-200 bg-amber-50 text-amber-900',
+        message: '공공데이터 갱신이 지연되어 마지막 정상 검증본을 표시합니다.',
+      };
+    }
+    return null;
+  }, [dataStatus, error]);
 
   return (
     <section className="shrink-0 border-b border-slate-300 bg-white" aria-label="정책 자료 안내">
+      {statusNotice ? (
+        <p
+          className={`border-b px-4 py-2 text-center text-xs font-bold leading-5 md:px-6 ${statusNotice.tone}`}
+          role="status"
+        >
+          {statusNotice.message}
+        </p>
+      ) : null}
       <details className="group mx-auto max-w-[1800px] px-4 py-3 md:px-6">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
           <div>
@@ -272,10 +323,10 @@ export function PolicyDataPipeline({
 
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] leading-4 text-slate-500">
             <p className={error ? 'font-semibold text-amber-800' : undefined}>
-              {error ?? formatSnapshotTime(dataStatus?.latestSnapshotAt ?? null)}
+              {error ?? `마지막 정상 분석본 · ${formatSnapshotTime(dataStatus?.latestSnapshotAt ?? null)}`}
             </p>
             <p className="font-bold text-teal-800">
-              25개 기관과 5,100개 도로 경로를 함께 검증한 단일 분석 릴리스
+              25개 기관과 5,100개 도로 경로를 함께 검증한 정책 분석본
             </p>
           </div>
         </div>

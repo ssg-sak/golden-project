@@ -68,6 +68,9 @@ export function MapToolbar({
     Number.isFinite(vulnerabilityMin) &&
     Number.isFinite(vulnerabilityMax) &&
     vulnerabilityMax >= vulnerabilityMin;
+  const sliderMin = Math.floor(vulnerabilityMin);
+  const sliderMax = Math.ceil(vulnerabilityMax);
+  const sliderStep = Math.max(1, Math.round((sliderMax - sliderMin) / 200));
 
   return (
     <div className="relative z-[900] shrink-0 border-b border-slate-300/70 bg-[#eef3f9] px-2.5 py-2 pointer-events-auto">
@@ -113,10 +116,10 @@ export function MapToolbar({
             <span className="text-[10px] font-semibold text-slate-600">위험 기준</span>
             <input
               type="range"
-              min={1500}
-              max={10000}
-              step={100}
-              value={Math.min(10000, Math.max(1500, riskThreshold))}
+              min={sliderMin}
+              max={sliderMax}
+              step={sliderStep}
+              value={Math.min(sliderMax, Math.max(sliderMin, riskThreshold))}
               onChange={(event) => onRiskThresholdChange?.(Number(event.target.value))}
               className="w-24 accent-rose-600 xl:w-32"
               aria-label="위험 점수 기준"
@@ -159,9 +162,8 @@ export function MapToolbar({
                   'linear-gradient(to right, rgba(254,249,195,0.95) 0%, #f59e0b 35%, #ef4444 70%, #7f1d1d 100%)',
               }}
             />
-            <span className="text-[10px] font-semibold text-amber-700">1,500+</span>
-            <span className="text-[10px] font-semibold text-orange-700">5,000+</span>
-            <span className="text-[10px] font-semibold text-red-800">10,000+</span>
+            <span className="text-[10px] font-semibold text-amber-700">상대적으로 낮음</span>
+            <span className="text-[10px] font-semibold text-red-800">상대적으로 높음</span>
           </div>
         ) : null}
 

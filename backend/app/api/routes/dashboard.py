@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import secrets
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Header, HTTPException
@@ -129,6 +130,16 @@ def get_dashboard_summary(db: Session = Depends(get_db)) -> dict:
             "failedSources": failed_sources,
         },
         "analysisVersion": latest.analysis_version,
+        "comparison": {
+            "currentGeneratedAt": _ensure_utc(latest.generated_at).isoformat()
+            if latest.generated_at
+            else None,
+            "previousGeneratedAt": _ensure_utc(previous.generated_at).isoformat()
+            if previous and previous.generated_at
+            else None,
+            "previousAnalysisVersion": previous.analysis_version if previous else None,
+            "previousPopulationBaseMonth": previous.population_base_month if previous else None,
+        },
     }
 
 
@@ -150,6 +161,20 @@ def get_data_status(db: Session = Depends(get_db)) -> dict:
     )
     analysis_pending = latest_snapshot_at is None or (
         source_updated_at is not None and source_updated_at > latest_snapshot_at
+    )
+    last_checked_at = max(
+        (_ensure_utc(status.last_checked_at) for status in statuses if status.last_checked_at),
+        default=None,
+    )
+    last_updated_at = max(
+        (_ensure_utc(status.last_updated_at) for status in statuses if status.last_updated_at),
+        default=None,
+    )
+    failed_sources = [
+        status.source_name for status in statuses if status.status in {"failed", "degraded"}
+    ]
+    is_stale = last_checked_at is None or (
+        datetime.now(timezone.utc) - last_checked_at > timedelta(hours=24)
     )
     analysis_metadata = {}
     if ACTUAL_ROAD_MATRIX_PATH.exists():
@@ -173,6 +198,13 @@ def get_data_status(db: Session = Depends(get_db)) -> dict:
             for s in statuses
         ],
         "latestSnapshotAt": latest_snapshot_at.isoformat() if latest_snapshot_at else None,
+        "status": {
+            "lastCheckedAt": last_checked_at.isoformat() if last_checked_at else None,
+            "lastUpdatedAt": last_updated_at.isoformat() if last_updated_at else None,
+            "stale": is_stale,
+            "dataState": "degraded" if failed_sources else "ok",
+            "failedSources": failed_sources,
+        },
         "analysis": {
             "version": analysis_metadata.get("version"),
             "resourceCount": analysis_metadata.get("resource_count"),
@@ -191,7 +223,9 @@ async def force_refresh_dashboard(
     x_admin_token: str | None = Header(default=None, alias="X-Admin-Token"),
 ):
     expected = data_refresh_admin_token()
-    if expected and x_admin_token != expected:
+    if expected is None:
+        raise HTTPException(status_code=503, detail="Dashboard refresh is disabled")
+    if x_admin_token is None or not secrets.compare_digest(x_admin_token, expected):
         raise HTTPException(status_code=401, detail="Invalid admin token")
 
     result = await run_data_pipeline(db)
