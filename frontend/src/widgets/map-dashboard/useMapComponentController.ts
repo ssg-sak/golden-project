@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { HospitalRecord } from '../../shared/types/hospital';
+import type { GeoJsonFeature } from '../../shared/types/geojson';
+import type { DistrictVulnerabilityRecord } from '../../shared/types/vulnerability';
 import { buildVulnerabilityRecordMap, toAdmNmKey } from '../../shared/types/vulnerability';
 import { useVulnerabilityStore } from '../../shared/store/vulnerabilityStore';
 import { useDashboardActions } from './lib/useDashboardActions';
@@ -16,6 +18,8 @@ interface MapComponentControllerProps {
   selectedDistrict: string | null;
   onDistrictSelect: (admNm: string | null) => void;
   currentMode?: string;
+  vulnerabilityRecords: DistrictVulnerabilityRecord[];
+  districtFeatures: GeoJsonFeature[];
 }
 
 export function useMapComponentController({
@@ -25,6 +29,8 @@ export function useMapComponentController({
   selectedDistrict,
   onDistrictSelect,
   currentMode = 'all',
+  vulnerabilityRecords,
+  districtFeatures,
 }: MapComponentControllerProps) {
   const [activeFilter, setActiveFilter] = useState<HospitalFilter>('all');
   const [hoveredDistrict, setHoveredDistrict] = useState<string | null>(null);
@@ -35,8 +41,6 @@ export function useMapComponentController({
     return filterByCareTarget(baseFiltered, currentMode as 'all' | 'adult' | 'pediatric' | 'senior');
   }, [hospitals, activeFilter, currentMode]);
 
-  const vulnerabilityRecords = useVulnerabilityStore((state) => state.records);
-  const districtFeatures = useVulnerabilityStore((state) => state.features);
   const showHeatmap = useVulnerabilityStore((state) => state.showHeatmap);
   const activePreset = usePresetStore((state) => state.activePreset);
   const presetData = usePresetStore((state) => state.presetData);

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import json
 from datetime import datetime
 
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.api.routes.dashboard import get_dashboard_summary
+from app.api.routes.dashboard import get_dashboard_summary, get_data_status
 from app.db.database import Base
 from app.db.models import DashboardSnapshot, DataSourceStatus
 from app.services.analysis_metrics import compute_high_risk_metrics, format_change_text
@@ -120,3 +121,69 @@ def test_dashboard_summary_normalizes_naive_datetimes(db_session):
     assert summary["status"]["lastCheckedAt"].endswith("+00:00")
     assert summary["status"]["lastUpdatedAt"].endswith("+00:00")
     assert isinstance(summary["status"]["stale"], bool)
+
+    data_status = get_data_status(db_session)
+    assert data_status["latestSnapshotAt"].endswith("+00:00")
+
+
+def test_data_status_exposes_analysis_version_and_pending_state(
+    db_session,
+    monkeypatch,
+    tmp_path,
+):
+    matrix_path = tmp_path / "actual_road_accessibility_matrix.json"
+    matrix_path.write_text(
+        json.dumps(
+            {
+                "metadata": {
+                    "version": "test-r2",
+                    "resource_count": 25,
+                    "resource_count_by_mode": {"pediatric": 6, "senior": 19},
+                    "requested_route_count": 5100,
+                    "successful_route_count": 5100,
+                    "missing_route_count": 0,
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "app.api.routes.dashboard.ACTUAL_ROAD_MATRIX_PATH",
+        matrix_path,
+    )
+    db_session.add(
+        DashboardSnapshot(
+            admin_dong_count=150,
+            emergency_total=25,
+            large_emergency_count=6,
+            secondary_emergency_count=13,
+            moonlight_pediatric_count=6,
+            high_risk_admin_dong_count=38,
+            risk_threshold=13261.43,
+            population_base_month="2026.06",
+            analysis_version="test-r2",
+            generated_at=datetime(2026, 7, 18, 10, 0, 0),
+        )
+    )
+    db_session.add(
+        DataSourceStatus(
+            source_name="population",
+            status="updated",
+            record_count=150,
+            last_checked_at=datetime(2026, 7, 18, 11, 0, 0),
+            last_updated_at=datetime(2026, 7, 18, 11, 0, 0),
+        )
+    )
+    db_session.commit()
+
+    result = get_data_status(db_session)
+
+    assert result["analysis"] == {
+        "version": "test-r2",
+        "resourceCount": 25,
+        "resourceCountByMode": {"pediatric": 6, "senior": 19},
+        "requestedRouteCount": 5100,
+        "successfulRouteCount": 5100,
+        "missingRouteCount": 0,
+        "pending": True,
+    }

@@ -4,24 +4,15 @@ import { useDashboardSummaryStore } from '../../shared/store/dashboardSummarySto
 import { useHospitalStore } from '../../shared/store/hospitalStore';
 import { useVulnerabilityStore } from '../../shared/store/vulnerabilityStore';
 import { useOptimalLocationsStore } from '../map-dashboard/lib/useOptimalLocationsStore';
+import { usePolicyReleaseStore } from '../../shared/store/policyReleaseStore';
+import { parseVulnerabilityRecords } from '../../data/api/vulnerability';
 import { usePresetStore } from '../map-dashboard/lib/usePresetStore';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { toAdmNmKey } from '../../shared/types/vulnerability';
 
-interface KakaoState {
-  configured: boolean;
-  loading: boolean;
-  error: ErrorEvent | null;
-}
-
-export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => void) {
+export function useAdminController() {
   const useDynamicDashboard = ENV.USE_DYNAMIC_DASHBOARD_DATA;
 
-  const hospitals = useHospitalStore((state) => state.hospitals);
-  const hospitalsLoading = useHospitalStore((state) => state.isLoading);
-  const hospitalsError = useHospitalStore((state) => state.error);
-  const hospitalsDegraded = useHospitalStore((state) => state.isDegraded);
-  const hospitalsDegradedMode = useHospitalStore((state) => state.degradedMode);
   const hospitalsUpdatedAt = useHospitalStore((state) => state.lastUpdatedAt);
 
   const dashboardSummary = useDashboardSummaryStore((state) => state.summary);
@@ -41,16 +32,34 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     }
   }, [currentMode, showLocations, fetchLocations]);
 
-  const vulnerabilityData = useVulnerabilityStore((state) => state.records);
-  const vulnerabilityLoading = useVulnerabilityStore((state) => state.isLoading);
-  const vulnerabilityError = useVulnerabilityStore((state) => state.error);
-  const vulnerabilityDegraded = useVulnerabilityStore((state) => state.isDegraded);
+  const sourceVulnerabilityData = useVulnerabilityStore((state) => state.records);
   const vulnerabilityUpdatedAt = useVulnerabilityStore((state) => state.lastUpdatedAt);
-  const fetchVulnerability = useVulnerabilityStore((state) => state.fetchVulnerability);
+  const policyRelease = usePolicyReleaseStore((state) => state.release);
+  const policyReleaseLoading = usePolicyReleaseStore((state) => state.isLoading);
+  const policyReleaseError = usePolicyReleaseStore((state) => state.error);
+  const fetchPolicyRelease = usePolicyReleaseStore((state) => state.fetchRelease);
+
+  useEffect(() => {
+    void fetchPolicyRelease().catch(() => undefined);
+  }, [fetchPolicyRelease]);
+
+  const hospitals = useMemo(() => policyRelease?.hospitals ?? [], [policyRelease]);
+  const vulnerabilityData = useMemo(
+    () =>
+      policyRelease
+        ? parseVulnerabilityRecords(policyRelease.vulnerability.features)
+        : sourceVulnerabilityData,
+    [policyRelease, sourceVulnerabilityData],
+  );
+  const vulnerabilityFeatures = policyRelease?.vulnerability.features ?? [];
 
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [selectedHospital, setSelectedHospital] = useState<HospitalRecord | null>(null);
   const [riskThreshold, setRiskThreshold] = useState(10000);
+
+  useEffect(() => {
+    if (policyRelease) setRiskThreshold(policyRelease.metadata.risk_threshold);
+  }, [policyRelease]);
 
   const resolvedSelectedHospital = useMemo(() => {
     if (!selectedHospital) return null;
@@ -78,6 +87,13 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     const defaultCutoff = sorted[Math.floor(sorted.length * 0.25)]?.vdi_log ?? 0;
     setRiskThreshold((current) => (current === 0 ? defaultCutoff : current));
   }, [useDynamicDashboard, dashboardSummary, vulnerabilityData]);
+
+  const dashboardRiskThreshold = dashboardSummary?.risk.threshold;
+
+  useEffect(() => {
+    if (!useDynamicDashboard || dashboardRiskThreshold === undefined) return;
+    setRiskThreshold(dashboardRiskThreshold);
+  }, [useDynamicDashboard, dashboardRiskThreshold]);
 
   useEffect(() => {
     if (useDynamicDashboard) return;
@@ -123,82 +139,31 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     }
   }, []);
 
-  const handleRetryVulnerability = useCallback(() => {
-    void fetchVulnerability();
-    if (useDynamicDashboard) {
-      void fetchDashboardSummary();
-    }
-  }, [fetchVulnerability, useDynamicDashboard, fetchDashboardSummary]);
-
   const activePreset = usePresetStore((state) => state.activePreset);
 
-  const districtCount = useDynamicDashboard
-    ? (dashboardSummary?.adminArea.count ?? 0)
-    : vulnerabilityError
-      ? 0
-      : vulnerabilityData.length;
-
-  const tier1Count = useDynamicDashboard
-    ? (dashboardSummary?.emergencyFacilities.categories.large ?? 0)
-    : hospitals.filter((h) => h.tier === 1).length;
-  const tier2Count = useDynamicDashboard
-    ? (dashboardSummary?.emergencyFacilities.categories.secondary ?? 0)
-    : hospitals.filter((h) => h.tier === 2).length;
-  const tier3Count = useDynamicDashboard
-    ? (dashboardSummary?.emergencyFacilities.categories.moonlightPediatric ?? 0)
-    : hospitals.filter((h) => h.tier === 3).length;
-
-  const statsLoading = useDynamicDashboard
-    ? dashboardLoading && !dashboardSummary
-    : hospitalsLoading || vulnerabilityLoading;
-
-  const mapBlocked = hospitalsLoading || hospitalsError !== null;
+  const districtCount = policyRelease?.metadata.district_count ?? 0;
+  const tier1Count = hospitals.filter((hospital) => hospital.tier === 1).length;
+  const tier2Count = hospitals.filter((hospital) => hospital.tier === 2).length;
+  const tier3Count = hospitals.filter((hospital) => hospital.tier === 3).length;
   const isDetailOpen = selectedHospital !== null || selectedVulnerability !== null || activePreset !== null;
 
   const policyStatus = useMemo(() => {
+    if (policyReleaseError || (!policyRelease && !policyReleaseLoading)) {
+      return {
+        tone: 'danger' as const,
+        message: policyReleaseError ?? '검증된 정책 분석 릴리스를 불러오지 못했습니다.',
+        actionLabel: '정책 릴리스 다시 조회',
+        onAction: (): void => { void fetchPolicyRelease(); },
+        actionLoading: policyReleaseLoading,
+      };
+    }
     if (useDynamicDashboard && dashboardError && !dashboardSummary) {
       return {
         tone: 'warning' as const,
         message: `${dashboardError} 저장된 분석 자료를 먼저 표시합니다.`,
         actionLabel: '정책 요약 다시 조회',
-        onAction: () => void fetchDashboardSummary(),
+        onAction: (): void => { void fetchDashboardSummary(); },
         actionLoading: dashboardLoading,
-      };
-    }
-    if (hospitalsError) {
-      return {
-        tone: 'danger' as const,
-        message: `${hospitalsError} 병원 목록을 다시 조회해 주세요.`,
-        actionLabel: '병원 다시 조회',
-        onAction: onRetryHospitals,
-        actionLoading: hospitalsLoading,
-      };
-    }
-    if (hospitalsDegraded) {
-      return {
-        tone: 'warning' as const,
-        message:
-          hospitalsDegradedMode === 'stale-cache'
-            ? '병원 데이터 연결이 불안정해 이전 기준 자료를 표시 중입니다.'
-            : '실시간 병상 연결 실패로 기본 병원 목록을 표시 중입니다.',
-        actionLabel: '병원 다시 조회',
-        onAction: onRetryHospitals,
-        actionLoading: hospitalsLoading,
-      };
-    }
-    if (vulnerabilityError) {
-      return {
-        tone: 'warning' as const,
-        message: `${vulnerabilityError} 저장된 분석 자료와 병원 위치 정보로 계속 표시합니다.`,
-        actionLabel: '분석 다시 조회',
-        onAction: handleRetryVulnerability,
-        actionLoading: vulnerabilityLoading,
-      };
-    }
-    if (vulnerabilityDegraded) {
-      return {
-        tone: 'info' as const,
-        message: '동네별 분석 데이터 연결이 실패해 저장된 분석 자료를 표시 중입니다.',
       };
     }
     if (useDynamicDashboard && dashboardSummary?.status.stale) {
@@ -210,30 +175,26 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     return null;
   }, [
     useDynamicDashboard,
+    policyRelease,
+    policyReleaseError,
+    policyReleaseLoading,
+    fetchPolicyRelease,
     dashboardError,
     dashboardSummary,
     fetchDashboardSummary,
     dashboardLoading,
-    hospitalsError,
-    hospitalsDegraded,
-    hospitalsDegradedMode,
-    onRetryHospitals,
-    hospitalsLoading,
-    vulnerabilityError,
-    handleRetryVulnerability,
-    vulnerabilityLoading,
-    vulnerabilityDegraded,
   ]);
 
   return {
     hospitals,
-    hospitalsLoading,
-    hospitalsError,
+    hospitalsLoading: policyReleaseLoading,
+    hospitalsError: policyReleaseError,
     hospitalsUpdatedAt: useDynamicDashboard
       ? (dashboardSummary?.status.lastUpdatedAt ?? dashboardFetchedAt)
       : hospitalsUpdatedAt,
     vulnerabilityData,
-    vulnerabilityError,
+    vulnerabilityFeatures,
+    vulnerabilityError: policyReleaseError,
     vulnerabilityUpdatedAt: useDynamicDashboard
       ? (dashboardSummary?.status.lastUpdatedAt ?? dashboardFetchedAt)
       : vulnerabilityUpdatedAt,
@@ -248,8 +209,8 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     highRiskDistrictCount,
     vulnerabilitySummary,
     highlightedHospitalName,
-    statsLoading,
-    mapBlocked,
+    statsLoading: policyReleaseLoading,
+    mapBlocked: policyReleaseLoading || policyReleaseError !== null,
     isDetailOpen,
     policyStatus,
     selectedVulnerability,
@@ -258,8 +219,8 @@ export function useAdminController(_kakao: KakaoState, onRetryHospitals: () => v
     tier1Count,
     tier2Count,
     tier3Count,
-    populationBaseMonth: dashboardSummary?.population.baseMonth ?? '2026.06',
-    dataStale: dashboardSummary?.status.stale ?? false,
+    populationBaseMonth: policyRelease?.metadata.population_base_month ?? '확인 중',
+    dataStale: false,
     useDynamicDashboard,
   };
 }

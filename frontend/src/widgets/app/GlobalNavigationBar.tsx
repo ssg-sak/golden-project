@@ -140,7 +140,7 @@ export function GlobalNavigationBar() {
                 to="/about"
                 className="px-3 py-2 text-xs font-semibold text-teal-800 transition hover:bg-teal-50 sm:text-sm"
               >
-                공식 소개
+                서비스 소개
               </Link>
             )}
           </div>

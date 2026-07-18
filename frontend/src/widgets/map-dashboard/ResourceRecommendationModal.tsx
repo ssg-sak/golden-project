@@ -55,7 +55,7 @@ export function ResourceRecommendationModal({ isOpen, onClose }: ResourceRecomme
       <div className="relative flex max-h-[min(92dvh,760px)] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl ring-1 ring-slate-900/5 sm:max-h-[calc(100dvh-2rem)] sm:rounded-2xl lg:max-h-[calc(100dvh-3rem)]">
         <div className="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 px-4 py-4 sm:px-6">
           <div>
-            <h2 className="text-lg font-bold text-slate-800">정책 우선 검토 후보와 자원 보강 시나리오</h2>
+            <h2 className="text-lg font-bold text-slate-800">정책 후보와 자원 보강 시나리오</h2>
             <p className="mt-1 max-w-3xl text-xs leading-relaxed text-slate-500">
               이 표는 민감도 분석에서 반복 등장한 후보를 기준으로 반경 5km 안의 병원 인프라를 1차로 살펴본
               사전 검토 자료입니다. 실제 입지 확정, 예산 배정, 의료기관 지정 근거가 아니라 현장 조사와 전문가
