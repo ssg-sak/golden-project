@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
+import os
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -34,10 +35,13 @@ logger = logging.getLogger(__name__)
 PROJECT_DIR = Path(__file__).resolve().parents[3]
 RAW_POP_CSV = PROJECT_DIR / "data" / "raw" / "population" / "daegu_population_real.csv"
 HOSPITALS_JSON = PROJECT_DIR / "data" / "processed" / "final_hospitals.json"
-SPATIAL_ANALYSIS_SCRIPT = PROJECT_DIR / "backend" / "scripts" / "spatial_analysis.py"
 GEOJSON_PATH = PROJECT_DIR / "data" / "processed" / "daegu_vulnerability.geojson"
-ANALYSIS_VERSION = "1.0"
+ACTUAL_ROAD_MATRIX_PATH = PROJECT_DIR / "data" / "processed" / "actual_road_accessibility_matrix.json"
+INTEGRATED_POLICY_SCRIPT = PROJECT_DIR / "ai-model" / "run_integrated_policy_pipeline.py"
+ANALYSIS_VERSION_FALLBACK = "unversioned"
 LOCK_NAME = "data_pipeline"
+EXPECTED_DAEGU_ADMIN_DONG_COUNT = 150
+EXPECTED_ACTIVE_FACILITY_COUNT = 25
 
 
 @dataclass
@@ -46,6 +50,7 @@ class PipelineResult:
     hospitals_changed: bool = False
     population_changed: bool = False
     analysis_rerun: bool = False
+    analysis_pending: bool = False
     snapshot_created: bool = False
     base_month: str | None = None
     error: str | None = None
@@ -104,20 +109,21 @@ async def run_data_pipeline(db: Session, targets: set[str] | None = None) -> Pip
             )
             result.base_month = latest_pop.base_month if latest_pop else "2026.06"
 
-        should_analyze = (
-            result.admin_changed
-            or result.hospitals_changed
-            or result.population_changed
-            or "rebuild-analysis" in selected
-            or "all" in selected
-        )
+        source_changed = result.admin_changed or result.hospitals_changed or result.population_changed
+        should_analyze = "rebuild-analysis" in selected
 
         if should_analyze:
             result.analysis_rerun = True
             snapshot_ok = _run_adapter_and_analysis(db, result.base_month)
             result.snapshot_created = snapshot_ok
+            if not snapshot_ok:
+                result.error = result.error or "analysis_failed"
+        elif source_changed:
+            result.analysis_pending = True
         elif "rebuild-dashboard-summary" in selected:
             result.snapshot_created = _generate_dashboard_snapshot(db, result.base_month)
+            if not result.snapshot_created:
+                result.error = result.error or "analysis_failed"
 
         source_by_target = {
             "admin-boundary": {"sgis_admin_dong"},
@@ -149,19 +155,29 @@ async def run_data_pipeline(db: Session, targets: set[str] | None = None) -> Pip
 
 def _run_adapter_and_analysis(db: Session, base_month: str | None) -> bool:
     if not _export_hospitals(db):
-        logger.error("No active hospitals to export")
+        logger.error("Hospital export validation failed")
         return False
-    _export_population_csv(db, base_month)
+    if not _export_population_csv(db, base_month):
+        logger.error("Population export validation failed")
+        return False
 
-    logger.info("Executing spatial_analysis.py...")
+    logger.info("Executing integrated policy analysis pipeline...")
+    environment = {
+        **os.environ,
+        "PYTHONUTF8": "1",
+        "PYTHONIOENCODING": "utf-8",
+    }
     proc = subprocess.run(
-        ["python", str(SPATIAL_ANALYSIS_SCRIPT)],
+        ["python", str(INTEGRATED_POLICY_SCRIPT)],
         cwd=str(PROJECT_DIR),
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=environment,
     )
     if proc.returncode != 0:
-        logger.error("spatial_analysis.py failed:\n%s", proc.stderr)
+        logger.error("Integrated policy analysis failed:\n%s", proc.stderr)
         return False
 
     return _generate_dashboard_snapshot(db, base_month)
@@ -171,33 +187,67 @@ def _export_hospitals(db: Session) -> bool:
     hospitals = db.query(MedicalFacility).filter_by(is_active=True).all()
     if not hospitals:
         return False
+    if len(hospitals) != EXPECTED_ACTIVE_FACILITY_COUNT:
+        logger.error(
+            "Unexpected active medical facility count: %d (expected %d). "
+            "Skipping hospital JSON export to avoid corrupting analysis inputs.",
+            len(hospitals),
+            EXPECTED_ACTIVE_FACILITY_COUNT,
+        )
+        return False
 
     hosp_list = []
     for hospital in hospitals:
         tier = tier_from_dashboard_category(hospital.dashboard_category or "secondary")
-        hosp_list.append(
-            {
-                "name": hospital.facility_name,
-                "lat": hospital.latitude or 0.0,
-                "lng": hospital.longitude or 0.0,
-                "tier": tier,
-                "address": hospital.address,
-                "tel": hospital.phone,
-            }
-        )
+        exported_hospital = {
+            "name": hospital.facility_name,
+            "lat": hospital.latitude or 0.0,
+            "lng": hospital.longitude or 0.0,
+            "tier": tier,
+            "address": hospital.address,
+        }
+        if hospital.phone:
+            exported_hospital["tel"] = hospital.phone
+        hosp_list.append(exported_hospital)
 
     HOSPITALS_JSON.parent.mkdir(parents=True, exist_ok=True)
-    HOSPITALS_JSON.write_text(json.dumps(hosp_list, ensure_ascii=False, indent=2), encoding="utf-8")
+    temporary_path = HOSPITALS_JSON.with_suffix(HOSPITALS_JSON.suffix + ".tmp")
+    temporary_path.write_text(
+        json.dumps(hosp_list, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    temporary_path.replace(HOSPITALS_JSON)
     return True
 
 
-def _export_population_csv(db: Session, base_month: str | None) -> None:
+def _export_population_csv(db: Session, base_month: str | None) -> bool:
     if not base_month:
-        return
+        return False
 
     pop_records = db.query(PopulationSnapshot).filter_by(base_month=base_month).all()
     if not pop_records:
-        return
+        return False
+
+    unique_pop_records = {}
+    for record in pop_records:
+        key = record.admin_dong_code or record.admin_dong_name
+        if key and key not in unique_pop_records:
+            unique_pop_records[key] = record
+    if len(unique_pop_records) != len(pop_records):
+        logger.warning(
+            "Deduplicated population snapshots before CSV export: %d -> %d",
+            len(pop_records),
+            len(unique_pop_records),
+        )
+    pop_records = list(unique_pop_records.values())
+    if len(pop_records) != EXPECTED_DAEGU_ADMIN_DONG_COUNT:
+        logger.error(
+            "Unexpected population snapshot count: %d (expected %d). "
+            "Skipping population CSV export to avoid corrupting analysis inputs.",
+            len(pop_records),
+            EXPECTED_DAEGU_ADMIN_DONG_COUNT,
+        )
+        return False
 
     old_pop = pd.read_csv(RAW_POP_CSV, encoding="utf-8-sig") if RAW_POP_CSV.exists() else pd.DataFrame()
     ratio_by_name: dict[str, tuple[float, float]] = {}
@@ -223,7 +273,10 @@ def _export_population_csv(db: Session, base_month: str | None) -> None:
         )
 
     RAW_POP_CSV.parent.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(rows).to_csv(RAW_POP_CSV, index=False, encoding="utf-8-sig")
+    temporary_path = RAW_POP_CSV.with_suffix(RAW_POP_CSV.suffix + ".tmp")
+    pd.DataFrame(rows).to_csv(temporary_path, index=False, encoding="utf-8-sig")
+    temporary_path.replace(RAW_POP_CSV)
+    return True
 
 
 def _generate_dashboard_snapshot(db: Session, base_month: str | None) -> bool:
@@ -232,9 +285,23 @@ def _generate_dashboard_snapshot(db: Session, base_month: str | None) -> bool:
 
     geo = json.loads(GEOJSON_PATH.read_text(encoding="utf-8"))
     indices = [float(f["properties"].get("vulnerability_index", 0)) for f in geo.get("features", [])]
+    if len(indices) != EXPECTED_DAEGU_ADMIN_DONG_COUNT:
+        logger.error(
+            "Unexpected vulnerability feature count: %d (expected %d)",
+            len(indices),
+            EXPECTED_DAEGU_ADMIN_DONG_COUNT,
+        )
+        return False
     threshold, high_risk = compute_high_risk_metrics(indices)
 
     hospitals = db.query(MedicalFacility).filter_by(is_active=True).all()
+    if len(hospitals) != EXPECTED_ACTIVE_FACILITY_COUNT:
+        logger.error(
+            "Unexpected active medical facility count for dashboard snapshot: %d (expected %d)",
+            len(hospitals),
+            EXPECTED_ACTIVE_FACILITY_COUNT,
+        )
+        return False
     large = sum(1 for h in hospitals if h.dashboard_category == "large")
     secondary = sum(1 for h in hospitals if h.dashboard_category == "secondary")
     moonlight = sum(1 for h in hospitals if h.dashboard_category == "moonlightPediatric")
@@ -273,9 +340,19 @@ def _generate_dashboard_snapshot(db: Session, base_month: str | None) -> bool:
         risk_threshold=threshold,
         population_base_month=base_month or "2026.06",
         source_versions=json.dumps(source_versions, ensure_ascii=False),
-        analysis_version=ANALYSIS_VERSION,
+        analysis_version=_current_analysis_version(),
         generated_at=datetime.now(timezone.utc),
     )
     db.add(snap)
     db.commit()
     return True
+
+
+def _current_analysis_version() -> str:
+    if not ACTUAL_ROAD_MATRIX_PATH.exists():
+        return ANALYSIS_VERSION_FALLBACK
+    try:
+        metadata = json.loads(ACTUAL_ROAD_MATRIX_PATH.read_text(encoding="utf-8")).get("metadata", {})
+    except (json.JSONDecodeError, OSError):
+        return ANALYSIS_VERSION_FALLBACK
+    return str(metadata.get("version") or ANALYSIS_VERSION_FALLBACK)

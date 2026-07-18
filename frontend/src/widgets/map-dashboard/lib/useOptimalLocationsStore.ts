@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { usePolicyReleaseStore } from '../../../shared/store/policyReleaseStore';
 
 export interface OptimalLocation {
   id: number;
@@ -76,6 +77,8 @@ export interface PolicyOptimizationResult {
 
 export interface PolicyOptimizationData {
   metadata: {
+    version: string;
+    matrix_source_sha256: string;
     matrix_method: 'actual_road_route_api';
     optimization: 'exact_enumeration';
     max_facilities: number;
@@ -121,14 +124,6 @@ interface OptimalLocationsState {
   fetchLocations: () => Promise<void>;
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.status}`);
-  }
-  return (await response.json()) as T;
-}
-
 export const useOptimalLocationsStore = create<OptimalLocationsState>((set, get) => ({
   locations: [],
   optimization: null,
@@ -157,30 +152,14 @@ export const useOptimalLocationsStore = create<OptimalLocationsState>((set, get)
     set({ isLoading: true, error: null });
 
     try {
-      const dataBaseUrl = `${import.meta.env.BASE_URL}data/`;
       if (currentMode !== 'pediatric' && currentMode !== 'senior') {
         set({ locations: [], isLoading: false });
         return;
       }
 
-      let data: OptimalLocation[] = [];
-      try {
-        const stableCandidates = await fetchJson<OptimalLocation[]>(`${dataBaseUrl}stable_policy_candidates.json`);
-        data = stableCandidates.filter((location) => location.mode === currentMode);
-      } catch {
-        const tracedCandidates = await fetchJson<OptimalLocation[]>(`${dataBaseUrl}accessibility_candidate_trace.json`);
-        data = tracedCandidates.filter((location) => location.mode === currentMode);
-      }
-
-      if (data.length === 0) {
-        const fallbackFile =
-          currentMode === 'senior' ? 'optimal_locations_senior.json' : 'optimal_locations_pediatric.json';
-        data = await fetchJson<OptimalLocation[]>(`${dataBaseUrl}${fallbackFile}`);
-      }
-
-      const optimization = await fetchJson<PolicyOptimizationData>(
-        `${dataBaseUrl}policy_location_optimization.json`,
-      );
+      const release = await usePolicyReleaseStore.getState().fetchRelease();
+      const data = release.candidates.filter((location) => location.mode === currentMode);
+      const optimization = release.optimization;
       const referencedCandidateIds = collectReferencedCandidateIds(
         optimization,
         currentMode as 'pediatric' | 'senior',

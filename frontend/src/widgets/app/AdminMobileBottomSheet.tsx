@@ -23,6 +23,7 @@ import { DetailPanel } from '../map-dashboard/DetailPanel';
 
 import { DashboardStatsBar } from '../map-dashboard/DashboardStatsBar';
 import { MetricsGuide } from '../map-dashboard/MetricsGuide';
+import { PolicyDataPipeline } from '../map-dashboard/PolicyDataPipeline';
 import { PolicyStatusBanner } from './PolicyStatusBanner';
 
 interface AdminMobileBottomSheetProps {
@@ -301,6 +302,13 @@ export function AdminMobileBottomSheet({
                 dataStale={dataStale}
               />
               <MetricsGuide />
+              <PolicyDataPipeline
+                districtCount={districtCount}
+                hospitalCount={hospitals.length}
+                highRiskDistrictCount={highRiskDistrictCount}
+                highRiskThreshold={highRiskThreshold}
+                populationBaseMonth={populationBaseMonth}
+              />
             </div>
 
             <ul className="space-y-1 px-2 pt-2">

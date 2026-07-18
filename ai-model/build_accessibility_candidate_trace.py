@@ -11,8 +11,8 @@ CANDIDATE_FILES = {
     "pediatric": PROJECT_ROOT / "frontend" / "public" / "data" / "optimal_locations_pediatric.json",
     "senior": PROJECT_ROOT / "frontend" / "public" / "data" / "optimal_locations_senior.json",
 }
-VULNERABILITY_GEOJSON = PROJECT_ROOT / "frontend" / "src" / "data" / "daegu_vulnerability.geojson"
-HOSPITALS_JSON = PROJECT_ROOT / "frontend" / "src" / "data" / "final_hospitals.json"
+VULNERABILITY_GEOJSON = PROJECT_ROOT / "data" / "processed" / "daegu_vulnerability.geojson"
+HOSPITALS_JSON = PROJECT_ROOT / "data" / "processed" / "final_hospitals.json"
 OUTPUT_JSON = PROJECT_ROOT / "data" / "processed" / "accessibility_candidate_trace.json"
 PUBLIC_OUTPUT_JSON = PROJECT_ROOT / "frontend" / "public" / "data" / "accessibility_candidate_trace.json"
 OUTPUT_REPORT = PROJECT_ROOT / "docs" / "reports" / "accessibility_candidate_trace_report_20260715.md"

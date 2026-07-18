@@ -28,6 +28,14 @@ POPULATION_CSV = PROJECT_DIR / "data" / "raw" / "population" / "daegu_population
 MAX_RETRIES = 3
 
 
+def _safe_error_summary(exc: Exception | None) -> str:
+    if exc is None:
+        return "unknown"
+    if isinstance(exc, httpx.HTTPStatusError):
+        return f"HTTP {exc.response.status_code}"
+    return type(exc).__name__
+
+
 class PopulationAPIClient:
     def __init__(self):
         self.service_key = get_env("DATA_GO_KR_API_KEY", "") or ""
@@ -69,7 +77,7 @@ class PopulationAPIClient:
             except (httpx.HTTPError, ValueError, KeyError) as exc:
                 last_error = exc
                 await asyncio.sleep(2 ** attempt)
-        raise RuntimeError(f"Population API failed for {yyyymm}: {last_error}")
+        raise RuntimeError(f"Population API failed for {yyyymm}: {_safe_error_summary(last_error)}")
 
     async def find_latest_month_and_fetch(self) -> tuple[str, list[dict[str, Any]]]:
         if not self.service_key:
@@ -207,6 +215,12 @@ async def refresh_population(db: Session, client: PopulationAPIClient) -> tuple[
 
 
 def _upsert_population(db: Session, rows: list[dict[str, Any]]) -> None:
+    incoming_keys = {
+        (row["base_month"], row["admin_dong_code"])
+        for row in rows
+    }
+    incoming_months = {row["base_month"] for row in rows}
+
     for row in rows:
         record = db.query(PopulationSnapshot).filter_by(
             base_month=row["base_month"],
@@ -223,6 +237,13 @@ def _upsert_population(db: Session, rows: list[dict[str, Any]]) -> None:
         record.male_population = row["male_population"]
         record.female_population = row["female_population"]
         record.household_count = row["household_count"]
+
+    for base_month in incoming_months:
+        stale_records = db.query(PopulationSnapshot).filter_by(base_month=base_month).all()
+        for stale in stale_records:
+            key = (stale.base_month, stale.admin_dong_code)
+            if key not in incoming_keys:
+                db.delete(stale)
     db.commit()
 
 

@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from 'react';
 import { Map, MapMarker, ZoomControl } from 'react-kakao-maps-sdk';
 
 import type { HospitalRecord } from '../../shared/types/hospital';
+import type { GeoJsonFeature } from '../../shared/types/geojson';
+import type { DistrictVulnerabilityRecord } from '../../shared/types/vulnerability';
 import { toAdmNmKey } from '../../shared/types/vulnerability';
 
 import { DistrictHoverTooltip } from './DistrictHoverTooltip';
@@ -37,6 +39,8 @@ interface MapComponentProps {
   onRiskThresholdChange: (value: number) => void;
   highlightedHospitalName?: string | null;
   currentMode?: string;
+  vulnerabilityRecords: DistrictVulnerabilityRecord[];
+  districtFeatures: GeoJsonFeature[];
 }
 
 import { useMapComponentController } from './useMapComponentController';

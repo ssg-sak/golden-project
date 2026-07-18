@@ -92,14 +92,12 @@ export function PolicyWelcomePanel() {
           </ol>
         </section>
 
-        <a
-          href="/data/reports/daegu-golden-time-policy-analysis-report.pdf"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex w-full items-center justify-center rounded-full bg-teal-800 px-4 py-2 text-xs font-bold text-white transition hover:bg-teal-900"
-        >
-          정책 분석 보고서 열기
-        </a>
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-center">
+          <strong className="text-sm text-emerald-900">25개 기관 기준 분석</strong>
+          <p className="mt-1 text-[11px] leading-5 text-emerald-800">
+            소아 6개·어르신 19개 기관과 5,100개 도로 경로를 한 분석본으로 사용합니다.
+          </p>
+        </div>
       </div>
     </aside>
   );

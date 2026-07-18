@@ -8,7 +8,8 @@ from sqlalchemy.orm import sessionmaker
 
 from app.db.database import Base
 from app.services.data_seed import ensure_seeded
-from app.services.pipeline import run_data_pipeline
+from app.db.models import PopulationSnapshot
+from app.services.pipeline import _export_population_csv, run_data_pipeline
 
 
 @pytest.fixture()
@@ -70,3 +71,18 @@ def test_pipeline_idempotent_without_api(db_session, monkeypatch):
     from app.db.models import DashboardSnapshot
 
     assert db_session.query(DashboardSnapshot).count() >= 2
+
+
+def test_population_export_rejects_incomplete_month(db_session, monkeypatch, tmp_path):
+    project_dir = Path(__file__).resolve().parents[3]
+    monkeypatch.setattr("app.services.data_seed.PROJECT_DIR", project_dir)
+    monkeypatch.setattr("app.services.pipeline.RAW_POP_CSV", tmp_path / "population.csv")
+
+    ensure_seeded(db_session)
+    first_record = db_session.query(PopulationSnapshot).filter_by(base_month="2026.06").first()
+    assert first_record is not None
+    db_session.delete(first_record)
+    db_session.commit()
+
+    assert _export_population_csv(db_session, "2026.06") is False
+    assert not (tmp_path / "population.csv").exists()
