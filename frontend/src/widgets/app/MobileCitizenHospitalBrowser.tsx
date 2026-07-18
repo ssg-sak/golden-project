@@ -45,11 +45,11 @@ function MobileMapLegend() {
     >
       <span className="flex items-center gap-1 text-green-700">
         <span className="h-2 w-2 rounded-full bg-green-500" aria-hidden />
-        진료 가능
+        가용병상 1개 이상 보고
       </span>
       <span className="flex items-center gap-1 text-red-700">
         <span className="h-2 w-2 rounded-full bg-red-500" aria-hidden />
-        수용 불가
+        가용병상 0 보고
       </span>
       <span className="flex items-center gap-1 text-blue-700">
         <span className="h-2 w-2 rounded-full bg-blue-500" aria-hidden />

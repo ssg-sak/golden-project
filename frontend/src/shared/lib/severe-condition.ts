@@ -112,8 +112,8 @@ export function hospitalMatchesSevereCondition(
 
 export function severeConditionSummary(hospital: HospitalRecord, conditionId: SevereConditionId): string {
   const status = severeConditionStatus(hospital, conditionId);
-  if (status === 'available') return '공식 데이터 기준 수용 가능';
-  if (status === 'unavailable') return '공식 데이터 기준 수용 불가';
+  if (status === 'available') return '공식 데이터에 가능으로 보고됨';
+  if (status === 'unavailable') return '공식 데이터에 불가로 보고됨';
   if (status === 'unknown') return '공식 데이터 미제공';
   return severeConditionOption(conditionId).description;
 }
