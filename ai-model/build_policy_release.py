@@ -220,7 +220,8 @@ def build_release() -> dict[str, Any]:
             "missing_route_count": int(matrix_metadata["missing_route_count"]),
             "source_sha256": source_hash,
             "route_result_sha256": str(matrix_metadata["route_result_sha256"]),
-            "sensitivity_sha256": file_hash(SENSITIVITY_PATH),
+            # JSON 의미 내용의 해시를 사용해 Git 줄바꿈 변환과 무관하게 재현한다.
+            "sensitivity_sha256": payload_hash(sensitivity),
             "sensitivity_scenario_count_per_mode": sensitivity_scenario_count,
             "sensitivity_completed_count_per_mode": sensitivity_completed_count,
             "coordinate_snap_route_count": int(coordinate_snap_audit["route_count"]),

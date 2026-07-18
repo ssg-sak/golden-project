@@ -29,9 +29,9 @@ def test_policy_release_is_complete_and_uses_single_version():
     assert metadata["population_manifest_sha256"] == hashlib.sha256(
         build_policy_release.POPULATION_MANIFEST_PATH.read_bytes()
     ).hexdigest()
-    assert metadata["sensitivity_sha256"] == hashlib.sha256(
-        build_policy_release.SENSITIVITY_PATH.read_bytes()
-    ).hexdigest()
+    assert metadata["sensitivity_sha256"] == build_policy_release.payload_hash(
+        build_policy_release.read_json(build_policy_release.SENSITIVITY_PATH)
+    )
     assert metadata["sensitivity_scenario_count_per_mode"] == {
         "pediatric": 240,
         "senior": 240,
