@@ -63,6 +63,8 @@ const STATUS_STYLE: Record<StageTone, string> = {
   unknown: 'bg-slate-100 text-slate-600 ring-slate-200',
 };
 
+const POLICY_REPORT_URL = `${import.meta.env.BASE_URL}data/reports/daegu-golden-time-policy-analysis-report.pdf`;
+
 function sourceTone(source?: DataSourceStatusRecord): StageTone {
   if (!source) return 'unknown';
   if (source.status === 'failed' || source.status === 'degraded') return 'warning';
@@ -289,14 +291,24 @@ export function PolicyDataPipeline({
                 정책 결과는 기준자료 기반 분석본
               </span>
             </div>
-            <button
-              type="button"
-              onClick={() => void loadStatus()}
-              disabled={isLoading}
-              className="rounded-full border border-slate-300 bg-white px-3 py-1 text-[11px] font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-wait disabled:opacity-60"
-            >
-              {isLoading ? '확인 중' : '최신 상태 확인'}
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href={POLICY_REPORT_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-teal-300 bg-teal-50 px-3 py-1 text-[11px] font-bold text-teal-900 transition hover:bg-teal-100"
+              >
+                최종 정책보고서 보기 (PDF)
+              </a>
+              <button
+                type="button"
+                onClick={() => void loadStatus()}
+                disabled={isLoading}
+                className="rounded-full border border-slate-300 bg-white px-3 py-1 text-[11px] font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-wait disabled:opacity-60"
+              >
+                {isLoading ? '확인 중' : '최신 상태 확인'}
+              </button>
+            </div>
           </div>
 
           <ol className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
