@@ -4,6 +4,7 @@ import {
   candidateDistrictLabel,
   type CandidateMode,
 } from './lib/candidate-location-labels';
+import { usePolicyReleaseStore } from '../../shared/store/policyReleaseStore';
 import { useOptimalLocationsStore } from './lib/useOptimalLocationsStore';
 
 type ObjectiveResult = {
@@ -55,6 +56,7 @@ export function PolicyOptimizationSummary() {
   const currentMode = useOptimalLocationsStore((state) => state.currentMode);
   const setOptimalMode = useOptimalLocationsStore((state) => state.setMode);
   const optimization = useOptimalLocationsStore((state) => state.optimization);
+  const routeCount = usePolicyReleaseStore((state) => state.release?.metadata.route_count);
   const [facilityCount, setFacilityCount] = useState(2);
 
   if (!showLocations || (currentMode !== 'pediatric' && currentMode !== 'senior')) return null;
@@ -81,7 +83,7 @@ export function PolicyOptimizationSummary() {
             </p>
           </div>
           <span className="rounded-full bg-white/10 px-2 py-1 text-[9px] font-bold text-cyan-100 ring-1 ring-white/15">
-            실제 도로 4,901건 반영
+            실제 도로 {routeCount?.toLocaleString('ko-KR') ?? '검증된'}경로 반영
           </span>
         </div>
       </div>

@@ -7,10 +7,7 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-CANDIDATE_FILES = {
-    "pediatric": PROJECT_ROOT / "frontend" / "public" / "data" / "optimal_locations_pediatric.json",
-    "senior": PROJECT_ROOT / "frontend" / "public" / "data" / "optimal_locations_senior.json",
-}
+CANDIDATES_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "stable_policy_candidates.json"
 VULNERABILITY_GEOJSON = PROJECT_ROOT / "data" / "processed" / "daegu_vulnerability.geojson"
 HOSPITALS_JSON = PROJECT_ROOT / "data" / "processed" / "final_hospitals.json"
 OUTPUT_JSON = PROJECT_ROOT / "data" / "processed" / "accessibility_candidate_trace.json"
@@ -115,7 +112,7 @@ def summarize_candidate(
 
     nearest_name, nearest_distance = nearest_hospital(candidate, hospitals)
     top_districts = improved[:8]
-    group = candidate_group(candidate, top_districts)
+    group = str(candidate.get("candidate_group") or candidate_group(candidate, top_districts))
 
     before_avg = before_weighted / total_population if total_population else None
     after_avg = after_weighted / total_population if total_population else None
@@ -132,7 +129,7 @@ def summarize_candidate(
     return {
         "id": int(candidate["id"]),
         "mode": mode,
-        "candidate_type": "kmeans_centroid",
+        "candidate_type": str(candidate.get("candidate_type") or "kmeans_centroid"),
         "candidate_group": group,
         "lat": float(candidate["lat"]),
         "lng": float(candidate["lng"]),
@@ -219,10 +216,11 @@ def main() -> None:
     hospitals = read_json(HOSPITALS_JSON)
     results: list[dict[str, Any]] = []
 
-    for mode, path in CANDIDATE_FILES.items():
-        candidates = read_json(path)
-        for candidate in candidates:
-            results.append(summarize_candidate(mode, candidate, districts, hospitals))
+    candidates = read_json(CANDIDATES_PATH)
+    if len(candidates) != 9:
+        raise RuntimeError(f"안정 후보 추적 입력 검증 실패: {len(candidates)}개")
+    for candidate in candidates:
+        results.append(summarize_candidate(str(candidate["mode"]), candidate, districts, hospitals))
 
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     output_text = json.dumps(results, ensure_ascii=False, indent=2)

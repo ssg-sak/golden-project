@@ -17,5 +17,5 @@ export const useAppModeStore = create<AppModeStore>()((set) => ({
   viewMode: 'citizen',
   setViewMode: (mode) => set({ viewMode: mode }),
   isSimulationMode: false,
-  setSimulationMode: (_on) => set({ isSimulationMode: false }),
+  setSimulationMode: () => set({ isSimulationMode: false }),
 }));

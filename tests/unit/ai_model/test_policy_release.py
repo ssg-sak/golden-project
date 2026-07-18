@@ -26,6 +26,16 @@ def test_policy_release_is_complete_and_uses_single_version():
     assert len(release["hospitals"]) == 25
     assert len(release["vulnerability"]["features"]) == 150
     assert len(release["candidates"]) == 9
+    assert len(release["candidate_trace"]) == 9
+    assert {
+        (row["mode"], row["id"], round(row["lat"], 7), round(row["lng"], 7))
+        for row in release["candidates"]
+    } == {
+        (row["mode"], row["id"], round(row["lat"], 7), round(row["lng"], 7))
+        for row in release["candidate_trace"]
+    }
+    assert "candidate_trace" in metadata["content_sha256"]
+    assert "recommendations" not in release
     assert release["optimization"]["metadata"]["version"] == metadata["version"]
     assert (
         release["optimization"]["metadata"]["matrix_source_sha256"]

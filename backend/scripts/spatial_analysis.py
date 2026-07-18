@@ -18,10 +18,12 @@
 
 사용법:
   python backend/scripts/spatial_analysis.py
+  python backend/scripts/spatial_analysis.py --offline
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import shutil
 import sys
@@ -95,6 +97,18 @@ def download_daegu_geojson(dest: Path) -> gpd.GeoDataFrame:
     gdf = gpd.GeoDataFrame.from_features(features, crs="EPSG:4326")
     print(f"      → {dest} ({len(gdf)}개 동)")
     return gdf
+
+
+def load_local_daegu_geojson(path: Path) -> gpd.GeoDataFrame:
+    if not path.exists():
+        raise FileNotFoundError(f"오프라인 행정동 GeoJSON 없음: {path}")
+    gdf = gpd.read_file(path)
+    if len(gdf) != 150 or "adm_nm" not in gdf.columns:
+        raise RuntimeError(
+            f"오프라인 행정동 GeoJSON 검증 실패: rows={len(gdf)}, columns={list(gdf.columns)}"
+        )
+    print(f"[1/4] 저장된 행정동 GeoJSON 사용: {path} ({len(gdf)}개 동)")
+    return gdf.to_crs("EPSG:4326")
 
 
 def load_population(csv_path: Path) -> pd.DataFrame:
@@ -233,8 +247,28 @@ def export_geojson(gdf: gpd.GeoDataFrame) -> None:
     ]
     output = gdf[columns]
 
-    output.to_file(DAEGU_VULNERABILITY_GEOJSON, driver="GeoJSON")
-    output.to_file(OUTPUT_FRONTEND, driver="GeoJSON")
+    generated = json.loads(output.to_json(drop_id=True, ensure_ascii=False))
+    collection = {
+        "type": generated["type"],
+        "name": "daegu_vulnerability",
+        "crs": {
+            "type": "name",
+            "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"},
+        },
+        "features": generated["features"],
+    }
+    payload = json.dumps(collection, ensure_ascii=False, separators=(",", ":"))
+    for output_path in (DAEGU_VULNERABILITY_GEOJSON, OUTPUT_FRONTEND):
+        temporary_path = output_path.with_suffix(output_path.suffix + ".tmp")
+        temporary_path.write_text(payload, encoding="utf-8")
+        # Windows 개발 서버가 대상 파일을 읽는 동안 rename 교체는 거부될 수 있다.
+        # 먼저 완성된 임시 JSON을 검증하고, 그 경우에만 복사 방식으로 대체한다.
+        json.loads(temporary_path.read_text(encoding="utf-8"))
+        try:
+            temporary_path.replace(output_path)
+        except PermissionError:
+            shutil.copyfile(temporary_path, output_path)
+            temporary_path.unlink()
     shutil.copy2(DAEGU_VULNERABILITY_GEOJSON, ANALYSIS_DAEGU_VULNERABILITY_GEOJSON)
     sync_to_frontend_assets(DAEGU_VULNERABILITY_GEOJSON)
 
@@ -251,7 +285,18 @@ def export_geojson(gdf: gpd.GeoDataFrame) -> None:
     )
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="행정동·인구·병원 공간 전처리")
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="행정동 GeoJSON을 다운로드하지 않고 data/raw/geo 정본을 사용합니다.",
+    )
+    return parser.parse_args()
+
+
 def main() -> int:
+    args = parse_args()
     print("=" * 60)
     print("spatial_analysis.py — [1단계] 공간 분석")
     print("=" * 60)
@@ -267,7 +312,11 @@ def main() -> int:
         print(f"[ERROR] 병원 JSON 없음: {FINAL_HOSPITALS_JSON}", file=sys.stderr)
         return 1
 
-    gdf = download_daegu_geojson(RAW_DAEGU_DONG_GEOJSON)
+    gdf = (
+        load_local_daegu_geojson(RAW_DAEGU_DONG_GEOJSON)
+        if args.offline
+        else download_daegu_geojson(RAW_DAEGU_DONG_GEOJSON)
+    )
     pop = load_population(RAW_DAEGU_POPULATION_REAL_CSV)
     merged = merge_population(gdf, pop)
     result = compute_distances_and_index(merged, FINAL_HOSPITALS_JSON)

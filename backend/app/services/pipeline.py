@@ -154,11 +154,13 @@ async def run_data_pipeline(db: Session, targets: set[str] | None = None) -> Pip
 
 
 def _run_adapter_and_analysis(db: Session, base_month: str | None) -> bool:
+    previous_hospitals = HOSPITALS_JSON.read_bytes() if HOSPITALS_JSON.exists() else None
     if not _export_hospitals(db):
         logger.error("Hospital export validation failed")
         return False
     if not _export_population_csv(db, base_month):
         logger.error("Population export validation failed")
+        _restore_file(HOSPITALS_JSON, previous_hospitals)
         return False
 
     logger.info("Executing integrated policy analysis pipeline...")
@@ -178,9 +180,19 @@ def _run_adapter_and_analysis(db: Session, base_month: str | None) -> bool:
     )
     if proc.returncode != 0:
         logger.error("Integrated policy analysis failed:\n%s", proc.stderr)
+        _restore_file(HOSPITALS_JSON, previous_hospitals)
         return False
 
     return _generate_dashboard_snapshot(db, base_month)
+
+
+def _restore_file(path: Path, content: bytes | None) -> None:
+    if content is None:
+        path.unlink(missing_ok=True)
+        return
+    temporary_path = path.with_suffix(path.suffix + ".restore.tmp")
+    temporary_path.write_bytes(content)
+    temporary_path.replace(path)
 
 
 def _export_hospitals(db: Session) -> bool:
@@ -249,34 +261,60 @@ def _export_population_csv(db: Session, base_month: str | None) -> bool:
         )
         return False
 
-    old_pop = pd.read_csv(RAW_POP_CSV, encoding="utf-8-sig") if RAW_POP_CSV.exists() else pd.DataFrame()
-    ratio_by_name: dict[str, tuple[float, float]] = {}
-    if not old_pop.empty:
-        for _, row in old_pop.iterrows():
-            dong = str(row["동이름"])
-            pop_65 = float(row.get("65세이상_인구", 0))
-            pop_09 = float(row.get("0~9세_인구", 0))
-            total = pop_65 + pop_09
-            if total > 0:
-                ratio_by_name[dong] = (pop_65 / total, pop_09 / total)
+    if not RAW_POP_CSV.exists():
+        logger.error("Verified age-specific population CSV is missing: %s", RAW_POP_CSV)
+        return False
 
-    rows = []
-    for record in pop_records:
-        ratio_65, ratio_09 = ratio_by_name.get(record.admin_dong_name, (0.15, 0.05))
-        total = max(record.total_population, 1)
-        rows.append(
-            {
-                "동이름": record.admin_dong_name,
-                "65세이상_인구": int(total * ratio_65),
-                "0~9세_인구": int(total * ratio_09),
-            }
+    population = pd.read_csv(RAW_POP_CSV, encoding="utf-8-sig")
+    required_columns = {"동이름", "65세이상_인구", "0~9세_인구"}
+    if not required_columns.issubset(population.columns):
+        logger.error("Age-specific population CSV columns are invalid")
+        return False
+    if len(population) != EXPECTED_DAEGU_ADMIN_DONG_COUNT:
+        logger.error(
+            "Unexpected age-specific population row count: %d (expected %d)",
+            len(population),
+            EXPECTED_DAEGU_ADMIN_DONG_COUNT,
         )
+        return False
+    if population["동이름"].astype(str).nunique() != EXPECTED_DAEGU_ADMIN_DONG_COUNT:
+        logger.error("Age-specific population CSV contains duplicate district names")
+        return False
+    age_values = population[["65세이상_인구", "0~9세_인구"]].apply(
+        pd.to_numeric,
+        errors="coerce",
+    )
+    if age_values.isna().any().any() or (age_values < 0).any().any():
+        logger.error("Age-specific population CSV contains invalid values")
+        return False
 
-    RAW_POP_CSV.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = RAW_POP_CSV.with_suffix(RAW_POP_CSV.suffix + ".tmp")
-    pd.DataFrame(rows).to_csv(temporary_path, index=False, encoding="utf-8-sig")
-    temporary_path.replace(RAW_POP_CSV)
+    # PopulationSnapshot stores total population only. It must never be split into
+    # age groups by an estimated ratio and promoted into the policy analysis input.
+    # A new analysis month is accepted only after an official age-specific CSV is
+    # parsed and the release base month is updated together.
+    current_analysis_month = _current_population_base_month()
+    if base_month != current_analysis_month:
+        logger.error(
+            "Population month %s has no verified age-specific analysis input (current %s)",
+            base_month,
+            current_analysis_month,
+        )
+        return False
     return True
+
+
+def _current_population_base_month() -> str:
+    if not (PROJECT_DIR / "data" / "processed" / "policy_release.json").exists():
+        return "2026.06"
+    try:
+        release = json.loads(
+            (PROJECT_DIR / "data" / "processed" / "policy_release.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        return str(release.get("metadata", {}).get("population_base_month") or "2026.06")
+    except (json.JSONDecodeError, OSError):
+        return "2026.06"
 
 
 def _generate_dashboard_snapshot(db: Session, base_month: str | None) -> bool:

@@ -98,6 +98,14 @@ class SGISClient:
             for sigungu in sigungu_list:
                 dong_list = await self._fetch_stage(client, cd=sigungu.get("cd"), pg_yn="1")
                 for dong in dong_list:
+                    raw_x = float(dong["x_coor"]) if dong.get("x_coor") else None
+                    raw_y = float(dong["y_coor"]) if dong.get("y_coor") else None
+                    is_wgs84 = (
+                        raw_x is not None
+                        and raw_y is not None
+                        and 124.0 <= raw_x <= 132.0
+                        and 33.0 <= raw_y <= 39.0
+                    )
                     all_dongs.append(
                         {
                             "admin_dong_code": dong.get("cd"),
@@ -107,8 +115,10 @@ class SGISClient:
                             "sigungu_name": sigungu.get("addr_name"),
                             "admin_dong_name": dong.get("addr_name"),
                             "full_address": dong.get("full_addr"),
-                            "center_longitude": float(dong["x_coor"]) if dong.get("x_coor") else None,
-                            "center_latitude": float(dong["y_coor"]) if dong.get("y_coor") else None,
+                            # SGIS stage 좌표계가 WGS84로 확인되는 경우에만 위·경도로 저장한다.
+                            # 투영좌표를 위·경도로 오인하면 지도와 분석 입력이 오염된다.
+                            "center_longitude": raw_x if is_wgs84 else None,
+                            "center_latitude": raw_y if is_wgs84 else None,
                             "geometry": dong.get("pg"),
                         }
                     )
@@ -121,10 +131,14 @@ def _normalize_dong_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             {
                 "admin_dong_code": str(r["admin_dong_code"]),
                 "admin_dong_name": str(r["admin_dong_name"]).strip(),
+                "sido_code": r.get("sido_code"),
+                "sigungu_code": r.get("sigungu_code"),
                 "sido_name": r["sido_name"],
                 "sigungu_name": r.get("sigungu_name"),
+                "full_address": r.get("full_address"),
                 "center_latitude": r.get("center_latitude"),
                 "center_longitude": r.get("center_longitude"),
+                "geometry": r.get("geometry"),
             }
             for r in rows
         ],
