@@ -39,7 +39,7 @@ describe('canonical hospital locations', () => {
     expect(normalizeHospitalLocation(hospital)).toBe(hospital);
   });
 
-  it('contains the 24 canonical hospitals used by demo and fallback sources', () => {
-    expect(getCanonicalHospitals()).toHaveLength(24);
+  it('contains the 25 canonical hospitals used by demo and fallback sources', () => {
+    expect(getCanonicalHospitals()).toHaveLength(25);
   });
 });

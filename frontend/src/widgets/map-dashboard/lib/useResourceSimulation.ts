@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { usePolicyReleaseStore } from '../../../shared/store/policyReleaseStore';
 
 export interface ResourceRecommendation {
   pipeline: 'pediatric' | 'senior';
@@ -28,6 +29,7 @@ export function useResourceSimulation() {
   const [recommendations, setRecommendations] = useState<ResourceRecommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fetchRelease = usePolicyReleaseStore((state) => state.fetchRelease);
 
   useEffect(() => {
     let isMounted = true;
@@ -36,12 +38,7 @@ export function useResourceSimulation() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${import.meta.env.BASE_URL}data/resource_recommendations.json`);
-        if (!response.ok) {
-          throw new Error('자원 보강 시나리오 데이터를 불러오지 못했습니다.');
-        }
-
-        const rawData = (await response.json()) as ResourceRecommendation[];
+        const rawData = (await fetchRelease()).recommendations;
 
         if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
           const geocoder = new window.kakao.maps.services.Geocoder();
@@ -76,7 +73,7 @@ export function useResourceSimulation() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [fetchRelease]);
 
   return { recommendations, loading, error };
 }

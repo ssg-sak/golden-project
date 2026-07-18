@@ -16,6 +16,7 @@ import { DashboardStatsBar } from '../map-dashboard/DashboardStatsBar';
 import { DetailPanel } from '../map-dashboard/DetailPanel';
 import { MapComponent } from '../map-dashboard/MapComponent';
 import { MetricsGuide } from '../map-dashboard/MetricsGuide';
+import { PolicyDataPipeline } from '../map-dashboard/PolicyDataPipeline';
 import { PolicyWelcomePanel } from '../map-dashboard/PolicyWelcomePanel';
 import { ResourceRecommendationModal } from '../map-dashboard/ResourceRecommendationModal';
 
@@ -65,7 +66,7 @@ import { useAdminController } from './useAdminController';
 type CareTarget = 'all' | 'adult' | 'pediatric' | 'senior';
 
 export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
-  const adminState = useAdminController(kakao, onRetryHospitals);
+  const adminState = useAdminController();
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [severeCondition, setSevereCondition] = useState<SevereConditionId>('all');
   const [isSimulationModalOpen, setIsSimulationModalOpen] = useState(false);
@@ -134,6 +135,14 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
 
         <MetricsGuide />
 
+        <PolicyDataPipeline
+          districtCount={adminState.districtCount}
+          hospitalCount={adminState.hospitals.length}
+          highRiskDistrictCount={adminState.highRiskDistrictCount}
+          highRiskThreshold={adminState.riskThreshold}
+          populationBaseMonth={adminState.populationBaseMonth}
+        />
+
         <div className="flex flex-col items-center border-b border-slate-200/50 bg-[#eef2f3] pb-3 pt-1">
           {adminState.policyStatus ? <PolicyStatusBanner {...adminState.policyStatus} /> : null}
           <button
@@ -143,7 +152,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
             <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
             </svg>
-            AI 인프라 시뮬레이션 결과 분석
+            정책 후보·자원 보강 시나리오
           </button>
         </div>
         
@@ -242,6 +251,8 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
                 onRiskThresholdChange={adminState.setRiskThreshold}
                 highlightedHospitalName={adminState.highlightedHospitalName}
                 currentMode={adminState.currentMode}
+                vulnerabilityRecords={adminState.vulnerabilityData}
+                districtFeatures={adminState.vulnerabilityFeatures}
               />
             </div>
           ) : null}

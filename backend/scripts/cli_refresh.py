@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-import asyncio
+from __future__ import annotations
+
 import argparse
+import asyncio
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -15,6 +18,8 @@ from app.services.data_seed import ensure_seeded
 from app.services.pipeline import run_data_pipeline
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 TARGET_MAP = {
@@ -29,6 +34,8 @@ TARGET_MAP = {
 
 
 async def main() -> int:
+    os.environ.setdefault("PYTHONUTF8", "1")
+    os.environ.setdefault("PYTHONIOENCODING", "utf-8")
     load_dotenv()
     Base.metadata.create_all(bind=engine)
 
