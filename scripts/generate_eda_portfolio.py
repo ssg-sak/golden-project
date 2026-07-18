@@ -1,12 +1,49 @@
+import hashlib
 import json
 from pathlib import Path
+
 import pandas as pd
 import matplotlib
 
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
 import seaborn as sns
+
+
+KOREAN_FONT_CANDIDATES = (
+    "Malgun Gothic",
+    "AppleGothic",
+    "Noto Sans CJK KR",
+    "Noto Sans KR",
+    "NanumGothic",
+)
+
+
+def payload_sha256(value: object) -> str:
+    encoded = json.dumps(
+        value,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def configure_plot_font() -> bool:
+    available = {font.name for font in font_manager.fontManager.ttflist}
+    selected = next(
+        (font for font in KOREAN_FONT_CANDIDATES if font in available),
+        None,
+    )
+    plt.rc("font", family=selected or "DejaVu Sans")
+    plt.rcParams["axes.unicode_minus"] = False
+    return selected is not None
+
+
+def plot_text(korean: str, english: str, korean_font_available: bool) -> str:
+    return korean if korean_font_available else english
 
 def main():
     # Set paths
@@ -19,9 +56,7 @@ def main():
     analysis_dir.mkdir(parents=True, exist_ok=True)
     img_dir.mkdir(parents=True, exist_ok=True)
 
-    # Korean Font Setting for Windows
-    plt.rc('font', family='Malgun Gothic')
-    plt.rcParams['axes.unicode_minus'] = False
+    korean_font_available = configure_plot_font()
 
     # 1. Load Data
     print("Loading data...")
@@ -44,6 +79,21 @@ def main():
         and metadata["missing_route_count"] == 0
     ):
         raise ValueError("정책 분석본의 행정동·기관·후보·도로 경로 계약이 일치하지 않습니다.")
+
+    payload_contract = {
+        "hospitals": hospitals,
+        "vulnerability": vul_data,
+        "candidates": candidates,
+        "candidate_trace": release["candidate_trace"],
+        "optimization": policy,
+    }
+    for payload_name, payload in payload_contract.items():
+        expected_hash = metadata["content_sha256"].get(payload_name)
+        actual_hash = payload_sha256(payload)
+        if expected_hash != actual_hash:
+            raise ValueError(
+                f"정책 분석본의 {payload_name} SHA-256 계약이 일치하지 않습니다."
+            )
 
     # Parse Features
     features = []
@@ -72,14 +122,19 @@ def main():
     # Plot 1: VDI and Distance Distribution
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
     sns.histplot(df['vdi'], bins=20, ax=axes[0], color='salmon', kde=True)
-    axes[0].axvline(metadata["risk_threshold"], color="darkred", linestyle="--", label="상위 25% 상대 경계")
-    axes[0].set_title("행정동별 도로 ETA 기반 VDI 분포")
+    axes[0].axvline(
+        metadata["risk_threshold"],
+        color="darkred",
+        linestyle="--",
+        label=plot_text("상위 25% 상대 경계", "Top-quartile boundary", korean_font_available),
+    )
+    axes[0].set_title(plot_text("행정동별 도로 ETA 기반 VDI 분포", "Road-ETA VDI distribution", korean_font_available))
     axes[0].set_xlabel("VDI")
     axes[0].legend()
     
     sns.histplot(df['road_eta'], bins=20, ax=axes[1], color='skyblue', kde=True)
-    axes[1].set_title("최근접 분석 기관까지의 일반 차량 ETA 분포")
-    axes[1].set_xlabel("도로 이동시간 (분)")
+    axes[1].set_title(plot_text("최근접 분석 기관까지의 일반 차량 ETA 분포", "Road ETA to nearest analyzed resource", korean_font_available))
+    axes[1].set_xlabel(plot_text("도로 이동시간 (분)", "Road ETA (minutes)", korean_font_available))
     plt.tight_layout()
     plt.savefig(img_dir / "vdi_distance_dist.png", dpi=300)
     plt.close()
@@ -89,7 +144,7 @@ def main():
     corr_matrix = df[corr_cols].corr()
     plt.figure(figsize=(8, 6))
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-    plt.title("취약 지표 간 상관관계 분석")
+    plt.title(plot_text("VDI 산식 구성요소 민감도 점검", "VDI component sensitivity check", korean_font_available))
     plt.tight_layout()
     plt.savefig(img_dir / "correlation_heatmap.png", dpi=300)
     plt.close()
@@ -97,9 +152,9 @@ def main():
     # Plot 3: Accessibility by Tier
     plt.figure(figsize=(8, 5))
     sns.boxplot(x='nearest_tier', y='road_eta', data=df, hue='nearest_tier', palette='Set2', legend=False)
-    plt.title("최근접 분석 기관 분류별 도로 ETA 분포")
-    plt.xlabel("기관 분류 (1: 대형, 2: 준종합, 3: 소아 야간·휴일)")
-    plt.ylabel("도로 이동시간 (분)")
+    plt.title(plot_text("최근접 분석 기관 분류별 도로 ETA 분포", "Road ETA by nearest resource class", korean_font_available))
+    plt.xlabel(plot_text("기관 분류 (1: 대형, 2: 준종합, 3: 소아 야간·휴일)", "Resource class (1, 2, 3)", korean_font_available))
+    plt.ylabel(plot_text("도로 이동시간 (분)", "Road ETA (minutes)", korean_font_available))
     plt.tight_layout()
     plt.savefig(img_dir / "accessibility_by_tier.png", dpi=300)
     plt.close()
@@ -107,10 +162,15 @@ def main():
     # Plot 4: Top 10 Vulnerable Districts
     top10_vdi = df.sort_values('vdi', ascending=False).head(10)
     plt.figure(figsize=(10, 6))
-    sns.barplot(x='vdi', y='adm_nm', data=top10_vdi, hue='adm_nm', palette='Reds_r', legend=False)
-    plt.title("현재 분석본의 VDI 상위 10개 행정동")
-    plt.xlabel("응급의료 취약성지수 (VDI)")
-    plt.ylabel("행정동")
+    top10_plot = top10_vdi.copy()
+    if not korean_font_available:
+        top10_plot["plot_label"] = [f"District {index}" for index in range(1, len(top10_plot) + 1)]
+    else:
+        top10_plot["plot_label"] = top10_plot["adm_nm"]
+    sns.barplot(x='vdi', y='plot_label', data=top10_plot, hue='plot_label', palette='Reds_r', legend=False)
+    plt.title(plot_text("현재 분석본의 VDI 상위 10개 행정동", "Top 10 districts by current VDI", korean_font_available))
+    plt.xlabel(plot_text("응급의료 취약성지수 (VDI)", "Vulnerability index (VDI)", korean_font_available))
+    plt.ylabel(plot_text("행정동", "District rank", korean_font_available))
     plt.tight_layout()
     plt.savefig(img_dir / "top10_vulnerable_districts.png", dpi=300)
     plt.close()
@@ -118,16 +178,21 @@ def main():
     # Plot 5: Candidate-set optimization results. These are model comparisons,
     # not forecasts of actual construction or patient outcomes.
     fig, axes = plt.subplots(1, 2, figsize=(14, 5), sharey=True)
-    for axis, mode, label in zip(axes, ("pediatric", "senior"), ("소아", "어르신")):
+    mode_labels = (
+        ("소아", "Pediatric"),
+        ("어르신", "Senior"),
+    )
+    for axis, mode, label_pair in zip(axes, ("pediatric", "senior"), mode_labels):
         results = policy["results"].get(mode, [])
         facility_counts = [row["facility_count"] for row in results]
         coverage = [row["mclp_30min_optimum"]["covered_30min_ratio"] * 100 for row in results]
         axis.plot(facility_counts, coverage, marker="o", linewidth=2)
-        axis.set_title(f"{label} 후보 조합의 30분 모델 커버율")
-        axis.set_xlabel("선택 후보 수")
+        label = plot_text(label_pair[0], label_pair[1], korean_font_available)
+        axis.set_title(plot_text(f"{label} 후보 조합의 30분 모델 커버율", f"{label} candidate-set 30-minute model coverage", korean_font_available))
+        axis.set_xlabel(plot_text("선택 후보 수", "Selected candidates", korean_font_available))
         axis.set_xticks(facility_counts)
         axis.set_ylim(0, 100)
-    axes[0].set_ylabel("30분 내 모델 커버율 (%)")
+    axes[0].set_ylabel(plot_text("30분 내 모델 커버율 (%)", "Model coverage within 30 minutes (%)", korean_font_available))
     plt.tight_layout()
     plt.savefig(img_dir / "policy_improvement.png", dpi=300)
     plt.close()
@@ -147,7 +212,7 @@ def main():
 - **인구 기준월**: {metadata['population_base_month']}
 - **취약 인구 평균**: {df['pop_vul'].mean():.1f}명 / 행정동
 
-분석본 생성 단계에서 행정동 150개, 기관 25개, 후보 9개와 경로 5,100개의 계약을 검사합니다. 이 검사는 구조적 완전성을 의미하며 원천자료의 임상적 타당성이나 최신성을 자동으로 보증하지는 않습니다.
+분석본 생성 단계에서 행정동 150개, 기관 25개, 후보 9개와 경로 5,100개의 계약을 검사합니다. 병원·행정동·후보·후보 추적·최적화 자료의 SHA-256도 단일 릴리스 메타데이터와 대조합니다. 이 검사는 구조적 완전성과 파일 계보를 의미하며 원천자료의 임상적 타당성이나 최신성을 자동으로 보증하지는 않습니다.
 
 ## 2. 응급의료 접근성 및 VDI 분포
 행정동별 취약성 지표의 기초 분포를 파악합니다.
@@ -159,14 +224,14 @@ def main():
 - 현재 분석본은 VDI 상위 25%를 우선 확인 대상으로 구분하며 상대 경계값은 {metadata['risk_threshold']:,.2f}, 해당 행정동은 {metadata['high_risk_district_count']}개입니다.
 - 일반 차량 ETA는 {df['road_eta'].min():.2f}~{df['road_eta'].max():.2f}분입니다. 이는 수집 시점의 분석용 경로이며 119 구급차 이송시간이 아닙니다.
 
-## 3. 취약 지표 간 상관관계 분석
-취약성 지수(VDI)가 어떤 요인에 의해 주로 형성되는지 상관계수를 통해 분석합니다.
+## 3. VDI 산식 구성요소와 민감도 점검
+현재 VDI는 `ln(1 + 일반 차량 ETA) × 취약인구`로 정의됩니다. 따라서 VDI와 취약인구·ETA의 상관은 독립적인 발견이 아니라 산식에 포함된 구성요소가 결과에 미치는 구조적 민감도를 점검하는 값입니다.
 
-![상관관계 히트맵](images/eda/correlation_heatmap.png)
+![VDI 산식 구성요소 민감도 히트맵](images/eda/correlation_heatmap.png)
 
 **해석(Insights)**:
 - 현재 VDI와 취약인구의 피어슨 상관계수는 {df['vdi'].corr(df['pop_vul']):.3f}, 도로 ETA와의 상관계수는 {df['vdi'].corr(df['road_eta']):.3f}입니다.
-- 이 상관은 현재 150개 행정동과 현행 산식에서 관찰된 기술통계입니다. 인과관계나 개별 지역의 의료적 위험을 증명하지 않습니다.
+- 이 값은 현행 산식의 구성요소 민감도와 현재 150개 행정동의 분포를 함께 반영합니다. 인과관계, 지표의 외부 타당성 또는 개별 지역의 의료적 위험을 증명하지 않습니다.
 
 ## 4. 병원 티어별 접근성 비교
 
@@ -220,23 +285,40 @@ p-median과 MCLP를 사용해 분류된 후보군 안에서 1~3개 후보 조합
                 "metadata": {},
                 "outputs": [],
                 "source": [
+                    "import hashlib\n",
                     "import json\n",
                     "from pathlib import Path\n",
                     "import pandas as pd\n",
                     "import matplotlib\n",
                     "matplotlib.use('Agg')\n",
                     "import matplotlib.pyplot as plt\n",
+                    "from matplotlib import font_manager\n",
                     "import seaborn as sns\n",
                     "\n",
-                    "# 한글 폰트 설정 (Windows 기준)\n",
-                    "plt.rc('font', family='Malgun Gothic')\n",
+                    "available_fonts = {font.name for font in font_manager.fontManager.ttflist}\n",
+                    "font_candidates = ('Malgun Gothic', 'AppleGothic', 'Noto Sans CJK KR', 'Noto Sans KR', 'NanumGothic')\n",
+                    "selected_font = next((font for font in font_candidates if font in available_fonts), 'DejaVu Sans')\n",
+                    "plt.rc('font', family=selected_font)\n",
                     "plt.rcParams['axes.unicode_minus'] = False\n",
+                    "\n",
+                    "def payload_sha256(value):\n",
+                    "    encoded = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8')\n",
+                    "    return hashlib.sha256(encoded).hexdigest()\n",
                     "\n",
                     "release_path = Path('../frontend/public/data/policy_release.json')\n",
                     "with open(release_path, encoding='utf-8') as f:\n",
                     "    release = json.load(f)\n",
+                    "metadata = release['metadata']\n",
                     "vul_data = release['vulnerability']\n",
-                    "    \n",
+                    "expected_routes = metadata['district_count'] * (metadata['resource_count'] + metadata['candidate_count'])\n",
+                    "assert metadata['district_count'] == len(vul_data['features']) == 150\n",
+                    "assert metadata['resource_count'] == len(release['hospitals']) == 25\n",
+                    "assert metadata['candidate_count'] == len(release['candidates']) == 9\n",
+                    "assert metadata['route_count'] == metadata['successful_route_count'] == expected_routes == 5100\n",
+                    "assert metadata['missing_route_count'] == 0\n",
+                    "for name in ('hospitals', 'vulnerability', 'candidates', 'candidate_trace', 'optimization'):\n",
+                    "    assert payload_sha256(release[name]) == metadata['content_sha256'][name], f'{name} SHA-256 불일치'\n",
+                    "\n",
                     "features = []\n",
                     "for feat in vul_data['features']:\n",
                     "    props = feat['properties']\n",
@@ -271,7 +353,8 @@ p-median과 MCLP를 사용해 분류된 후보군 안에서 1~3개 후보 조합
                 "cell_type": "markdown",
                 "metadata": {},
                 "source": [
-                    "### 지표 상관관계 (Correlation)"
+                    "### VDI 산식 구성요소와 민감도 점검\n",
+                    "VDI는 `ln(1 + 일반 차량 ETA) × 취약인구`이므로 아래 상관은 독립적인 인과 발견이 아니라 산식 구성요소 민감도 점검입니다."
                 ]
             },
             {
@@ -282,7 +365,7 @@ p-median과 MCLP를 사용해 분류된 후보군 안에서 1~3개 후보 조합
                 "source": [
                     "corr_cols = ['pop_vul', 'road_eta', 'vdi']\n",
                     "sns.heatmap(df[corr_cols].corr(), annot=True, cmap='coolwarm')\n",
-                    "plt.title('주요 지표 상관관계')\n",
+                    "plt.title('VDI formula component sensitivity')\n",
                     "plt.show()"
                 ]
             }
@@ -307,8 +390,14 @@ p-median과 MCLP를 사용해 분류된 후보군 안에서 1~3개 후보 조합
         "nbformat_minor": 4
     }
     
-    with open(analysis_dir / "golden_governance_eda.ipynb", "w", encoding='utf-8') as f:
-        json.dump(notebook, f, ensure_ascii=False, indent=2)
+    notebook_paths = (
+        analysis_dir / "golden_governance_eda.ipynb",
+        project_root / "golden-data-lab" / "notebooks" / "01_daegu_data_eda.ipynb",
+    )
+    for notebook_path in notebook_paths:
+        notebook_path.parent.mkdir(parents=True, exist_ok=True)
+        with notebook_path.open("w", encoding="utf-8") as file:
+            json.dump(notebook, file, ensure_ascii=False, indent=2)
         
     print("All tasks completed successfully!")
 

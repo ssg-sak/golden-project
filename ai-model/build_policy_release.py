@@ -13,6 +13,9 @@ RELEASED_AT = "2026-07-18T00:00:00+09:00"
 
 HOSPITALS_PATH = PROJECT_ROOT / "data" / "processed" / "final_hospitals.json"
 VULNERABILITY_PATH = PROJECT_ROOT / "data" / "processed" / "daegu_vulnerability.geojson"
+POPULATION_PATH = PROJECT_ROOT / "data" / "raw" / "population" / "daegu_population_real.csv"
+POPULATION_MANIFEST_PATH = POPULATION_PATH.with_suffix(".manifest.json")
+SENSITIVITY_PATH = PROJECT_ROOT / "data" / "processed" / "candidate_sensitivity_analysis.json"
 MATRIX_PATH = PROJECT_ROOT / "data" / "processed" / "actual_road_accessibility_matrix.json"
 OPTIMIZATION_PATH = PROJECT_ROOT / "data" / "processed" / "policy_location_optimization.json"
 CANDIDATES_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "stable_policy_candidates.json"
@@ -45,6 +48,14 @@ def payload_hash(payload: Any) -> str:
     return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
 
+def file_hash(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def candidate_identity(row: dict[str, Any]) -> tuple[str, int, float, float]:
     return (
         str(row.get("mode")),
@@ -61,6 +72,8 @@ def validate_release_parts(
     optimization: dict[str, Any],
     candidates: list[dict[str, Any]],
     trace: list[dict[str, Any]],
+    population_manifest: dict[str, Any],
+    sensitivity: list[dict[str, Any]],
 ) -> None:
     features = vulnerability.get("features", [])
     errors: list[str] = []
@@ -108,8 +121,47 @@ def validate_release_parts(
         errors.append("성공 경로 수 불일치")
     if int(matrix_metadata.get("missing_route_count", 0)) != 0:
         errors.append("누락 경로 존재")
+    route_provenance = matrix_metadata.get("route_provenance", {})
+    coordinate_snap_audit = route_provenance.get("coordinate_snap_audit", {})
+    snap_route_count = int(route_provenance.get("coordinate_snap_route_count", 0))
+    if int(coordinate_snap_audit.get("route_count", -1)) != snap_route_count:
+        errors.append("좌표 보정 경로 감사 개수 불일치")
+    if len(coordinate_snap_audit.get("route_details", [])) != snap_route_count:
+        errors.append("좌표 보정 경로 상세 목록 불일치")
+    if float(coordinate_snap_audit.get("max_snap_distance_km", 0)) > float(
+        coordinate_snap_audit.get("allowed_max_snap_distance_km", 0)
+    ):
+        errors.append("좌표 보정 거리 허용 한도 초과")
     if any(row.get("analysis_version") != VERSION for row in candidates):
         errors.append("후보 분석 버전 불일치")
+
+    vulnerability_metadata = vulnerability.get("metadata", {})
+    population_base_month = str(population_manifest.get("population_base_month") or "")
+    population_source_hash = str(population_manifest.get("source_sha256") or "")
+    if not population_base_month:
+        errors.append("인구 manifest 기준월 누락")
+    if int(population_manifest.get("district_count", 0)) != len(features):
+        errors.append("인구 manifest 행정동 수 불일치")
+    if str(population_manifest.get("source_file") or "") != POPULATION_PATH.name:
+        errors.append("인구 manifest 원본 파일명 불일치")
+    if not POPULATION_PATH.exists() or file_hash(POPULATION_PATH) != population_source_hash:
+        errors.append("인구 원본 파일 해시 불일치")
+    if vulnerability_metadata.get("population_base_month") != population_base_month:
+        errors.append("취약성 산출물 인구 기준월 불일치")
+    if vulnerability_metadata.get("population_source_sha256") != population_source_hash:
+        errors.append("취약성 산출물 인구 원본 해시 불일치")
+
+    sensitivity_by_mode = {
+        str(row.get("mode")): row for row in sensitivity if isinstance(row, dict)
+    }
+    if set(sensitivity_by_mode) != {"pediatric", "senior"}:
+        errors.append("민감도 분석 모드 불일치")
+    for mode in ("pediatric", "senior"):
+        result = sensitivity_by_mode.get(mode, {})
+        if int(result.get("total_scenarios", 0)) != 240:
+            errors.append(f"{mode} 민감도 조건 수 불일치")
+        if int(result.get("completed_scenarios", 0)) != 240:
+            errors.append(f"{mode} 민감도 완료 수 불일치")
     if errors:
         raise RuntimeError("정책 릴리스 검증 실패: " + "; ".join(errors))
 
@@ -121,6 +173,8 @@ def build_release() -> dict[str, Any]:
     optimization = read_json(OPTIMIZATION_PATH)
     candidates = read_json(CANDIDATES_PATH)
     trace = read_json(TRACE_PATH)
+    population_manifest = read_json(POPULATION_MANIFEST_PATH)
+    sensitivity = read_json(SENSITIVITY_PATH)
     validate_release_parts(
         hospitals,
         vulnerability,
@@ -128,6 +182,8 @@ def build_release() -> dict[str, Any]:
         optimization,
         candidates,
         trace,
+        population_manifest,
+        sensitivity,
     )
 
     scores = [float(row["properties"]["vulnerability_index"]) for row in vulnerability["features"]]
@@ -137,12 +193,22 @@ def build_release() -> dict[str, Any]:
     matrix_metadata = matrix["metadata"]
     source_hash = str(matrix_metadata["source_sha256"])
     resource_count_by_mode = matrix_metadata["resource_count_by_mode"]
+    population_base_month = str(population_manifest["population_base_month"])
+    sensitivity_scenario_count = {
+        str(row["mode"]): int(row["total_scenarios"]) for row in sensitivity
+    }
+    sensitivity_completed_count = {
+        str(row["mode"]): int(row["completed_scenarios"]) for row in sensitivity
+    }
+    coordinate_snap_audit = matrix_metadata["route_provenance"]["coordinate_snap_audit"]
 
     return {
         "metadata": {
             "version": VERSION,
             "released_at": RELEASED_AT,
-            "population_base_month": "2026.06",
+            "population_base_month": population_base_month,
+            "population_source_sha256": str(population_manifest["source_sha256"]),
+            "population_manifest_sha256": file_hash(POPULATION_MANIFEST_PATH),
             "district_count": len(vulnerability["features"]),
             "resource_count": len(hospitals),
             "resource_count_by_mode": resource_count_by_mode,
@@ -154,11 +220,22 @@ def build_release() -> dict[str, Any]:
             "missing_route_count": int(matrix_metadata["missing_route_count"]),
             "source_sha256": source_hash,
             "route_result_sha256": str(matrix_metadata["route_result_sha256"]),
+            "sensitivity_sha256": file_hash(SENSITIVITY_PATH),
+            "sensitivity_scenario_count_per_mode": sensitivity_scenario_count,
+            "sensitivity_completed_count_per_mode": sensitivity_completed_count,
+            "coordinate_snap_route_count": int(coordinate_snap_audit["route_count"]),
+            "coordinate_snap_average_distance_km": float(
+                coordinate_snap_audit["average_snap_distance_km"]
+            ),
+            "coordinate_snap_max_distance_km": float(
+                coordinate_snap_audit["max_snap_distance_km"]
+            ),
             "content_sha256": {
                 "hospitals": payload_hash(hospitals),
                 "vulnerability": payload_hash(vulnerability),
                 "candidates": payload_hash(candidates),
                 "candidate_trace": payload_hash(trace),
+                "sensitivity": payload_hash(sensitivity),
                 "optimization": payload_hash(optimization),
             },
         },
