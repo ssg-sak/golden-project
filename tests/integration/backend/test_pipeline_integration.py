@@ -74,6 +74,17 @@ def test_pipeline_idempotent_without_api(db_session, monkeypatch):
     assert db_session.query(DashboardSnapshot).count() >= 2
 
 
+def test_pipeline_rejects_second_run_when_job_lock_is_held(db_session, monkeypatch):
+    monkeypatch.setattr("app.services.pipeline.try_acquire_job_lock", lambda *_: None)
+
+    result = asyncio.run(
+        run_data_pipeline(db_session, targets={"rebuild-dashboard-summary"})
+    )
+
+    assert result.error == "already_running"
+    assert result.snapshot_created is False
+
+
 def test_population_export_rejects_incomplete_month(db_session, monkeypatch, tmp_path):
     project_dir = Path(__file__).resolve().parents[3]
     monkeypatch.setattr("app.services.data_seed.PROJECT_DIR", project_dir)

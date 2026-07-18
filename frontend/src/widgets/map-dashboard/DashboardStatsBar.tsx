@@ -34,7 +34,7 @@ export function DashboardStatsBar({
   loading,
   hospitalsUpdatedAt,
   vulnerabilityUpdatedAt,
-  populationBaseMonth = '2026.06',
+  populationBaseMonth = '확인 중',
   dataStale = false,
 }: DashboardStatsBarProps) {
   const totalHospitals = tier1Count + tier2Count + tier3Count;
@@ -120,7 +120,7 @@ export function DashboardStatsBar({
         </div>
 
         <p className="border-t border-slate-200 pt-2 text-[11px] text-slate-500">
-          병원 {formatUpdatedAt(hospitalsUpdatedAt)} 갱신 · 분석 {formatUpdatedAt(vulnerabilityUpdatedAt)} 갱신
+          병원 상태 확인 {formatUpdatedAt(hospitalsUpdatedAt)} · 분석 파일 확인 {formatUpdatedAt(vulnerabilityUpdatedAt)}
           {dataStale ? ' · 최신 자료 확인이 지연되어 저장된 자료를 표시 중' : ''}
         </p>
       </div>

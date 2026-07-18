@@ -1,0 +1,9 @@
+{
+  "manifest_version": 1,
+  "population_base_month": "2026.06",
+  "district_count": 150,
+  "source_file": "daegu_population_real.csv",
+  "source_sha256": "16f77e5e7e0e55b60c04a502ca94c85a22425ee5502d62900c08019edce3f5fc",
+  "verified_on": "2026-07-18",
+  "collection_date_status": "개별 원천 수집일 추가 확인 필요"
+}
