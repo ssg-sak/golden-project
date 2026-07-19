@@ -32,19 +32,25 @@ const examples = [
 
 const supplyTypeGuides = [
   {
-    label: '중증 응급 거점',
+    label: '권역응급의료센터 · 2개',
     tone: 'border-rose-200 bg-rose-50',
     labelTone: 'text-rose-800',
-    body: '중증 응급환자 대응을 우선 확인하는 대형 응급 거점입니다. 정책 분석에서는 주요 응급 공급 지점과 행정동 접근성의 기준으로 사용합니다.',
+    body: '대구의 권역응급의료센터 2개입니다. Tier 1 정책 분석 그룹에 포함됩니다.',
   },
   {
-    label: '일반 응급기관',
+    label: '지역응급의료센터 · 4개',
+    tone: 'border-violet-200 bg-violet-50',
+    labelTone: 'text-violet-800',
+    body: '대구의 지역응급의료센터 4개입니다. 권역센터와 함께 Tier 1 정책 분석 그룹으로 묶어 접근성을 비교합니다.',
+  },
+  {
+    label: '지역응급의료기관 · 13개',
     tone: 'border-sky-200 bg-sky-50',
     labelTone: 'text-sky-800',
-    body: '지역 단위 응급의료 접근성을 살피는 기관입니다. 행정동별 거리와 도로 이동시간을 비교할 때 응급 관련 공급 지점으로 포함합니다.',
+    body: '공식 기관 유형인 지역응급의료기관 13개입니다. Tier 2 정책 분석 그룹으로 접근성을 비교합니다.',
   },
   {
-    label: '소아 야간·휴일',
+    label: '달빛어린이병원 · 6개',
     tone: 'border-amber-200 bg-amber-50',
     labelTone: 'text-amber-900',
     body: '달빛어린이병원 등 야간·휴일 소아진료 자원입니다. 일반 응급기관과 같은 의미가 아니라 소아 접근성의 보완 자원으로 따로 봅니다.',

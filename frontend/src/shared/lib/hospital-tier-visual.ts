@@ -24,8 +24,8 @@ export interface HospitalTierVisual {
 export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
   1: {
     tier: 1,
-    label: '중증 응급 거점',
-    description: '중증 응급환자 수용을 우선 확인할 대형 응급 거점',
+    label: '권역·지역 응급센터',
+    description: '권역응급의료센터 2개와 지역응급의료센터 4개를 묶은 정책 분석 그룹',
     glyph: '+',
     chipClass: 'bg-rose-50 ring-rose-100',
     chipTextClass: 'text-rose-700',
@@ -42,8 +42,8 @@ export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
   },
   2: {
     tier: 2,
-    label: '일반 응급기관',
-    description: '응급실 운영이 확인되는 지역 응급의료기관',
+    label: '지역응급의료기관',
+    description: '지역 단위 응급의료 접근성을 비교하는 공식 기관 유형',
     glyph: '+',
     chipClass: 'bg-sky-50 ring-sky-100',
     chipTextClass: 'text-sky-700',
@@ -86,7 +86,28 @@ export function hospitalTierLabel(tier: HospitalTier): string {
 
 /** 원천의 개별 공식 유형명을 대체하지 않는, 화면 분류의 근거 설명. */
 export function hospitalTierBasisLabel(tier: HospitalTier): string {
-  if (tier === 1) return '권역·전문 응급기관 분류 기반';
-  if (tier === 2) return '지역 응급기관 분류 기반';
+  if (tier === 1) return '권역·지역 응급센터 분류 기반';
+  if (tier === 2) return '지역응급의료기관 분류 기반';
   return '달빛어린이병원 지정 자원';
+}
+
+const REGIONAL_CENTER_NAMES = new Set([
+  '경북대학교병원',
+  '영남대학교병원',
+]);
+
+const LOCAL_CENTER_NAMES = new Set([
+  '계명대학교 동산병원',
+  '대구파티마병원',
+  '대구가톨릭대학교병원',
+  '칠곡경북대학교병원',
+]);
+
+/** 저장소의 기관명으로 확인 가능한 공식 기관 유형을 표시한다. */
+export function hospitalOfficialTypeLabel(name: string, tier: HospitalTier): string {
+  if (REGIONAL_CENTER_NAMES.has(name)) return '권역응급의료센터';
+  if (LOCAL_CENTER_NAMES.has(name)) return '지역응급의료센터';
+  if (tier === 2) return '지역응급의료기관';
+  if (tier === 3) return '달빛어린이병원';
+  return '응급기관 유형 확인 필요';
 }
