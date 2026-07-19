@@ -4,6 +4,7 @@ import { DESKTOP_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-la
 import {
   HOSPITAL_TIER_ORDER,
   HOSPITAL_TIER_VISUAL,
+  hospitalOfficialTypeLabel,
 } from '../../shared/lib/hospital-tier-visual';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import {
@@ -156,6 +157,9 @@ export function AdminHospitalSidebar({
                         }`}
                       >
                         <span>{hospitalTierBadge(hospital.tier)}</span>
+                        {hospitalOfficialTypeLabel(hospital.name, hospital.tier) !== hospitalTierBadge(hospital.tier) ? (
+                          <span>{hospitalOfficialTypeLabel(hospital.name, hospital.tier)}</span>
+                        ) : null}
                         <AvailableBedsBadge
                           availableBeds={hospitalAvailableBeds(hospital)}
                           totalBeds={hospital.total_hvec}

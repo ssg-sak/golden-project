@@ -75,16 +75,21 @@ export function DashboardStatsBar({
               병원까지의 거리와 보호가 필요한 인구를 함께 보며, 먼저 살펴볼 동네를 좁힙니다.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2 text-[11px] font-bold">
+          <div className="flex flex-col items-start gap-2 text-[11px] font-bold lg:items-end">
+            <div className="flex flex-wrap gap-2">
             <span className="rounded-md bg-red-50 px-2.5 py-1 text-red-700 ring-1 ring-red-200">
               상위 25% 우선 확인
             </span>
             <span className="rounded-md bg-blue-50 px-2.5 py-1 text-blue-800 ring-1 ring-blue-200">
-              상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}
+              현재 상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}
             </span>
             <span className="rounded-md bg-slate-100 px-2.5 py-1 text-slate-700 ring-1 ring-slate-200">
-              절대 의료 기준 아님
+              의료적 절대 기준 아님
             </span>
+            </div>
+            <p className="max-w-xl text-right text-[11px] font-normal leading-5 text-slate-500">
+              150개 행정동 점수를 높은 순서로 정렬해 상위 25%를 먼저 확인할 지역으로 표시합니다. 경계값은 분석본에 따라 달라지는 비교용 숫자입니다.
+            </p>
           </div>
         </div>
 

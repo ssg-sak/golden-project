@@ -5,6 +5,7 @@ import type { PanInfo } from 'framer-motion';
 import {
   HOSPITAL_TIER_ORDER,
   HOSPITAL_TIER_VISUAL,
+  hospitalOfficialTypeLabel,
 } from '../../shared/lib/hospital-tier-visual';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import {
@@ -352,6 +353,9 @@ export function AdminMobileBottomSheet({
                             }`}
                           >
                             <span>{hospitalTierBadge(hospital.tier)}</span>
+                            {hospitalOfficialTypeLabel(hospital.name, hospital.tier) !== hospitalTierBadge(hospital.tier) ? (
+                              <span>{hospitalOfficialTypeLabel(hospital.name, hospital.tier)}</span>
+                            ) : null}
                             <AvailableBedsBadge
                               availableBeds={hospitalAvailableBeds(hospital)}
                               totalBeds={hospital.total_hvec}

@@ -4,7 +4,11 @@ import {
   hospitalTierBadge,
   isMoonlightHospital,
 } from '../../shared/types/hospital';
-import { HOSPITAL_TIER_VISUAL, hospitalTierBasisLabel } from '../../shared/lib/hospital-tier-visual';
+import {
+  HOSPITAL_TIER_VISUAL,
+  hospitalOfficialTypeLabel,
+  hospitalTierBasisLabel,
+} from '../../shared/lib/hospital-tier-visual';
 import type { DistrictVulnerabilityRecord } from '../../shared/types/vulnerability';
 
 const PANEL_SHELL =
@@ -12,12 +16,12 @@ const PANEL_SHELL =
 
 const POLICY_ROLE: Record<HospitalRecord['tier'], { title: string; body: string }> = {
   1: {
-    title: '중증 응급 거점',
-    body: '중증 응급환자 대응을 우선 확인하는 대형 응급 거점입니다. 분석에서는 주요 응급 공급 지점과 접근성 비교의 기준으로 사용합니다.',
+    title: '권역·지역 응급센터',
+    body: '권역응급의료센터 2개와 지역응급의료센터 4개를 묶은 정책 분석 그룹입니다. 공식 기관 유형을 합산한 내부 공급 기준이며, 실제 진료·수용 가능 여부를 뜻하지 않습니다.',
   },
   2: {
-    title: '일반 응급기관',
-    body: '지역 단위 응급의료 접근성을 살피는 기관입니다. 행정동별 거리와 도로 이동시간을 비교할 때 응급 관련 공급 지점으로 포함합니다.',
+    title: '지역응급의료기관',
+    body: '공식 기관 유형인 지역응급의료기관입니다. 행정동별 거리와 도로 이동시간을 비교할 때 응급 관련 공급 지점으로 포함합니다.',
   },
   3: {
     title: '소아 야간·휴일',
@@ -67,6 +71,11 @@ export function PolicyHospitalContextView({
         <p className="mt-2 text-[11px] font-semibold text-teal-800">
           {hospitalTierBasisLabel(hospital.tier)} · 프로젝트 분석 역할
         </p>
+        {hospitalOfficialTypeLabel(hospital.name, hospital.tier) !== tierVisual.label ? (
+          <p className="mt-1 text-[11px] font-bold text-slate-600">
+            공식 유형: {hospitalOfficialTypeLabel(hospital.name, hospital.tier)}
+          </p>
+        ) : null}
         <p className="mt-2 text-xs leading-5 text-slate-600">
           이 기관은 정책 분석에서 응급의료 공급과 접근성을 비교하기 위한 기준점입니다.
         </p>
