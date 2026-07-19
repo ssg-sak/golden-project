@@ -32,7 +32,6 @@ golden-project/
 ├─ scripts/                  EDA·추출·로컬 개발 보조 명령
 ├─ tests/                    프론트·백엔드·분석 테스트
 ├─ docs/                     방법론·데이터 사전·검증·회고 문서
-├─ golden-data-lab/          별도 저장소 분리 전의 분석 학습 영역
 ├─ .github/workflows/        CI 검증과 GitHub Pages 배포
 ├─ README.md                 프로젝트 대표 설명
 ├─ Dockerfile                Render용 백엔드 컨테이너
@@ -186,6 +185,6 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 - `tmp/`, `data/cache/`, 로그
 - 실행 중 생성되는 보조 DB 사본
 
-## 10. 별도 분리 대상
+## 10. 별도 데이터분석 저장소
 
-`golden-data-lab/`은 제품 런타임과 다른 SQL·Python EDA·Power BI 학습 로드맵입니다. 별도 데이터분석가 포트폴리오 저장소로 분리하기로 결정했으며, 독립 실행 준비와 Git 이력 추출까지 완료했습니다. 현재 원격 저장소 생성·push가 남아 있어 기존 폴더를 유지합니다. 상세 상태와 제거 조건은 `docs/GOLDEN_DATA_LAB_SEPARATION_REPORT_20260719.md`를 따릅니다.
+SQL·Python EDA·Power BI 학습 로드맵은 제품 런타임과 분리해 [`ssg-sak/golden-data-lab`](https://github.com/ssg-sak/golden-data-lab)에서 관리합니다. 이 저장소는 시민 서비스와 정책분석 엔진의 실행·검증·배포에 집중합니다. 분리 근거와 이력 검증은 `docs/GOLDEN_DATA_LAB_SEPARATION_REPORT_20260719.md`를 따릅니다.
