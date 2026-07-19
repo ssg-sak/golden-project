@@ -82,11 +82,15 @@ export function PolicyWelcomePanel() {
             {supplyTypeGuides.map((item) => (
               <article key={item.label} className={`rounded-xl border p-3 ${item.tone}`}>
                 <h4 className={`text-xs font-extrabold ${item.labelTone}`}>{item.label}</h4>
-                <p className="mt-1 text-[11px] leading-5 text-slate-700">{item.body}</p>
+            <p className="mt-1 text-[11px] leading-5 text-slate-700">{item.body}</p>
               </article>
             ))}
           </div>
         </section>
+
+        <p className="text-[10px] leading-5 text-slate-500">
+          위 분류는 공공데이터 기관 유형을 바탕으로 한 프로젝트 표시입니다. 개별 기관의 실제 진료·수용 가능 여부를 판정하는 정보가 아닙니다.
+        </p>
 
         <section className="rounded-xl border border-teal-200 bg-teal-50 p-4">
           <p className="text-xs font-bold text-teal-800">위험 점수를 쓰는 이유</p>
