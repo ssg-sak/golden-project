@@ -77,13 +77,14 @@ export function AdminHospitalSidebar({
       <PanelSidebarHeader
         variant="admin"
         icon={<AdminPolicyIcon />}
-        title="응급의료기관 현황"
-        subtitle="지도·행정동 분석과 연동"
+        title="정책 분석 기준 기관"
+        subtitle="공급 기준·행정동 분석과 연동"
       />
 
       {onModeChange && (
-        <HospitalSidebarControls
-          heading="분석 대상 인구"
+          <HospitalSidebarControls
+            variant="policy"
+            heading="분석 대상 인구"
           isLocating={false}
           locationSource={null}
           locationErrorReason={null}
