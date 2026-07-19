@@ -48,7 +48,7 @@ export function AvailableBedsBadge({
 
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded-full font-bold ring-1 ${SIZE_CLASS[size]} ${toneClass} ${className}`}
+      className={`inline-flex shrink-0 items-center rounded-sm font-bold ring-1 ${SIZE_CLASS[size]} ${toneClass} ${className}`}
       title={ratio === null
         ? '조회된 일반응급실 가용 병상 보고값'
         : `조회된 일반응급실 가용 병상 비율 ${Math.round(ratio * 100)}% · 진료·수용 가능을 보장하지 않음`}

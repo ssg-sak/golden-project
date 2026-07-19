@@ -13,7 +13,7 @@ function svgDataUrl(svg: string): string {
 function hospitalMarkerSvg(fill: string, size: number, symbol: string, symbolColor: string): string {
   const fontSize = size >= 34 ? 16 : size >= 28 ? 13 : 12;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" fill="${fill}" stroke="#fff" stroke-width="2"/>
+    <rect x="2" y="2" width="${size - 4}" height="${size - 4}" rx="2" fill="${fill}" stroke="#fff" stroke-width="2"/>
     <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" fill="${symbolColor}" font-size="${fontSize}" font-weight="700" font-family="system-ui,sans-serif">${symbol}</text>
   </svg>`;
 }

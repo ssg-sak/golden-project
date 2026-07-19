@@ -34,7 +34,7 @@ export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
     gradientClass: 'from-rose-500 to-red-600',
     ringClass: 'ring-rose-100',
     filterActiveClass:
-      'bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-md shadow-rose-300/40 ring-rose-300',
+      'bg-red-700 text-white shadow-sm ring-red-300',
     panelHeaderClass: 'border-rose-100 bg-gradient-to-br from-rose-50 via-white to-orange-50',
     markerBorderClass: 'border-red-500',
     markerRingClass: 'ring-red-200',
@@ -52,7 +52,7 @@ export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
     gradientClass: 'from-sky-500 to-blue-600',
     ringClass: 'ring-sky-100',
     filterActiveClass:
-      'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md shadow-sky-300/40 ring-sky-300',
+      'bg-blue-700 text-white shadow-sm ring-blue-300',
     panelHeaderClass: 'border-sky-100 bg-gradient-to-br from-sky-50 via-white to-indigo-50',
     markerBorderClass: 'border-blue-500',
     markerRingClass: 'ring-blue-200',
@@ -70,7 +70,7 @@ export const HOSPITAL_TIER_VISUAL: Record<HospitalTier, HospitalTierVisual> = {
     gradientClass: 'from-amber-400 to-orange-500',
     ringClass: 'ring-amber-100',
     filterActiveClass:
-      'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md shadow-amber-300/40 ring-amber-300',
+      'bg-amber-600 text-white shadow-sm ring-amber-300',
     panelHeaderClass: 'border-amber-100 bg-gradient-to-br from-amber-50 via-white to-yellow-50',
     markerBorderClass: 'border-amber-400',
     markerRingClass: 'ring-amber-200',

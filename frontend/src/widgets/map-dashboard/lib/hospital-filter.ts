@@ -32,7 +32,7 @@ const FILTER_TIER: Record<Exclude<HospitalFilter, 'all'>, HospitalRecord['tier']
 
 export function filterActiveStyle(filter: HospitalFilter): string {
   if (filter === 'all') {
-    return 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-300/40 ring-indigo-300';
+    return 'bg-slate-800 text-white shadow-sm ring-slate-500';
   }
   return HOSPITAL_TIER_VISUAL[FILTER_TIER[filter]].filterActiveClass;
 }
