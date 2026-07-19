@@ -172,6 +172,7 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 | `docs/DATA_INTEGRITY_AND_REFRESH_HARDENING_20260718.md` | 갱신·승격·복원 계약 |
 | `docs/FINAL_PORTFOLIO_FREEZE_REPORT_20260718.md` | 최종 개선·검증·동결 기록 |
 | `docs/REPOSITORY_CLEANUP_PLAN_20260719.md` | 저장소 정리 기준과 단계 |
+| `docs/GOLDEN_DATA_LAB_SEPARATION_REPORT_20260719.md` | 데이터랩 독립 저장소 분리 계획·검증·진행 상태 |
 | `docs/01`~`07` | 현재와 다른 내용이 포함된 과거 개발·회고 기록 |
 
 ## 9. 저장소에 두지 않는 파일
@@ -187,4 +188,4 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 
 ## 10. 별도 분리 대상
 
-`golden-data-lab/`은 제품 런타임과 다른 SQL·Python EDA·Power BI 학습 로드맵입니다. 현재는 `docs/golden-data-lab-extraction-plan.md`의 승인 게이트가 완료되지 않아 유지합니다. 새 저장소 이전과 검증이 끝난 뒤 별도 PR에서만 제거합니다.
+`golden-data-lab/`은 제품 런타임과 다른 SQL·Python EDA·Power BI 학습 로드맵입니다. 별도 데이터분석가 포트폴리오 저장소로 분리하기로 결정했으며, 독립 실행 준비와 Git 이력 추출까지 완료했습니다. 현재 원격 저장소 생성·push가 남아 있어 기존 폴더를 유지합니다. 상세 상태와 제거 조건은 `docs/GOLDEN_DATA_LAB_SEPARATION_REPORT_20260719.md`를 따릅니다.
