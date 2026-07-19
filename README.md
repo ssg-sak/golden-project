@@ -7,6 +7,7 @@
 ## 서비스 바로가기
 
 - **[배포 서비스](https://ssg-sak.github.io/golden-project/#/)**
+- [데이터분석 포트폴리오: Golden Data Lab](https://github.com/ssg-sak/golden-data-lab)
 - [프로젝트 구조도](./docs/PROJECT_STRUCTURE.md)
 - [정책분석 방법론](./docs/methodology.md)
 - [탐색적 데이터 분석(EDA)](./docs/EDA_REPORT.md)
