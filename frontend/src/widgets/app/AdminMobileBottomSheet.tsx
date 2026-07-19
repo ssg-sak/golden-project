@@ -43,6 +43,7 @@ interface AdminMobileBottomSheetProps {
   // Detail Props
   isDetailOpen: boolean;
   selectedVulnerability: DistrictVulnerabilityRecord | null;
+  vulnerabilityRecords: DistrictVulnerabilityRecord[];
   vulnerabilitySummary?: {
     avgVulnerabilityIndex: number;
     avgDistanceKm: number;
@@ -81,6 +82,7 @@ export function AdminMobileBottomSheet({
   onSevereConditionChange,
   isDetailOpen,
   selectedVulnerability,
+  vulnerabilityRecords,
   vulnerabilitySummary,
   onDistrictSelect,
   districtCount,
@@ -233,6 +235,9 @@ export function AdminMobileBottomSheet({
               hospitals={hospitals}
               vulnerabilitySummary={vulnerabilitySummary}
               onDistrictSelect={onDistrictSelect}
+              viewMode="admin"
+              vulnerabilityRecords={vulnerabilityRecords}
+              riskThreshold={highRiskThreshold}
             />
           </div>
         </div>
@@ -242,13 +247,14 @@ export function AdminMobileBottomSheet({
             <PanelSidebarHeader
               variant="admin"
               icon={<AdminPolicyIcon />}
-              title="응급의료기관 현황"
-              subtitle="지도·행정동 분석과 연동"
+              title="정책 분석 기준 기관"
+              subtitle="공급 기준·행정동 분석과 연동"
             />
           </div>
 
           {onModeChange && (
             <HospitalSidebarControls
+              variant="policy"
               isLocating={false}
               locationSource={null}
               locationErrorReason={null}

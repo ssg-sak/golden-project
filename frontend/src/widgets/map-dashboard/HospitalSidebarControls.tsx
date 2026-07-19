@@ -7,6 +7,7 @@ import {
 import { LocationNotice } from '../landing/LocationNotice';
 
 interface HospitalSidebarControlsProps {
+  variant?: 'citizen' | 'policy';
   heading?: string;
   isLocating: boolean;
   locationSource: LocationSource | null;
@@ -28,6 +29,7 @@ const CARE_TARGET_OPTIONS = [
 ] as const;
 
 export function HospitalSidebarControls({
+  variant = 'citizen',
   heading = '누가 진료받나요?',
   isLocating,
   locationSource,
@@ -44,7 +46,7 @@ export function HospitalSidebarControls({
   const selectedCareTarget =
     CARE_TARGET_OPTIONS.find((option) => option.key === careTarget) ?? CARE_TARGET_OPTIONS[0];
   const summary = [
-    showAvailableOnly ? '응급병상 보유' : '전체 병상 상태',
+    showAvailableOnly ? (variant === 'policy' ? '병상 보고 기관' : '응급병상 보유') : '전체 병상 상태',
     selectedCareTarget.label,
     selectedCondition.shortLabel,
   ].join(' · ');
@@ -54,7 +56,9 @@ export function HospitalSidebarControls({
       <details className="group rounded-xl border border-slate-200 bg-slate-50/80 shadow-sm">
         <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 [&::-webkit-details-marker]:hidden">
           <div className="min-w-0">
-            <p className="text-xs font-extrabold text-slate-900">진료 조건</p>
+            <p className="text-xs font-extrabold text-slate-900">
+              {variant === 'policy' ? '정책 분석 필터' : '진료 조건'}
+            </p>
             <p className="mt-0.5 truncate text-[11px] font-semibold text-slate-500">{summary}</p>
           </div>
           <span className="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-extrabold text-slate-700">
@@ -85,7 +89,7 @@ export function HospitalSidebarControls({
                     : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                 }`}
               >
-                응급병상 보유만
+                {variant === 'policy' ? '병상 보고 기관만' : '응급병상 보유만'}
               </button>
 
               {CARE_TARGET_OPTIONS.map((option) => {
@@ -110,7 +114,9 @@ export function HospitalSidebarControls({
 
           <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-extrabold text-slate-800">중증·응급 상황 필터</p>
+              <p className="text-xs font-extrabold text-slate-800">
+                {variant === 'policy' ? '분석 기관·대상 조건' : '중증·응급 상황 필터'}
+              </p>
               <span className="shrink-0 whitespace-nowrap text-[11px] font-bold text-teal-800">
                 {selectedCondition.shortLabel}
               </span>
