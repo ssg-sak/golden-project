@@ -5,7 +5,7 @@ import {
   hospitalTierBadge,
   isMoonlightHospital,
 } from '../../shared/types/hospital';
-import { HOSPITAL_TIER_VISUAL } from '../../shared/lib/hospital-tier-visual';
+import { HOSPITAL_TIER_VISUAL, hospitalTierBasisLabel } from '../../shared/lib/hospital-tier-visual';
 import { useAppModeStore } from '../../shared/store/appModeStore';
 
 import { HospitalActionButtons } from './HospitalActionButtons';
@@ -52,6 +52,9 @@ export function HospitalDetailView({ hospital }: { hospital: HospitalRecord }) {
         <h2 className="mt-2 text-xl font-extrabold leading-snug text-slate-900">
           {hospitalDisplayName(hospital)}
         </h2>
+        <p className="mt-1 text-[10px] font-semibold text-slate-500">
+          {hospitalTierBasisLabel(hospital.tier)} · 서비스 표시 분류
+        </p>
       </div>
 
       <div className="flex min-h-0 flex-col gap-4 overflow-y-auto p-5">

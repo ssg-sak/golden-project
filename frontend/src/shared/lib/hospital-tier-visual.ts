@@ -83,3 +83,10 @@ export const HOSPITAL_TIER_ORDER: HospitalTier[] = [1, 2, 3];
 export function hospitalTierLabel(tier: HospitalTier): string {
   return HOSPITAL_TIER_VISUAL[tier].label;
 }
+
+/** 원천의 개별 공식 유형명을 대체하지 않는, 화면 분류의 근거 설명. */
+export function hospitalTierBasisLabel(tier: HospitalTier): string {
+  if (tier === 1) return '권역·전문 응급기관 분류 기반';
+  if (tier === 2) return '지역 응급기관 분류 기반';
+  return '달빛어린이병원 지정 자원';
+}

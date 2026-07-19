@@ -4,7 +4,7 @@ import {
   hospitalTierBadge,
   isMoonlightHospital,
 } from '../../shared/types/hospital';
-import { HOSPITAL_TIER_VISUAL } from '../../shared/lib/hospital-tier-visual';
+import { HOSPITAL_TIER_VISUAL, hospitalTierBasisLabel } from '../../shared/lib/hospital-tier-visual';
 import type { DistrictVulnerabilityRecord } from '../../shared/types/vulnerability';
 
 const PANEL_SHELL =
@@ -64,6 +64,9 @@ export function PolicyHospitalContextView({
           ) : null}
         </div>
         <h2 className="mt-3 text-xl font-extrabold leading-snug text-slate-900">{hospital.name}</h2>
+        <p className="mt-2 text-[11px] font-semibold text-teal-800">
+          {hospitalTierBasisLabel(hospital.tier)} · 프로젝트 분석 역할
+        </p>
         <p className="mt-2 text-xs leading-5 text-slate-600">
           이 기관은 정책 분석에서 응급의료 공급과 접근성을 비교하기 위한 기준점입니다.
         </p>
