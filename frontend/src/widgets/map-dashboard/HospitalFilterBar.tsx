@@ -20,7 +20,7 @@ export function HospitalFilterBar({
 }: HospitalFilterBarProps) {
   return (
     <div role="toolbar" aria-label="병원 분류 필터" className="shrink-0">
-      <div className="flex items-center overflow-hidden rounded-md shadow-sm ring-1 ring-slate-300">
+      <div className="flex items-center overflow-hidden rounded-sm shadow-sm ring-1 ring-slate-300">
         {HOSPITAL_FILTER_OPTIONS.map((option, index) => {
           const isActive = activeFilter === option.id;
           const isLast = index === HOSPITAL_FILTER_OPTIONS.length - 1;

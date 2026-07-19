@@ -53,7 +53,7 @@ export function HospitalSidebarControls({
 
   return (
     <div className="shrink-0 border-b border-slate-100 bg-white px-3 py-2">
-      <details className="group rounded-xl border border-slate-200 bg-slate-50/80 shadow-sm">
+      <details className="group rounded-sm border border-slate-200 bg-slate-50/80 shadow-sm">
         <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 [&::-webkit-details-marker]:hidden">
           <div className="min-w-0">
             <p className="text-xs font-extrabold text-slate-900">
@@ -61,7 +61,7 @@ export function HospitalSidebarControls({
             </p>
             <p className="mt-0.5 truncate text-[11px] font-semibold text-slate-500">{summary}</p>
           </div>
-          <span className="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-extrabold text-slate-700">
+          <span className="shrink-0 rounded-sm border border-slate-200 bg-white px-3 py-1 text-[11px] font-extrabold text-slate-700">
             <span className="group-open:hidden">펼치기</span>
             <span className="hidden group-open:inline">접기</span>
           </span>
@@ -83,7 +83,7 @@ export function HospitalSidebarControls({
               <button
                 type="button"
                 onClick={() => onShowAvailableOnlyChange(!showAvailableOnly)}
-                className={`min-h-9 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
+                className={`min-h-9 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
                   showAvailableOnly
                     ? 'border-teal-700 bg-teal-50 text-teal-800'
                     : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
@@ -99,7 +99,7 @@ export function HospitalSidebarControls({
                     key={option.key}
                     type="button"
                     onClick={() => onCareTargetChange(option.key)}
-                    className={`min-h-9 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
+                    className={`min-h-9 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
                       active
                         ? 'border-teal-800 bg-teal-800 text-white'
                         : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
@@ -138,7 +138,7 @@ export function HospitalSidebarControls({
                         onShowAvailableOnlyChange(false);
                       }
                     }}
-                    className={`min-h-9 shrink-0 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
+                    className={`min-h-9 shrink-0 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
                       active
                         ? 'border-slate-900 bg-slate-900 text-white'
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100'

@@ -76,7 +76,7 @@ export function HospitalMarkerOverlay({
       zIndex={isSelected ? 6 : 4}
     >
       <div
-        className={`pointer-events-auto flex cursor-pointer items-center gap-1.5 rounded-full border-2 bg-white px-3 py-1.5 shadow-lg transition-all duration-200 hover:scale-105 ${
+        className={`pointer-events-auto flex cursor-pointer items-center gap-1.5 rounded-sm border-2 bg-white px-3 py-1.5 shadow-md transition-colors duration-200 hover:bg-slate-50 ${
           isSelected
             ? `ring-4 ${ringClass} ${activeRingClass} scale-105`
             : `ring-2 ${ringClass}`
@@ -97,7 +97,7 @@ export function HospitalMarkerOverlay({
         aria-pressed={isSelected}
         title={hospital.name}
       >
-        <span className={`h-3 w-3 shrink-0 rounded-full ${dotClass}`} aria-hidden />
+        <span className={`h-3 w-3 shrink-0 rounded-sm border border-white ${dotClass}`} aria-hidden />
         <span className={`whitespace-nowrap text-sm font-bold tracking-tight ${isSelected ? 'text-slate-900' : 'text-slate-700'}`}>
           {hospital.name}
         </span>
