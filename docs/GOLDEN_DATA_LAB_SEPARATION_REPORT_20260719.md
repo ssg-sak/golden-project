@@ -90,26 +90,23 @@ b436c14 fix: 정책 릴리스 계보와 안전 안내 강화
 | 독립 README·로드맵·데이터 계보 준비 | 완료 |
 | 고정 스냅샷 다운로드·검증 | 완료 |
 | Git 이력 분리 | 완료 |
-| `ssg-sak/golden-data-lab` 원격 저장소 생성 | 대기 |
-| 독립 이력 push와 원격 파일 검증 | 대기 |
-| 양쪽 README 상호 링크 | 대기 |
-| `golden-project`의 기존 폴더 제거 | 대기 |
+| `ssg-sak/golden-data-lab` 원격 저장소 생성 | 완료 |
+| 독립 이력 push와 원격 파일 검증 | 완료 |
+| 양쪽 README 상호 링크 | 완료 |
+| `golden-project`의 기존 폴더 제거 | Draft PR 제출 |
 
-원격 생성이 대기 중인 이유는 로컬 GitHub CLI의 `ssg-sak` 인증이 만료됐고, 현재 세션에서 사용할 수 있는 로그인 브라우저가 없기 때문이다. 인증을 우회하거나 토큰을 파일에 저장하지 않았다.
+공개 저장소는 `https://github.com/ssg-sak/golden-data-lab`에 생성했다. 추출한 4개 커밋을 `main`에 push한 뒤 새 경로에 다시 복제하여 문서, Notebook, 다운로드 스크립트와 데이터 계약을 재검증했다.
 
-## 8. 남은 실행 절차
+## 8. 완료한 원격 이관 절차
 
-1. GitHub CLI 인증을 복구한다.
-
-   ```bash
-   gh auth login -h github.com -p https -w
-   ```
-
-2. 빈 공개 저장소 `ssg-sak/golden-data-lab`을 생성한다.
-3. 추출된 `export/golden-data-lab` 이력을 새 저장소 `main`으로 push한다.
-4. 새 저장소에서 README·노트북·다운로드 검증을 재확인한다.
-5. 두 저장소 README에 상호 링크를 추가한다.
-6. 별도 Draft PR에서 기존 `golden-data-lab/` 폴더를 제거한다.
+1. 공개 저장소 `ssg-sak/golden-data-lab` 생성
+2. 추출된 `export/golden-data-lab` 이력을 새 저장소 `main`으로 push
+3. 별도 임시 경로에 원격 저장소 재복제
+4. README·노트북·다운로드 스크립트 존재 확인
+5. 고정 정책 릴리스 다운로드와 SHA-256 재검증
+6. 150·25·9·5,100 데이터 계약 재검증
+7. 두 저장소 README 상호 연결
+8. 기존 폴더 제거용 별도 Draft PR 제출
 
 ## 9. 삭제·복구 원칙
 

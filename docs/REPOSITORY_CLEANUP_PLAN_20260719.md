@@ -27,7 +27,7 @@
 | `frontend/public/data/` | 유지 | GitHub Pages가 소비하는 공개 산출물 |
 | 처리용·공개용 정책 JSON 사본 | 유지 | CI가 바이트 동일성과 결정성을 검증하는 의도적 사본 |
 | `docs/01`~`07` | 당장 유지 | 현재와 다른 과거 기록임을 명시한 감사·회고 자료이며 일부 README 링크가 존재 |
-| `golden-data-lab/` | 이관 검증 전 유지 | 별도 데이터분석가 저장소로 분리 결정. 독립 실행·이력 추출 완료 후 원격 이관 대기 |
+| `golden-data-lab/` | 분리 완료 후 제거 | `ssg-sak/golden-data-lab`로 이력·문서·검증 경로를 이전하고 원격 재복제 검증 완료 |
 | `analysis/golden_governance_eda.ipynb` | 유지 | EDA 생성 스크립트의 명시적 산출 경로 |
 | `handoff/claude-integrated-policy-model-20260715/` | 삭제 | 2026-07-15 외부 검토용 소스·산출물 복사본이며 현재 본 코드와 정본이 후속 검증을 완료함 |
 | `CODE_EXPLANATION.md` | 삭제 | 제거된 HIRA 폴링과 과거 병상 표현을 현행 구조처럼 설명함 |
@@ -149,4 +149,4 @@
 - EDA 문서·노트북 재생성 통과
 - npm production audit 취약점 0개
 
-Phase 4 대상은 삭제하지 않았다. `golden-data-lab/`은 별도 저장소 분리가 승인되어 독립 실행 준비와 이력 추출을 완료했지만, 원격 이관 검증 전에는 제거하지 않는다. 상세 진행 상태는 `GOLDEN_DATA_LAB_SEPARATION_REPORT_20260719.md`에 기록한다. 과거 감사 문서와 무시된 사용자 문서는 별도 검토 대상으로 남긴다.
+Phase 4 중 `golden-data-lab/`은 별도 저장소 이관과 원격 재복제 검증을 완료한 뒤 후속 Draft PR에서 제거했다. 상세 결과는 `GOLDEN_DATA_LAB_SEPARATION_REPORT_20260719.md`에 기록한다. 과거 감사 문서와 무시된 사용자 문서는 별도 검토 대상으로 남긴다.
