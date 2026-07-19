@@ -4,10 +4,21 @@
 
 시민 화면은 병원 위치·거리·예상 이동시간·전화·길찾기와 조회 가능한 응급실 정보를 제공하고, 정책 화면은 소아·고령층 수요, 의료 공급, 거리·도로 이동시간을 결합해 의료 사각지대와 우선 검토 후보를 비교합니다.
 
+## 30초 요약
+
+| 항목 | 내용 |
+|---|---|
+| 시민 문제 | 가까운 응급의료기관의 위치·거리·예상 이동시간·전화·길찾기와 최근 조회 병상정보를 한 화면에서 확인 |
+| 정책 문제 | 150개 행정동의 소아·고령층 수요와 의료 접근성 격차를 비교하고 자원배치 후보를 검토 |
+| 검증 분석본 | 2026.06 인구, 25개 응급 관련 기관, 9개 후보지, 5,100개 도로 경로 |
+| 기술 | React·TypeScript, FastAPI·Python, SQLite, Kakao·공공데이터 API, Pytest·Vitest·GitHub Actions |
+| 개인 역할 | 문제 정의, 데이터 수집·전처리, 지표·공간분석 설계, React·FastAPI 구현, API·배포·검증·보고서 작성 |
+| 안전 원칙 | 병상 `0`·미확인·오래됨을 구분하고, 분석 후보를 진료 가능·수용 가능·확정 입지로 단정하지 않음 |
+
 ## 서비스 바로가기
 
 - **[배포 서비스](https://ssg-sak.github.io/golden-project/#/)**
-- [데이터분석 포트폴리오: Golden Data Lab](https://github.com/ssg-sak/golden-data-lab)
+- **[데이터분석 포트폴리오: Golden Data Lab](https://github.com/ssg-sak/golden-data-lab)**
 - [프로젝트 구조도](./docs/PROJECT_STRUCTURE.md)
 - [정책분석 방법론](./docs/methodology.md)
 - [탐색적 데이터 분석(EDA)](./docs/EDA_REPORT.md)
@@ -108,8 +119,6 @@
 ### 분석 이미지
 
 [안정 정책 후보 시각화](./data/processed/stable_policy_candidates_overview_20260715.png)는 소아·고령층 민감도 분석에서 반복 등장한 9개 검토 후보를 보여줍니다.
-
-새 서비스 화면 캡처는 추가하지 않았습니다. 시민 화면과 정책 화면은 상단의 배포 서비스에서 직접 확인할 수 있습니다.
 
 ## 사용 데이터와 기준 시점
 

@@ -19,13 +19,16 @@
 | Golden Data Lab ROADMAP | Python EDA → SQL → Power BI → 통합 보고서 순서 확인 |
 | GitHub 프로필 표시 이름·소개 | 현재 비어 있음 |
 | 프로필 README 저장소 | `ssg-sak/ssg-sak` 미생성 |
+| `golden-project` README | 30초 요약·Golden Data Lab 직접 링크 로컬 반영 |
+| 공개 링크 | 배포 서비스·Golden Data Lab 모두 HTTP 200 확인 |
+| Golden Data Lab Python EDA | 로컬 독립 작업본 실행·검증 완료, 원격 게시 대기 |
 
 ## 확정한 진행 순서
 
 1. GitHub 프로필 README 초안을 확정한다.
 2. `golden-project` README와 배포 서비스의 설명·링크 정합성을 점검한다.
 3. 대표 프로젝트 설명과 배포 링크를 최종 점검한다.
-4. Golden Data Lab의 Python EDA를 먼저 완성한다.
+4. Golden Data Lab의 Python EDA 완료본을 원격 Draft PR로 게시한다.
 5. 같은 질문을 SQL로 재현하고 Python 결과와 교차 검증한다.
 6. Power BI 시각화는 검증된 분석 테이블을 기준으로 제작한다.
 
