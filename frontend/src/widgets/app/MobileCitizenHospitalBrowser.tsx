@@ -362,7 +362,7 @@ export function MobileCitizenHospitalBrowser({
                   key={option.key}
                   type="button"
                   onClick={() => applyLayoutMode(option.key)}
-                  className={`rounded-full px-2.5 py-1 text-[11px] font-bold transition-colors ${
+                  className={`rounded-sm px-2.5 py-1 text-[11px] font-bold transition-colors ${
                     active
                       ? 'bg-teal-800 text-white'
                       : 'bg-white text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100'

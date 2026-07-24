@@ -16,7 +16,7 @@ export function GovernanceFooter({ variant = 'default', className = '' }: Govern
         <p className={`leading-relaxed text-slate-700 ${isCompact ? 'text-[11px]' : 'text-sm'}`}>
           <span className="font-semibold text-slate-800">대구 골든타임</span>
           {' — '}
-          <span className="font-semibold text-slate-800">국립중앙의료원</span> 실시간 응급 의료
+          <span className="font-semibold text-slate-800">국립중앙의료원</span> 최근 조회 응급의료
           데이터 기반 응급의료 거버넌스 플랫폼입니다.
           {isCompact ? (
             <span className="text-slate-500">

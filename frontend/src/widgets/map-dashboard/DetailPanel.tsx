@@ -3,6 +3,7 @@ import type { DistrictVulnerabilityRecord } from '../../shared/types/vulnerabili
 
 import { HospitalEmptyPanel } from './HospitalEmptyPanel';
 import { HospitalDetailView } from './HospitalDetailView';
+import { PolicyHospitalContextView } from './PolicyHospitalContextView';
 import { VulnerabilityDistrictView } from './VulnerabilityDistrictView';
 import { PresetDistrictListPanel } from './PresetDistrictListPanel';
 import { usePresetStore } from './lib/usePresetStore';
@@ -18,6 +19,9 @@ interface DetailPanelProps {
     riskThreshold: number;
   };
   onDistrictSelect?: (admNm: string | null) => void;
+  viewMode?: 'citizen' | 'admin';
+  vulnerabilityRecords?: DistrictVulnerabilityRecord[];
+  riskThreshold?: number;
 }
 
 export function DetailPanel({
@@ -26,6 +30,9 @@ export function DetailPanel({
   hospitals,
   vulnerabilitySummary,
   onDistrictSelect,
+  viewMode = 'citizen',
+  vulnerabilityRecords = [],
+  riskThreshold,
 }: DetailPanelProps) {
   const activePreset = usePresetStore((state) => state.activePreset);
 
@@ -43,7 +50,15 @@ export function DetailPanel({
   }
 
   if (selectedHospital) {
-    return <HospitalDetailView hospital={selectedHospital} />;
+    return viewMode === 'admin' ? (
+      <PolicyHospitalContextView
+        hospital={selectedHospital}
+        vulnerabilityRecords={vulnerabilityRecords}
+        riskThreshold={riskThreshold}
+      />
+    ) : (
+      <HospitalDetailView hospital={selectedHospital} />
+    );
   }
 
   if (vulnerabilityRecord) {

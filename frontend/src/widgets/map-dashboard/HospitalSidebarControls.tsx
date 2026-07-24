@@ -7,6 +7,7 @@ import {
 import { LocationNotice } from '../landing/LocationNotice';
 
 interface HospitalSidebarControlsProps {
+  variant?: 'citizen' | 'policy';
   heading?: string;
   isLocating: boolean;
   locationSource: LocationSource | null;
@@ -28,6 +29,7 @@ const CARE_TARGET_OPTIONS = [
 ] as const;
 
 export function HospitalSidebarControls({
+  variant = 'citizen',
   heading = '누가 진료받나요?',
   isLocating,
   locationSource,
@@ -44,20 +46,22 @@ export function HospitalSidebarControls({
   const selectedCareTarget =
     CARE_TARGET_OPTIONS.find((option) => option.key === careTarget) ?? CARE_TARGET_OPTIONS[0];
   const summary = [
-    showAvailableOnly ? '응급병상 보유' : '전체 병상 상태',
+    showAvailableOnly ? (variant === 'policy' ? '병상 보고 기관' : '응급병상 보유') : '전체 병상 상태',
     selectedCareTarget.label,
     selectedCondition.shortLabel,
   ].join(' · ');
 
   return (
     <div className="shrink-0 border-b border-slate-100 bg-white px-3 py-2">
-      <details className="group rounded-xl border border-slate-200 bg-slate-50/80 shadow-sm">
+      <details className="group rounded-sm border border-slate-200 bg-slate-50/80 shadow-sm">
         <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 [&::-webkit-details-marker]:hidden">
           <div className="min-w-0">
-            <p className="text-xs font-extrabold text-slate-900">진료 조건</p>
+            <p className="text-xs font-extrabold text-slate-900">
+              {variant === 'policy' ? '정책 분석 필터' : '진료 조건'}
+            </p>
             <p className="mt-0.5 truncate text-[11px] font-semibold text-slate-500">{summary}</p>
           </div>
-          <span className="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-extrabold text-slate-700">
+          <span className="shrink-0 rounded-sm border border-slate-200 bg-white px-3 py-1 text-[11px] font-extrabold text-slate-700">
             <span className="group-open:hidden">펼치기</span>
             <span className="hidden group-open:inline">접기</span>
           </span>
@@ -79,13 +83,13 @@ export function HospitalSidebarControls({
               <button
                 type="button"
                 onClick={() => onShowAvailableOnlyChange(!showAvailableOnly)}
-                className={`min-h-9 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
+                className={`min-h-9 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
                   showAvailableOnly
                     ? 'border-teal-700 bg-teal-50 text-teal-800'
                     : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                 }`}
               >
-                응급병상 보유만
+                {variant === 'policy' ? '병상 보고 기관만' : '응급병상 보유만'}
               </button>
 
               {CARE_TARGET_OPTIONS.map((option) => {
@@ -95,7 +99,7 @@ export function HospitalSidebarControls({
                     key={option.key}
                     type="button"
                     onClick={() => onCareTargetChange(option.key)}
-                    className={`min-h-9 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
+                    className={`min-h-9 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
                       active
                         ? 'border-teal-800 bg-teal-800 text-white'
                         : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
@@ -110,7 +114,9 @@ export function HospitalSidebarControls({
 
           <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-extrabold text-slate-800">중증·응급 상황 필터</p>
+              <p className="text-xs font-extrabold text-slate-800">
+                {variant === 'policy' ? '분석 기관·대상 조건' : '중증·응급 상황 필터'}
+              </p>
               <span className="shrink-0 whitespace-nowrap text-[11px] font-bold text-teal-800">
                 {selectedCondition.shortLabel}
               </span>
@@ -132,7 +138,7 @@ export function HospitalSidebarControls({
                         onShowAvailableOnlyChange(false);
                       }
                     }}
-                    className={`min-h-9 shrink-0 whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition-colors ${
+                    className={`min-h-9 shrink-0 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
                       active
                         ? 'border-slate-900 bg-slate-900 text-white'
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100'

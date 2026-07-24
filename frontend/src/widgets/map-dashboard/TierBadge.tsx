@@ -10,7 +10,7 @@ export function TierBadge({ tier }: TierBadgeProps) {
 
   return (
     <span
-      className={`inline-flex rounded-full bg-gradient-to-r px-3 py-1 text-xs font-bold text-white shadow-sm ${visual.gradientClass}`}
+      className={`inline-flex rounded-sm px-3 py-1 text-xs font-bold text-white shadow-sm ${visual.iconBgClass}`}
     >
       {visual.label}
     </span>
