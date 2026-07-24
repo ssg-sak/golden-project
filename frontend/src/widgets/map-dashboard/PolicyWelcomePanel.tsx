@@ -30,6 +30,33 @@ const examples = [
   },
 ] as const;
 
+const supplyTypeGuides = [
+  {
+    label: '권역응급의료센터 · 2개',
+    tone: 'border-rose-200 bg-rose-50',
+    labelTone: 'text-rose-800',
+    body: '대구의 권역응급의료센터 2개입니다. Tier 1 정책 분석 그룹에 포함됩니다.',
+  },
+  {
+    label: '지역응급의료센터 · 4개',
+    tone: 'border-violet-200 bg-violet-50',
+    labelTone: 'text-violet-800',
+    body: '대구의 지역응급의료센터 4개입니다. 권역센터와 함께 Tier 1 정책 분석 그룹으로 묶어 접근성을 비교합니다.',
+  },
+  {
+    label: '지역응급의료기관 · 13개',
+    tone: 'border-sky-200 bg-sky-50',
+    labelTone: 'text-sky-800',
+    body: '공식 기관 유형인 지역응급의료기관 13개입니다. Tier 2 정책 분석 그룹으로 접근성을 비교합니다.',
+  },
+  {
+    label: '달빛어린이병원 · 6개',
+    tone: 'border-amber-200 bg-amber-50',
+    labelTone: 'text-amber-900',
+    body: '달빛어린이병원 등 야간·휴일 소아진료 자원입니다. 일반 응급기관과 같은 의미가 아니라 소아 접근성의 보완 자원으로 따로 봅니다.',
+  },
+] as const;
+
 export function PolicyWelcomePanel() {
   return (
     <aside className="flex h-full min-h-0 flex-col overflow-y-auto border-l border-slate-300 bg-white">
@@ -52,6 +79,24 @@ export function PolicyWelcomePanel() {
             </article>
           ))}
         </section>
+
+        <section>
+          <h3 className="border-l-4 border-teal-700 pl-3 text-sm font-extrabold text-slate-900">
+            기관 유형을 이렇게 구분합니다
+          </h3>
+          <div className="mt-3 space-y-2">
+            {supplyTypeGuides.map((item) => (
+              <article key={item.label} className={`rounded-xl border p-3 ${item.tone}`}>
+                <h4 className={`text-xs font-extrabold ${item.labelTone}`}>{item.label}</h4>
+            <p className="mt-1 text-[11px] leading-5 text-slate-700">{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <p className="text-[10px] leading-5 text-slate-500">
+          위 분류는 공공데이터 기관 유형을 바탕으로 한 프로젝트 표시입니다. 개별 기관의 실제 진료·수용 가능 여부를 판정하는 정보가 아닙니다.
+        </p>
 
         <section className="rounded-xl border border-teal-200 bg-teal-50 p-4">
           <p className="text-xs font-bold text-teal-800">위험 점수를 쓰는 이유</p>

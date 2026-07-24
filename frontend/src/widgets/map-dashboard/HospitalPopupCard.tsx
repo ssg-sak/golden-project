@@ -21,13 +21,13 @@ export function HospitalPopupCard({ hospital, onClose }: HospitalPopupCardProps)
   const isMoonlight = isMoonlightHospital(hospital);
 
   return (
-    <div className="min-w-[240px] rounded-xl border border-gray-100 bg-white p-3.5 shadow-lg">
+    <div className="min-w-[240px] rounded-sm border border-gray-200 bg-white p-3.5 shadow-md">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-bold leading-snug text-gray-900">{hospital.name}</h3>
             <span
-              className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide ${badgeClassName(hospital.tier)}`}
+              className={`inline-flex shrink-0 rounded-sm px-2 py-0.5 text-[10px] font-bold tracking-wide ${badgeClassName(hospital.tier)}`}
             >
               [{badge}]
             </span>
@@ -35,7 +35,7 @@ export function HospitalPopupCard({ hospital, onClose }: HospitalPopupCardProps)
               <AvailableBedsBadge availableBeds={availableBeds} totalBeds={hospital.total_hvec} />
             )}
             {isMoonlight ? (
-              <span className="inline-flex shrink-0 rounded-full bg-cyan-50 px-2 py-0.5 text-[10px] font-extrabold text-cyan-800 ring-1 ring-cyan-200">
+              <span className="inline-flex shrink-0 rounded-sm bg-cyan-50 px-2 py-0.5 text-[10px] font-extrabold text-cyan-800 ring-1 ring-cyan-200">
                 야간·휴일 소아진료
               </span>
             ) : null}

@@ -162,6 +162,7 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
           onSevereConditionChange={handleSevereConditionChange}
           isDetailOpen={adminState.isDetailOpen}
           selectedVulnerability={adminState.selectedVulnerability}
+          vulnerabilityRecords={adminState.vulnerabilityData}
           vulnerabilitySummary={adminState.vulnerabilitySummary ?? undefined}
           onDistrictSelect={adminState.handleDistrictSelect}
           districtCount={adminState.districtCount}
@@ -255,6 +256,9 @@ export function AdminView({ kakao, onRetryHospitals }: AdminViewProps) {
                 hospitals={adminState.hospitals}
                 vulnerabilitySummary={adminState.vulnerabilitySummary ?? undefined}
                 onDistrictSelect={adminState.handleDistrictSelect}
+                viewMode="admin"
+                vulnerabilityRecords={adminState.vulnerabilityData}
+                riskThreshold={adminState.riskThreshold}
               />
             ) : (
               <PolicyWelcomePanel />

@@ -75,18 +75,33 @@ export function DashboardStatsBar({
               병원까지의 거리와 보호가 필요한 인구를 함께 보며, 먼저 살펴볼 동네를 좁힙니다.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2 text-[11px] font-bold">
+          <div className="flex flex-col items-start gap-2 text-[11px] font-bold lg:items-end">
+            <div className="flex flex-wrap gap-2">
             <span className="rounded-md bg-red-50 px-2.5 py-1 text-red-700 ring-1 ring-red-200">
               상위 25% 우선 확인
             </span>
             <span className="rounded-md bg-blue-50 px-2.5 py-1 text-blue-800 ring-1 ring-blue-200">
-              상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}
+              현재 상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}
             </span>
             <span className="rounded-md bg-slate-100 px-2.5 py-1 text-slate-700 ring-1 ring-slate-200">
-              절대 의료 기준 아님
+              의료적 절대 기준 아님
             </span>
+            </div>
           </div>
         </div>
+
+        <details className="group border-t border-slate-200 bg-slate-50 px-3 py-2 text-[11px] leading-5 text-slate-600">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-slate-700 [&::-webkit-details-marker]:hidden">
+            <span>위험 점수는 어떻게 계산하고 읽나요?</span>
+            <span className="text-slate-400 transition group-open:rotate-180" aria-hidden>⌄</span>
+          </summary>
+          <div className="mt-2 border-t border-slate-200 pt-2">
+            위험 점수는 0~9세와 65세 이상 인구를 합친 보호 필요 인구에 최근접 응급 관련 기관까지의 도로 이동 부담을 결합한 비교값입니다. 150개 행정동 점수를 높은 순서로 정렬해 상위 25%를 먼저 확인할 지역으로 표시합니다.
+            <br />
+            현재 상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')} 이상인 동네는 먼저 확인할 비교 대상이며,
+            {highRiskDistrictCount !== undefined ? ` 현재 ${highRiskDistrictCount}개 동네가 해당합니다.` : ''} 설치·진료 가능 여부를 자동으로 결정하는 값은 아닙니다.
+          </div>
+        </details>
 
         <dl className="grid divide-y divide-slate-200 sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">
           {rows.map(({ label, metric, detail }) => (

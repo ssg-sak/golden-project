@@ -4,6 +4,7 @@ import { DESKTOP_SIDEBAR_PANEL_CLASS } from '../../shared/constants/dashboard-la
 import {
   HOSPITAL_TIER_ORDER,
   HOSPITAL_TIER_VISUAL,
+  hospitalOfficialTypeLabel,
 } from '../../shared/lib/hospital-tier-visual';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import {
@@ -77,13 +78,14 @@ export function AdminHospitalSidebar({
       <PanelSidebarHeader
         variant="admin"
         icon={<AdminPolicyIcon />}
-        title="응급의료기관 현황"
-        subtitle="지도·행정동 분석과 연동"
+        title="정책 분석 기준 기관"
+        subtitle="공급 기준·행정동 분석과 연동"
       />
 
       {onModeChange && (
-        <HospitalSidebarControls
-          heading="분석 대상 인구"
+          <HospitalSidebarControls
+            variant="policy"
+            heading="분석 대상 인구"
           isLocating={false}
           locationSource={null}
           locationErrorReason={null}
@@ -155,6 +157,9 @@ export function AdminHospitalSidebar({
                         }`}
                       >
                         <span>{hospitalTierBadge(hospital.tier)}</span>
+                        {hospitalOfficialTypeLabel(hospital.name, hospital.tier) !== hospitalTierBadge(hospital.tier) ? (
+                          <span>{hospitalOfficialTypeLabel(hospital.name, hospital.tier)}</span>
+                        ) : null}
                         <AvailableBedsBadge
                           availableBeds={hospitalAvailableBeds(hospital)}
                           totalBeds={hospital.total_hvec}
