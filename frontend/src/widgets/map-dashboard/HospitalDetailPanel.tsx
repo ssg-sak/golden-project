@@ -137,7 +137,7 @@ function HospitalDetailContent({
 
         {hospital.realtime_messages && hospital.realtime_messages.length > 0 ? (
           <section className="rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
-            <p className="mb-2 text-xs font-bold text-amber-800">실시간 안내사항</p>
+            <p className="mb-2 text-xs font-bold text-amber-800">최근 조회 안내사항</p>
             <ul className="space-y-1">
               {hospital.realtime_messages.map((msg, i) => (
                 <li key={i} className="text-xs leading-relaxed text-amber-900">
