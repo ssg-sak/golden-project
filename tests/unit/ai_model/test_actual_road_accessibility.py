@@ -103,6 +103,52 @@ def test_mode_specific_baselines_and_current_cache_counts():
     assert senior["weighted_average_eta_minutes"] == 7.0
 
 
+def test_nearest_resource_tie_uses_resource_id_as_stable_tiebreaker():
+    district = {
+        "id": "district:tie",
+        "name": "동률동",
+        "lat": 35.8,
+        "lng": 128.6,
+        "vulnerable_population": 100,
+        "senior_population": 100,
+        "pediatric_population": 0,
+    }
+    hospital_z = {
+        "id": "hospital:z",
+        "name": "Z병원",
+        "lat": 35.81,
+        "lng": 128.61,
+        "tier": 1,
+    }
+    hospital_a = {
+        "id": "hospital:a",
+        "name": "A병원",
+        "lat": 35.82,
+        "lng": 128.62,
+        "tier": 1,
+    }
+    routes = dict(
+        [
+            _ok_route(district, hospital_z, 5),
+            _ok_route(district, hospital_a, 5),
+        ]
+    )
+
+    matrix = road_accessibility.build_matrix(
+        [district],
+        [hospital_z, hospital_a],
+        [],
+        {"version": 1, "routes": routes},
+    )
+
+    row = matrix["districts"][0]
+    assert row["nearest_emergency_resource"]["resource_id"] == "hospital:a"
+    assert (
+        row["nearest_emergency_resource_by_mode"]["senior"]["resource_id"]
+        == "hospital:a"
+    )
+
+
 def test_cache_only_validation_rejects_missing_current_routes():
     matrix = {"metadata": {"missing_route_count": 1}}
 

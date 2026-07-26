@@ -81,9 +81,7 @@ docs/**
 # 피드백 반영 과정 공개 기록
 !docs/plans/
 docs/plans/**
-!docs/plans/enterprise_demo_roadmap_20260713.md
 !docs/plans/emergency_room_feedback_implementation_plan_20260713.md
-!docs/plans/enterprise_demo_backlog_20260713.md
 !docs/plans/ai_model_eda_plan_20260713.md
 !docs/guides/
 docs/guides/**
@@ -96,7 +94,6 @@ docs/architecture/**
 docs/reports/**
 !docs/reports/emergency_room_feedback_implementation_report_20260713.md
 !docs/reports/friend_feedback_product_narrative_20260713.md
-!docs/reports/enterprise_demo_baseline_20260713.md
 !docs/reports/exception_handling_improvement_report_20260714.md
 
 # =========================

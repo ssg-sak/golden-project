@@ -46,6 +46,11 @@ MODE_HOSPITAL_TIERS = {
 }
 
 
+def nearest_route_sort_key(route: dict[str, Any]) -> tuple[float, str]:
+    """ETA 동률에서도 같은 기관명이 선택되도록 자원 키를 2차 정렬한다."""
+    return float(route["eta_minutes"]), str(route["id"])
+
+
 def read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -493,12 +498,16 @@ def build_matrix(
             route = route_for(district, hospital)
             if route is not None:
                 hospital_routes.append({**hospital, **route})
-        nearest = min(hospital_routes, key=lambda row: row["eta_minutes"]) if hospital_routes else None
+        nearest = (
+            min(hospital_routes, key=nearest_route_sort_key)
+            if hospital_routes
+            else None
+        )
         nearest_by_mode = {}
         for mode, tiers in MODE_HOSPITAL_TIERS.items():
             relevant_routes = [route for route in hospital_routes if route["tier"] in tiers]
             mode_nearest = (
-                min(relevant_routes, key=lambda row: row["eta_minutes"])
+                min(relevant_routes, key=nearest_route_sort_key)
                 if relevant_routes
                 else None
             )

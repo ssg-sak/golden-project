@@ -19,6 +19,7 @@ from app.services.hospital_static import load_hospital_names
 
 logger = logging.getLogger(__name__)
 
+BED_CACHE_REFRESH_TIMEOUT_SECONDS = 120
 _poller_task: asyncio.Task[None] | None = None
 
 
@@ -41,7 +42,19 @@ async def _poll_loop() -> None:
     interval = bed_cache_poll_interval_sec()
     logger.info("bed cache poller started (interval=%ss)", interval)
     while True:
-        await refresh_bed_cache()
+        try:
+            await asyncio.wait_for(
+                refresh_bed_cache(),
+                timeout=BED_CACHE_REFRESH_TIMEOUT_SECONDS,
+            )
+        except TimeoutError:
+            logger.warning(
+                "bed cache refresh timed out after %ss",
+                BED_CACHE_REFRESH_TIMEOUT_SECONDS,
+            )
+            await mark_refresh_error(
+                f"refresh timed out after {BED_CACHE_REFRESH_TIMEOUT_SECONDS}s"
+            )
         await asyncio.sleep(interval)
 
 
@@ -50,6 +63,10 @@ async def start_bed_poller() -> None:
     
     if should_use_mock_realtime():
         logger.info("Using mock API or no DATA_GO_KR_API_KEY — bed cache poller disabled")
+        return
+
+    if _poller_task is not None and not _poller_task.done():
+        logger.info("bed cache poller already running")
         return
 
     _poller_task = asyncio.create_task(_poll_loop(), name="bed-cache-poller")
@@ -66,3 +83,13 @@ async def stop_bed_poller() -> None:
         pass
     _poller_task = None
     logger.info("bed cache poller stopped")
+
+
+def get_bed_poller_status() -> dict[str, bool | int]:
+    """환경 설정과 실제 비동기 작업 상태를 구분해 반환."""
+    running = _poller_task is not None and not _poller_task.done()
+    return {
+        "configured": not should_use_mock_realtime(),
+        "running": running,
+        "intervalSec": bed_cache_poll_interval_sec(),
+    }

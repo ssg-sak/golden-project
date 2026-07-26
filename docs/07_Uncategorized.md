@@ -5057,8 +5057,8 @@ Step 5  DetailPanel.tsx UI 연동
 
 | 문서 | 역할 | 현재 상태 | 다음 행동 |
 |---|---|---|---|
-| [enterprise_demo_roadmap_20260713.md](./enterprise_demo_roadmap_20260713.md) | 8월 기업 관계자 방문 대비 전체 완성 로드맵 | 기준 일정으로 사용 중 | 남은 지도 SDK 실브라우저 검증 결과를 7/15 완료 기록에 반영 |
-| [enterprise_demo_backlog_20260713.md](./enterprise_demo_backlog_20260713.md) | P0/P1/P2 우선순위 백로그 | P0 8건 확정 | 완료된 리스크는 체크하거나 보고서 링크 추가 |
+| [portfolio_demo_roadmap_20260713.md](./portfolio_demo_roadmap_20260713.md) | 8월 공개 포트폴리오 완성 로드맵 | 기준 일정으로 사용 중 | 남은 지도 SDK 실브라우저 검증 결과를 7/15 완료 기록에 반영 |
+| [portfolio_demo_backlog_20260713.md](./portfolio_demo_backlog_20260713.md) | P0/P1/P2 우선순위 백로그 | P0 8건 확정 | 완료된 리스크는 체크하거나 보고서 링크 추가 |
 
 ## 2. 7/13 실행 계획
 
@@ -5082,7 +5082,7 @@ Step 5  DetailPanel.tsx UI 연동
 
 | 문서 | 구분 | 연결되는 계획 |
 |---|---|---|
-| [../../reports/enterprise_demo_baseline_20260713.md](../../reports/enterprise_demo_baseline_20260713.md) | 기준선 검증 보고서 | `enterprise_demo_roadmap_20260713.md` |
+| [../../reports/portfolio_demo_baseline_20260713.md](../../reports/portfolio_demo_baseline_20260713.md) | 기준선 검증 보고서 | `portfolio_demo_roadmap_20260713.md` |
 | [../../reports/emergency_room_feedback_implementation_report_20260713.md](../../reports/emergency_room_feedback_implementation_report_20260713.md) | 응급실 피드백 구현 보고서 | `emergency_room_feedback_implementation_plan_20260713.md` |
 | [../../reports/data_status_lineage_fix_report_20260714.md](../../reports/data_status_lineage_fix_report_20260714.md) | 데이터 상태 계보 리스크 해결 보고서 | `citizen_policy_flow_data_lineage_20260714.md` |
 | [../../guides/data_status_and_static_lineage_study_20260714.md](../../guides/data_status_and_static_lineage_study_20260714.md) | 데이터 상태 계보 학습서 | `citizen_policy_flow_data_lineage_20260714.md` |
@@ -5103,8 +5103,8 @@ Step 5  DetailPanel.tsx UI 연동
 2. 정책탭에서 안정 후보 기반 최적입지 마커와 AI 인프라 확충 시뮬레이션 모달이 보이는지 확인한다.
 3. 우선검토후보, 민감도 반복률, 반경 5km, 전문의 보강, MRI/CT 보강 용어 해설이 화면에서 이해 가능한지 확인한다.
 4. 시민탭에는 최적입지 후보와 위험권역이 노출되지 않는지 회귀 확인한다.
-5. 확인 결과를 `citizen_policy_flow_data_lineage_20260714.md`와 `enterprise_demo_roadmap_20260713.md`의 7/15 완료 기록에 반영한다.
-6. P0가 완료될 때마다 `enterprise_demo_backlog_20260713.md`의 상태와 검증 결과를 갱신한다.
+5. 확인 결과를 `citizen_policy_flow_data_lineage_20260714.md`와 `portfolio_demo_roadmap_20260713.md`의 7/15 완료 기록에 반영한다.
+6. P0가 완료될 때마다 `portfolio_demo_backlog_20260713.md`의 상태와 검증 결과를 갱신한다.
 
 
 
@@ -5636,7 +5636,7 @@ gain = before - after
 - 관련 문서:
   - `ai_model_eda_plan_20260713.md`
   - `optimal_location_bias_stabilization_roadmap_20260715.md`
-  - `enterprise_demo_roadmap_20260713.md`
+  - `portfolio_demo_roadmap_20260713.md`
 
 ## 1. 핵심 방향
 
@@ -6307,7 +6307,7 @@ K-Means를 정답 생성기가 아니라 후보 생성기로 쓰고,
 - 작성일: 2026-07-14
 - 목적: 7/15 작업의 착수 문서. 방문 전 P0-1, P0-5, P0-6 검증에서 무엇을 눌러보고 어떤 데이터가 쓰이는지 한 장으로 고정한다.
 - 기준 화면: `http://localhost:5173/`
-- 관련 백로그: `docs/plans/roadmaps/enterprise_demo_backlog_20260713.md`
+- 관련 백로그: `docs/plans/roadmaps/portfolio_demo_backlog_20260713.md`
 
 ## 1. 오늘 확정할 대표 흐름
 
@@ -6526,9 +6526,9 @@ GitHub Pages는 정적 프런트엔드만 제공한다. 따라서 추천의 필�
 
 
 ---
-## [원본 파일명: plans\roadmaps\enterprise_demo_backlog_20260713.md]
+## [원본 파일명: plans\roadmaps\portfolio_demo_backlog_20260713.md]
 
-# 엔터프라이즈 데모 우선순위 백로그
+# 공개 포트폴리오 우선순위 백로그
 
 - 기준일: 2026-07-13
 - 목적: 시민·정책·데이터·운영 영역의 현재 상태와 방문 전 우선순위를 한 문서에서 관리한다.
@@ -6590,17 +6590,17 @@ P0는 8건으로 제한한다.
 
 
 ---
-## [원본 파일명: plans\roadmaps\enterprise_demo_roadmap_20260713.md]
+## [원본 파일명: plans\roadmaps\portfolio_demo_roadmap_20260713.md]
 
-﻿# 기업 관계자 방문 대비 프로젝트 완성 로드맵
+﻿# 공개 포트폴리오 프로젝트 완성 로드맵
 
 - 작성일: 2026-07-13
 - 별도 팀 프로젝트 시작: 2026-07-20 주간
 - 목표 완료일: 2026-08-12
-- 기업 관계자 방문 가정: 2026-08-14 전후
+- 외부 공개 검토 가정: 2026-08-14 전후
 - 관련 로드맵·계획 색인: `docs/plans/roadmaps/20260714_roadmap_file_index.md`
 
-> 이 자리는 정식 발표회가 아니다. 방문한 기업 관계자와 대화하는 과정에서 프로젝트의 가치, 실행력, 기술적 판단을 자연스럽게 보여주는 자리로 준비한다.
+> 정식 발표회가 아닌 외부 검토 과정에서도 프로젝트의 가치, 실행력, 기술적 판단을 자연스럽게 보여줄 수 있도록 준비한다.
 >
 > 이 프로젝트는 처음부터 끝까지 개인 프로젝트다. 7월 20일부터 시작하는 팀 프로젝트는 이 프로젝트와 아무 관련이 없는 별도 일정이며, 이 문서는 두 프로젝트를 합치거나 팀원을 이 프로젝트에 참여시키는 계획이 아니다.
 
@@ -6722,7 +6722,7 @@ AI·공간분석 모델의 EDA는 `docs/plans/roadmaps/ai_model_eda_plan_2026071
 | 날짜 | 사용 시간 | 반드시 할 일 | 하루 완료 기준 |
 |---|---:|---|---|
 | 8/10(월) | 60~90분 | 기능을 동결하고 남은 P0 결함만 수정한다. | P0 외 코드 변경이 중단되고 릴리스 체크리스트가 고정됨 |
-| 8/11(화) | 60~90분 | 기업 관계자와의 자연스러운 대화를 가정해 질문 대응과 즉석 화면 전환을 녹화한다. | 제품·기술·데이터 질문에 3분 이내로 답하고 화면을 열 수 있음 |
+| 8/11(화) | 60~90분 | 외부 검토자와의 자연스러운 대화를 가정해 질문 대응과 즉석 화면 전환을 녹화한다. | 제품·기술·데이터 질문에 3분 이내로 답하고 화면을 열 수 있음 |
 | 8/12(수) | 90분 | 최종 테스트와 배포 검증 후 릴리스 후보를 확정한다. | 공개 URL, 핵심 E2E, 데모 모드가 모두 통과함 |
 | 8/13(목) | 60분 | 노트북, 충전기, 브라우저, 화면 비율, API 키, 네트워크와 오프라인 백업을 확인한다. | 온라인·데모 모드·영상·PDF 네 가지 경로가 준비됨 |
 | 8/14(금) | 30~60분 | 데이터 갱신 시점과 서비스 상태만 확인하고 코드는 수정하지 않는다. | 바로 보여줄 수 있는 상태이며 새로운 변경이 없음 |
@@ -6731,8 +6731,8 @@ AI·공간분석 모델의 EDA는 `docs/plans/roadmaps/ai_model_eda_plan_2026071
 
 ### 7/13 완료 기록
 
-- 완료한 것: 현재 기능과 변경 파일을 시민·정책·데이터·운영으로 분류하고 P0 8건, P1 5건과 P2 범위를 확정했다. 상세 백로그는 `docs/plans/roadmaps/enterprise_demo_backlog_20260713.md`에 기록했다.
-- 검증 결과: 프런트 테스트·타입 검사·린트·일반 빌드·데모 빌드와 백엔드 테스트 19건이 통과했다. 명령과 제한은 `docs/reports/enterprise_demo_baseline_20260713.md`에 기록했다.
+- 완료한 것: 현재 기능과 변경 파일을 시민·정책·데이터·운영으로 분류하고 P0 8건, P1 5건과 P2 범위를 확정했다. 상세 백로그는 `docs/plans/roadmaps/portfolio_demo_backlog_20260713.md`에 기록했다.
+- 검증 결과: 프런트 테스트·타입 검사·린트·일반 빌드·데모 빌드와 백엔드 테스트 19건이 통과했다. 명령과 제한은 `docs/reports/portfolio_demo_baseline_20260713.md`에 기록했다.
 - 다음 한 가지: 7/15의 시민·정책 대표 흐름과 데이터 계보 초안을 작성한다.
 
 ### 7/14 진행 기록
@@ -6760,7 +6760,7 @@ AI·공간분석 모델의 EDA는 `docs/plans/roadmaps/ai_model_eda_plan_2026071
 - 실행 명령, 환경변수, 데이터 출처, 배포 방식을 README와 개발 문서에서 한 번에 찾을 수 있게 정리한다.
 - 현재 변경 파일을 기능 단위로 분리하고, 이후 작업을 안전하게 이어갈 기준점을 만든다.
 - 배포 URL에서 시민/정책 화면과 공개 JSON 요청을 직접 점검한다.
-- 기업 관계자에게 자연스럽게 건넬 핵심 메시지와 1분·3분·10분 소개 흐름을 작성한다.
+- 외부 검토자에게 자연스럽게 전달할 핵심 메시지와 1분·3분·10분 소개 흐름을 작성한다.
 
 ### 7/17~7/19 집중 작업 계획
 
@@ -6878,7 +6878,7 @@ AI·공간분석 모델의 EDA는 `docs/plans/roadmaps/ai_model_eda_plan_2026071
 
 - 화면 문구를 일반 사용자와 정책 담당자가 이해할 수 있는 표현으로 다듬는다.
 - 접근성, 반응형, 로딩 체감, 지도 조작, 상세 패널 가독성을 점검한다.
-- 기업 관계자 관점에서 기술 선택 이유, 데이터 처리 흐름, 확장 가능성, 한계를 정리한다.
+- 외부 검토자 관점에서 기술 선택 이유, 데이터 처리 흐름, 확장 가능성, 한계를 정리한다.
 - 먼저 말을 꺼낼 수 있는 30초 소개와, 관심을 보였을 때 이어갈 3분·10분 설명 흐름을 만든다.
 - 예상 질문 목록을 만들고 데이터 정확성, 개인정보, 장애 대응, 운영비, 확장성 답변을 준비한다.
 - 실제 노트북과 네트워크 조건에서 자연스럽게 화면을 보여주는 연습을 진행한다.
@@ -6902,7 +6902,7 @@ AI·공간분석 모델의 EDA는 `docs/plans/roadmaps/ai_model_eda_plan_2026071
 
 - 8월 10일부터 기능 동결하고 P0 결함만 수정한다.
 - 8월 10일 전체 회귀 테스트와 데이터 최신성 점검을 수행한다.
-- 8월 11일 기업 관계자와의 대화를 가정해 소개와 질의응답을 녹화한다.
+- 8월 11일 외부 검토자와의 대화를 가정해 소개와 질의응답을 녹화한다.
 - 8월 12일 릴리스 후보를 확정하고 태그 또는 별도 릴리스 브랜치로 고정한다.
 - 8월 13일 사용할 노트북, 충전기, 화면 비율, 브라우저, 카카오 키, 네트워크를 최종 확인한다.
 - 온라인 데모, 데모 데이터 모드, 화면 녹화본, 주요 화면 캡처를 준비한다.
@@ -7229,7 +7229,7 @@ AI·공간분석 모델의 EDA는 `docs/plans/roadmaps/ai_model_eda_plan_2026071
 
 - 작성일: 2026-07-15
 - 대상: 소아·어르신 최적입지 후보 JSON, K-Means 산출 로직, 정책 화면 해석 문구
-- 관련 문서: `ai_model_eda_plan_20260713.md`, `accessibility_model_upgrade_roadmap_20260715.md`, `citizen_policy_flow_data_lineage_20260714.md`, `enterprise_demo_roadmap_20260713.md`
+- 관련 문서: `ai_model_eda_plan_20260713.md`, `accessibility_model_upgrade_roadmap_20260715.md`, `citizen_policy_flow_data_lineage_20260714.md`, `portfolio_demo_roadmap_20260713.md`
 
 ## 1. 문제 정의
 

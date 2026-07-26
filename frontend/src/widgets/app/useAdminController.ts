@@ -43,7 +43,19 @@ export function useAdminController() {
     void fetchPolicyRelease().catch(() => undefined);
   }, [fetchPolicyRelease]);
 
-  const hospitals = useMemo(() => policyRelease?.hospitals ?? [], [policyRelease]);
+  const realtimeHospitals = useHospitalStore((state) => state.hospitals);
+
+  const hospitals = useMemo(() => {
+    if (!policyRelease) return [];
+    return policyRelease.hospitals.map((hospital) => {
+      const realtime = realtimeHospitals.find((h) => h.name === hospital.name);
+      if (realtime && realtime.severe_conditions) {
+        return { ...hospital, severe_conditions: realtime.severe_conditions };
+      }
+      return hospital;
+    });
+  }, [policyRelease, realtimeHospitals]);
+
   const vulnerabilityData = useMemo(
     () =>
       policyRelease
@@ -164,12 +176,6 @@ export function useAdminController() {
         actionLabel: '정책 요약 다시 조회',
         onAction: (): void => { void fetchDashboardSummary(); },
         actionLoading: dashboardLoading,
-      };
-    }
-    if (useDynamicDashboard && dashboardSummary?.status.stale) {
-      return {
-        tone: 'info' as const,
-        message: '공공데이터 갱신이 지연되어 마지막 정상 자료를 표시 중입니다.',
       };
     }
     return null;

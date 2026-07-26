@@ -30,9 +30,15 @@ export interface DashboardSummary {
   status: {
     lastCheckedAt: string | null;
     lastUpdatedAt: string | null;
+    lastSuccessAt?: string | null;
     stale: boolean;
     dataState?: string;
     failedSources?: string[];
+    freshnessThresholdHours?: number;
+    externalSourceCount?: number;
+    missingExternalSources?: string[];
+    staleExternalSources?: string[];
+    oldestSuccessAgeHours?: number | null;
   };
   analysisVersion?: string | null;
 }

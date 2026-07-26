@@ -22,6 +22,8 @@ SGIS_AUTH_URL = "https://sgisapi.mods.go.kr/OpenAPI3/auth/authentication.json"
 SGIS_STAGE_URL = "https://sgisapi.mods.go.kr/OpenAPI3/addr/stage.json"
 SOURCE_NAME = "sgis_admin_dong"
 MAX_RETRIES = 3
+MAX_REQUESTS_PER_RUN = 60
+MAX_SIGUNGU_COUNT = 20
 
 
 class SGISClient:
@@ -29,6 +31,14 @@ class SGISClient:
         self.consumer_key = get_env("SGIS_CONSUMER_KEY", "") or ""
         self.consumer_secret = get_env("SGIS_CONSUMER_SECRET", "") or ""
         self.access_token: str | None = None
+        self.request_count = 0
+
+    def _reserve_request(self) -> None:
+        if self.request_count >= MAX_REQUESTS_PER_RUN:
+            raise RuntimeError(
+                f"SGIS API request budget exceeded: {MAX_REQUESTS_PER_RUN}"
+            )
+        self.request_count += 1
 
     async def _request_json(
         self,
@@ -38,6 +48,7 @@ class SGISClient:
     ) -> dict[str, Any]:
         last_error: Exception | None = None
         for attempt in range(1, MAX_RETRIES + 1):
+            self._reserve_request()
             try:
                 resp = await client.get(url, params=params, timeout=15.0)
                 resp.raise_for_status()
@@ -94,6 +105,11 @@ class SGISClient:
                 raise RuntimeError("SGIS: 대구광역시 코드를 찾을 수 없습니다.")
 
             sigungu_list = await self._fetch_stage(client, cd=daegu_cd)
+            if len(sigungu_list) > MAX_SIGUNGU_COUNT:
+                raise RuntimeError(
+                    f"SGIS sigungu count exceeds request guard: "
+                    f"{len(sigungu_list)} > {MAX_SIGUNGU_COUNT}"
+                )
             all_dongs: list[dict[str, Any]] = []
             for sigungu in sigungu_list:
                 dong_list = await self._fetch_stage(client, cd=sigungu.get("cd"), pg_yn="1")

@@ -26,6 +26,16 @@ POPULATION_OPERATION = get_env("POPULATION_API_OPERATION", "getAdmDongPopulation
 PROJECT_DIR = __import__("pathlib").Path(__file__).resolve().parents[4]
 POPULATION_CSV = PROJECT_DIR / "data" / "raw" / "population" / "daegu_population_real.csv"
 MAX_RETRIES = 3
+MAX_REQUESTS_PER_RUN = 60
+MAX_PAGES_PER_MONTH = 5
+
+
+def latest_completed_population_yyyymm(
+    reference_time: datetime | None = None,
+) -> str:
+    """주민등록 인구는 매월 말일 기준으로 다음 달에 공표된다."""
+    current = reference_time or datetime.now()
+    return (current - relativedelta(months=1)).strftime("%Y%m")
 
 
 def _safe_error_summary(exc: Exception | None) -> str:
@@ -39,6 +49,14 @@ def _safe_error_summary(exc: Exception | None) -> str:
 class PopulationAPIClient:
     def __init__(self):
         self.service_key = get_env("DATA_GO_KR_API_KEY", "") or ""
+        self.request_count = 0
+
+    def _reserve_request(self) -> None:
+        if self.request_count >= MAX_REQUESTS_PER_RUN:
+            raise RuntimeError(
+                f"Population API request budget exceeded: {MAX_REQUESTS_PER_RUN}"
+            )
+        self.request_count += 1
 
     async def _fetch_page(
         self,
@@ -57,6 +75,7 @@ class PopulationAPIClient:
         }
         last_error: Exception | None = None
         for attempt in range(1, MAX_RETRIES + 1):
+            self._reserve_request()
             try:
                 response = await client.get(url, params=params, timeout=20.0)
                 response.raise_for_status()
@@ -79,26 +98,49 @@ class PopulationAPIClient:
                 await asyncio.sleep(2 ** attempt)
         raise RuntimeError(f"Population API failed for {yyyymm}: {_safe_error_summary(last_error)}")
 
-    async def find_latest_month_and_fetch(self) -> tuple[str, list[dict[str, Any]]]:
+    async def find_latest_month_and_fetch(
+        self,
+        reference_time: datetime | None = None,
+    ) -> tuple[str, list[dict[str, Any]]]:
         if not self.service_key:
             raise ValueError("DATA_GO_KR_API_KEY is not set")
 
         async with httpx.AsyncClient() as client:
-            now = datetime.now()
+            latest_completed = datetime.strptime(
+                latest_completed_population_yyyymm(reference_time),
+                "%Y%m",
+            )
             for offset in range(6):
-                target = now - relativedelta(months=offset)
+                target = latest_completed - relativedelta(months=offset)
                 yyyymm = target.strftime("%Y%m")
                 page = 1
                 collected: list[dict[str, Any]] = []
                 total = 0
-                while True:
-                    rows, total = await self._fetch_page(client, yyyymm, page)
-                    if not rows:
-                        break
-                    collected.extend(rows)
-                    if page * 1000 >= max(total, len(collected)):
-                        break
-                    page += 1
+                try:
+                    while True:
+                        rows, total = await self._fetch_page(
+                            client,
+                            yyyymm,
+                            page,
+                        )
+                        if not rows:
+                            break
+                        collected.extend(rows)
+                        if page * 1000 >= max(total, len(collected)):
+                            break
+                        if page >= MAX_PAGES_PER_MONTH:
+                            raise RuntimeError(
+                                f"Population API page limit exceeded for {yyyymm}: "
+                                f"{MAX_PAGES_PER_MONTH}"
+                            )
+                        page += 1
+                except RuntimeError as exc:
+                    logger.info(
+                        "Population month %s is unavailable; trying older month: %s",
+                        yyyymm,
+                        exc,
+                    )
+                    continue
                 if collected:
                     return yyyymm, collected
         raise RuntimeError("Population: 최근 6개월 내 데이터를 찾지 못했습니다.")

@@ -79,11 +79,11 @@ export function HospitalSidebarControls({
 
           <div className="mt-3">
             <p className="text-xs font-bold text-slate-700">{heading}</p>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
+            <div className="-mx-1 mt-2 flex items-center gap-2 overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <button
                 type="button"
                 onClick={() => onShowAvailableOnlyChange(!showAvailableOnly)}
-                className={`min-h-9 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
+                className={`min-h-9 shrink-0 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
                   showAvailableOnly
                     ? 'border-teal-700 bg-teal-50 text-teal-800'
                     : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
@@ -99,7 +99,7 @@ export function HospitalSidebarControls({
                     key={option.key}
                     type="button"
                     onClick={() => onCareTargetChange(option.key)}
-                    className={`min-h-9 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
+                    className={`min-h-9 shrink-0 whitespace-nowrap rounded-sm border px-3 text-xs font-semibold transition-colors ${
                       active
                         ? 'border-teal-800 bg-teal-800 text-white'
                         : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'

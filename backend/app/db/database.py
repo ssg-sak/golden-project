@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -19,6 +20,15 @@ engine = create_engine(
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+def database_storage_mode() -> str:
+    """Render에서 SQLite 경로가 영구 디스크인지 상태 확인용으로 구분."""
+    if os.environ.get("RENDER", "").strip().lower() != "true":
+        return "local"
+    if os.path.ismount(DB_PATH.parent):
+        return "persistent-disk"
+    return "ephemeral"
+
 
 def get_db():
     db = SessionLocal()

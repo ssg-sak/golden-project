@@ -137,13 +137,14 @@ CI는 핵심 정책 릴리스를 재생성한 뒤 처리용·공개용 사본의
 
 ## 6. 최종 정책보고서
 
-공개 정책 PDF는 다음 한 파일만 유지합니다.
+프로젝트 포트폴리오 정본과 서비스 공개 사본은 다음 경로를 사용합니다.
 
 ```text
+output/pdf/golden-governance-portfolio-20260726.pdf
 frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf
 ```
 
-정책 화면의 `최종 정책보고서 보기 (PDF)` 링크와 GitHub Pages 빌드가 이 파일을 사용합니다. 이전 PDF와 전달용 복사본은 활성 트리에서 제거했습니다.
+`scripts/generate_portfolio_pdf.py`가 검증된 정책 릴리스와 품질·KPI 산출물을 읽어 두 파일을 같은 바이트로 생성합니다. 정책 화면의 `최종 정책보고서 보기 (PDF)` 링크와 GitHub Pages 빌드는 공개 사본을 사용합니다.
 
 ## 7. 테스트와 자동 검증
 
@@ -168,10 +169,10 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 | `docs/methodology.md` | VDI·K-Means·도로 접근성·후보 방법론 |
 | `docs/data_dictionary.md` | 데이터 필드와 안전한 해석 범위 |
 | `docs/EDA_REPORT.md` | 탐색적 데이터 분석 결과 |
-| `docs/DATA_INTEGRITY_AND_REFRESH_HARDENING_20260718.md` | 갱신·승격·복원 계약 |
-| `docs/FINAL_PORTFOLIO_FREEZE_REPORT_20260718.md` | 최종 개선·검증·동결 기록 |
-| `docs/REPOSITORY_CLEANUP_PLAN_20260719.md` | 저장소 정리 기준과 단계 |
-| `docs/GOLDEN_DATA_LAB_SEPARATION_REPORT_20260719.md` | 데이터랩 독립 저장소 분리 계획·검증·진행 상태 |
+| `docs/DATA_QUALITY_REPORT.md` | 좌표·키·경로·산식 품질 판정 |
+| `docs/kpi.md` | 정적 분석과 외부 동적 원천을 구분한 KPI 운영 기준 |
+| `docs/PORTFOLIO_VALIDATION_REPORT_20260726.md` | 포트폴리오 PDF 생성·시각·회귀 검증 기록 |
+| `docs/TEST_REPORT_20260726.md` | 단위·통합·E2E·데이터·성능·보안 최종 판정 |
 | `docs/01`~`07` | 현재와 다른 내용이 포함된 과거 개발·회고 기록 |
 
 ## 9. 저장소에 두지 않는 파일

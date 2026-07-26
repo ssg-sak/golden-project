@@ -98,13 +98,13 @@ export function AdminHospitalSidebar({
         />
       )}
 
-      <div className="shrink-0 grid grid-cols-3 divide-x divide-slate-300 border-b border-slate-300 bg-slate-50">
+      <div className="flex shrink-0 overflow-x-auto divide-x divide-slate-300 border-b border-slate-300 bg-slate-50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {HOSPITAL_TIER_ORDER.map((tier) => (
           <div
             key={tier}
-            className="p-2 text-center"
+            className="flex-1 shrink-0 p-2 text-center min-w-[110px]"
           >
-            <p className="text-[10px] font-semibold text-slate-500">
+            <p className="whitespace-nowrap text-[10px] font-semibold text-slate-500">
               {HOSPITAL_TIER_VISUAL[tier].label}
             </p>
             <p className="text-base font-extrabold text-slate-900">
