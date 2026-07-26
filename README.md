@@ -297,8 +297,7 @@ Render 무료 Web Service는 유휴 시 중지되고 로컬 SQLite가 영속 저
 
 ## 📚 상세 문서
 프로젝트에 관한 세부 기록은 아래 문서에서 확인할 수 있습니다.
-*   [포트폴리오 전달 패키지 (ZIP)](output/golden-governance-portfolio-package-20260726.zip)
-*   [프로젝트 포트폴리오 (PDF)](output/pdf/golden-governance-portfolio-20260726.pdf)
+
 *   [정책분석 보고서 (PDF)](frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf)
 *   [접근성 모델 분석 방법론](docs/methodology.md)
 *   [탐색적 데이터 분석(EDA)](docs/EDA_REPORT.md)
@@ -306,7 +305,6 @@ Render 무료 Web Service는 유휴 시 중지되고 로컬 SQLite가 영속 저
 *   [KPI 운영 보고서](docs/kpi.md)
 *   [전처리 및 데이터 사전](docs/data_dictionary.md)
 *   [프로젝트 구조와 정본 위치](docs/PROJECT_STRUCTURE.md)
-*   [장애 대응 및 회고록](docs/03_Troubleshooting_and_Daily_Reports.md)
 *   [공개 데모 검증 보고서](docs/DEMO_VALIDATION_REPORT_20260724.md)
 *   [포트폴리오 검증 보고서](docs/PORTFOLIO_VALIDATION_REPORT_20260726.md)
 *   [최종 테스트 결과 보고서](docs/TEST_REPORT_20260726.md)
