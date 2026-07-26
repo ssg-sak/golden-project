@@ -16,10 +16,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import hospitals, indicators, vulnerability, optimal_locations, routing
 
 from app.core.env import load_dotenv
-from app.core.env import get_env
-from app.services.bed_poller import start_bed_poller, stop_bed_poller
-from app.services.scheduler import start_public_data_scheduler, stop_public_data_scheduler
-from app.db.database import Base, engine
+from app.services.bed_poller import (
+    get_bed_poller_status,
+    start_bed_poller,
+    stop_bed_poller,
+)
+from app.services.scheduler import (
+    get_public_data_scheduler_status,
+    start_public_data_scheduler,
+    stop_public_data_scheduler,
+)
+from app.db.database import Base, database_storage_mode, engine
 
 load_dotenv()
 Base.metadata.create_all(bind=engine)
@@ -75,12 +82,16 @@ def root() -> dict:
 
 @app.get("/health")
 def health() -> dict:
+    scheduler_status = get_public_data_scheduler_status()
+    bed_poller_status = get_bed_poller_status()
     return {
         "status": "ok",
         "service": "daegu-golden-time-api",
-        "publicDataSchedulerEnabled": get_env(
-            "ENABLE_PUBLIC_DATA_SCHEDULER",
-            "false",
-        ).lower()
-        == "true",
+        "publicDataSchedulerEnabled": scheduler_status["running"],
+        "publicDataSchedulerConfigured": scheduler_status["configured"],
+        "publicDataSchedulerJobCount": scheduler_status["jobCount"],
+        "bedCachePollerEnabled": bed_poller_status["running"],
+        "bedCachePollerConfigured": bed_poller_status["configured"],
+        "bedCachePollIntervalSec": bed_poller_status["intervalSec"],
+        "databaseStorageMode": database_storage_mode(),
     }

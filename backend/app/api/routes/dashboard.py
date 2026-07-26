@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
+from typing import Any
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy.orm import Session
@@ -11,9 +12,22 @@ from app.db.database import get_db
 from app.db.models import DashboardSnapshot, DataSourceStatus
 from app.services.analysis_metrics import format_change_text
 from app.services.data_seed import ensure_seeded
+from app.services.fetchers.population_api import (
+    latest_completed_population_yyyymm,
+)
 from app.services.pipeline import ACTUAL_ROAD_MATRIX_PATH, run_data_pipeline
 
 router = APIRouter(tags=["dashboard"])
+
+FRESHNESS_THRESHOLD_HOURS = 24.0
+EXTERNAL_SOURCE_NAMES = frozenset(
+    {
+        "sgis_admin_dong",
+        "emergency_facilities",
+        "moonlight_pediatric",
+        "population",
+    }
+)
 
 
 def _ensure_utc(dt: datetime | None) -> datetime | None:
@@ -22,6 +36,143 @@ def _ensure_utc(dt: datetime | None) -> datetime | None:
     if dt.tzinfo is None:
         return dt.replace(tzinfo=timezone.utc)
     return dt.astimezone(timezone.utc)
+
+
+def _age_hours(value: datetime | None, now: datetime) -> float | None:
+    normalized = _ensure_utc(value)
+    if normalized is None:
+        return None
+    return round(max((now - normalized).total_seconds(), 0.0) / 3_600, 2)
+
+
+def _source_status_payload(
+    source: DataSourceStatus,
+    now: datetime,
+) -> dict[str, Any]:
+    checked_age_hours = _age_hours(source.last_checked_at, now)
+    updated_age_hours = _age_hours(source.last_updated_at, now)
+    success_age_hours = _age_hours(source.last_success_at, now)
+    is_external = source.source_name in EXTERNAL_SOURCE_NAMES
+    is_fallback = source.status == "degraded"
+    expected_source_version = None
+    period_current = None
+    freshness_policy = "24h_operational_check"
+    if source.source_name == "population":
+        expected_yyyymm = latest_completed_population_yyyymm(now)
+        expected_source_version = (
+            f"{expected_yyyymm[:4]}.{expected_yyyymm[4:]}"
+        )
+        period_current = source.source_version == expected_source_version
+        freshness_policy = "monthly_completed_period"
+    is_stale = is_external and (
+        source.status in {"failed", "degraded"}
+        or checked_age_hours is None
+        or checked_age_hours > FRESHNESS_THRESHOLD_HOURS
+        or success_age_hours is None
+        or success_age_hours > FRESHNESS_THRESHOLD_HOURS
+    )
+    return {
+        "sourceName": source.source_name,
+        "sourceVersion": source.source_version,
+        "status": source.status,
+        "recordCount": source.record_count,
+        "lastCheckedAt": (
+            _ensure_utc(source.last_checked_at).isoformat()
+            if source.last_checked_at
+            else None
+        ),
+        "lastUpdatedAt": (
+            _ensure_utc(source.last_updated_at).isoformat()
+            if source.last_updated_at
+            else None
+        ),
+        "lastSuccessAt": (
+            _ensure_utc(source.last_success_at).isoformat()
+            if source.last_success_at
+            else None
+        ),
+        "checkedAgeHours": checked_age_hours,
+        "updatedAgeHours": updated_age_hours,
+        "successAgeHours": success_age_hours,
+        "isExternal": is_external,
+        "freshnessPolicy": freshness_policy,
+        "expectedSourceVersion": expected_source_version,
+        "periodCurrent": period_current,
+        "stale": is_stale,
+        "isFallback": is_fallback,
+        "fallbackVersion": source.source_version if is_fallback else None,
+        "fallbackAgeHours": updated_age_hours if is_fallback else None,
+        "errorMessage": source.error_message,
+    }
+
+
+def _freshness_status(
+    statuses: list[DataSourceStatus],
+    now: datetime,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    sources = [_source_status_payload(source, now) for source in statuses]
+    external_sources = {
+        source["sourceName"]: source
+        for source in sources
+        if source["isExternal"]
+    }
+    missing_external_sources = sorted(
+        EXTERNAL_SOURCE_NAMES - external_sources.keys()
+    )
+    stale_external_sources = sorted(
+        name for name, source in external_sources.items() if source["stale"]
+    )
+    external_last_checked = [
+        _ensure_utc(source.last_checked_at)
+        for source in statuses
+        if source.source_name in EXTERNAL_SOURCE_NAMES and source.last_checked_at
+    ]
+    external_last_updated = [
+        _ensure_utc(source.last_updated_at)
+        for source in statuses
+        if source.source_name in EXTERNAL_SOURCE_NAMES and source.last_updated_at
+    ]
+    external_last_success = [
+        _ensure_utc(source.last_success_at)
+        for source in statuses
+        if source.source_name in EXTERNAL_SOURCE_NAMES and source.last_success_at
+    ]
+    success_ages = [
+        float(source["successAgeHours"])
+        for source in external_sources.values()
+        if source["successAgeHours"] is not None
+    ]
+    failed_sources = sorted(
+        source.source_name
+        for source in statuses
+        if source.status in {"failed", "degraded"}
+    )
+    is_stale = bool(missing_external_sources or stale_external_sources)
+    return sources, {
+        "lastCheckedAt": (
+            max(external_last_checked).isoformat()
+            if external_last_checked
+            else None
+        ),
+        "lastUpdatedAt": (
+            max(external_last_updated).isoformat()
+            if external_last_updated
+            else None
+        ),
+        "lastSuccessAt": (
+            max(external_last_success).isoformat()
+            if external_last_success
+            else None
+        ),
+        "stale": is_stale,
+        "dataState": "degraded" if failed_sources or is_stale else "ok",
+        "failedSources": failed_sources,
+        "freshnessThresholdHours": FRESHNESS_THRESHOLD_HOURS,
+        "externalSourceCount": len(external_sources),
+        "missingExternalSources": missing_external_sources,
+        "staleExternalSources": stale_external_sources,
+        "oldestSuccessAgeHours": max(success_ages, default=None),
+    }
 
 
 def _build_fallback_summary() -> dict:
@@ -49,8 +200,14 @@ def _build_fallback_summary() -> dict:
         "status": {
             "lastCheckedAt": None,
             "lastUpdatedAt": None,
+            "lastSuccessAt": None,
             "stale": True,
             "dataState": "empty",
+            "freshnessThresholdHours": FRESHNESS_THRESHOLD_HOURS,
+            "externalSourceCount": 0,
+            "missingExternalSources": sorted(EXTERNAL_SOURCE_NAMES),
+            "staleExternalSources": [],
+            "oldestSuccessAgeHours": None,
         },
         "analysisVersion": None,
     }
@@ -79,15 +236,8 @@ def get_dashboard_summary(db: Session = Depends(get_db)) -> dict:
     )
 
     statuses = db.query(DataSourceStatus).all()
-    last_checked_at = max((_ensure_utc(s.last_checked_at) for s in statuses if s.last_checked_at), default=None)
-    last_updated_at = max((_ensure_utc(s.last_updated_at) for s in statuses if s.last_updated_at), default=None)
-
-    is_stale = True
-    if last_checked_at:
-        is_stale = datetime.now(timezone.utc) - last_checked_at > timedelta(hours=24)
-
-    failed_sources = [s.source_name for s in statuses if s.status in {"failed", "degraded"}]
-    data_state = "degraded" if failed_sources else "ok"
+    now = datetime.now(timezone.utc)
+    source_payloads, freshness = _freshness_status(statuses, now)
 
     return {
         "adminArea": {
@@ -114,21 +264,9 @@ def get_dashboard_summary(db: Session = Depends(get_db)) -> dict:
         },
         "population": {"baseMonth": latest.population_base_month or "—"},
         "sources": {
-            s.source_name: {
-                "status": s.status,
-                "lastCheckedAt": _ensure_utc(s.last_checked_at).isoformat() if s.last_checked_at else None,
-                "lastUpdatedAt": _ensure_utc(s.last_updated_at).isoformat() if s.last_updated_at else None,
-                "recordCount": s.record_count,
-            }
-            for s in statuses
+            source["sourceName"]: source for source in source_payloads
         },
-        "status": {
-            "lastCheckedAt": last_checked_at.isoformat() if last_checked_at else None,
-            "lastUpdatedAt": last_updated_at.isoformat() if last_updated_at else None,
-            "stale": is_stale,
-            "dataState": data_state,
-            "failedSources": failed_sources,
-        },
+        "status": freshness,
         "analysisVersion": latest.analysis_version,
         "comparison": {
             "currentGeneratedAt": _ensure_utc(latest.generated_at).isoformat()
@@ -147,34 +285,21 @@ def get_dashboard_summary(db: Session = Depends(get_db)) -> dict:
 def get_data_status(db: Session = Depends(get_db)) -> dict:
     ensure_seeded(db)
     statuses = db.query(DataSourceStatus).all()
+    now = datetime.now(timezone.utc)
+    source_payloads, freshness = _freshness_status(statuses, now)
     latest_snapshot = db.query(DashboardSnapshot).order_by(DashboardSnapshot.generated_at.desc()).first()
     latest_snapshot_at = _ensure_utc(latest_snapshot.generated_at) if latest_snapshot else None
     source_updated_at = max(
         (
             _ensure_utc(status.last_updated_at)
             for status in statuses
-            if status.source_name
-            in {"sgis_admin_dong", "emergency_facilities", "moonlight_pediatric", "population"}
+            if status.source_name in EXTERNAL_SOURCE_NAMES
             and status.last_updated_at
         ),
         default=None,
     )
     analysis_pending = latest_snapshot_at is None or (
         source_updated_at is not None and source_updated_at > latest_snapshot_at
-    )
-    last_checked_at = max(
-        (_ensure_utc(status.last_checked_at) for status in statuses if status.last_checked_at),
-        default=None,
-    )
-    last_updated_at = max(
-        (_ensure_utc(status.last_updated_at) for status in statuses if status.last_updated_at),
-        default=None,
-    )
-    failed_sources = [
-        status.source_name for status in statuses if status.status in {"failed", "degraded"}
-    ]
-    is_stale = last_checked_at is None or (
-        datetime.now(timezone.utc) - last_checked_at > timedelta(hours=24)
     )
     analysis_metadata = {}
     if ACTUAL_ROAD_MATRIX_PATH.exists():
@@ -185,26 +310,9 @@ def get_data_status(db: Session = Depends(get_db)) -> dict:
         except (json.JSONDecodeError, OSError):
             analysis_metadata = {}
     return {
-        "sources": [
-            {
-                "sourceName": s.source_name,
-                "status": s.status,
-                "recordCount": s.record_count,
-                "lastCheckedAt": _ensure_utc(s.last_checked_at).isoformat() if s.last_checked_at else None,
-                "lastUpdatedAt": _ensure_utc(s.last_updated_at).isoformat() if s.last_updated_at else None,
-                "lastSuccessAt": _ensure_utc(s.last_success_at).isoformat() if s.last_success_at else None,
-                "errorMessage": s.error_message,
-            }
-            for s in statuses
-        ],
+        "sources": source_payloads,
         "latestSnapshotAt": latest_snapshot_at.isoformat() if latest_snapshot_at else None,
-        "status": {
-            "lastCheckedAt": last_checked_at.isoformat() if last_checked_at else None,
-            "lastUpdatedAt": last_updated_at.isoformat() if last_updated_at else None,
-            "stale": is_stale,
-            "dataState": "degraded" if failed_sources else "ok",
-            "failedSources": failed_sources,
-        },
+        "status": freshness,
         "analysis": {
             "version": analysis_metadata.get("version"),
             "resourceCount": analysis_metadata.get("resource_count"),
@@ -213,6 +321,28 @@ def get_data_status(db: Session = Depends(get_db)) -> dict:
             "successfulRouteCount": analysis_metadata.get("successful_route_count"),
             "missingRouteCount": analysis_metadata.get("missing_route_count"),
             "pending": analysis_pending,
+        },
+        "scopeContracts": {
+            "pediatricFacilities": {
+                "policyStaticCount": analysis_metadata.get(
+                    "resource_count_by_mode",
+                    {},
+                ).get("pediatric"),
+                "dynamicSourceName": "moonlight_pediatric",
+                "dynamicRecordCount": next(
+                    (
+                        source.record_count
+                        for source in statuses
+                        if source.source_name == "moonlight_pediatric"
+                    ),
+                    None,
+                ),
+                "comparable": False,
+                "reason": (
+                    "정책분석 정적 기준 기관과 동적 운영 원천은 "
+                    "기관 정의·운영시간·중복 제거·갱신 시점이 다릅니다."
+                ),
+            }
         },
     }
 
