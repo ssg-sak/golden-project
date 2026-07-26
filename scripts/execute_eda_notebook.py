@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import secrets
+import subprocess
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -146,9 +148,58 @@ def _validate_execution(notebook: dict[str, Any]) -> tuple[int, int]:
     return executed_cells, output_cells
 
 
+def _notebook_source_signature(notebook: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "nbformat": notebook.get("nbformat"),
+        "nbformat_minor": notebook.get("nbformat_minor"),
+        "cells": [
+            {
+                "cell_type": cell.get("cell_type"),
+                "source": cell.get("source", []),
+            }
+            for cell in notebook.get("cells", [])
+        ],
+    }
+
+
+def _verify_committed_source(notebook: dict[str, Any]) -> None:
+    relative_path = NOTEBOOK_PATH.relative_to(PROJECT_ROOT).as_posix()
+    committed_content = subprocess.run(
+        ["git", "show", f"HEAD:{relative_path}"],
+        cwd=PROJECT_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    ).stdout
+    committed_notebook = json.loads(committed_content)
+    if _notebook_source_signature(notebook) != _notebook_source_signature(
+        committed_notebook
+    ):
+        raise RuntimeError(
+            "생성된 EDA 노트북의 셀 종류 또는 소스가 커밋본과 다릅니다."
+        )
+
+
+def _parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--verify-committed-source",
+        action="store_true",
+        help=(
+            "운영체제별 이미지 렌더링 바이트를 제외하고 "
+            "커밋본과 셀 종류·소스 구조를 비교합니다."
+        ),
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    arguments = _parse_arguments()
     notebook = _execute_with_nbclient() or _execute_with_kernel_protocol()
     executed_cells, output_cells = _validate_execution(notebook)
+    if arguments.verify_committed_source:
+        _verify_committed_source(notebook)
     print(
         "EDA notebook executed successfully: "
         f"{executed_cells} code cells, {output_cells} cells with outputs."

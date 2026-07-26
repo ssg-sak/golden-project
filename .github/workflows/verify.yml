@@ -89,7 +89,9 @@ jobs:
         run: python scripts/generate_eda_portfolio.py
 
       - name: Execute and validate the EDA notebook
-        run: python scripts/execute_eda_notebook.py
+        run: >-
+          python scripts/execute_eda_notebook.py
+          --verify-committed-source
 
       - name: Verify the policy release remains deterministic
         run: >-
@@ -97,4 +99,3 @@ jobs:
           data/processed/policy_release.json
           frontend/public/data/policy_release.json
           docs/EDA_REPORT.md
-          analysis/golden_governance_eda.ipynb
