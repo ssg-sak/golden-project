@@ -6,11 +6,23 @@ import { usePolicyReleaseStore } from '../../shared/store/policyReleaseStore';
 
 interface DataSourceStatusRecord {
   sourceName: string;
+  sourceVersion?: string | null;
   status: string;
-  recordCount: number;
+  recordCount: number | null;
   lastCheckedAt?: string | null;
   lastUpdatedAt?: string | null;
   lastSuccessAt?: string | null;
+  checkedAgeHours?: number | null;
+  updatedAgeHours?: number | null;
+  successAgeHours?: number | null;
+  isExternal?: boolean;
+  freshnessPolicy?: string;
+  expectedSourceVersion?: string | null;
+  periodCurrent?: boolean | null;
+  stale?: boolean;
+  isFallback?: boolean;
+  fallbackVersion?: string | null;
+  fallbackAgeHours?: number | null;
   errorMessage?: string | null;
 }
 
@@ -20,9 +32,15 @@ interface DataStatusResponse {
   status?: {
     lastCheckedAt: string | null;
     lastUpdatedAt: string | null;
+    lastSuccessAt: string | null;
     stale: boolean;
     dataState: string;
     failedSources: string[];
+    freshnessThresholdHours: number;
+    externalSourceCount: number;
+    missingExternalSources: string[];
+    staleExternalSources: string[];
+    oldestSuccessAgeHours: number | null;
   };
   analysis?: {
     version: string | null;
@@ -35,6 +53,15 @@ interface DataStatusResponse {
     successfulRouteCount: number | null;
     missingRouteCount: number | null;
     pending: boolean;
+  };
+  scopeContracts?: {
+    pediatricFacilities?: {
+      policyStaticCount: number | null;
+      dynamicSourceName: string;
+      dynamicRecordCount: number | null;
+      comparable: boolean;
+      reason: string;
+    };
   };
 }
 
@@ -67,6 +94,7 @@ const POLICY_REPORT_URL = `${import.meta.env.BASE_URL}data/reports/daegu-golden-
 
 function sourceTone(source?: DataSourceStatusRecord): StageTone {
   if (!source) return 'unknown';
+  if (source.sourceName === 'population' && source.periodCurrent) return 'stable';
   if (source.status === 'failed' || source.status === 'degraded') return 'warning';
   if (source.status === 'updated' || source.status === 'unchanged') return 'success';
   if (source.status === 'static') return 'stable';
@@ -75,11 +103,32 @@ function sourceTone(source?: DataSourceStatusRecord): StageTone {
 
 function sourceLabel(source?: DataSourceStatusRecord): string {
   if (!source) return '확인 중';
+  if (source.sourceName === 'population' && source.periodCurrent) {
+    return source.isFallback ? '최신 공표월 검증본' : '최신 공표월 확인';
+  }
   if (source.status === 'failed' || source.status === 'degraded') return '기존 자료 유지';
   if (source.status === 'updated') return '새 자료 반영';
   if (source.status === 'unchanged') return '변경 없음 확인';
   if (source.status === 'static') return '저장된 기준 자료';
   return '확인 중';
+}
+
+function formatAgeHours(value?: number | null): string {
+  if (value == null) return '시각 미확인';
+  if (value < 24) return `${Math.max(1, Math.round(value))}시간 전`;
+  return `${Math.round(value / 24)}일 전`;
+}
+
+function sourceFreshnessDetail(source?: DataSourceStatusRecord): string {
+  if (!source) return '원천 상태 미확인';
+  if (source.sourceName === 'population' && source.periodCurrent) {
+    return `${source.sourceVersion ?? source.expectedSourceVersion ?? '기준월 미확인'} · 최신 공표 완료월${source.isFallback ? ' · CSV 검증본' : ''}`;
+  }
+  if (source.isFallback) {
+    return `fallback ${source.fallbackVersion ?? '버전 미확인'} · ${formatAgeHours(source.fallbackAgeHours)}`;
+  }
+  const version = source.sourceVersion ? `${source.sourceVersion} · ` : '';
+  return `${version}마지막 성공 ${formatAgeHours(source.successAgeHours)}`;
 }
 
 function formatSnapshotTime(value: string | null): string {
@@ -186,14 +235,14 @@ export function PolicyDataPipeline({
       {
         title: '병상 정보',
         metric: '변동 가능',
-        detail: `분석 기준 기관 ${analysis?.resourceCount ?? hospitalCount}곳 · 병상은 출발 전 전화 확인`,
+        detail: `분석 기준 기관 ${analysis?.resourceCount ?? hospitalCount}곳 · ${sourceFreshnessDetail(hospitalSource)} · 병상은 출발 전 전화 확인`,
         statusLabel: sourceLabel(hospitalSource),
         tone: sourceTone(hospitalSource),
       },
       {
         title: '인구와 행정동',
         metric: policyRelease?.metadata.population_base_month ?? populationBaseMonth,
-        detail: `${policyRelease?.metadata.district_count ?? districtCount}개 동네 기준`,
+        detail: `${policyRelease?.metadata.district_count ?? districtCount}개 동네 · 정적 분석 기준월 · ${sourceFreshnessDetail(populationSource)}`,
         statusLabel: sourceLabel(populationSource),
         tone: sourceTone(populationSource),
       },
@@ -242,12 +291,6 @@ export function PolicyDataPipeline({
         message: '원천자료 변경이 확인되어 재분석 대기 중입니다. 현재 화면은 이전 검증 분석본입니다.',
       };
     }
-    if (dataStatus?.status?.dataState === 'degraded' || dataStatus?.status?.stale) {
-      return {
-        tone: 'border-amber-200 bg-amber-50 text-amber-900',
-        message: '공공데이터 갱신이 지연되어 마지막 정상 검증본을 표시합니다.',
-      };
-    }
     return null;
   }, [dataStatus, error]);
 
@@ -255,48 +298,50 @@ export function PolicyDataPipeline({
     <section className="shrink-0 border-b border-slate-300 bg-white" aria-label="정책 자료 안내">
       {statusNotice ? (
         <p
-          className={`border-b px-4 py-2 text-center text-xs font-bold leading-5 md:px-6 ${statusNotice.tone}`}
+          className={`border-b px-4 py-1 text-center text-[10px] font-bold leading-snug md:px-6 ${statusNotice.tone}`}
           role="status"
         >
           {statusNotice.message}
         </p>
       ) : null}
-      <details className="group mx-auto max-w-[1800px] px-4 py-3 md:px-6">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+      <details className="group mx-auto max-w-[1800px] px-4 py-1.5 md:px-6">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 [&::-webkit-details-marker]:hidden">
           <div>
-            <p className="text-xs font-bold text-teal-800">정책 자료 안내</p>
-            <h2 className="mt-0.5 text-sm font-extrabold text-slate-900 md:text-base">
-              변동 정보와 기준자료 기반 정책분석을 구분해 보여드립니다
-            </h2>
-            <p className="mt-1 text-xs leading-5 text-slate-500">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xs font-extrabold text-slate-900 md:text-sm">
+                변동 정보와 기준자료 기반 정책분석을 구분해 보여드립니다
+              </h2>
+              <p className="text-[10px] font-bold text-teal-800">정책 자료 안내</p>
+            </div>
+            <p className="text-[10px] leading-snug text-slate-500">
               병상은 계속 달라질 수 있지만, 위험도와 정책 후보는 기준 자료가 바뀔 때 별도로 다시 분석합니다.
             </p>
           </div>
-          <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-700">
+          <span className="inline-flex shrink-0 items-center gap-1 rounded border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700">
             <span className="group-open:hidden">펼쳐보기</span>
             <span className="hidden group-open:inline">접기</span>
-            <span className="text-sm transition-transform group-open:rotate-180" aria-hidden>
+            <span className="text-[10px] transition-transform group-open:rotate-180" aria-hidden>
               ↓
             </span>
           </span>
         </summary>
 
-        <div className="mt-3 border-t border-slate-200 pt-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold">
-              <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-900 ring-1 ring-amber-200">
+        <div className="mt-1.5 border-t border-slate-200 pt-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-bold">
+              <span className="rounded bg-amber-50 px-1.5 py-0.5 text-amber-900 ring-1 ring-amber-200">
                 병상은 변동 가능
               </span>
-              <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-800 ring-1 ring-blue-200">
+              <span className="rounded bg-blue-50 px-1.5 py-0.5 text-blue-800 ring-1 ring-blue-200">
                 정책 결과는 기준자료 기반 분석본
               </span>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
               <a
                 href={POLICY_REPORT_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full border border-teal-300 bg-teal-50 px-3 py-1 text-[11px] font-bold text-teal-900 transition hover:bg-teal-100"
+                className="rounded border border-teal-300 bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-900 transition hover:bg-teal-100"
               >
                 최종 정책보고서 보기 (PDF)
               </a>
@@ -304,36 +349,36 @@ export function PolicyDataPipeline({
                 type="button"
                 onClick={() => void loadStatus()}
                 disabled={isLoading}
-                className="rounded-full border border-slate-300 bg-white px-3 py-1 text-[11px] font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-wait disabled:opacity-60"
+                className="rounded border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-bold text-slate-700 transition hover:bg-slate-50 disabled:cursor-wait disabled:opacity-60"
               >
                 {isLoading ? '확인 중' : '최신 상태 확인'}
               </button>
             </div>
           </div>
 
-          <ol className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
+          <ol className="mt-1.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-5">
             {stages.map((stage, index) => (
-              <li key={stage.title} className="relative min-w-0 border border-slate-200 bg-slate-50 px-3 py-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono text-[10px] font-bold text-slate-400">
+              <li key={stage.title} className="relative min-w-0 border border-slate-200 bg-slate-50 px-2 py-1.5">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="font-mono text-[9px] font-bold text-slate-400">
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-bold ring-1 ${STATUS_STYLE[stage.tone]}`}
+                    className={`rounded px-1.5 py-0.5 text-[9px] font-bold ring-1 ${STATUS_STYLE[stage.tone]}`}
                   >
                     {stage.statusLabel}
                   </span>
                 </div>
-                <p className="mt-2 text-xs font-bold text-slate-600">{stage.title}</p>
-                <strong className="mt-0.5 block text-lg font-extrabold tabular-nums text-slate-950">
+                <p className="mt-1 text-[10px] font-bold text-slate-600">{stage.title}</p>
+                <strong className="block text-base font-extrabold tabular-nums text-slate-950">
                   {stage.metric}
                 </strong>
-                <p className="mt-1 text-[11px] leading-4 text-slate-500">{stage.detail}</p>
+                <p className="mt-0.5 text-[9px] leading-snug text-slate-500">{stage.detail}</p>
               </li>
             ))}
           </ol>
 
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] leading-4 text-slate-500">
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-[9px] text-slate-500">
             <p className={error ? 'font-semibold text-amber-800' : undefined}>
               {error ?? `마지막 정상 분석본 · ${formatSnapshotTime(dataStatus?.latestSnapshotAt ?? null)}`}
             </p>

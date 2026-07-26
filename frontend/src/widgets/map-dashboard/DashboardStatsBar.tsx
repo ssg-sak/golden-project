@@ -64,38 +64,40 @@ export function DashboardStatsBar({
 
   return (
     <section className="shrink-0 border-b border-slate-300 bg-white" aria-label="정책 현황 요약">
-      <div className="mx-auto max-w-[1800px] px-4 py-3 md:px-6">
-        <div className="grid gap-3 border-b border-slate-300 pb-3 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div className="mx-auto max-w-[1800px] px-4 py-2 md:px-6">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between border-b border-slate-300 pb-2 gap-3">
           <div>
-            <p className="text-xs font-bold text-teal-800">정책 현황 요약</p>
-            <h1 className="mt-0.5 text-lg font-extrabold text-slate-900">
-              대구 응급의료 접근성 지도
-            </h1>
-            <p className="mt-1 text-xs leading-5 text-slate-600">
+            <div className="flex items-center gap-2">
+              <h1 className="text-base font-extrabold text-slate-900">
+                대구 응급의료 접근성 지도
+              </h1>
+              <p className="text-xs font-bold text-teal-800">정책 현황 요약</p>
+            </div>
+            <p className="mt-0.5 text-xs text-slate-600">
               병원까지의 거리와 보호가 필요한 인구를 함께 보며, 먼저 살펴볼 동네를 좁힙니다.
             </p>
           </div>
-          <div className="flex flex-col items-start gap-2 text-[11px] font-bold lg:items-end">
-            <div className="flex flex-wrap gap-2">
-            <span className="rounded-md bg-red-50 px-2.5 py-1 text-red-700 ring-1 ring-red-200">
-              상위 25% 우선 확인
-            </span>
-            <span className="rounded-md bg-blue-50 px-2.5 py-1 text-blue-800 ring-1 ring-blue-200">
-              현재 상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}
-            </span>
-            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-slate-700 ring-1 ring-slate-200">
-              의료적 절대 기준 아님
-            </span>
+          <div className="flex flex-col items-start gap-1.5 text-xs font-bold lg:items-end">
+            <div className="flex flex-wrap gap-1.5">
+              <span className="rounded-md bg-red-50 px-2 py-0.5 text-red-700 ring-1 ring-red-200">
+                상위 25% 우선 확인
+              </span>
+              <span className="rounded-md bg-blue-50 px-2 py-0.5 text-blue-800 ring-1 ring-blue-200">
+                현재 상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')}
+              </span>
+              <span className="rounded-md bg-slate-100 px-2 py-0.5 text-slate-600 ring-1 ring-slate-200">
+                의료적 절대 기준 아님
+              </span>
             </div>
           </div>
         </div>
 
-        <details className="group border-t border-slate-200 bg-slate-50 px-3 py-2 text-[11px] leading-5 text-slate-600">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-slate-700 [&::-webkit-details-marker]:hidden">
+        <details className="group border-t border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600">
+          <summary className="flex cursor-pointer list-none items-center justify-between font-bold text-slate-700 [&::-webkit-details-marker]:hidden">
             <span>위험 점수는 어떻게 계산하고 읽나요?</span>
             <span className="text-slate-400 transition group-open:rotate-180" aria-hidden>⌄</span>
           </summary>
-          <div className="mt-2 border-t border-slate-200 pt-2">
+          <div className="mt-1.5 border-t border-slate-200 pt-1.5 leading-snug">
             위험 점수는 0~9세와 65세 이상 인구를 합친 보호 필요 인구에 최근접 응급 관련 기관까지의 도로 이동 부담을 결합한 비교값입니다. 150개 행정동 점수를 높은 순서로 정렬해 상위 25%를 먼저 확인할 지역으로 표시합니다.
             <br />
             현재 상대 경계 {Math.round(highRiskThreshold ?? 0).toLocaleString('ko-KR')} 이상인 동네는 먼저 확인할 비교 대상이며,
@@ -105,38 +107,35 @@ export function DashboardStatsBar({
 
         <dl className="grid divide-y divide-slate-200 sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">
           {rows.map(({ label, metric, detail }) => (
-            <div key={label} className="px-3 py-3 first:pl-0">
-              <dt className="text-xs font-bold text-slate-600">{label}</dt>
-              <dd className="mt-1 flex flex-wrap items-baseline gap-2">
-                <strong className="text-xl font-extrabold tabular-nums text-slate-900">{metric}</strong>
-                <span className="text-[11px] leading-4 text-slate-500">{detail}</span>
+            <div key={label} className="px-3 py-2 first:pl-0">
+              <dt className="text-xs font-bold text-slate-500">{label}</dt>
+              <dd className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
+                <strong className="text-lg font-extrabold tabular-nums text-slate-900">{metric}</strong>
+                <span className="text-[11px] leading-snug text-slate-500">{detail}</span>
               </dd>
             </div>
           ))}
         </dl>
 
         <div
-          className="flex flex-wrap items-center gap-1.5 border-t border-slate-200 py-2 text-[10px] font-bold sm:text-[11px]"
+          className="flex flex-wrap items-center gap-2 border-t border-slate-200 py-1.5 text-xs font-bold"
           aria-label="데이터 갱신 주기"
         >
-          <span className="mr-1 text-slate-500">데이터 갱신 기준</span>
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-900 ring-1 ring-amber-200">
+          <span className="text-slate-500">데이터 갱신 기준:</span>
+          <span className="rounded-md bg-amber-50 px-2 py-0.5 text-amber-900 ring-1 ring-amber-200">
             병상 변동 가능
           </span>
-          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-800 ring-1 ring-blue-200">
+          <span className="rounded-md bg-blue-50 px-2 py-0.5 text-blue-800 ring-1 ring-blue-200">
             인구 월간 기준
           </span>
-          <span className="rounded-full bg-violet-50 px-2.5 py-1 text-violet-800 ring-1 ring-violet-200">
+          <span className="rounded-md bg-violet-50 px-2 py-0.5 text-violet-800 ring-1 ring-violet-200">
             정책 분석 기준본
-          </span>
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-900 ring-1 ring-amber-200">
-            후보지·정책결과 수동 재분석
           </span>
         </div>
 
         <p className="border-t border-slate-200 pt-2 text-[11px] text-slate-500">
           병원 상태 확인 {formatUpdatedAt(hospitalsUpdatedAt)} · 분석 파일 확인 {formatUpdatedAt(vulnerabilityUpdatedAt)}
-          {dataStale ? ' · 최신 자료 확인이 지연되어 저장된 자료를 표시 중' : ''}
+          {dataStale ? ' · 병원 등 운영정보의 최신 확인이 지연됨' : ''}
         </p>
       </div>
     </section>

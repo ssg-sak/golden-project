@@ -23,6 +23,8 @@ MOONLIGHT_LIST_OPERATION = "getHsptlMdcncListInfoInqire"
 SOURCE_ER = "emergency_facilities"
 SOURCE_MOONLIGHT = "moonlight_pediatric"
 MAX_RETRIES = 3
+MAX_REQUESTS_PER_RUN = 100
+MAX_PAGES_PER_SIGUNGU = 5
 DAEGU_SIGUNGU = ["중구", "동구", "서구", "남구", "북구", "수성구", "달서구", "달성군", "군위군"]
 
 TIER1_KEYWORDS = ("권역응급", "전문응급", "권역응급의료센터", "전문응급의료센터")
@@ -70,6 +72,14 @@ def _classify_official_type(text: str) -> str:
 class HospitalsAPIClient:
     def __init__(self):
         self.service_key = get_env("DATA_GO_KR_API_KEY", "") or ""
+        self.request_count = 0
+
+    def _reserve_request(self) -> None:
+        if self.request_count >= MAX_REQUESTS_PER_RUN:
+            raise RuntimeError(
+                f"Hospital API request budget exceeded: {MAX_REQUESTS_PER_RUN}"
+            )
+        self.request_count += 1
 
     async def _get_xml(
         self,
@@ -79,6 +89,7 @@ class HospitalsAPIClient:
     ) -> str:
         last_error: Exception | None = None
         for attempt in range(1, MAX_RETRIES + 1):
+            self._reserve_request()
             try:
                 response = await client.get(url, params=params, timeout=20.0)
                 response.raise_for_status()
@@ -135,6 +146,11 @@ class HospitalsAPIClient:
                         }
                     if page * 200 >= max(total, len(rows)):
                         break
+                    if page >= MAX_PAGES_PER_SIGUNGU:
+                        raise RuntimeError(
+                            f"Hospital API page limit exceeded for {sigungu}: "
+                            f"{MAX_PAGES_PER_SIGUNGU}"
+                        )
                     page += 1
             return list(merged.values())
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import asyncio
 import logging
 import time
 
@@ -16,6 +17,7 @@ from app.services.pipeline import run_data_pipeline
 logger = logging.getLogger(__name__)
 
 scheduler = AsyncIOScheduler() if AsyncIOScheduler is not None else None
+SCHEDULED_JOB_TIMEOUT_SECONDS = 600
 
 
 async def _run_target(target: str) -> None:
@@ -23,7 +25,10 @@ async def _run_target(target: str) -> None:
     logger.info("Scheduled job '%s' started", target)
     db = SessionLocal()
     try:
-        result = await run_data_pipeline(db, targets={target})
+        result = await asyncio.wait_for(
+            run_data_pipeline(db, targets={target}),
+            timeout=SCHEDULED_JOB_TIMEOUT_SECONDS,
+        )
         if result.error:
             logger.error(
                 "Scheduled job '%s' completed with error=%s duration_sec=%.2f failed_sources=%s",
@@ -45,6 +50,12 @@ async def _run_target(target: str) -> None:
                 result.analysis_pending,
                 result.snapshot_created,
             )
+    except TimeoutError:
+        logger.error(
+            "Scheduled job '%s' timed out after %s seconds",
+            target,
+            SCHEDULED_JOB_TIMEOUT_SECONDS,
+        )
     except Exception as exc:
         logger.error(
             "Scheduled job '%s' failed duration_sec=%.2f error=%s",
@@ -87,9 +98,10 @@ def start_public_data_scheduler() -> None:
         max_instances=1,
         misfire_grace_time=3600,
     )
+    # 전월 인구는 익월 1일 공표되므로 공표 직후인 2일에 첫 자동 수집을 시도한다.
     scheduler.add_job(
         _run_target,
-        CronTrigger(day=10, hour=4, minute=0, timezone=tz),
+        CronTrigger(day=2, hour=4, minute=0, timezone=tz),
         args=["population"],
         id="refresh_population",
         replace_existing=True,
@@ -110,6 +122,17 @@ def start_public_data_scheduler() -> None:
 
     if scheduler is not None and not scheduler.running:
         scheduler.start()
+
+
+def get_public_data_scheduler_status() -> dict[str, bool | int]:
+    configured = get_env("ENABLE_PUBLIC_DATA_SCHEDULER", "false").lower() == "true"
+    running = bool(scheduler is not None and scheduler.running)
+    job_count = len(scheduler.get_jobs()) if running else 0
+    return {
+        "configured": configured,
+        "running": running,
+        "jobCount": job_count,
+    }
 
 
 def stop_public_data_scheduler() -> None:

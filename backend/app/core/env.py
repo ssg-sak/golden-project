@@ -9,6 +9,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 ENV_FILE = PROJECT_ROOT / ".env"
 
 _PLACEHOLDER_KEYS = {"", "YOUR_API_KEY_HERE"}
+DEFAULT_BED_CACHE_POLL_INTERVAL_SEC = 600
+MIN_BED_CACHE_POLL_INTERVAL_SEC = 300
+MAX_BED_CACHE_POLL_INTERVAL_SEC = 3600
 
 
 def _read_env_file(name: str) -> str | None:
@@ -74,15 +77,18 @@ def has_kakao_rest_api_key() -> bool:
     return get_kakao_rest_api_key() is not None
 
 def bed_cache_poll_interval_sec() -> int:
-    """백그라운드 병상 캐시 폴링 주기(초). 기본 120초(2분)."""
+    """백그라운드 병상 캐시 폴링 주기(초). 기본 600초(10분)."""
     raw = env_str("BED_CACHE_POLL_INTERVAL_SEC")
     if raw is None:
-        return 120
+        return DEFAULT_BED_CACHE_POLL_INTERVAL_SEC
     try:
         value = int(raw)
-        return max(60, min(value, 300))
+        return max(
+            MIN_BED_CACHE_POLL_INTERVAL_SEC,
+            min(value, MAX_BED_CACHE_POLL_INTERVAL_SEC),
+        )
     except ValueError:
-        return 120
+        return DEFAULT_BED_CACHE_POLL_INTERVAL_SEC
 
 def use_mock_api() -> bool:
     return env_bool("USE_MOCK_API", default=False)

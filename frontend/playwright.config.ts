@@ -10,8 +10,9 @@ export default defineConfig({
   testDir: path.resolve(configDir, 'tests/e2e'),
   timeout: 30_000,
   retries: 0,
+  globalTeardown: path.resolve(configDir, 'scripts/playwright-global-teardown.mjs'),
   webServer: {
-    command: 'npm run dev -- --host 127.0.0.1',
+    command: 'node ./scripts/playwright-vite-server.mjs',
     url: 'http://127.0.0.1:5173',
     reuseExistingServer: true,
     timeout: 30_000,
