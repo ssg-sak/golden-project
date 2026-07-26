@@ -149,13 +149,24 @@ def _validate_execution(notebook: dict[str, Any]) -> tuple[int, int]:
 
 
 def _notebook_source_signature(notebook: dict[str, Any]) -> dict[str, Any]:
+    def normalize_source(source: Any) -> str:
+        if isinstance(source, str):
+            source_text = source
+        elif isinstance(source, list) and all(
+            isinstance(line, str) for line in source
+        ):
+            source_text = "".join(source)
+        else:
+            raise TypeError("노트북 셀 소스는 문자열 또는 문자열 배열이어야 합니다.")
+        return source_text.replace("\r\n", "\n").replace("\r", "\n")
+
     return {
         "nbformat": notebook.get("nbformat"),
         "nbformat_minor": notebook.get("nbformat_minor"),
         "cells": [
             {
                 "cell_type": cell.get("cell_type"),
-                "source": cell.get("source", []),
+                "source": normalize_source(cell.get("source", [])),
             }
             for cell in notebook.get("cells", [])
         ],
