@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { PlatformIntroView } from '../app/PlatformIntroView';
 export default function PublicAboutPage() {

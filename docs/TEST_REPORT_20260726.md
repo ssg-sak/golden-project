@@ -51,7 +51,7 @@ Golden Data Lab은 이 프로젝트와 별개이므로 테스트·판정·패키
 | TC-D-01 | 데이터·모델 | 분석 단위 테스트 | 14 | 14 passed | PASS |
 | TC-D-02 | 데이터 | 좌표·키·경로·VDI·최근접 기관·보정 집중도·25+9 계약 | 1 | 검증 스크립트 통과 | PASS |
 | TC-D-03 | KPI | ETA·15분·30분 KPI 독립 재계산 | 1 | 보고서 값과 일치 | PASS |
-| TC-D-04 | 재현성 | EDA 생성·실행 노트북 반복 생성 | 1 | 코드 셀 5개 실행, 반복 SHA-256 `3E2E5453…0634` 동일 | PASS |
+| TC-D-04 | 재현성 | EDA 생성·실행 노트북 반복 생성 | 1 | 코드 셀 5개 실행, 반복 SHA-256 `21548372…E2CC` 동일 | PASS |
 | TC-D-05 | 재현성 | 포트폴리오 PDF 반복 생성과 공개 사본 동기화 | 1 | 반복 SHA-256 및 두 PDF 바이트 동일 | PASS |
 | TC-N-01 | 성능 | 프로덕션 빌드 산출물 규모 | 1 | JS 571,959 bytes, CSS 85,061 bytes, GeoJSON 1,783,521 bytes | PASS |
 | TC-N-02 | 성능 | 로컬 프로덕션 핵심 화면 표시 3회 | 1 | 412.4~443.1ms, 중앙값 424.1ms | PASS |
@@ -100,21 +100,21 @@ Golden Data Lab은 이 프로젝트와 별개이므로 테스트·판정·패키
 
 ### 프론트엔드
 
-최초 `npm audit --omit=dev`에서 탐지된 High advisory 3건을 다음과 같이 조치했다.
+최초 `npm audit --omit=dev`에서 탐지된 High advisory를 다음과 같이 조치했다. 7.11.0 고정안은 당시 RSC advisory 범위를 피했지만 현재 advisory 피드에서 일반 라우팅·SSR 계열 High 취약점이 추가 확인돼 최종안에서 제외했다.
 
 | 패키지 | 변경 전 | 변경 후 | advisory | 판정 |
 |---|---:|---:|---|---|
 | `postcss` | 8.5.16 | 8.5.18 override | [GHSA-r28c-9q8g-f849](https://github.com/advisories/GHSA-r28c-9q8g-f849) | 패치 버전 적용 |
-| `react-router` | 7.18.1 | 7.11.0 | [GHSA-qwww-vcr4-c8h2](https://github.com/advisories/GHSA-qwww-vcr4-c8h2) | 영향 범위 밖 버전 적용 |
-| `react-router-dom` | 7.18.1 | 7.11.0 exact | 위 advisory의 의존 경로 | 동일 |
+| `react-router` | 7.18.1 | 8.3.0 exact | [GHSA-qwww-vcr4-c8h2](https://github.com/advisories/GHSA-qwww-vcr4-c8h2) 및 현재 7.x advisory | 수정 버전 적용 |
+| `react-router-dom` | 7.18.1 | 제거 | v8부터 DOM API를 `react-router`가 직접 제공 | 중복·취약 의존 경로 제거 |
 
-`npm ci` 후 단위 21건, E2E 2건, ESLint, TypeScript, 프로덕션 빌드가 모두 통과했다. 로컬 온라인 audit endpoint는 압축 응답을 JSON으로 해석하지 못해 두 npm 버전에서 동일하게 실패했지만, 직전에 갱신된 advisory 캐시를 사용한 오프라인 감사에서는 0건이었다. 온라인 최종 확인은 GitHub Actions의 기존 `npm audit` 단계가 담당한다.
+React Router 8.3.0의 런타임 조건에 맞춰 Node.js 최소 버전을 22.22.0으로 명시하고 GitHub Actions의 검증·배포 런타임도 같은 버전으로 고정했다. `npm ci` 후 단위 21건, E2E 2건, ESLint, TypeScript, 프로덕션 빌드가 모두 통과했고 온라인 `npm audit --omit=dev --audit-level=high` 결과는 취약점 0건이다.
 
 ## 8. 발견 결함
 
 | 결함 ID | 심각도 | 현상 | 영향 | 상태 |
 |---|---|---|---|---|
-| BUG-QA-001 | P1 | 프론트 운영 의존성 High advisory 3건 | 안전 버전 적용 전 CI 보안 감사 실패 | 수정·재검증 완료 |
+| BUG-QA-001 | P1 | 프론트 운영 의존성 High advisory 탐지 | 안전 버전 적용 전 CI 보안 감사 실패 | 수정·재검증 완료 |
 | BUG-QA-002 | P2 | Windows에서 E2E 2건 통과 후 Playwright·Vite 프로세스가 종료되지 않음 | 서비스 기능은 정상이나 로컬 자동화 명령이 끝나지 않음 | 수정·재검증 완료 |
 | BUG-QA-003 | P2 | E2E가 이전 메뉴명 `시민 구조망`, `공식 소개`를 참조 | 현재 UI에서 assertion 실패 | 수정·재검증 완료 |
 
