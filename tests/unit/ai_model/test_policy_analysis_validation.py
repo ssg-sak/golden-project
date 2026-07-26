@@ -13,6 +13,7 @@ SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
+from execute_eda_notebook import _notebook_source_signature
 from kpi_metrics import calculate_policy_kpis, selected_p_median_resources
 from policy_analysis_validation import validate_policy_analysis
 from vdi_sensitivity import calculate_vdi_rank_sensitivity
@@ -21,6 +22,23 @@ from vdi_sensitivity import calculate_vdi_rank_sensitivity
 def _read_json(relative_path: str) -> dict:
     with (PROJECT_ROOT / relative_path).open(encoding="utf-8") as file:
         return json.load(file)
+
+
+def test_notebook_source_signature_normalizes_nbformat_source_shape() -> None:
+    string_source_notebook = {
+        "nbformat": 4,
+        "nbformat_minor": 5,
+        "cells": [{"cell_type": "code", "source": "print('ok')\n"}],
+    }
+    list_source_notebook = {
+        "nbformat": 4,
+        "nbformat_minor": 5,
+        "cells": [{"cell_type": "code", "source": ["print('ok')\r\n"]}],
+    }
+
+    assert _notebook_source_signature(
+        string_source_notebook
+    ) == _notebook_source_signature(list_source_notebook)
 
 
 def test_current_policy_analysis_contract_is_complete() -> None:
