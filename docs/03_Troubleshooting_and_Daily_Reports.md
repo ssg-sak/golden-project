@@ -1501,9 +1501,9 @@ AppPage div: lg:h-auto (높이 무한 확장)
 
 
 ---
-## [원본 파일명: reports/enterprise_demo_baseline_20260713.md]
+## [원본 파일명: reports/portfolio_demo_baseline_20260713.md]
 
-﻿# 엔터프라이즈 데모 검증 기준선 보고서
+﻿# 공개 포트폴리오 검증 기준선 보고서
 
 - 실행일: 2026-07-13
 - 결과: 코드 기준선 통과, 실제 브라우저 및 공개 배포 환경 검증은 후속 P0로 유지
@@ -1547,7 +1547,7 @@ python -m pytest ..\tests\unit\backend ..\tests\integration\backend -q
 
 - 현재 실행 환경에는 제어 가능한 브라우저 세션이 없어 실제 DOM, 반응형 레이아웃, 클릭 흐름과 화면 캡처를 자동 확인하지 못했다.
 - 공개 GitHub Pages URL과 실제 모바일 기기 검증은 로컬 빌드 성공과 별개다.
-- 위 두 항목은 `docs/plans/roadmaps/enterprise_demo_backlog_20260713.md`의 P0-1과 P0-8로 추적한다.
+- 위 두 항목은 `docs/plans/roadmaps/portfolio_demo_backlog_20260713.md`의 P0-1과 P0-8로 추적한다.
 
 
 
@@ -2833,7 +2833,7 @@ PC는 `CitizenView`의 `DesktopSidebar` + `default` 지도. 공통 컴포넌트�
 - 작성일: 2026-07-15
 - 기준 URL: `http://localhost:5173/`
 - 검증 도구: 로컬 Chrome + Playwright 자동 조작
-- 목적: 기업 관계자 방문 로드맵의 7/15 정책 대표 흐름과 AI 모델 동결 전 화면 마감 상태를 확인한다.
+- 목적: 공개 포트폴리오 로드맵의 7/15 정책 대표 흐름과 AI 모델 동결 전 화면 마감 상태를 확인한다.
 
 ## 1. 결론
 
@@ -2933,7 +2933,7 @@ MRI/CT 보강: 주변 병원 장비 커버리지가 낮을 때 검토할 장비 
 ## 7. 다음 행동
 
 1. 확인 결과를 `docs/plans/roadmaps/citizen_policy_flow_data_lineage_20260714.md`에 반영한다.
-2. `docs/plans/roadmaps/enterprise_demo_roadmap_20260713.md`의 7/15 완료 기록을 실제 브라우저 통과 기준으로 갱신한다.
+2. `docs/plans/roadmaps/portfolio_demo_roadmap_20260713.md`의 7/15 완료 기록을 실제 브라우저 통과 기준으로 갱신한다.
 3. 모델 동결 선언 문서와 발표용 한계 문구 정리로 넘어간다.
 
 

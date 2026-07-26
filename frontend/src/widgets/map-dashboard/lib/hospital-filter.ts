@@ -68,6 +68,12 @@ export function filterByCareTarget(
   if (careTarget === 'all') return conditionFiltered;
 
   return conditionFiltered.filter((hospital) => {
+    // 특정 중증·응급 상황(심근경색, 뇌출혈 등) 필터가 켜져 있으면 인구(careTarget) 필터보다 우선하여
+    // 해당 질환을 치료할 수 있는 병원이 안 보이게 되는 현상을 방지합니다.
+    if (severeCondition !== 'all' && severeCondition !== 'pediatric_night_holiday') {
+      return true;
+    }
+
     if (careTarget === 'adult') {
       return !isMoonlightHospital(hospital);
     }

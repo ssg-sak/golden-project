@@ -8,32 +8,12 @@ function isHospitalRecord(value: unknown): value is HospitalRecord {
   if (!value || typeof value !== 'object') return false;
   const row = value as Record<string, unknown>;
   const tierOk = row.tier === 1 || row.tier === 2 || row.tier === 3;
-  const bedsOk =
-    row.available_beds === undefined ||
-    row.available_beds === null ||
-    (typeof row.available_beds === 'number' && Number.isFinite(row.available_beds));
-  const hvecOk =
-    row.hvec === undefined ||
-    row.hvec === null ||
-    (typeof row.hvec === 'number' && Number.isFinite(row.hvec));
-  const hvocOk =
-    row.hvoc === undefined ||
-    row.hvoc === null ||
-    (typeof row.hvoc === 'number' && Number.isFinite(row.hvoc));
-  const telOk =
-    row.tel === undefined ||
-    row.tel === null ||
-    (typeof row.tel === 'string' && row.tel.trim().length > 0);
-
+  // 필수 필드(name, lat, lng, tier)만 검증하고, 나머지는 관대하게 넘어갑니다.
   return (
     typeof row.name === 'string' &&
     typeof row.lat === 'number' &&
     typeof row.lng === 'number' &&
-    tierOk &&
-    bedsOk &&
-    hvecOk &&
-    hvocOk &&
-    telOk
+    tierOk
   );
 }
 
@@ -42,15 +22,15 @@ function parseHospitalPayload(payload: unknown): HospitalRecord[] {
     throw new Error('병원 정보가 예상과 달라 최근 확인된 정보를 먼저 보여드립니다');
   }
 
-  const hospitals = payload.filter(isHospitalRecord);
+  const hospitals = payload.filter((item) => {
+    const valid = isHospitalRecord(item);
+    if (!valid && import.meta.env.DEV) console.warn('[isHospitalRecord failed]', item);
+    return valid;
+  });
   const dropped = payload.length - hospitals.length;
 
   if (import.meta.env.DEV && dropped > 0) {
     console.warn(`[fetchHospitals] 병원 응답 데이터 검증 실패: ${dropped}건`);
-  }
-
-  if (dropped > 0) {
-    throw new Error('일부 병원 정보가 예상과 달라 최근 확인된 정보를 먼저 보여드립니다');
   }
 
   if (hospitals.length === 0) {

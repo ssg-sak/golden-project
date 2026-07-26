@@ -1,6 +1,9 @@
-/** 대구광역시 행정권역 경계. 군위군 편입 이후 북쪽 권역까지 포함한다. */
-export const DAEGU_SW = { lat: 35.68, lng: 128.38 };
-export const DAEGU_NE = { lat: 36.26, lng: 128.84 };
+/**
+ * 행정동 GeoJSON 전체 범위를 바깥쪽 0.01도 단위로 반올림한 안전 경계다.
+ * 직사각형 판정이 정확한 행정구역 판정은 아니지만 유효한 대구 좌표를 잘라내지 않아야 한다.
+ */
+export const DAEGU_SW = { lat: 35.6, lng: 128.34 };
+export const DAEGU_NE = { lat: 36.34, lng: 128.91 };
 
 export function clampToDaeguBounds(lat: number, lng: number): { lat: number; lng: number } {
   return {
