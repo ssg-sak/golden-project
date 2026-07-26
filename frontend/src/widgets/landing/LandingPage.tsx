@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { HOSPITALS_LOADING_MESSAGE } from '../../shared/constants/loading-messages';
 import { useSortedHospitalsByDistance } from '../../shared/hooks/useSortedHospitalsByDistance';
