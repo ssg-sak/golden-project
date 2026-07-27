@@ -77,6 +77,8 @@ docs/**
 !docs/images/
 !docs/images/eda/
 !docs/images/eda/*.png
+!docs/images/citizen-map.png
+!docs/images/golden-governance.png
 
 # 피드백 반영 과정 공개 기록
 !docs/plans/
