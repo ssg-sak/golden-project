@@ -136,8 +136,8 @@ P0가 끝나지 않으면 P1 작업을 시작하지 않는다. 7월 29일 이후
 | 질문 | 답변의 중심 | 근거 |
 |---|---|---|
 | 왜 이 문제가 중요한가 | 시민 탐색과 지역 접근성 격차를 분리하되 연결 | [`README.md`](../README.md) |
-| 데이터가 믿을 만한가 | 출처·기준시점·결측·이상치·계보를 공개 | [`data_dictionary.md`](./data_dictionary.md), [`EDA_REPORT.md`](./EDA_REPORT.md) |
-| 왜 이 분석 방법을 선택했나 | VDI·도로 ETA·K-Means의 역할과 대안을 구분 | [`methodology.md`](./methodology.md) |
+| 데이터가 믿을 만한가 | 출처·기준시점·결측·이상치·계보를 공개 | [`data_dictionary.md`](../../core/data_dictionary.md), [`EDA_REPORT.md`](../../reports/EDA_REPORT.md) |
+| 왜 이 분석 방법을 선택했나 | VDI·도로 ETA·K-Means의 역할과 대안을 구분 | [`methodology.md`](../../core/methodology.md) |
 | 결과를 다시 만들 수 있나 | 테스트, CI, 해시, 고정 정책 릴리스로 검증 | [`FINAL_PORTFOLIO_FREEZE_REPORT_20260718.md`](./archive/FINAL_PORTFOLIO_FREEZE_REPORT_20260718.md) |
 | 의료적으로 안전한가 | 조회값과 수용 판단을 분리하고 119·1339·기관 확인을 우선 | README와 활성 시민 화면 |
 | 운영 중 API가 실패하면 어떻게 하나 | 이전 검증값·미확인 상태·정적 기준정보를 구분 | [`01_Architecture_and_Tech.md`](./01_Architecture_and_Tech.md) |
