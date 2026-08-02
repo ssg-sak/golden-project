@@ -7,6 +7,7 @@
 | 상태 | 의미 | 관리 원칙 |
 |---|---|---|
 | `CURRENT` | 현재 구조·방법·데이터 계약을 설명하는 기준 문서 | 기존 문서를 갱신하고 같은 주제의 새 문서를 중복 생성하지 않음 |
+| `ACTIVE` | 종료일이나 완료 조건이 남아 있는 진행 계획 | 완료되면 결과를 확인한 뒤 `archive/plans/`로 이동함 |
 | `EVIDENCE` | 특정 시점의 분석·검증 결과 | 작성일과 검증 범위를 유지하며 새 검증은 새 기록으로 남김 |
 | `TEMPLATE` | 반복 작업에 사용하는 빈 양식 | 실제 결과와 섞지 않고 입력란을 유지함 |
 | `ARCHIVE` | 현재 구현과 다를 수 있는 과거 기록 | 현행 근거로 인용하지 않고 원문과 Git 이력을 보존함 |
@@ -20,6 +21,12 @@
 | [데이터 사전](core/data_dictionary.md) | 정본 데이터, 필드, 단위, JOIN과 해석 범위 | `CURRENT` |
 | [KPI 운영 기준](core/kpi.md) | 검증된 분석값과 운영 계측 지표의 구분 | `CURRENT` |
 
+## 진행 중 계획
+
+| 문서 | 기간·목적 | 상태 |
+|---|---|---|
+| [기업 관계자 방문 준비 로드맵](plans/active/ENTERPRISE_VISIT_ROADMAP_20260822.md) | 2026-08-22 방문 전 검증·리허설·동결 계획 | `ACTIVE` |
+
 ## 검증 및 분석 기록
 
 | 문서 | 기준일·범위 | 상태 |
@@ -28,6 +35,9 @@
 | [데이터 품질 보고서](reports/DATA_QUALITY_REPORT.md) | 정본·좌표·경로·산식 품질 점검 | `EVIDENCE` |
 | [공개 데모 검증 보고서](reports/DEMO_VALIDATION_REPORT_20260724.md) | 2026-07-24 공개 화면과 PDF | `EVIDENCE` |
 | [최종 테스트 보고서](reports/TEST_REPORT_20260726.md) | 2026-07-26 단위·통합·E2E·비기능 검증 | `EVIDENCE` |
+| [접근성 후보 역추적 1차 보고서](reports/accessibility_candidate_trace_report_20260715.md) | 2026-07-15 직선거리 기반 후보별 개선량 초안 | `EVIDENCE` |
+| [후보 민감도 분석 보고서](reports/candidate_sensitivity_analysis_report_20260715.md) | 2026-07-15 K·시드·거리 상한·군위 조건 비교 | `EVIDENCE` |
+| [투영좌표 K-Means 비교 보고서](reports/projected_kmeans_candidate_comparison_report_20260715.md) | 2026-07-15 EPSG:5179 후보 안정성 실험 | `EVIDENCE` |
 
 ## 양식과 보관 자료
 
