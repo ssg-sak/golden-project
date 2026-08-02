@@ -4,7 +4,7 @@
 
 [배포 서비스](https://ssg-sak.github.io/golden-project/) ·
 [정책분석 보고서](data/reports/daegu-golden-time-policy-analysis-report.pdf) ·
-[검증 기록](docs/DEMO_VALIDATION_REPORT_20260724.md)
+[검증 기록](docs/reports/DEMO_VALIDATION_REPORT_20260724.md)
 
 > 병상 정보는 조회 시점의 참고값이며 실제 진료·수용 가능 여부를 보장하지 않습니다.
 > 응급상황에서는 119·1339 또는 의료기관에 직접 확인해야 합니다.
@@ -34,7 +34,7 @@
 | ![시민 구조망 화면](docs/images/citizen-map.png) | ![골든 거버넌스 화면](docs/images/golden-governance.png) |
 
 데스크톱·모바일 반복 검증과 캡처 조건은
-[공개 데모 검증 보고서](docs/DEMO_VALIDATION_REPORT_20260724.md)에서 확인할 수 있습니다.
+[공개 데모 검증 보고서](docs/reports/DEMO_VALIDATION_REPORT_20260724.md)에서 확인할 수 있습니다.
 
 ## 분석 흐름
 
@@ -77,7 +77,7 @@ flowchart LR
 - 서버 비밀값은 환경 변수로 관리하고 `.env`는 Git에서 제외합니다.
 - 2026-07-26 기준 분석 14건, 백엔드 47건, 프론트 21건과 E2E 2건이 통과했습니다.
 
-상세 결과는 [최종 테스트 보고서](docs/TEST_REPORT_20260726.md)를 참고해 주세요.
+상세 결과는 [최종 테스트 보고서](docs/reports/TEST_REPORT_20260726.md)를 참고해 주세요.
 
 ## 로컬 실행
 
@@ -121,9 +121,8 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ## 상세 문서
 
-- [접근성 분석 방법론](docs/methodology.md)
-- [EDA 보고서](docs/EDA_REPORT.md)
-- [데이터 품질 보고서](docs/DATA_QUALITY_REPORT.md)
-- [데이터 사전](docs/data_dictionary.md)
-- [프로젝트 구조](docs/PROJECT_STRUCTURE.md)
-- [최종 테스트 보고서](docs/TEST_REPORT_20260726.md)
+- [문서 안내](docs/README.md)
+- [접근성 분석 방법론](docs/core/methodology.md)
+- [데이터 사전](docs/core/data_dictionary.md)
+- [프로젝트 구조](docs/core/PROJECT_STRUCTURE.md)
+- [검증 및 분석 기록](docs/reports/)

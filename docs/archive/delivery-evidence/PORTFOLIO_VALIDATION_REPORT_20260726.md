@@ -4,7 +4,7 @@
 
 **판정: 설명 가능한 포트폴리오 산출물과 의존성 보안·E2E 종료 조치의 로컬 검증 완료**
 
-2026-07-26 추가 비기능 검증에서 탐지된 프론트 운영 의존성 High advisory는 PostCSS 8.5.18과 React Router 8.3.0 적용, `react-router-dom` 제거로 조치했다. 단위·E2E 기능 시나리오·Windows 테스트 서버 자동 종료·린트·타입·빌드와 온라인 보안 감사 재검증을 통과했다. 상세 판정은 `docs/TEST_REPORT_20260726.md`를 따른다.
+2026-07-26 추가 비기능 검증에서 탐지된 프론트 운영 의존성 High advisory는 PostCSS 8.5.18과 React Router 8.3.0 적용, `react-router-dom` 제거로 조치했다. 단위·E2E 기능 시나리오·Windows 테스트 서버 자동 종료·린트·타입·빌드와 온라인 보안 감사 재검증을 통과했다. 상세 판정은 `docs/reports/TEST_REPORT_20260726.md`를 따른다.
 
 Golden Data Lab의 코드·문서·산출물은 이번 생성과 검증 범위에서 제외했다. 이 보고서는 Golden Governance 현재 저장소의 검증된 정책 릴리스, EDA, 데이터 품질, KPI, 서비스 화면만 다룬다.
 

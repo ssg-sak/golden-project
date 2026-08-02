@@ -1,8 +1,8 @@
 # 대구 골든타임 프로젝트 구조
 
-최종 갱신: 2026-07-19
+최종 갱신: 2026-08-02
 
-이 문서는 저장소의 모든 파일명을 나열하지 않고, 실제 실행·분석·검증·배포 흐름을 이해하는 데 필요한 구조만 설명합니다. 과거 구현 기록은 `docs/01_Architecture_and_Tech.md`부터 `docs/07_Uncategorized.md`까지의 보관 문서를 참고하되, 현재 동작은 이 문서와 README, 활성 코드, 테스트를 우선합니다.
+이 문서는 저장소의 모든 파일명을 나열하지 않고, 실제 실행·분석·검증·배포 흐름을 이해하는 데 필요한 구조만 설명합니다. 과거 구현 기록은 `docs/archive/legacy-consolidated/`에 보관하며, 현재 동작은 이 문서와 README, 활성 코드, 테스트를 우선합니다.
 
 ## 1. 전체 구조
 
@@ -31,7 +31,12 @@ golden-project/
 │  └─ hospitals.db          병원 기준정보 SQLite
 ├─ scripts/                  EDA·추출·로컬 개발 보조 명령
 ├─ tests/                    프론트·백엔드·분석 테스트
-├─ docs/                     방법론·데이터 사전·검증·회고 문서
+├─ docs/
+│  ├─ core/                 현재 구조·방법론·데이터·KPI 기준
+│  ├─ reports/              날짜가 고정된 분석·검증 기록
+│  ├─ templates/            재사용 문서 양식
+│  ├─ archive/              과거 통합 문서와 완료된 계획
+│  └─ images/               문서용 화면·분석 이미지
 ├─ .github/workflows/        CI 검증과 GitHub Pages 배포
 ├─ README.md                 프로젝트 대표 설명
 ├─ Dockerfile                Render용 백엔드 컨테이너
@@ -137,7 +142,7 @@ CI는 핵심 정책 릴리스를 재생성한 뒤 처리용·공개용 사본의
 
 ## 6. 최종 정책보고서
 
-프로젝트 포트폴리오 정본과 서비스 공개 사본은 다음 경로를 사용합니다.
+정책분석 PDF의 생성본과 서비스 공개 사본은 다음 경로를 사용합니다.
 
 ```text
 output/pdf/golden-governance-portfolio-20260726.pdf
@@ -166,14 +171,14 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 | 문서 | 역할 |
 |---|---|
 | `README.md` | 프로젝트 정체성과 실행·배포·안전 안내 |
-| `docs/methodology.md` | VDI·K-Means·도로 접근성·후보 방법론 |
-| `docs/data_dictionary.md` | 데이터 필드와 안전한 해석 범위 |
-| `docs/EDA_REPORT.md` | 탐색적 데이터 분석 결과 |
-| `docs/DATA_QUALITY_REPORT.md` | 좌표·키·경로·산식 품질 판정 |
-| `docs/kpi.md` | 정적 분석과 외부 동적 원천을 구분한 KPI 운영 기준 |
-| `docs/PORTFOLIO_VALIDATION_REPORT_20260726.md` | 포트폴리오 PDF 생성·시각·회귀 검증 기록 |
-| `docs/TEST_REPORT_20260726.md` | 단위·통합·E2E·데이터·성능·보안 최종 판정 |
-| `docs/01`~`07` | 현재와 다른 내용이 포함된 과거 개발·회고 기록 |
+| `docs/README.md` | 문서 상태와 전체 분류 안내 |
+| `docs/core/methodology.md` | VDI·K-Means·도로 접근성·후보 방법론 |
+| `docs/core/data_dictionary.md` | 데이터 필드와 안전한 해석 범위 |
+| `docs/reports/EDA_REPORT.md` | 탐색적 데이터 분석 결과 |
+| `docs/reports/DATA_QUALITY_REPORT.md` | 좌표·키·경로·산식 품질 판정 |
+| `docs/core/kpi.md` | 정적 분석과 외부 동적 원천을 구분한 KPI 운영 기준 |
+| `docs/reports/TEST_REPORT_20260726.md` | 단위·통합·E2E·데이터·성능·보안 최종 판정 |
+| `docs/archive/` | 현재와 다른 내용이 포함된 과거 개발·회고 기록 |
 
 ## 9. 저장소에 두지 않는 파일
 
@@ -188,4 +193,4 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 
 ## 10. 별도 데이터분석 저장소
 
-SQL·Python EDA·Power BI 학습 로드맵은 제품 런타임과 분리해 [`ssg-sak/golden-data-lab`](https://github.com/ssg-sak/golden-data-lab)에서 관리합니다. 이 저장소는 시민 서비스와 정책분석 엔진의 실행·검증·배포에 집중합니다. 분리 근거와 이력 검증은 `docs/GOLDEN_DATA_LAB_SEPARATION_REPORT_20260719.md`를 따릅니다.
+SQL·Python EDA·Power BI 학습 로드맵은 제품 런타임과 분리해 [`ssg-sak/golden-data-lab`](https://github.com/ssg-sak/golden-data-lab)에서 관리합니다. 이 저장소는 시민 서비스와 정책분석 엔진의 실행·검증·배포에 집중합니다. 초기 분리 계획은 `docs/archive/plans/`에 보관합니다.
