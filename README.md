@@ -3,8 +3,8 @@
 시민의 응급의료기관 탐색과 행정의 의료 접근성 분석을 연결한 공공데이터 기반 웹서비스입니다.
 
 [배포 서비스](https://ssg-sak.github.io/golden-project/) ·
-[포트폴리오 PDF](output/pdf/golden-governance-portfolio-20260726.pdf) ·
-[검증 보고서](docs/PORTFOLIO_VALIDATION_REPORT_20260726.md)
+[정책분석 보고서](data/reports/daegu-golden-time-policy-analysis-report.pdf) ·
+[검증 기록](docs/DEMO_VALIDATION_REPORT_20260724.md)
 
 > 병상 정보는 조회 시점의 참고값이며 실제 진료·수용 가능 여부를 보장하지 않습니다.
 > 응급상황에서는 119·1339 또는 의료기관에 직접 확인해야 합니다.
@@ -103,16 +103,14 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 환경 변수는 [`.env.example`](.env.example)을 참고합니다.
 
-## 개인 기여
+## 구현 범위
 
-기획부터 데이터 파이프라인, 분석, 프론트엔드·백엔드, 검증과 배포까지 100% 개인 프로젝트로 수행했습니다.
+기획, 데이터 파이프라인, 분석, 프론트엔드·백엔드, 검증과 배포를 하나의 프로젝트 흐름으로 구현했습니다.
 
 - 문제 정의와 VDI·후보 검증 기준 설계
 - 공간 데이터 정제, 민감도 분석과 도로 ETA 파이프라인 구현
 - 시민·정책 화면 및 API 장애 대응 구조 구현
 - 테스트·데이터 계약·재현성 검증과 문서화
-
-AI 어시스턴트는 일부 보일러플레이트와 컴포넌트 마이그레이션에 보조적으로 사용했으며, 데이터 기준·분석 조건·검증 방식과 결과 해석은 직접 판단했습니다.
 
 ## 한계
 
@@ -123,11 +121,9 @@ AI 어시스턴트는 일부 보일러플레이트와 컴포넌트 마이그레�
 
 ## 상세 문서
 
-- [포트폴리오 전달 패키지](output/golden-governance-portfolio-package-20260726.zip)
 - [접근성 분석 방법론](docs/methodology.md)
 - [EDA 보고서](docs/EDA_REPORT.md)
 - [데이터 품질 보고서](docs/DATA_QUALITY_REPORT.md)
 - [데이터 사전](docs/data_dictionary.md)
 - [프로젝트 구조](docs/PROJECT_STRUCTURE.md)
-- [포트폴리오 검증 보고서](docs/PORTFOLIO_VALIDATION_REPORT_20260726.md)
 - [최종 테스트 보고서](docs/TEST_REPORT_20260726.md)
