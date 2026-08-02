@@ -77,6 +77,9 @@ docs/**
 !docs/reports/*.md
 !docs/templates/
 !docs/templates/*.md
+!docs/plans/
+!docs/plans/active/
+!docs/plans/active/*.md
 !docs/archive/
 !docs/archive/README.md
 !docs/archive/legacy-consolidated/
@@ -85,6 +88,10 @@ docs/**
 !docs/archive/delivery-evidence/*.md
 !docs/archive/plans/
 !docs/archive/plans/*.md
+!docs/archive/repository-history/
+!docs/archive/repository-history/*.md
+!docs/archive/drafts/
+!docs/archive/drafts/*.md
 !docs/**/*.csv
 !docs/images/
 !docs/images/eda/
@@ -92,32 +99,11 @@ docs/**
 !docs/images/citizen-map.png
 !docs/images/golden-governance.png
 
-# 피드백 반영 과정 공개 기록
-!docs/plans/
-docs/plans/**
-!docs/plans/emergency_room_feedback_implementation_plan_20260713.md
-!docs/plans/ai_model_eda_plan_20260713.md
-!docs/guides/
-docs/guides/**
-!docs/guides/emergency_room_recommendation_study_20260713.md
-!docs/guides/exception_handling_study_20260714.md
-!docs/architecture/
-docs/architecture/**
-!docs/architecture/component_file_map_20260714.md
-!docs/reports/
-docs/reports/**
-!docs/reports/emergency_room_feedback_implementation_report_20260713.md
-!docs/reports/friend_feedback_product_narrative_20260713.md
-!docs/reports/exception_handling_improvement_report_20260714.md
-
 # =========================
 # 기타 누락된 기밀 문서
 # =========================
 기획서.html
 frontend/src/widgets/map-dashboard/implementation_plan.md
-
-# 리포트 예외 추가 (추적 허용)
-!docs/reports/integrated_policy_model_final_report_20260715.md
 
 # 임시 파일 및 로컬 캐시 비활성화
 data/cache/
