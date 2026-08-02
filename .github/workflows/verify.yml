@@ -98,4 +98,4 @@ jobs:
           git diff --exit-code --
           data/processed/policy_release.json
           frontend/public/data/policy_release.json
-          docs/EDA_REPORT.md
+          docs/reports/EDA_REPORT.md

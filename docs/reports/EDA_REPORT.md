@@ -26,7 +26,7 @@
 ## 3. 응급의료 접근성 및 VDI 분포
 행정동별 취약성 지표의 기초 분포를 파악합니다.
 
-![VDI 및 거리 분포](images/eda/vdi_distance_dist.png)
+![VDI 및 거리 분포](../images/eda/vdi_distance_dist.png)
 
 **해석(Insights)**:
 - 도로 ETA 기반 VDI는 749.83~38,827.48, 평균 10,155.58, 중앙값 9,438.26입니다.
@@ -36,7 +36,7 @@
 ## 4. VDI 산식 구성요소와 민감도 점검
 현재 VDI는 `ln(1 + 일반 차량 ETA) × 취약인구`로 정의됩니다. 따라서 VDI와 취약인구·ETA의 상관은 독립적인 발견이 아니라 산식에 포함된 구성요소가 결과에 미치는 구조적 민감도를 점검하는 값입니다.
 
-![VDI 산식 구성요소 민감도 히트맵](images/eda/correlation_heatmap.png)
+![VDI 산식 구성요소 민감도 히트맵](../images/eda/correlation_heatmap.png)
 
 **해석(Insights)**:
 - 현재 VDI와 취약인구의 피어슨 상관계수는 0.915, 도로 ETA와의 상관계수는 0.034입니다.
@@ -51,7 +51,7 @@
 
 ## 5. 병원 티어별 접근성 비교
 
-![티어별 접근성](images/eda/accessibility_by_tier.png)
+![티어별 접근성](../images/eda/accessibility_by_tier.png)
 
 **해석(Insights)**:
 - 분류별 상자그림은 행정동별 최근접 분석 기관의 도로 ETA 분포를 비교합니다.
@@ -59,7 +59,7 @@
 
 ## 6. 최우선 취약 지역 (Top 10) 파악
 
-![취약 지역 Top 10](images/eda/top10_vulnerable_districts.png)
+![취약 지역 Top 10](../images/eda/top10_vulnerable_districts.png)
 
 **해석(Insights)**:
 - 현재 상위 3개는 달성군 화원읍, 달성군 다사읍, 달서구 진천동입니다.
@@ -68,7 +68,7 @@
 ## 7. 기존 기관 포함 전체 체계의 접근성 전후 비교
 p-median의 3개 후보 조합을 적용하되 기존 기관을 제거하지 않고, 행정동별로 기존 기관과 선택 후보 중 더 짧은 ETA를 사용해 전후를 비교합니다.
 
-![취약인구 가중 평균 ETA와 전체 체계 15분 커버율 전후 비교](images/eda/policy_improvement.png)
+![취약인구 가중 평균 ETA와 전체 체계 15분 커버율 전후 비교](../images/eda/policy_improvement.png)
 
 **해석(Insights)**:
 - 소아 후보 1, 3, 4 적용 시 취약인구 가중 평균 ETA는 15.932분에서 12.969분으로 줄고, 전체 체계의 15분 커버율은 42.94%에서 66.25%로 증가합니다.

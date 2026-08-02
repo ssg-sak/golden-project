@@ -105,7 +105,7 @@
 6. **좌표 보정의 집중:** 460건은 출발지 5곳·목적지 33곳에 집중됐고, 소아 후보 6과 어르신 후보 2가 각각 목적지 보정 150건을 차지한다. 따라서 460개의 독립 위치 오류처럼 해석하지 않고 후보별 보정 의존도를 함께 감시한다.
 7. **최근접 기관 ETA 동률:** 달서구 본리동에서 구병원과 열린아동병원이 5.62분으로 동률이다. 수치 영향은 없으며, 향후 재생성에서는 ETA 다음에 기관 키를 정렬해 표시 기관을 고정한다.
 
-세부 증거·심각도·자동검사 범위는 [데이터 품질 보고서](DATA_QUALITY_REPORT.md)를 정본으로 사용한다.
+세부 증거·심각도·자동검사 범위는 [데이터 품질 보고서](../reports/DATA_QUALITY_REPORT.md)를 정본으로 사용한다.
 
 ## 4. 서비스 KPI 계측 계획
 
@@ -165,9 +165,9 @@
 - 후보 조합 결과: `data/processed/policy_location_optimization.json`
 - 민감도 분석: `data/processed/candidate_sensitivity_analysis.json`
 - 인구 원천 매니페스트: `data/raw/population/daegu_population_real.manifest.json`
-- 방법론: `docs/methodology.md`
-- 분포·상관 점검: `docs/EDA_REPORT.md`
-- 데이터 품질 정본: `docs/DATA_QUALITY_REPORT.md`
+- 방법론: `docs/core/methodology.md`
+- 분포·상관 점검: `docs/reports/EDA_REPORT.md`
+- 데이터 품질 정본: `docs/reports/DATA_QUALITY_REPORT.md`
 - 운영 상태: `data/hospitals.db`의 `data_source_status`, `dashboard_snapshot`
 - KPI 재산출: `python scripts/kpi_metrics.py`
 

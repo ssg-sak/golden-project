@@ -1,6 +1,6 @@
 # Architecture and Tech
 
-> **⚠️ 현재 구현과 다른 과거 기록 (2026-07-18):** 이 문서는 개발 과정의 원문을 보존한 기록입니다. 제거된 HIRA 연동·자원추천·구형 24개 기관 산출물과 과거의 `진료 가능`, `수용 불가`, 과장된 정책 표현이 남아 있을 수 있으며 현재 서비스 설명이나 안전 기준으로 사용하지 않습니다. 현행 기준은 `README.md`, `docs/PROJECT_STRUCTURE.md`, `docs/methodology.md`, `ai-model/run_integrated_policy_pipeline.py`입니다.
+> **⚠️ 현재 구현과 다른 과거 기록 (2026-07-18):** 이 문서는 개발 과정의 원문을 보존한 기록입니다. 제거된 HIRA 연동·자원추천·구형 24개 기관 산출물과 과거의 `진료 가능`, `수용 불가`, 과장된 정책 표현이 남아 있을 수 있으며 현재 서비스 설명이나 안전 기준으로 사용하지 않습니다. 현행 기준은 `README.md`, `docs/core/PROJECT_STRUCTURE.md`, `docs/core/methodology.md`, `ai-model/run_integrated_policy_pipeline.py`입니다.
 
 
 ---

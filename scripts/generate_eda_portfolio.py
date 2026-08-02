@@ -219,9 +219,11 @@ def main() -> None:
     )
     analysis_dir = project_root / "analysis"
     docs_dir = project_root / "docs"
+    reports_dir = docs_dir / "reports"
     img_dir = docs_dir / "images" / "eda"
 
     analysis_dir.mkdir(parents=True, exist_ok=True)
+    reports_dir.mkdir(parents=True, exist_ok=True)
     img_dir.mkdir(parents=True, exist_ok=True)
 
     korean_font_available = configure_plot_font()
@@ -392,7 +394,7 @@ def main() -> None:
 ## 3. 응급의료 접근성 및 VDI 분포
 행정동별 취약성 지표의 기초 분포를 파악합니다.
 
-![VDI 및 거리 분포](images/eda/vdi_distance_dist.png)
+![VDI 및 거리 분포](../images/eda/vdi_distance_dist.png)
 
 **해석(Insights)**:
 - 도로 ETA 기반 VDI는 {df['vdi'].min():,.2f}~{df['vdi'].max():,.2f}, 평균 {df['vdi'].mean():,.2f}, 중앙값 {df['vdi'].median():,.2f}입니다.
@@ -402,7 +404,7 @@ def main() -> None:
 ## 4. VDI 산식 구성요소와 민감도 점검
 현재 VDI는 `ln(1 + 일반 차량 ETA) × 취약인구`로 정의됩니다. 따라서 VDI와 취약인구·ETA의 상관은 독립적인 발견이 아니라 산식에 포함된 구성요소가 결과에 미치는 구조적 민감도를 점검하는 값입니다.
 
-![VDI 산식 구성요소 민감도 히트맵](images/eda/correlation_heatmap.png)
+![VDI 산식 구성요소 민감도 히트맵](../images/eda/correlation_heatmap.png)
 
 **해석(Insights)**:
 - 현재 VDI와 취약인구의 피어슨 상관계수는 {df['vdi'].corr(df['pop_vul']):.3f}, 도로 ETA와의 상관계수는 {df['vdi'].corr(df['road_eta']):.3f}입니다.
@@ -417,7 +419,7 @@ def main() -> None:
 
 ## 5. 병원 티어별 접근성 비교
 
-![티어별 접근성](images/eda/accessibility_by_tier.png)
+![티어별 접근성](../images/eda/accessibility_by_tier.png)
 
 **해석(Insights)**:
 - 분류별 상자그림은 행정동별 최근접 분석 기관의 도로 ETA 분포를 비교합니다.
@@ -425,7 +427,7 @@ def main() -> None:
 
 ## 6. 최우선 취약 지역 (Top 10) 파악
 
-![취약 지역 Top 10](images/eda/top10_vulnerable_districts.png)
+![취약 지역 Top 10](../images/eda/top10_vulnerable_districts.png)
 
 **해석(Insights)**:
 - 현재 상위 3개는 {top_names}입니다.
@@ -434,7 +436,7 @@ def main() -> None:
 ## 7. 기존 기관 포함 전체 체계의 접근성 전후 비교
 p-median의 3개 후보 조합을 적용하되 기존 기관을 제거하지 않고, 행정동별로 기존 기관과 선택 후보 중 더 짧은 ETA를 사용해 전후를 비교합니다.
 
-![취약인구 가중 평균 ETA와 전체 체계 15분 커버율 전후 비교](images/eda/policy_improvement.png)
+![취약인구 가중 평균 ETA와 전체 체계 15분 커버율 전후 비교](../images/eda/policy_improvement.png)
 
 **해석(Insights)**:
 - 소아 후보 {', '.join(map(str, policy_kpis['pediatric']['selected_candidate_ids']))} 적용 시 취약인구 가중 평균 ETA는 {policy_kpis['pediatric']['baseline_weighted_eta_minutes']:.3f}분에서 {policy_kpis['pediatric']['after_weighted_eta_minutes']:.3f}분으로 줄고, 전체 체계의 15분 커버율은 {policy_kpis['pediatric']['baseline_15min_coverage_percent']:.2f}%에서 {policy_kpis['pediatric']['after_15min_coverage_percent']:.2f}%로 증가합니다.
@@ -448,7 +450,7 @@ p-median의 3개 후보 조합을 적용하되 기존 기관을 제거하지 않
 - **데이터 한계**: ETA는 수집 시점의 일반 차량 경로이며 병상·의료진·구급차 우선통행·실제 환자 흐름을 반영하지 않습니다.
 - **후속 과제**: 원천 수집일 확정, 시간대별 반복 수집, 실제 이송자료를 이용한 외부 타당성 검증이 필요합니다. 검증 전 후보는 현장조사 우선순위로만 해석합니다.
 """
-    with open(docs_dir / "EDA_REPORT.md", "w", encoding='utf-8') as f:
+    with open(reports_dir / "EDA_REPORT.md", "w", encoding='utf-8') as f:
         f.write(report_content)
 
     # 4. Generate a reader-facing Jupyter notebook.
