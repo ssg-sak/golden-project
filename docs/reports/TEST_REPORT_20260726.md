@@ -80,7 +80,7 @@ Golden Data Lab은 이 프로젝트와 별개이므로 테스트·판정·패키
 | 프론트 보안 감사 | `npm.cmd audit --prefix frontend --omit=dev --audit-level=high` | PASS, 0건 |
 | Python 보안 감사 | 임시 격리 `pip-audit -r backend/requirements.txt` | PASS, 0건 |
 
-CI에서는 운영체제별 Matplotlib·한글 폰트 렌더링에 따라 달라질 수 있는 `image/png` 바이트를 Git 정본과 직접 비교하지 않는다. 대신 코드 셀 5개가 모두 실행 결과를 남겼는지 확인하고, 커밋본과 생성본의 셀 종류·소스 구조가 같은지 별도로 검증한다. 정책 릴리스 두 사본과 `docs/EDA_REPORT.md`는 계속 바이트 단위 `git diff`를 적용한다.
+CI에서는 운영체제별 Matplotlib·한글 폰트 렌더링에 따라 달라질 수 있는 `image/png` 바이트를 Git 정본과 직접 비교하지 않는다. 대신 코드 셀 5개가 모두 실행 결과를 남겼는지 확인하고, 커밋본과 생성본의 셀 종류·소스 구조가 같은지 별도로 검증한다. 정책 릴리스 두 사본과 `docs/reports/EDA_REPORT.md`는 계속 바이트 단위 `git diff`를 적용한다.
 
 ## 6. 성능 결과의 해석 범위
 

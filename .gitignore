@@ -68,11 +68,23 @@ Thumbs.db
 docs/**
 !docs/
 
-# 2. 예외적으로 공개할 외부 어필용 포트폴리오 파일만 허용
+# 2. 저장소에서 관리할 공개 문서와 이미지 허용
 !docs/README.md
-!docs/PORTFOLIO.md
-!docs/CASE_STUDY_PORTFOLIO.md
 !docs/*.md
+!docs/core/
+!docs/core/*.md
+!docs/reports/
+!docs/reports/*.md
+!docs/templates/
+!docs/templates/*.md
+!docs/archive/
+!docs/archive/README.md
+!docs/archive/legacy-consolidated/
+!docs/archive/legacy-consolidated/*.md
+!docs/archive/delivery-evidence/
+!docs/archive/delivery-evidence/*.md
+!docs/archive/plans/
+!docs/archive/plans/*.md
 !docs/**/*.csv
 !docs/images/
 !docs/images/eda/
