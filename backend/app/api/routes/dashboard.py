@@ -15,7 +15,11 @@ from app.services.data_seed import ensure_seeded
 from app.services.fetchers.population_api import (
     latest_completed_population_yyyymm,
 )
-from app.services.pipeline import ACTUAL_ROAD_MATRIX_PATH, run_data_pipeline
+from app.services.pipeline import (
+    ACTUAL_ROAD_MATRIX_PATH,
+    PROJECT_DIR,
+    run_data_pipeline,
+)
 
 router = APIRouter(tags=["dashboard"])
 
@@ -28,6 +32,7 @@ EXTERNAL_SOURCE_NAMES = frozenset(
         "population",
     }
 )
+POLICY_RELEASE_PATH = PROJECT_DIR / "data" / "processed" / "policy_release.json"
 
 
 def _ensure_utc(dt: datetime | None) -> datetime | None:
@@ -213,6 +218,44 @@ def _build_fallback_summary() -> dict:
     }
 
 
+def _release_status_payload(statuses: list[DataSourceStatus]) -> dict[str, Any]:
+    try:
+        metadata = json.loads(POLICY_RELEASE_PATH.read_text(encoding="utf-8")).get(
+            "metadata",
+            {},
+        )
+    except (json.JSONDecodeError, OSError):
+        metadata = {}
+    analysis_month = str(metadata.get("population_base_month") or "")
+    operational_month = next(
+        (
+            str(status.source_version or "")
+            for status in statuses
+            if status.source_name == "population"
+        ),
+        "",
+    )
+    analysis_key = analysis_month.replace(".", "")
+    operational_key = operational_month.replace(".", "")
+    waiting_for_analysis = bool(
+        analysis_key.isdigit()
+        and operational_key.isdigit()
+        and operational_key > analysis_key
+    )
+    return {
+        "state": "waiting_analysis_source" if waiting_for_analysis else "published",
+        "statusLabel": (
+            "연령별 분석 자료 공개 대기"
+            if waiting_for_analysis
+            else "검증된 분석 결과 공개 중"
+        ),
+        "version": metadata.get("version"),
+        "populationBaseMonth": analysis_month or None,
+        "operationalPopulationMonth": operational_month or None,
+        "releasedAt": metadata.get("released_at"),
+    }
+
+
 @router.get("/api/dashboard/summary")
 def get_dashboard_summary(db: Session = Depends(get_db)) -> dict:
     ensure_seeded(db)
@@ -313,6 +356,7 @@ def get_data_status(db: Session = Depends(get_db)) -> dict:
         "sources": source_payloads,
         "latestSnapshotAt": latest_snapshot_at.isoformat() if latest_snapshot_at else None,
         "status": freshness,
+        "release": _release_status_payload(statuses),
         "analysis": {
             "version": analysis_metadata.get("version"),
             "resourceCount": analysis_metadata.get("resource_count"),

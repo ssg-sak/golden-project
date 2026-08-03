@@ -30,6 +30,7 @@ jobs:
       - name: Build Version
         run: npm run build
         env:
+          # Kakao JavaScript 앱 키는 공개 번들에 포함되는 식별자이며 허용 도메인으로 제한한다.
           VITE_KAKAO_MAP_APP_KEY: b54a1f93a683570c939eeb09a140e9bb
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
@@ -39,3 +40,34 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./frontend/dist
           commit_message: "deploy: 깃허브 페이지 데모 버전 자동 배포"
+
+      - name: Verify published policy analysis version
+        working-directory: .
+        shell: bash
+        run: |
+          SITE_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/"
+          LOCAL_POINTER="frontend/public/data/policy_release.latest.json"
+          REMOTE_POINTER="${RUNNER_TEMP}/policy_release.latest.json"
+          curl --fail --location --retry 8 --retry-all-errors --retry-delay 10 \
+            "${SITE_URL}data/policy_release.latest.json?run=${GITHUB_RUN_ID}" \
+            --output "$REMOTE_POINTER"
+          export SITE_URL LOCAL_POINTER REMOTE_POINTER
+          python -X utf8 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import urllib.request
+
+          with open(os.environ["LOCAL_POINTER"], encoding="utf-8") as source:
+              local_pointer = json.load(source)
+          with open(os.environ["REMOTE_POINTER"], encoding="utf-8") as source:
+              remote_pointer = json.load(source)
+          if remote_pointer["version"] != local_pointer["version"]:
+              raise SystemExit("공개 사이트의 분석 버전이 배포 대상과 다릅니다.")
+          bundle_url = os.environ["SITE_URL"] + remote_pointer["bundle_url"]
+          with urllib.request.urlopen(bundle_url, timeout=30) as response:
+              bundle = response.read()
+          if hashlib.sha256(bundle).hexdigest() != remote_pointer["bundle_sha256"]:
+              raise SystemExit("공개 사이트의 분석 파일 해시가 포인터와 다릅니다.")
+          print(f"공개 분석 버전 검증 완료: {remote_pointer['version']}")
+          PY

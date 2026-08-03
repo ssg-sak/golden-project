@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import json
 from pathlib import Path
 
 
@@ -61,3 +62,24 @@ def test_policy_release_is_complete_and_uses_single_version():
         release["optimization"]["metadata"]["matrix_source_sha256"]
         == metadata["source_sha256"]
     )
+
+
+def test_policy_release_writes_version_pointer_last(tmp_path, monkeypatch):
+    processed_path = tmp_path / "processed" / "policy_release.json"
+    public_path = tmp_path / "public" / "policy_release.json"
+    pointer_path = tmp_path / "public" / "policy_release.latest.json"
+    releases_dir = tmp_path / "public" / "releases"
+    monkeypatch.setattr(build_policy_release, "PROCESSED_RELEASE_PATH", processed_path)
+    monkeypatch.setattr(build_policy_release, "PUBLIC_RELEASE_PATH", public_path)
+    monkeypatch.setattr(build_policy_release, "PUBLIC_RELEASE_POINTER_PATH", pointer_path)
+    monkeypatch.setattr(build_policy_release, "PUBLIC_RELEASES_DIR", releases_dir)
+
+    build_policy_release.main()
+
+    pointer = json.loads(pointer_path.read_text(encoding="utf-8"))
+    versioned_path = releases_dir / build_policy_release.VERSION / "policy_release.json"
+    assert pointer["version"] == build_policy_release.VERSION
+    assert pointer["bundle_url"] == (
+        f"data/releases/{build_policy_release.VERSION}/policy_release.json"
+    )
+    assert pointer["bundle_sha256"] == build_policy_release.file_hash(versioned_path)
