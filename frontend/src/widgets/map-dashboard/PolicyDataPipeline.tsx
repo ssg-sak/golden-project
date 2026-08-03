@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DASHBOARD_DATA_STATUS_API_URL } from '../../shared/config/api';
 import { fetchWithTimeout } from '../../shared/lib/fetch-with-timeout';
+import { formatPolicyReleaseLabel } from '../../shared/lib/policy-release-label';
 import { usePolicyReleaseStore } from '../../shared/store/policyReleaseStore';
 
 interface DataSourceStatusRecord {
@@ -151,16 +152,6 @@ function formatSnapshotTime(value: string | null): string {
   })} 확인`;
 }
 
-function formatAnalysisEdition(releasedAt?: string, version?: string | null): string {
-  const releasedDate = releasedAt ? new Date(releasedAt) : null;
-  if (releasedDate && !Number.isNaN(releasedDate.getTime())) {
-    return `${releasedDate.getFullYear()}.${String(releasedDate.getMonth() + 1).padStart(2, '0')}.${String(releasedDate.getDate()).padStart(2, '0')} 검증본`;
-  }
-  const versionDate = version?.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (versionDate) return `${versionDate[1]}.${versionDate[2]}.${versionDate[3]} 검증본`;
-  return '검증된 분석본';
-}
-
 export function PolicyDataPipeline({
   districtCount,
   hospitalCount,
@@ -234,7 +225,7 @@ export function PolicyDataPipeline({
         : '도로 경로 결과 확인 중';
     const analysisTone: StageTone =
       analysis?.pending || (analysis?.missingRouteCount ?? 0) > 0 ? 'warning' : 'stable';
-    const analysisEdition = formatAnalysisEdition(
+    const analysisEdition = formatPolicyReleaseLabel(
       policyRelease?.metadata.released_at,
       analysis?.version,
     );
