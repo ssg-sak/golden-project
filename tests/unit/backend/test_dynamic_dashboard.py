@@ -220,6 +220,48 @@ def test_data_status_exposes_analysis_version_and_pending_state(
     }
 
 
+def test_data_status_explains_when_operational_population_is_ahead(
+    db_session,
+    monkeypatch,
+    tmp_path,
+):
+    monkeypatch.setattr("app.api.routes.dashboard.ensure_seeded", lambda _db: {})
+    release_path = tmp_path / "policy_release.json"
+    release_path.write_text(
+        json.dumps(
+            {
+                "metadata": {
+                    "version": "2026-06-r1",
+                    "population_base_month": "2026.06",
+                    "released_at": "2026-07-01T18:00:00+09:00",
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("app.api.routes.dashboard.POLICY_RELEASE_PATH", release_path)
+    db_session.add(
+        DataSourceStatus(
+            source_name="population",
+            source_version="2026.07",
+            status="updated",
+            record_count=150,
+        )
+    )
+    db_session.commit()
+
+    result = get_data_status(db_session)
+
+    assert result["release"] == {
+        "state": "waiting_analysis_source",
+        "statusLabel": "연령별 분석 자료 공개 대기",
+        "version": "2026-06-r1",
+        "populationBaseMonth": "2026.06",
+        "operationalPopulationMonth": "2026.07",
+        "releasedAt": "2026-07-01T18:00:00+09:00",
+    }
+
+
 def test_external_freshness_is_checked_per_source_and_exposes_fallback_age(
     db_session,
     monkeypatch,

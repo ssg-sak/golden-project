@@ -26,6 +26,7 @@
 | 문서 | 기간·목적 | 상태 |
 |---|---|---|
 | [기업 관계자 방문 준비 로드맵](plans/active/ENTERPRISE_VISIT_ROADMAP_20260822.md) | 2026-08-22 방문 전 검증·리허설·동결 계획 | `ACTIVE` |
+| [월간 정책 분석 결과 완전자동화 설계](plans/active/MONTHLY_POLICY_RELEASE_AUTOMATION_DESIGN.md) | 공식 인구 공표 후 VDI·추천지·프론트 자동 반영 설계 | `ACTIVE` |
 
 ## 검증 및 분석 기록
 

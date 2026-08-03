@@ -15,6 +15,8 @@ from typing import Any
 
 import httpx
 
+from release_config import analysis_version
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 ENV_PATH = PROJECT_ROOT / ".env"
@@ -33,7 +35,7 @@ FRONTEND_ASSET_GEOJSON_PATH = PROJECT_ROOT / "frontend" / "src" / "assets" / "da
 
 KAKAO_DIRECTIONS_URL = "https://apis-navi.kakaomobility.com/v1/directions"
 CACHE_VERSION = 1
-ANALYSIS_VERSION = "2026-07-18-r2"
+ANALYSIS_VERSION = analysis_version()
 EXPECTED_DISTRICT_COUNT = 150
 EXPECTED_HOSPITAL_COUNT = 25
 EXPECTED_CANDIDATE_COUNT = 9

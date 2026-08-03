@@ -42,6 +42,14 @@ interface DataStatusResponse {
     staleExternalSources: string[];
     oldestSuccessAgeHours: number | null;
   };
+  release?: {
+    state: string;
+    statusLabel: string;
+    version: string | null;
+    populationBaseMonth: string | null;
+    operationalPopulationMonth: string | null;
+    releasedAt: string | null;
+  };
   analysis?: {
     version: string | null;
     resourceCount: number | null;
@@ -264,7 +272,9 @@ export function PolicyDataPipeline({
         title: '현재 정책 분석',
         metric: analysisEdition,
         detail: `기관 ${analysis?.resourceCount ?? hospitalCount}곳 · 소아 ${analysis?.resourceCountByMode.pediatric ?? 6} · 어르신 ${analysis?.resourceCountByMode.senior ?? 19}`,
-        statusLabel: analysis?.missingRouteCount === 0 ? '검증 완료' : '표시 보류',
+        statusLabel:
+          dataStatus?.release?.statusLabel ??
+          (analysis?.missingRouteCount === 0 ? '검증 완료' : '표시 보류'),
         tone: analysis?.missingRouteCount === 0 ? 'success' : 'warning',
       },
     ];
