@@ -98,10 +98,11 @@ def start_public_data_scheduler() -> None:
         max_instances=1,
         misfire_grace_time=3600,
     )
-    # 전월 인구는 익월 1일 공표되므로 공표 직후인 2일에 첫 자동 수집을 시도한다.
+    # 정상 공표 기간에는 매일, 장기 지연 시에는 지정일 18시에 다시 확인한다.
+    # 해시가 같으면 unchanged로 끝나므로 반복 실행이 정책 공개본을 자동 승격하지 않는다.
     scheduler.add_job(
         _run_target,
-        CronTrigger(day=2, hour=4, minute=0, timezone=tz),
+        CronTrigger(day="1-7,10,15,20,25", hour=18, minute=0, timezone=tz),
         args=["population"],
         id="refresh_population",
         replace_existing=True,

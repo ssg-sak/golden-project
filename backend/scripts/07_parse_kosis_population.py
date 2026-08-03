@@ -30,6 +30,10 @@ AGE_5_9_IDX = 1
 AGE_65_START_IDX = 2
 TOTAL_POP_LABEL = "총인구수 (명)"
 SIDO_NAME = "대구광역시"
+OUTPOST_PARENT_NAMES = {
+    "논공읍공단출장소": "논공읍",
+    "다사읍서재출장소": "다사읍",
+}
 
 
 def parse_int(value: str) -> int:
@@ -44,7 +48,7 @@ def parse_kosis_csv(source: Path) -> list[dict[str, int | str]]:
     with source.open(encoding="cp949", newline="") as handle:
         rows = list(csv.reader(handle))
 
-    records: list[dict[str, int | str]] = []
+    records_by_name: dict[str, dict[str, int | str]] = {}
     current_sgg: str | None = None
 
     for row in rows[2:]:
@@ -63,22 +67,28 @@ def parse_kosis_csv(source: Path) -> list[dict[str, int | str]]:
             continue
         if current_sgg is None:
             continue
-        if "출장소" in region_name:
-            continue
+        if "출장소" in region_name and region_name not in OUTPOST_PARENT_NAMES:
+            raise ValueError(f"합산할 부모 행정동을 알 수 없는 출장소입니다: {region_name}")
 
         values = [parse_int(value) for value in row[2:]]
         age_0_9 = values[AGE_0_4_IDX] + values[AGE_5_9_IDX]
         age_65_plus = sum(values[AGE_65_START_IDX:])
-
-        records.append(
-            {
-                "동이름": f"{current_sgg} {region_name}",
+        parent_region_name = OUTPOST_PARENT_NAMES.get(region_name, region_name)
+        full_name = f"{current_sgg} {parent_region_name}"
+        existing = records_by_name.get(full_name)
+        if existing is None:
+            records_by_name[full_name] = {
+                "동이름": full_name,
                 "65세이상_인구": age_65_plus,
                 "0~9세_인구": age_0_9,
             }
-        )
+            continue
 
-    return records
+        # 출장소는 별도 생활권이 아니라 부모 읍 통계에 합산해야 원본 총합이 보존된다.
+        existing["65세이상_인구"] = int(existing["65세이상_인구"]) + age_65_plus
+        existing["0~9세_인구"] = int(existing["0~9세_인구"]) + age_0_9
+
+    return list(records_by_name.values())
 
 
 def resolve_source(path: Path | None) -> Path:
