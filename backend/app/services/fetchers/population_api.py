@@ -11,8 +11,13 @@ from dateutil.relativedelta import relativedelta
 
 from app.core.env import get_env
 from app.db.models import PopulationSnapshot
-from app.services.data_validation import validate_population
-from app.services.fetchers.base import check_and_update_status, log_failure, mark_degraded, mark_success
+from app.services.data_validation import DataValidationError, validate_population
+from app.services.fetchers.base import (
+    check_and_update_status,
+    log_failure,
+    mark_degraded,
+    mark_success,
+)
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
@@ -20,14 +25,40 @@ logger = logging.getLogger(__name__)
 SOURCE_NAME = "population"
 POPULATION_API_BASE = get_env(
     "POPULATION_API_BASE_URL",
-    "https://apis.data.go.kr/1741000/AdmDongPopulation/AdmDongPopulation",
+    "https://apis.data.go.kr/1741000/admmPpltnHhStus",
 )
-POPULATION_OPERATION = get_env("POPULATION_API_OPERATION", "getAdmDongPopulation")
+POPULATION_OPERATION = get_env(
+    "POPULATION_API_OPERATION",
+    "selectAdmmPpltnHhStus",
+)
 PROJECT_DIR = __import__("pathlib").Path(__file__).resolve().parents[4]
 POPULATION_CSV = PROJECT_DIR / "data" / "raw" / "population" / "daegu_population_real.csv"
 MAX_RETRIES = 3
 MAX_REQUESTS_PER_RUN = 60
 MAX_PAGES_PER_MONTH = 5
+PAGE_SIZE = 100
+DAEGU_SGG_ADMIN_CODES = (
+    "2711000000",  # 중구
+    "2714000000",  # 동구
+    "2717000000",  # 서구
+    "2720000000",  # 남구
+    "2723000000",  # 북구
+    "2726000000",  # 수성구
+    "2729000000",  # 달서구
+    "2771000000",  # 달성군
+    "2772000000",  # 군위군
+)
+EXPECTED_DAEGU_ADMIN_DONG_COUNT = 150
+DAEGU_ADMIN_SUBUNIT_PARENTS = {
+    # 행정안전부 API는 출장소를 별도 행정단위로 반환하지만, 프로젝트 경계는
+    # 읍 단위 150개이므로 인구를 버리지 않고 부모 읍에 합산한다.
+    "2771025400": "2771025300",  # 논공읍공단출장소 -> 논공읍
+    "2771025700": "2771025600",  # 다사읍서재출장소 -> 다사읍
+}
+
+
+class PopulationAPIConfigurationError(RuntimeError):
+    """인증·활용신청 문제처럼 재시도로 해결되지 않는 API 설정 오류."""
 
 
 def latest_completed_population_yyyymm(
@@ -46,8 +77,72 @@ def _safe_error_summary(exc: Exception | None) -> str:
     return type(exc).__name__
 
 
+def _response_error_summary(response: httpx.Response) -> str:
+    try:
+        payload = response.json()
+    except ValueError:
+        return f"HTTP {response.status_code}"
+
+    common_header = (
+        payload.get("OpenAPI_ServiceResponse", {}).get("cmmMsgHeader", {})
+        if isinstance(payload, dict)
+        else {}
+    )
+    message = (
+        common_header.get("returnAuthMsg")
+        or common_header.get("errMsg")
+        or common_header.get("returnReasonCode")
+    )
+    if message:
+        return f"HTTP {response.status_code}: {message}"
+    return f"HTTP {response.status_code}"
+
+
+def _parse_population_json(
+    payload: dict[str, Any],
+) -> tuple[list[dict[str, Any]], int]:
+    response_payload: Any = (
+        payload.get("response")
+        or payload.get("Response")
+        or payload
+    )
+    if not isinstance(response_payload, dict):
+        raise RuntimeError("Population API response payload is invalid")
+
+    operation_payload = response_payload.get("selectAdmmPpltnHhStus_response")
+    if isinstance(operation_payload, dict):
+        response_payload = operation_payload
+
+    head = response_payload.get("head") or {}
+    if not isinstance(head, dict):
+        raise RuntimeError("Population API response head is invalid")
+    result_code = str(head.get("resultCode") or "").strip()
+    if result_code == "3" and int(float(head.get("totalCount") or 0)) == 0:
+        return [], 0
+    if result_code and result_code not in {"0", "00", "INFO-000"}:
+        result_message = str(head.get("resultMsg") or "unknown error").strip()
+        raise RuntimeError(f"Population API returned {result_code}: {result_message}")
+
+    items_container = response_payload.get("items") or {}
+    if isinstance(items_container, dict):
+        items: Any = items_container.get("item")
+    else:
+        items = items_container
+    if not items:
+        rows: list[dict[str, Any]] = []
+    elif isinstance(items, dict):
+        rows = [items]
+    elif isinstance(items, list):
+        rows = [item for item in items if isinstance(item, dict)]
+    else:
+        raise RuntimeError("Population API response items are invalid")
+
+    total = int(float(head.get("totalCount") or len(rows)))
+    return rows, total
+
+
 class PopulationAPIClient:
-    def __init__(self):
+    def __init__(self) -> None:
         self.service_key = get_env("DATA_GO_KR_API_KEY", "") or ""
         self.request_count = 0
 
@@ -63,40 +158,49 @@ class PopulationAPIClient:
         client: httpx.AsyncClient,
         yyyymm: str,
         page_no: int,
+        admin_code: str,
     ) -> tuple[list[dict[str, Any]], int]:
         url = f"{POPULATION_API_BASE.rstrip('/')}/{POPULATION_OPERATION}"
         params = {
             "serviceKey": self.service_key,
-            "yearMonth": yyyymm,
-            "siDoCd": "27",
+            "admmCd": admin_code,
+            "srchFrYm": yyyymm,
+            "srchToYm": yyyymm,
+            "lv": "3",
+            "regSeCd": "1",
+            "type": "JSON",
             "pageNo": str(page_no),
-            "numOfRows": "1000",
-            "resultType": "json",
+            "numOfRows": str(PAGE_SIZE),
         }
         last_error: Exception | None = None
         for attempt in range(1, MAX_RETRIES + 1):
             self._reserve_request()
             try:
                 response = await client.get(url, params=params, timeout=20.0)
+                if response.status_code in {401, 403}:
+                    raise PopulationAPIConfigurationError(
+                        "Population API authentication/application failed: "
+                        f"{_response_error_summary(response)}"
+                    )
                 response.raise_for_status()
                 content_type = response.headers.get("content-type", "")
                 if "json" in content_type:
                     payload = response.json()
-                    body = payload.get("response", {}).get("body", {})
-                    items = body.get("items")
-                    total = int(body.get("totalCount") or 0)
-                    if not items:
-                        return [], total
-                    if isinstance(items, dict):
-                        return [items], total
-                    return list(items), total
+                    if not isinstance(payload, dict):
+                        raise RuntimeError("Population API JSON root is invalid")
+                    return _parse_population_json(payload)
 
                 rows, total = _parse_population_xml(response.text)
                 return rows, total
+            except PopulationAPIConfigurationError:
+                raise
             except (httpx.HTTPError, ValueError, KeyError) as exc:
                 last_error = exc
                 await asyncio.sleep(2 ** attempt)
-        raise RuntimeError(f"Population API failed for {yyyymm}: {_safe_error_summary(last_error)}")
+        raise RuntimeError(
+            f"Population API failed for {yyyymm}: "
+            f"{_safe_error_summary(last_error)}"
+        )
 
     async def find_latest_month_and_fetch(
         self,
@@ -113,27 +217,37 @@ class PopulationAPIClient:
             for offset in range(6):
                 target = latest_completed - relativedelta(months=offset)
                 yyyymm = target.strftime("%Y%m")
-                page = 1
                 collected: list[dict[str, Any]] = []
-                total = 0
+                month_complete = True
                 try:
-                    while True:
-                        rows, total = await self._fetch_page(
-                            client,
-                            yyyymm,
-                            page,
-                        )
-                        if not rows:
-                            break
-                        collected.extend(rows)
-                        if page * 1000 >= max(total, len(collected)):
-                            break
-                        if page >= MAX_PAGES_PER_MONTH:
-                            raise RuntimeError(
-                                f"Population API page limit exceeded for {yyyymm}: "
-                                f"{MAX_PAGES_PER_MONTH}"
+                    for admin_code in DAEGU_SGG_ADMIN_CODES:
+                        page = 1
+                        district_rows: list[dict[str, Any]] = []
+                        total = 0
+                        while True:
+                            rows, total = await self._fetch_page(
+                                client,
+                                yyyymm,
+                                page,
+                                admin_code,
                             )
-                        page += 1
+                            if not rows:
+                                break
+                            district_rows.extend(rows)
+                            if page * PAGE_SIZE >= max(total, len(district_rows)):
+                                break
+                            if page >= MAX_PAGES_PER_MONTH:
+                                raise RuntimeError(
+                                    "Population API page limit exceeded for "
+                                    f"{yyyymm}/{admin_code}: {MAX_PAGES_PER_MONTH}"
+                                )
+                            page += 1
+                        if not district_rows:
+                            month_complete = False
+                            break
+                        collected.extend(district_rows)
+                except PopulationAPIConfigurationError:
+                    raise
                 except RuntimeError as exc:
                     logger.info(
                         "Population month %s is unavailable; trying older month: %s",
@@ -141,8 +255,12 @@ class PopulationAPIClient:
                         exc,
                     )
                     continue
-                if collected:
+                if month_complete and collected:
                     return yyyymm, collected
+                logger.info(
+                    "Population month %s is not fully published; trying older month",
+                    yyyymm,
+                )
         raise RuntimeError("Population: 최근 6개월 내 데이터를 찾지 못했습니다.")
 
 
@@ -150,28 +268,65 @@ def _parse_population_xml(xml_text: str) -> tuple[list[dict[str, Any]], int]:
     if not xml_text.strip():
         return [], 0
     root = ET.fromstring(xml_text)
-    body = root.find("body")
-    if body is None:
-        return [], 0
-    total_el = body.find("totalCount")
+    head = root.find(".//head")
+    result_code_el = head.find("resultCode") if head is not None else None
+    result_code = (result_code_el.text or "").strip() if result_code_el is not None else ""
+    if result_code and result_code not in {"0", "00", "INFO-000"}:
+        result_message_el = head.find("resultMsg") if head is not None else None
+        result_message = (
+            (result_message_el.text or "unknown error").strip()
+            if result_message_el is not None
+            else "unknown error"
+        )
+        raise RuntimeError(f"Population API returned {result_code}: {result_message}")
+
+    total_el = (
+        head.find("totalCount")
+        if head is not None
+        else root.find(".//totalCount")
+    )
     total = int(total_el.text or 0) if total_el is not None else 0
-    items_el = body.find("items")
+    items_el = root.find(".//items")
     if items_el is None:
         return [], total
     rows: list[dict[str, Any]] = []
     for item_el in items_el.findall("item"):
-        row = {child.tag: child.text for child in item_el if child.tag and child.text is not None}
+        row = {
+            child.tag: child.text
+            for child in item_el
+            if child.tag and child.text is not None
+        }
         rows.append(row)
     return rows, total
 
 
+def _parse_integer(value: Any) -> int:
+    normalized = str(value or "0").replace(",", "").strip()
+    return int(float(normalized or "0"))
+
+
 def _parse_api_item(item: dict[str, Any], base_month: str) -> dict[str, Any] | None:
-    dong_code = item.get("admCd") or item.get("admcd") or item.get("admDongCd")
-    dong_name = item.get("admNm") or item.get("admnm") or item.get("admDongNm")
-    sido = item.get("siDoNm") or item.get("sidonm") or ""
+    dong_code = (
+        item.get("admmCd")
+        or item.get("admCd")
+        or item.get("admcd")
+        or item.get("admDongCd")
+    )
+    dong_name = (
+        item.get("dongNm")
+        or item.get("admNm")
+        or item.get("admnm")
+        or item.get("admDongNm")
+    )
+    sido = item.get("ctpvNm") or item.get("siDoNm") or item.get("sidonm") or ""
     if sido and "대구" not in str(sido):
         return None
-    total_pop = int(float(item.get("totPpltn") or item.get("totPop") or item.get("totpop") or 0))
+    total_pop = _parse_integer(
+        item.get("totNmprCnt")
+        or item.get("totPpltn")
+        or item.get("totPop")
+        or item.get("totpop")
+    )
     if not dong_code or not dong_name:
         return None
     return {
@@ -179,9 +334,13 @@ def _parse_api_item(item: dict[str, Any], base_month: str) -> dict[str, Any] | N
         "admin_dong_code": str(dong_code),
         "admin_dong_name": str(dong_name),
         "total_population": total_pop,
-        "male_population": int(float(item.get("malePpltn") or item.get("malePop") or 0)),
-        "female_population": int(float(item.get("femalePpltn") or item.get("femalePop") or 0)),
-        "household_count": int(float(item.get("hhCnt") or item.get("households") or 0)),
+        "male_population": _parse_integer(
+            item.get("maleNmprCnt") or item.get("malePpltn") or item.get("malePop")
+        ),
+        "female_population": _parse_integer(
+            item.get("femlNmprCnt") or item.get("femalePpltn") or item.get("femalePop")
+        ),
+        "household_count": _parse_integer(item.get("hhCnt") or item.get("households")),
     }
 
 
@@ -199,6 +358,33 @@ def _aggregate_by_admin_dong(rows: list[dict[str, Any]]) -> list[dict[str, Any]]
         target["female_population"] += row["female_population"]
         target["household_count"] += row["household_count"]
     return list(bucket.values())
+
+
+def _merge_admin_subunits(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """공식 API의 출장소 인구를 프로젝트 행정동 경계의 부모 읍에 합산한다."""
+    by_key = {
+        (str(row["base_month"]), str(row["admin_dong_code"])): {**row}
+        for row in rows
+    }
+    for (base_month, child_code), child in list(by_key.items()):
+        parent_code = DAEGU_ADMIN_SUBUNIT_PARENTS.get(child_code)
+        if parent_code is None:
+            continue
+        parent_key = (base_month, parent_code)
+        parent = by_key.get(parent_key)
+        if parent is None:
+            raise DataValidationError(
+                f"출장소 부모 행정동 누락: {child_code} -> {parent_code}"
+            )
+        for field in (
+            "total_population",
+            "male_population",
+            "female_population",
+            "household_count",
+        ):
+            parent[field] = int(parent[field]) + int(child[field])
+        del by_key[(base_month, child_code)]
+    return list(by_key.values())
 
 
 def _load_population_from_csv(base_month: str = "2026.06") -> list[dict[str, Any]]:
@@ -224,18 +410,70 @@ def _load_population_from_csv(base_month: str = "2026.06") -> list[dict[str, Any
     return rows
 
 
-async def refresh_population(db: Session, client: PopulationAPIClient) -> tuple[bool, str | None]:
-    previous_total = sum(row.total_population for row in db.query(PopulationSnapshot).all())
+def _latest_official_population_total(db: Session) -> int | None:
+    latest = (
+        db.query(PopulationSnapshot)
+        .order_by(PopulationSnapshot.base_month.desc())
+        .first()
+    )
+    if latest is None:
+        return None
+    latest_rows = (
+        db.query(PopulationSnapshot)
+        .filter_by(base_month=latest.base_month)
+        .all()
+    )
+    if not latest_rows or any(
+        str(row.admin_dong_code).startswith("csv:") for row in latest_rows
+    ):
+        return None
+    return sum(row.total_population for row in latest_rows)
+
+
+def _validate_official_population(records: list[dict[str, Any]]) -> None:
+    if len(records) != EXPECTED_DAEGU_ADMIN_DONG_COUNT:
+        raise DataValidationError(
+            "대구 행정동 수 불일치: "
+            f"{len(records)} (expected {EXPECTED_DAEGU_ADMIN_DONG_COUNT})"
+        )
+    for row in records:
+        total = int(row["total_population"])
+        male = int(row["male_population"])
+        female = int(row["female_population"])
+        households = int(row["household_count"])
+        if male + female != total:
+            raise DataValidationError(
+                f"성별 인구 합계 불일치: {row['admin_dong_code']}"
+            )
+        if households < 0:
+            raise DataValidationError(f"음수 세대수: {row['admin_dong_code']}")
+
+
+async def refresh_population(
+    db: Session,
+    client: PopulationAPIClient,
+) -> tuple[bool, str | None]:
+    previous_total = _latest_official_population_total(db)
     try:
         yyyymm, items = await client.find_latest_month_and_fetch()
         base_month = f"{yyyymm[:4]}.{yyyymm[4:]}"
-        parsed = [row for row in (_parse_api_item(item, base_month) for item in items) if row]
-        parsed = _aggregate_by_admin_dong(parsed)
+        parsed = [
+            row
+            for row in (_parse_api_item(item, base_month) for item in items)
+            if row
+        ]
+        parsed = _merge_admin_subunits(_aggregate_by_admin_dong(parsed))
         if not parsed:
             raise RuntimeError("Population API returned no Daegu rows")
+        _validate_official_population(parsed)
         validate_population(parsed, previous_total or None)
         hash_rows = sorted(parsed, key=lambda item: item["admin_dong_code"])
-        has_changed, _, _ = check_and_update_status(db, SOURCE_NAME, hash_rows, version=base_month)
+        has_changed, _, _ = check_and_update_status(
+            db,
+            SOURCE_NAME,
+            hash_rows,
+            version=base_month,
+        )
         if not has_changed:
             mark_success(db, SOURCE_NAME)
             return False, base_month
@@ -249,7 +487,12 @@ async def refresh_population(db: Session, client: PopulationAPIClient) -> tuple[
             log_failure(db, SOURCE_NAME, str(exc))
             return False, None
         base_month = parsed[0]["base_month"]
-        has_changed, _, _ = check_and_update_status(db, SOURCE_NAME, parsed, version=base_month)
+        has_changed, _, _ = check_and_update_status(
+            db,
+            SOURCE_NAME,
+            parsed,
+            version=base_month,
+        )
         if has_changed:
             _upsert_population(db, parsed)
         mark_degraded(db, SOURCE_NAME, f"API failed; CSV fallback used: {exc}")

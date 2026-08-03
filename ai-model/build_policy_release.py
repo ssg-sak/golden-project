@@ -6,10 +6,12 @@ import shutil
 from pathlib import Path
 from typing import Any
 
+from release_config import analysis_version, released_at
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-VERSION = "2026-07-18-r2"
-RELEASED_AT = "2026-07-18T00:00:00+09:00"
+VERSION = analysis_version()
+RELEASED_AT = released_at()
 
 HOSPITALS_PATH = PROJECT_ROOT / "data" / "processed" / "final_hospitals.json"
 VULNERABILITY_PATH = PROJECT_ROOT / "data" / "processed" / "daegu_vulnerability.geojson"
@@ -22,6 +24,10 @@ CANDIDATES_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "stable_policy
 TRACE_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "accessibility_candidate_trace.json"
 PROCESSED_RELEASE_PATH = PROJECT_ROOT / "data" / "processed" / "policy_release.json"
 PUBLIC_RELEASE_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "policy_release.json"
+PUBLIC_RELEASE_POINTER_PATH = (
+    PROJECT_ROOT / "frontend" / "public" / "data" / "policy_release.latest.json"
+)
+PUBLIC_RELEASES_DIR = PROJECT_ROOT / "frontend" / "public" / "data" / "releases"
 
 
 def read_json(path: Path) -> Any:
@@ -251,8 +257,20 @@ def build_release() -> dict[str, Any]:
 
 def main() -> None:
     release = build_release()
+    versioned_release_path = PUBLIC_RELEASES_DIR / VERSION / "policy_release.json"
     write_json(PROCESSED_RELEASE_PATH, release)
     write_json(PUBLIC_RELEASE_PATH, release)
+    write_json(versioned_release_path, release)
+    pointer = {
+        "version": VERSION,
+        "released_at": RELEASED_AT,
+        "population_base_month": release["metadata"]["population_base_month"],
+        "content_sha256": payload_hash(release),
+        "bundle_sha256": file_hash(versioned_release_path),
+        "bundle_url": f"data/releases/{VERSION}/policy_release.json",
+    }
+    # 포인터는 버전별 불변 파일이 준비된 뒤 마지막에 바꾼다.
+    write_json(PUBLIC_RELEASE_POINTER_PATH, pointer)
     print(f"정책 릴리스 생성: {PUBLIC_RELEASE_PATH}")
 
 

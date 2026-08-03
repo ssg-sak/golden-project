@@ -60,8 +60,8 @@ def test_scheduler_tracks_full_coroutine_instead_of_detached_task(monkeypatch):
         ["admin-boundary"],
     ]
     assert fake_scheduler.jobs[2][1] == {
-        "day": 2,
-        "hour": 4,
+        "day": "1-7,10,15,20,25",
+        "hour": 18,
         "minute": 0,
         "timezone": "Asia/Seoul",
     }

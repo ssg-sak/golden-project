@@ -48,6 +48,8 @@ ROLLBACK_OUTPUTS = [
     PROJECT_ROOT / "data" / "processed" / "stable_policy_candidates_overview_20260715.png",
     PROJECT_ROOT / "data" / "processed" / "policy_release.json",
     PROJECT_ROOT / "frontend" / "public" / "data" / "policy_release.json",
+    PROJECT_ROOT / "frontend" / "public" / "data" / "policy_release.latest.json",
+    PROJECT_ROOT / "frontend" / "public" / "data" / "releases" / ANALYSIS_VERSION / "policy_release.json",
     *PUBLIC_HOSPITAL_OUTPUTS,
 ]
 
