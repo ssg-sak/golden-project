@@ -36,7 +36,7 @@ export function DetailPanel({
 }: DetailPanelProps) {
   const activePreset = usePresetStore((state) => state.activePreset);
 
-  if (activePreset) {
+  if (activePreset && !vulnerabilityRecord && !selectedHospital) {
     return (
       <PresetDistrictListPanel
         onDistrictSelect={(admNm: string) => {
@@ -44,7 +44,8 @@ export function DetailPanel({
             onDistrictSelect(admNm);
           }
         }}
-        selectedDistrict={vulnerabilityRecord?.adm_nm || null}
+        selectedDistrict={null}
+        records={vulnerabilityRecords}
       />
     );
   }

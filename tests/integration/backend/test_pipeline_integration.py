@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncio
+import json
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,15 @@ from app.db.database import Base
 from app.services.data_seed import ensure_seeded
 from app.db.models import PopulationSnapshot
 from app.services.pipeline import _export_population_csv, _restore_file, run_data_pipeline
+
+
+def _current_release_metadata() -> dict:
+    project_dir = Path(__file__).resolve().parents[3]
+    return json.loads(
+        (project_dir / "data" / "processed" / "policy_release.json").read_text(
+            encoding="utf-8"
+        )
+    )["metadata"]
 
 
 @pytest.fixture()
@@ -25,6 +35,7 @@ def db_session(tmp_path):
 
 def test_seed_creates_dashboard_snapshot(db_session, monkeypatch):
     project_dir = Path(__file__).resolve().parents[3]
+    release_metadata = _current_release_metadata()
     monkeypatch.setattr("app.services.data_seed.PROJECT_DIR", project_dir)
     monkeypatch.setattr("app.services.pipeline.PROJECT_DIR", project_dir)
 
@@ -39,8 +50,8 @@ def test_seed_creates_dashboard_snapshot(db_session, monkeypatch):
     assert snap.large_emergency_count == 6
     assert snap.secondary_emergency_count == 13
     assert snap.moonlight_pediatric_count == 6
-    assert snap.population_base_month == "2026.06"
-    assert snap.analysis_version == "2026-07-18-r2"
+    assert snap.population_base_month == release_metadata["population_base_month"]
+    assert snap.analysis_version == release_metadata["version"]
 
     sources = {
         row.source_name: row
@@ -51,9 +62,12 @@ def test_seed_creates_dashboard_snapshot(db_session, monkeypatch):
     assert "static_vulnerability_geojson" in sources
     assert sources["static_vulnerability_geojson"].record_count == 150
     assert "static_population" in sources
-    assert sources["static_population"].source_version == "2026.06"
+    assert (
+        sources["static_population"].source_version
+        == release_metadata["population_base_month"]
+    )
     assert sources["static_policy_candidates"].record_count == 9
-    assert sources["static_policy_release"].source_version == "2026-07-18-r2"
+    assert sources["static_policy_release"].source_version == release_metadata["version"]
     assert all(row.status == "static" for row in sources.values())
 
 
@@ -87,21 +101,23 @@ def test_pipeline_rejects_second_run_when_job_lock_is_held(db_session, monkeypat
 
 def test_population_export_rejects_incomplete_month(db_session, monkeypatch, tmp_path):
     project_dir = Path(__file__).resolve().parents[3]
+    analysis_month = _current_release_metadata()["population_base_month"]
     monkeypatch.setattr("app.services.data_seed.PROJECT_DIR", project_dir)
     monkeypatch.setattr("app.services.pipeline.RAW_POP_CSV", tmp_path / "population.csv")
 
     ensure_seeded(db_session)
-    first_record = db_session.query(PopulationSnapshot).filter_by(base_month="2026.06").first()
+    first_record = db_session.query(PopulationSnapshot).filter_by(base_month=analysis_month).first()
     assert first_record is not None
     db_session.delete(first_record)
     db_session.commit()
 
-    assert _export_population_csv(db_session, "2026.06") is False
+    assert _export_population_csv(db_session, analysis_month) is False
     assert not (tmp_path / "population.csv").exists()
 
 
 def test_population_export_never_estimates_age_groups(db_session, monkeypatch, tmp_path):
     project_dir = Path(__file__).resolve().parents[3]
+    analysis_month = _current_release_metadata()["population_base_month"]
     source = project_dir / "data" / "raw" / "population" / "daegu_population_real.csv"
     target = tmp_path / "population.csv"
     target.write_bytes(source.read_bytes())
@@ -109,12 +125,12 @@ def test_population_export_never_estimates_age_groups(db_session, monkeypatch, t
     monkeypatch.setattr("app.services.pipeline.RAW_POP_CSV", target)
     monkeypatch.setattr(
         "app.services.pipeline._current_population_base_month",
-        lambda: "2026.06",
+        lambda: analysis_month,
     )
 
     ensure_seeded(db_session)
 
-    assert _export_population_csv(db_session, "2026.06") is True
+    assert _export_population_csv(db_session, analysis_month) is True
     assert target.read_bytes() == original
 
 

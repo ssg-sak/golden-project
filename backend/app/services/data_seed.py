@@ -264,12 +264,18 @@ def _seed_data_source_status(db: Session, base_month: str = "2026.06") -> int:
 def ensure_seeded(db: Session) -> dict[str, int]:
     """DB가 비어 있거나 정적 정본과 불일치할 때 정본으로 동기화."""
     before = db.query(MedicalFacility).count()
+    release_metadata = _policy_release_metadata()
+    analysis_base_month = str(
+        release_metadata.get("population_base_month") or "2026.06"
+    )
     result = {
         "admin_dong": _seed_admin_dongs_from_geojson(db),
         "medical_facility": _seed_medical_facilities(db),
-        "population": _seed_population(db),
-        "dashboard_snapshot": 1 if _seed_dashboard_snapshot(db) else 0,
-        "data_source_status": _seed_data_source_status(db),
+        "population": _seed_population(db, analysis_base_month),
+        "dashboard_snapshot": (
+            1 if _seed_dashboard_snapshot(db, analysis_base_month) else 0
+        ),
+        "data_source_status": _seed_data_source_status(db, analysis_base_month),
     }
     if before == 0 and any(result.values()):
         logger.info("Static seed applied: %s", result)

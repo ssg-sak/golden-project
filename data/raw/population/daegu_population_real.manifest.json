@@ -1,9 +1,13 @@
 {
-  "manifest_version": 1,
-  "population_base_month": "2026.06",
+  "manifest_version": 2,
+  "population_base_month": "2026.07",
   "district_count": 150,
   "source_file": "daegu_population_real.csv",
-  "source_sha256": "16f77e5e7e0e55b60c04a502ca94c85a22425ee5502d62900c08019edce3f5fc",
-  "verified_on": "2026-07-18",
-  "collection_date_status": "개별 원천 수집일 추가 확인 필요"
+  "source_sha256": "afaea1edcdfac901c9e7f5f656ec9449a335e776a0d01101660f872e5318e8b7",
+  "official_source": "행정안전부 주민등록 인구통계 행정동별 연령별 인구현황",
+  "official_source_url": "https://jumin.mois.go.kr/ageStatMonth.do",
+  "official_source_file": "mois_age_population_202607.csv",
+  "official_source_sha256": "42650859e5e4185a58600c942ea85cc817491086cfd22430eacdcdc2bdb5aa45",
+  "verified_at": "2026-08-04T06:15:23+00:00",
+  "collection_date_status": "자동 수집 및 구조 검증 완료"
 }
