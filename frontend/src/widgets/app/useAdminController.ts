@@ -6,6 +6,7 @@ import { useVulnerabilityStore } from '../../shared/store/vulnerabilityStore';
 import { useOptimalLocationsStore } from '../map-dashboard/lib/useOptimalLocationsStore';
 import { usePolicyReleaseStore } from '../../shared/store/policyReleaseStore';
 import { parseVulnerabilityRecords } from '../../data/api/vulnerability';
+import { resolvePolicyRiskThreshold } from '../../shared/lib/policy-risk-threshold';
 import { usePresetStore } from '../map-dashboard/lib/usePresetStore';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { toAdmNmKey } from '../../shared/types/vulnerability';
@@ -69,10 +70,6 @@ export function useAdminController() {
   const [selectedHospital, setSelectedHospital] = useState<HospitalRecord | null>(null);
   const [riskThreshold, setRiskThreshold] = useState(0);
 
-  useEffect(() => {
-    if (policyRelease) setRiskThreshold(policyRelease.metadata.risk_threshold);
-  }, [policyRelease]);
-
   const resolvedSelectedHospital = useMemo(() => {
     if (!selectedHospital) return null;
     return hospitals.find((hospital) => hospital.name === selectedHospital.name) ?? selectedHospital;
@@ -101,11 +98,15 @@ export function useAdminController() {
   }, [useDynamicDashboard, dashboardSummary, vulnerabilityData]);
 
   const dashboardRiskThreshold = dashboardSummary?.risk.threshold;
+  const resolvedRiskThreshold = resolvePolicyRiskThreshold(
+    policyRelease?.metadata.risk_threshold,
+    useDynamicDashboard ? dashboardRiskThreshold : undefined,
+  );
 
   useEffect(() => {
-    if (!useDynamicDashboard || dashboardRiskThreshold === undefined) return;
-    setRiskThreshold(dashboardRiskThreshold);
-  }, [useDynamicDashboard, dashboardRiskThreshold]);
+    if (resolvedRiskThreshold === undefined) return;
+    setRiskThreshold(resolvedRiskThreshold);
+  }, [resolvedRiskThreshold]);
 
   useEffect(() => {
     if (useDynamicDashboard) return;
