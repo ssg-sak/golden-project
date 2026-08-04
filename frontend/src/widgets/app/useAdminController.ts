@@ -6,7 +6,10 @@ import { useVulnerabilityStore } from '../../shared/store/vulnerabilityStore';
 import { useOptimalLocationsStore } from '../map-dashboard/lib/useOptimalLocationsStore';
 import { usePolicyReleaseStore } from '../../shared/store/policyReleaseStore';
 import { parseVulnerabilityRecords } from '../../data/api/vulnerability';
-import { resolvePolicyRiskThreshold } from '../../shared/lib/policy-risk-threshold';
+import {
+  clampPolicyRiskThreshold,
+  resolvePolicyRiskThreshold,
+} from '../../shared/lib/policy-risk-threshold';
 import { usePresetStore } from '../map-dashboard/lib/usePresetStore';
 import type { HospitalRecord } from '../../shared/types/hospital';
 import { toAdmNmKey } from '../../shared/types/vulnerability';
@@ -109,12 +112,13 @@ export function useAdminController() {
   }, [resolvedRiskThreshold]);
 
   useEffect(() => {
-    if (useDynamicDashboard) return;
-    if (riskThreshold < vulnerabilityRange.min) {
-      setRiskThreshold(vulnerabilityRange.min);
-    } else if (riskThreshold > vulnerabilityRange.max) {
-      setRiskThreshold(vulnerabilityRange.max);
-    }
+    const clampedThreshold = clampPolicyRiskThreshold(
+      riskThreshold,
+      vulnerabilityRange.min,
+      vulnerabilityRange.max,
+      useDynamicDashboard,
+    );
+    if (clampedThreshold !== riskThreshold) setRiskThreshold(clampedThreshold);
   }, [useDynamicDashboard, riskThreshold, vulnerabilityRange.max, vulnerabilityRange.min]);
 
   const highRiskDistrictCount = useMemo(() => {
