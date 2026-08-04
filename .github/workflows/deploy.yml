@@ -47,27 +47,56 @@ jobs:
         run: |
           SITE_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/"
           LOCAL_POINTER="frontend/public/data/policy_release.latest.json"
-          REMOTE_POINTER="${RUNNER_TEMP}/policy_release.latest.json"
-          curl --fail --location --retry 8 --retry-all-errors --retry-delay 10 \
-            "${SITE_URL}data/policy_release.latest.json?run=${GITHUB_RUN_ID}" \
-            --output "$REMOTE_POINTER"
-          export SITE_URL LOCAL_POINTER REMOTE_POINTER
+          export SITE_URL LOCAL_POINTER GITHUB_RUN_ID
           python -X utf8 - <<'PY'
           import hashlib
           import json
           import os
+          import time
           import urllib.request
 
           with open(os.environ["LOCAL_POINTER"], encoding="utf-8") as source:
               local_pointer = json.load(source)
-          with open(os.environ["REMOTE_POINTER"], encoding="utf-8") as source:
-              remote_pointer = json.load(source)
-          if remote_pointer["version"] != local_pointer["version"]:
-              raise SystemExit("공개 사이트의 분석 버전이 배포 대상과 다릅니다.")
-          bundle_url = os.environ["SITE_URL"] + remote_pointer["bundle_url"]
-          with urllib.request.urlopen(bundle_url, timeout=30) as response:
-              bundle = response.read()
-          if hashlib.sha256(bundle).hexdigest() != remote_pointer["bundle_sha256"]:
-              raise SystemExit("공개 사이트의 분석 파일 해시가 포인터와 다릅니다.")
-          print(f"공개 분석 버전 검증 완료: {remote_pointer['version']}")
+
+          site_url = os.environ["SITE_URL"]
+          run_id = os.environ["GITHUB_RUN_ID"]
+          expected_version = local_pointer["version"]
+          expected_hash = local_pointer["bundle_sha256"]
+          last_error = "공개 사이트가 아직 이전 버전을 제공하고 있습니다."
+
+          for attempt in range(1, 25):
+              cache_key = f"run={run_id}&attempt={attempt}"
+              pointer_url = f"{site_url}data/policy_release.latest.json?{cache_key}"
+              try:
+                  request = urllib.request.Request(
+                      pointer_url,
+                      headers={
+                          "Cache-Control": "no-cache",
+                          "User-Agent": "golden-project-deploy-check",
+                      },
+                  )
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      remote_pointer = json.load(response)
+
+                  if remote_pointer.get("version") != expected_version:
+                      last_error = (
+                          f"공개 버전 {remote_pointer.get('version')} != "
+                          f"배포 버전 {expected_version}"
+                      )
+                  else:
+                      bundle_url = f"{site_url}{remote_pointer['bundle_url']}?{cache_key}"
+                      with urllib.request.urlopen(bundle_url, timeout=30) as response:
+                          bundle = response.read()
+                      actual_hash = hashlib.sha256(bundle).hexdigest()
+                      if actual_hash == expected_hash:
+                          print(f"공개 분석 버전 검증 완료: {expected_version}")
+                          break
+                      last_error = f"공개 분석 파일 해시 불일치: {actual_hash}"
+              except Exception as error:
+                  last_error = f"공개 사이트 확인 실패: {error}"
+
+              print(f"[{attempt}/24] {last_error}; 10초 후 다시 확인합니다.")
+              time.sleep(10)
+          else:
+              raise SystemExit(last_error)
           PY
