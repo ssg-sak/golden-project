@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import asyncio
 import csv
 import hashlib
 import io
@@ -235,8 +236,50 @@ def _request_body(source_month: str, sigungu_code: str) -> dict[str, str]:
 
 
 class AgePopulationClient:
-    def __init__(self, *, timeout_seconds: float = 45.0) -> None:
+    def __init__(
+        self,
+        *,
+        timeout_seconds: float = 45.0,
+        max_attempts: int = 3,
+        retry_delay_seconds: float = 2.0,
+    ) -> None:
+        if max_attempts < 1:
+            raise ValueError("max_attempts는 1 이상이어야 합니다.")
         self.timeout_seconds = timeout_seconds
+        self.max_attempts = max_attempts
+        self.retry_delay_seconds = retry_delay_seconds
+
+    async def _request(
+        self,
+        client: httpx.AsyncClient,
+        method: str,
+        url: str,
+        *,
+        data: dict[str, str] | None = None,
+        params: dict[str, str] | None = None,
+    ) -> httpx.Response:
+        for attempt in range(1, self.max_attempts + 1):
+            try:
+                response = await client.request(
+                    method,
+                    url,
+                    data=data,
+                    params=params,
+                )
+                response.raise_for_status()
+                return response
+            except httpx.HTTPStatusError as exc:
+                status_code = exc.response.status_code
+                retryable = status_code in {408, 429} or status_code >= 500
+                if not retryable or attempt == self.max_attempts:
+                    raise
+            except httpx.TransportError:
+                if attempt == self.max_attempts:
+                    raise
+
+            await asyncio.sleep(self.retry_delay_seconds * (2 ** (attempt - 1)))
+
+        raise RuntimeError("행안부 인구 요청 재시도 흐름이 예기치 않게 종료됐습니다.")
 
     async def fetch_month(self, source_month: str) -> AgePopulationDataset:
         parsed_records: list[AgePopulationRecord] = []
@@ -247,17 +290,17 @@ class AgePopulationClient:
         }
         timeout = httpx.Timeout(self.timeout_seconds)
         async with httpx.AsyncClient(headers=headers, timeout=timeout, follow_redirects=True) as client:
-            landing = await client.get(MOIS_AGE_PAGE_URL)
-            landing.raise_for_status()
+            await self._request(client, "GET", MOIS_AGE_PAGE_URL)
             for sigungu_code in DAEGU_SGG_CODES:
                 body = _request_body(source_month, sigungu_code)
-                await client.post(MOIS_AGE_PAGE_URL, data=body)
-                response = await client.post(
+                await self._request(client, "POST", MOIS_AGE_PAGE_URL, data=body)
+                response = await self._request(
+                    client,
+                    "POST",
                     MOIS_AGE_CSV_URL,
                     params={"searchYearMonth": "month", "xlsStats": "1"},
                     data=body,
                 )
-                response.raise_for_status()
                 parsed_records.extend(parse_official_age_csv(response.content, source_month))
                 official_parts.append(_decode_official_csv(response.content))
 

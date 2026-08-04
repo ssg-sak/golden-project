@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import asyncio
 import csv
 import io
 
+import httpx
 import pytest
 
 from app.services.fetchers.age_population import (
+    AgePopulationClient,
     AgePopulationNotPublished,
     AgePopulationRecord,
     normalize_age_records,
@@ -93,3 +96,49 @@ def test_normalize_age_records_treats_zero_filled_new_month_as_unpublished() -> 
 
     with pytest.raises(AgePopulationNotPublished, match="아직 채워지지"):
         normalize_age_records(records, expected_count=1)
+
+
+def test_age_population_request_retries_temporary_transport_error() -> None:
+    request_count = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal request_count
+        request_count += 1
+        if request_count < 3:
+            raise httpx.ReadTimeout("temporary timeout", request=request)
+        return httpx.Response(200, text="ok")
+
+    async def run() -> httpx.Response:
+        population_client = AgePopulationClient(
+            max_attempts=3,
+            retry_delay_seconds=0,
+        )
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await population_client._request(client, "GET", "https://test.local")
+
+    response = asyncio.run(run())
+
+    assert response.status_code == 200
+    assert request_count == 3
+
+
+def test_age_population_request_does_not_retry_permanent_client_error() -> None:
+    request_count = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal request_count
+        request_count += 1
+        return httpx.Response(404, request=request)
+
+    async def run() -> None:
+        population_client = AgePopulationClient(
+            max_attempts=3,
+            retry_delay_seconds=0,
+        )
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            await population_client._request(client, "GET", "https://test.local")
+
+    with pytest.raises(httpx.HTTPStatusError):
+        asyncio.run(run())
+
+    assert request_count == 1
