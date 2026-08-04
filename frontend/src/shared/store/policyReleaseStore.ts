@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import type { GeoJsonFeatureCollection } from '../types/geojson';
 import type { HospitalRecord } from '../types/hospital';
+import type { NearestHospitalByRole } from '../types/vulnerability';
 import type {
   OptimalLocation,
   PolicyOptimizationData,
@@ -54,6 +55,7 @@ interface PolicyReleaseState {
 
 export function validateRelease(release: PolicyReleaseBundle): void {
   const { metadata } = release;
+  const hospitalNames = new Set(release.hospitals.map((hospital) => hospital.name));
   const candidateKeys = new Set(
     release.candidates.map((candidate) =>
       `${candidate.mode}:${candidate.id}:${candidate.lat.toFixed(7)}:${candidate.lng.toFixed(7)}`,
@@ -81,7 +83,21 @@ export function validateRelease(release: PolicyReleaseBundle): void {
     [...candidateKeys].every((key) => traceKeys.has(key)) &&
     release.optimization.metadata.version === metadata.version &&
     release.optimization.metadata.matrix_source_sha256 === metadata.source_sha256 &&
-    release.optimization.metadata.matrix_route_result_sha256 === metadata.route_result_sha256;
+    release.optimization.metadata.matrix_route_result_sha256 === metadata.route_result_sha256 &&
+    release.vulnerability.features.every((feature) => {
+      const roles = (
+        feature.properties as typeof feature.properties & {
+          nearest_hospital_by_role?: NearestHospitalByRole;
+        }
+      ).nearest_hospital_by_role;
+      if (!roles) return false;
+      return [roles.general_emergency, roles.pediatric_night_holiday].every(
+        (route) =>
+          hospitalNames.has(route.name) &&
+          route.eta_minutes >= 0 &&
+          route.road_distance_km >= 0,
+      );
+    });
 
   if (!valid) {
     throw new Error('정책 분석 결과의 기관·경로·기준 검증에 실패했습니다.');
@@ -210,6 +226,7 @@ export function startPolicyReleasePolling(intervalMs = 5 * 60 * 1000): () => voi
   const refresh = () => {
     void usePolicyReleaseStore.getState().refreshLatest();
   };
+  refresh();
   const intervalId = window.setInterval(refresh, intervalMs);
   window.addEventListener('focus', refresh);
   return () => {

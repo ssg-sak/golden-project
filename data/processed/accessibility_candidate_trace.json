@@ -19,10 +19,10 @@
     "nearest_existing_hospital": "대구굿모닝병원",
     "nearest_existing_hospital_distance_km": 3.183,
     "before_avg_distance_km": 2.936,
-    "after_avg_distance_km": 1.691,
-    "accessibility_gain_km": 1.245,
-    "vulnerable_population": 22118,
-    "score": 12.457,
+    "after_avg_distance_km": 1.69,
+    "accessibility_gain_km": 1.246,
+    "vulnerable_population": 22169,
+    "score": 12.469,
     "interpretation": "소아 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
@@ -30,48 +30,48 @@
         "before_distance_km": 3.505,
         "after_distance_km": 2.176,
         "gain_km": 1.329,
-        "vulnerable_population": 8547,
-        "weighted_gain": 11361.090382162745
+        "vulnerable_population": 8541,
+        "weighted_gain": 11353.114888738974
       },
       {
         "adm_nm": "서구 비산7동",
         "before_distance_km": 3.047,
         "after_distance_km": 0.17,
         "gain_km": 2.877,
-        "vulnerable_population": 3199,
-        "weighted_gain": 9202.80695116773
+        "vulnerable_population": 3224,
+        "weighted_gain": 9274.726355287514
       },
       {
         "adm_nm": "북구 노원동",
         "before_distance_km": 3.049,
         "after_distance_km": 2.066,
         "gain_km": 0.983,
-        "vulnerable_population": 3768,
-        "weighted_gain": 3703.835397083581
+        "vulnerable_population": 3778,
+        "weighted_gain": 3713.6651088592807
       },
       {
         "adm_nm": "서구 평리6동",
         "before_distance_km": 2.34,
         "after_distance_km": 0.949,
         "gain_km": 1.391,
-        "vulnerable_population": 1647,
-        "weighted_gain": 2290.486250065029
+        "vulnerable_population": 1652,
+        "weighted_gain": 2297.4397602352324
       },
       {
         "adm_nm": "서구 비산5동",
         "before_distance_km": 2.27,
         "after_distance_km": 1.815,
         "gain_km": 0.455,
-        "vulnerable_population": 2047,
-        "weighted_gain": 931.6044368169648
+        "vulnerable_population": 2052,
+        "weighted_gain": 933.8799728130981
       },
       {
         "adm_nm": "서구 비산1동",
         "before_distance_km": 1.806,
         "after_distance_km": 1.788,
         "gain_km": 0.018,
-        "vulnerable_population": 2910,
-        "weighted_gain": 51.34543995350039
+        "vulnerable_population": 2922,
+        "weighted_gain": 51.557173726504516
       }
     ]
   },
@@ -84,43 +84,43 @@
     "lng": 128.431674535,
     "demand": 26,
     "covered_districts": [
-      "달성군 현풍읍",
       "달성군 논공읍",
+      "달성군 현풍읍",
       "달성군 구지면"
     ],
     "covered_district_count": 3,
     "nearest_existing_hospital": "우리허브병원",
     "nearest_existing_hospital_distance_km": 2.497,
-    "before_avg_distance_km": 4.549,
-    "after_avg_distance_km": 4.022,
-    "accessibility_gain_km": 0.527,
-    "vulnerable_population": 12111,
-    "score": 4.957,
+    "before_avg_distance_km": 4.97,
+    "after_avg_distance_km": 4.234,
+    "accessibility_gain_km": 0.736,
+    "vulnerable_population": 14779,
+    "score": 7.066,
     "interpretation": "소아 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
-      {
-        "adm_nm": "달성군 현풍읍",
-        "before_distance_km": 2.569,
-        "after_distance_km": 1.987,
-        "gain_km": 0.582,
-        "vulnerable_population": 5577,
-        "weighted_gain": 3246.5231608727904
-      },
       {
         "adm_nm": "달성군 논공읍",
         "before_distance_km": 6.886,
         "after_distance_km": 5.196,
         "gain_km": 1.69,
-        "vulnerable_population": 1631,
-        "weighted_gain": 2757.000504758059
+        "vulnerable_population": 4287,
+        "weighted_gain": 7246.63468050141
+      },
+      {
+        "adm_nm": "달성군 현풍읍",
+        "before_distance_km": 2.569,
+        "after_distance_km": 1.987,
+        "gain_km": 0.582,
+        "vulnerable_population": 5578,
+        "weighted_gain": 3247.105288030917
       },
       {
         "adm_nm": "달성군 구지면",
         "before_distance_km": 6.023,
         "after_distance_km": 5.945,
         "gain_km": 0.078,
-        "vulnerable_population": 4903,
-        "weighted_gain": 381.9418403907011
+        "vulnerable_population": 4914,
+        "weighted_gain": 382.7987362186223
       }
     ]
   },
@@ -144,11 +144,11 @@
     "covered_district_count": 7,
     "nearest_existing_hospital": "대구파티마병원",
     "nearest_existing_hospital_distance_km": 0.693,
-    "before_avg_distance_km": 1.922,
-    "after_avg_distance_km": 1.628,
+    "before_avg_distance_km": 1.921,
+    "after_avg_distance_km": 1.627,
     "accessibility_gain_km": 0.294,
-    "vulnerable_population": 26839,
-    "score": 2.998,
+    "vulnerable_population": 26925,
+    "score": 3.001,
     "interpretation": "소아 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
@@ -156,56 +156,56 @@
         "before_distance_km": 1.471,
         "after_distance_km": 0.838,
         "gain_km": 0.633,
-        "vulnerable_population": 4611,
-        "weighted_gain": 2917.784320037074
+        "vulnerable_population": 4625,
+        "weighted_gain": 2926.6433485516086
       },
       {
         "adm_nm": "동구 효목1동",
         "before_distance_km": 1.605,
         "after_distance_km": 1.292,
         "gain_km": 0.313,
-        "vulnerable_population": 4608,
-        "weighted_gain": 1442.1504094599218
+        "vulnerable_population": 4622,
+        "weighted_gain": 1446.5319428219964
       },
       {
         "adm_nm": "수성구 범어2동",
         "before_distance_km": 2.512,
         "after_distance_km": 2.209,
         "gain_km": 0.303,
-        "vulnerable_population": 3706,
-        "weighted_gain": 1121.912777365221
+        "vulnerable_population": 3735,
+        "weighted_gain": 1130.6919113489207
       },
       {
         "adm_nm": "동구 신암5동",
         "before_distance_km": 1.037,
         "after_distance_km": 0.734,
         "gain_km": 0.303,
-        "vulnerable_population": 2636,
-        "weighted_gain": 799.4329781682648
+        "vulnerable_population": 2632,
+        "weighted_gain": 798.2198780496483
       },
       {
         "adm_nm": "동구 신천4동",
         "before_distance_km": 1.359,
         "after_distance_km": 1.114,
         "gain_km": 0.245,
-        "vulnerable_population": 3165,
-        "weighted_gain": 774.4170848881383
+        "vulnerable_population": 3198,
+        "weighted_gain": 782.4915758206213
       },
       {
         "adm_nm": "동구 지저동",
         "before_distance_km": 2.082,
         "after_distance_km": 1.924,
         "gain_km": 0.158,
-        "vulnerable_population": 4691,
-        "weighted_gain": 739.2191399401944
+        "vulnerable_population": 4699,
+        "weighted_gain": 740.4797993133603
       },
       {
         "adm_nm": "수성구 범어4동",
         "before_distance_km": 3.3,
         "after_distance_km": 3.272,
         "gain_km": 0.028,
-        "vulnerable_population": 3422,
-        "weighted_gain": 95.93014978606355
+        "vulnerable_population": 3414,
+        "weighted_gain": 95.70588292507918
       }
     ]
   },
@@ -230,11 +230,11 @@
     "covered_district_count": 16,
     "nearest_existing_hospital": "경북대학교병원",
     "nearest_existing_hospital_distance_km": 3.008,
-    "before_avg_distance_km": 3.844,
-    "after_avg_distance_km": 2.348,
-    "accessibility_gain_km": 1.496,
-    "vulnerable_population": 69239,
-    "score": 16.669,
+    "before_avg_distance_km": 3.845,
+    "after_avg_distance_km": 2.35,
+    "accessibility_gain_km": 1.495,
+    "vulnerable_population": 69366,
+    "score": 16.663,
     "interpretation": "소아 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
@@ -242,64 +242,64 @@
         "before_distance_km": 4.979,
         "after_distance_km": 2.145,
         "gain_km": 2.834,
-        "vulnerable_population": 6196,
-        "weighted_gain": 17558.219908327712
+        "vulnerable_population": 6210,
+        "weighted_gain": 17597.893097274868
       },
       {
         "adm_nm": "수성구 황금1동",
         "before_distance_km": 4.082,
         "after_distance_km": 1.084,
         "gain_km": 2.998,
-        "vulnerable_population": 5175,
-        "weighted_gain": 15517.050355221503
+        "vulnerable_population": 5186,
+        "weighted_gain": 15550.033457425838
       },
       {
         "adm_nm": "수성구 지산2동",
         "before_distance_km": 5.295,
         "after_distance_km": 3.332,
         "gain_km": 1.963,
-        "vulnerable_population": 5733,
-        "weighted_gain": 11255.50047915315
+        "vulnerable_population": 5744,
+        "weighted_gain": 11277.096590311476
       },
       {
         "adm_nm": "수성구 범물2동",
         "before_distance_km": 6.504,
         "after_distance_km": 4.397,
         "gain_km": 2.107,
-        "vulnerable_population": 4540,
-        "weighted_gain": 9567.448105731495
+        "vulnerable_population": 4546,
+        "weighted_gain": 9580.092310276515
       },
       {
         "adm_nm": "수성구 범어1동",
         "before_distance_km": 2.406,
         "after_distance_km": 0.672,
         "gain_km": 1.734,
-        "vulnerable_population": 5422,
-        "weighted_gain": 9404.14486081047
+        "vulnerable_population": 5445,
+        "weighted_gain": 9444.03702823921
       },
       {
         "adm_nm": "수성구 범어4동",
         "before_distance_km": 3.3,
         "after_distance_km": 0.95,
         "gain_km": 2.35,
-        "vulnerable_population": 3422,
-        "weighted_gain": 8042.50371653956
+        "vulnerable_population": 3414,
+        "weighted_gain": 8023.701837599666
       },
       {
         "adm_nm": "수성구 만촌3동",
         "before_distance_km": 3.765,
         "after_distance_km": 1.841,
         "gain_km": 1.924,
-        "vulnerable_population": 3948,
-        "weighted_gain": 7596.878315322511
+        "vulnerable_population": 3925,
+        "weighted_gain": 7552.620918855334
       },
       {
         "adm_nm": "수성구 황금2동",
         "before_distance_km": 2.808,
         "after_distance_km": 0.787,
         "gain_km": 2.021,
-        "vulnerable_population": 3262,
-        "weighted_gain": 6591.272825725522
+        "vulnerable_population": 3258,
+        "weighted_gain": 6583.190332990113
       }
     ]
   },
@@ -321,11 +321,11 @@
     "covered_district_count": 5,
     "nearest_existing_hospital": "우리아이아동병원",
     "nearest_existing_hospital_distance_km": 3.675,
-    "before_avg_distance_km": 7.064,
+    "before_avg_distance_km": 7.066,
     "after_avg_distance_km": 4.979,
-    "accessibility_gain_km": 2.085,
-    "vulnerable_population": 19522,
-    "score": 20.595,
+    "accessibility_gain_km": 2.087,
+    "vulnerable_population": 19592,
+    "score": 20.623,
     "interpretation": "소아 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
@@ -333,24 +333,24 @@
         "before_distance_km": 10.343,
         "after_distance_km": 7.189,
         "gain_km": 3.154,
-        "vulnerable_population": 7265,
-        "weighted_gain": 22912.262549565894
+        "vulnerable_population": 7310,
+        "weighted_gain": 23054.182964532232
       },
       {
         "adm_nm": "동구 불로·봉무동",
         "before_distance_km": 3.731,
         "after_distance_km": 1.162,
         "gain_km": 2.569,
-        "vulnerable_population": 5483,
-        "weighted_gain": 14086.00846643567
+        "vulnerable_population": 5501,
+        "weighted_gain": 14132.251062167174
       },
       {
         "adm_nm": "동구 도평동",
         "before_distance_km": 5.531,
         "after_distance_km": 3.721,
         "gain_km": 1.81,
-        "vulnerable_population": 1277,
-        "weighted_gain": 2311.6168206690513
+        "vulnerable_population": 1276,
+        "weighted_gain": 2309.8066273874
       },
       {
         "adm_nm": "군위군 삼국유사면",
@@ -365,8 +365,8 @@
         "before_distance_km": 2.082,
         "after_distance_km": 1.985,
         "gain_km": 0.097,
-        "vulnerable_population": 4691,
-        "weighted_gain": 454.1835509624561
+        "vulnerable_population": 4699,
+        "weighted_gain": 454.9581125501132
       }
     ]
   },
@@ -390,11 +390,11 @@
     "covered_district_count": 7,
     "nearest_existing_hospital": "칠곡경북대학교병원",
     "nearest_existing_hospital_distance_km": 28.85,
-    "before_avg_distance_km": 27.817,
-    "after_avg_distance_km": 9.456,
-    "accessibility_gain_km": 18.361,
-    "vulnerable_population": 10591,
-    "score": 170.163,
+    "before_avg_distance_km": 27.82,
+    "after_avg_distance_km": 9.453,
+    "accessibility_gain_km": 18.368,
+    "vulnerable_population": 10611,
+    "score": 170.263,
     "interpretation": "군위 또는 원거리 권역은 메인 후보가 아니라 별도 권역 검토 후보",
     "top_improved_districts": [
       {
@@ -402,40 +402,40 @@
         "before_distance_km": 31.097,
         "after_distance_km": 4.84,
         "gain_km": 26.257,
-        "vulnerable_population": 3177,
-        "weighted_gain": 83418.69463193374
+        "vulnerable_population": 3192,
+        "weighted_gain": 83812.55060281162
       },
       {
         "adm_nm": "군위군 소보면",
         "before_distance_km": 34.837,
         "after_distance_km": 13.763,
         "gain_km": 21.074,
-        "vulnerable_population": 1298,
-        "weighted_gain": 27353.554185171484
+        "vulnerable_population": 1301,
+        "weighted_gain": 27416.77503459792
       },
       {
         "adm_nm": "군위군 효령면",
         "before_distance_km": 20.453,
         "after_distance_km": 8.367,
         "gain_km": 12.086,
-        "vulnerable_population": 2040,
-        "weighted_gain": 24656.101601137034
+        "vulnerable_population": 2044,
+        "weighted_gain": 24704.446898394166
       },
       {
         "adm_nm": "군위군 의흥면",
         "before_distance_km": 28.438,
         "after_distance_km": 11.796,
         "gain_km": 16.642,
-        "vulnerable_population": 1353,
-        "weighted_gain": 22516.958421078885
+        "vulnerable_population": 1352,
+        "weighted_gain": 22500.31617538703
       },
       {
         "adm_nm": "군위군 우보면",
         "before_distance_km": 25.182,
         "after_distance_km": 6.064,
         "gain_km": 19.118,
-        "vulnerable_population": 1172,
-        "weighted_gain": 22406.05254508918
+        "vulnerable_population": 1169,
+        "weighted_gain": 22348.699168267278
       },
       {
         "adm_nm": "군위군 삼국유사면",
@@ -450,8 +450,8 @@
         "before_distance_km": 20.688,
         "after_distance_km": 14.93,
         "gain_km": 5.758,
-        "vulnerable_population": 745,
-        "weighted_gain": 4289.607219703244
+        "vulnerable_population": 747,
+        "weighted_gain": 4301.122943782984
       }
     ]
   },
@@ -476,11 +476,11 @@
     "covered_district_count": 9,
     "nearest_existing_hospital": "천주성삼병원",
     "nearest_existing_hospital_distance_km": 5.319,
-    "before_avg_distance_km": 4.703,
-    "after_avg_distance_km": 2.227,
-    "accessibility_gain_km": 2.475,
-    "vulnerable_population": 42266,
-    "score": 26.365,
+    "before_avg_distance_km": 4.704,
+    "after_avg_distance_km": 2.228,
+    "accessibility_gain_km": 2.476,
+    "vulnerable_population": 42356,
+    "score": 26.379,
     "interpretation": "어르신 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
@@ -488,64 +488,64 @@
         "before_distance_km": 4.979,
         "after_distance_km": 1.102,
         "gain_km": 3.877,
-        "vulnerable_population": 6196,
-        "weighted_gain": 24020.551044036278
+        "vulnerable_population": 6210,
+        "weighted_gain": 24074.82601411641
       },
       {
         "adm_nm": "수성구 범물2동",
         "before_distance_km": 6.504,
         "after_distance_km": 1.837,
         "gain_km": 4.667,
-        "vulnerable_population": 4540,
-        "weighted_gain": 21189.34805389268
+        "vulnerable_population": 4546,
+        "weighted_gain": 21217.351597576242
       },
       {
         "adm_nm": "수성구 지산2동",
         "before_distance_km": 5.295,
         "after_distance_km": 1.796,
         "gain_km": 3.499,
-        "vulnerable_population": 5733,
-        "weighted_gain": 20059.614034973572
+        "vulnerable_population": 5744,
+        "weighted_gain": 20098.102741477098
       },
       {
         "adm_nm": "수성구 범물1동",
         "before_distance_km": 5.27,
         "after_distance_km": 2.043,
         "gain_km": 3.227,
-        "vulnerable_population": 4477,
-        "weighted_gain": 14446.978813451371
+        "vulnerable_population": 4504,
+        "weighted_gain": 14534.106003079065
       },
       {
         "adm_nm": "수성구 황금1동",
         "before_distance_km": 4.082,
         "after_distance_km": 1.919,
         "gain_km": 2.163,
-        "vulnerable_population": 5175,
-        "weighted_gain": 11191.452362639093
+        "vulnerable_population": 5186,
+        "weighted_gain": 11215.240957033107
       },
       {
         "adm_nm": "수성구 파동",
         "before_distance_km": 4.519,
         "after_distance_km": 3.578,
         "gain_km": 0.941,
-        "vulnerable_population": 5258,
-        "weighted_gain": 4946.760933717712
+        "vulnerable_population": 5295,
+        "weighted_gain": 4981.570776727897
       },
       {
         "adm_nm": "수성구 두산동",
         "before_distance_km": 3.808,
         "after_distance_km": 2.582,
         "gain_km": 1.226,
-        "vulnerable_population": 3517,
-        "weighted_gain": 4313.177039401882
+        "vulnerable_population": 3532,
+        "weighted_gain": 4331.572733343033
       },
       {
         "adm_nm": "수성구 만촌3동",
         "before_distance_km": 3.765,
         "after_distance_km": 2.71,
         "gain_km": 1.055,
-        "vulnerable_population": 3948,
-        "weighted_gain": 4166.986663985951
+        "vulnerable_population": 3925,
+        "weighted_gain": 4142.710905811768
       }
     ]
   },
@@ -564,11 +564,11 @@
     "covered_district_count": 2,
     "nearest_existing_hospital": "우리허브병원",
     "nearest_existing_hospital_distance_km": 6.569,
-    "before_avg_distance_km": 6.604,
-    "after_avg_distance_km": 2.458,
-    "accessibility_gain_km": 4.147,
-    "vulnerable_population": 8822,
-    "score": 37.672,
+    "before_avg_distance_km": 6.669,
+    "after_avg_distance_km": 2.641,
+    "accessibility_gain_km": 4.029,
+    "vulnerable_population": 11495,
+    "score": 37.668,
     "interpretation": "어르신 취약 수요의 접근성 개선을 검토할 도시권 후보",
     "top_improved_districts": [
       {
@@ -576,16 +576,16 @@
         "before_distance_km": 6.54,
         "after_distance_km": 2.278,
         "gain_km": 4.262,
-        "vulnerable_population": 7191,
-        "weighted_gain": 30650.24778121231
+        "vulnerable_population": 7208,
+        "weighted_gain": 30722.70699582511
       },
       {
         "adm_nm": "달성군 논공읍",
         "before_distance_km": 6.886,
         "after_distance_km": 3.25,
         "gain_km": 3.636,
-        "vulnerable_population": 1631,
-        "weighted_gain": 5930.723458089452
+        "vulnerable_population": 4287,
+        "weighted_gain": 15588.602982728069
       }
     ]
   },
@@ -610,11 +610,11 @@
     "covered_district_count": 8,
     "nearest_existing_hospital": "칠곡경북대학교병원",
     "nearest_existing_hospital_distance_km": 24.209,
-    "before_avg_distance_km": 26.522,
-    "after_avg_distance_km": 9.773,
-    "accessibility_gain_km": 16.749,
-    "vulnerable_population": 11740,
-    "score": 156.949,
+    "before_avg_distance_km": 26.523,
+    "after_avg_distance_km": 9.779,
+    "accessibility_gain_km": 16.744,
+    "vulnerable_population": 11764,
+    "score": 156.941,
     "interpretation": "군위 또는 원거리 권역은 메인 후보가 아니라 별도 권역 검토 후보",
     "top_improved_districts": [
       {
@@ -622,40 +622,40 @@
         "before_distance_km": 31.097,
         "after_distance_km": 11.115,
         "gain_km": 19.982,
-        "vulnerable_population": 3177,
-        "weighted_gain": 63483.27445921184
+        "vulnerable_population": 3192,
+        "weighted_gain": 63783.00663324022
       },
       {
         "adm_nm": "군위군 효령면",
         "before_distance_km": 20.453,
         "after_distance_km": 5.734,
         "gain_km": 14.719,
-        "vulnerable_population": 2040,
-        "weighted_gain": 30027.146820352744
+        "vulnerable_population": 2044,
+        "weighted_gain": 30086.023578824024
       },
       {
         "adm_nm": "군위군 우보면",
         "before_distance_km": 25.182,
         "after_distance_km": 1.03,
         "gain_km": 24.152,
-        "vulnerable_population": 1172,
-        "weighted_gain": 28305.99510050195
+        "vulnerable_population": 1169,
+        "weighted_gain": 28233.539481644013
       },
       {
         "adm_nm": "군위군 의흥면",
         "before_distance_km": 28.438,
         "after_distance_km": 7.579,
         "gain_km": 20.859,
-        "vulnerable_population": 1353,
-        "weighted_gain": 28222.360417981974
+        "vulnerable_population": 1352,
+        "weighted_gain": 28201.501319372972
       },
       {
         "adm_nm": "군위군 소보면",
         "before_distance_km": 34.837,
         "after_distance_km": 19.466,
         "gain_km": 15.371,
-        "vulnerable_population": 1298,
-        "weighted_gain": 19951.708604274336
+        "vulnerable_population": 1301,
+        "weighted_gain": 19997.821952358172
       },
       {
         "adm_nm": "군위군 삼국유사면",
@@ -670,16 +670,16 @@
         "before_distance_km": 20.688,
         "after_distance_km": 8.401,
         "gain_km": 12.287,
-        "vulnerable_population": 745,
-        "weighted_gain": 9153.521385918122
+        "vulnerable_population": 747,
+        "weighted_gain": 9178.0945976924
       },
       {
         "adm_nm": "군위군 부계면",
         "before_distance_km": 14.585,
         "after_distance_km": 11.066,
         "gain_km": 3.519,
-        "vulnerable_population": 1149,
-        "weighted_gain": 4042.91443340139
+        "vulnerable_population": 1153,
+        "weighted_gain": 4056.988983213057
       }
     ]
   }
