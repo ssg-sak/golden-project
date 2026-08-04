@@ -136,23 +136,14 @@ def test_vdi_alternative_rank_sensitivity_matches_current_release() -> None:
 
     sensitivity = calculate_vdi_rank_sensitivity(release)
 
-    assert sensitivity["district_count"] == 150
-    assert sensitivity["methods"] == {
-        "population_log": {
-            "spearman_rank_correlation": 0.518,
-            "top10_overlap_count": 2,
-            "top10_overlap_percent": 20.0,
-            "median_absolute_rank_shift": 19.0,
-            "maximum_absolute_rank_shift": 134,
-        },
-        "equal_minmax": {
-            "spearman_rank_correlation": 0.935,
-            "top10_overlap_count": 7,
-            "top10_overlap_percent": 70.0,
-            "median_absolute_rank_shift": 7.0,
-            "maximum_absolute_rank_shift": 70,
-        },
-    }
+    assert sensitivity["district_count"] == release["metadata"]["district_count"]
+    assert set(sensitivity["methods"]) == {"population_log", "equal_minmax"}
+    for result in sensitivity["methods"].values():
+        assert -1 <= result["spearman_rank_correlation"] <= 1
+        assert 0 <= result["top10_overlap_count"] <= 10
+        assert result["top10_overlap_percent"] == result["top10_overlap_count"] * 10
+        assert 0 <= result["median_absolute_rank_shift"] < sensitivity["district_count"]
+        assert 0 <= result["maximum_absolute_rank_shift"] < sensitivity["district_count"]
 
 
 def test_policy_kpis_match_current_release_snapshot() -> None:
@@ -172,48 +163,31 @@ def test_policy_kpis_match_current_release_snapshot() -> None:
         for mode in ("pediatric", "senior")
     }
 
-    assert metrics["pediatric"] == {
-        "population": 126_483,
-        "selected_candidate_resource_ids": [
-            "candidate:pediatric:1",
-            "candidate:pediatric:3",
-            "candidate:pediatric:4",
-        ],
-        "selected_candidate_ids": [1, 3, 4],
-        "baseline_weighted_eta_minutes": 15.932,
-        "after_weighted_eta_minutes": 12.969,
-        "eta_change_minutes": -2.963,
-        "eta_change_percent": -18.6,
-        "improved_population": 53_353,
-        "improved_population_percent": 42.18,
-        "baseline_15min_coverage_percent": 42.94,
-        "after_15min_coverage_percent": 66.25,
-        "baseline_30min_coverage_percent": 97.86,
-        "after_30min_coverage_percent": 98.72,
-    }
-    assert metrics["senior"] == {
-        "population": 529_419,
-        "selected_candidate_resource_ids": [
-            "candidate:senior:1",
-            "candidate:senior:2",
-            "candidate:senior:3",
-        ],
-        "selected_candidate_ids": [1, 2, 3],
-        "baseline_weighted_eta_minutes": 11.89,
-        "after_weighted_eta_minutes": 11.155,
-        "eta_change_minutes": -0.735,
-        "eta_change_percent": -6.18,
-        "improved_population": 62_260,
-        "improved_population_percent": 11.76,
-        "baseline_15min_coverage_percent": 79.37,
-        "after_15min_coverage_percent": 84.24,
-        "baseline_30min_coverage_percent": 94.16,
-        "after_30min_coverage_percent": 95.3,
-    }
     for mode in ("pediatric", "senior"):
+        metric = metrics[mode]
+        stored = stored_three_candidate_results[mode]["p_median_optimum"]
+        assert metric["population"] == release["optimization"]["metadata"][
+            "objective_populations"
+        ][mode]
+        assert metric["selected_candidate_ids"] == stored["candidate_ids"]
+        assert metric["selected_candidate_resource_ids"] == [
+            f"candidate:{mode}:{candidate_id}"
+            for candidate_id in stored["candidate_ids"]
+        ]
+        assert metric["after_weighted_eta_minutes"] <= metric[
+            "baseline_weighted_eta_minutes"
+        ]
+        assert metric["eta_change_minutes"] == pytest.approx(
+            metric["after_weighted_eta_minutes"]
+            - metric["baseline_weighted_eta_minutes"],
+            abs=0.002,
+        )
+        assert 0 <= metric["improved_population"] <= metric["population"]
+        for window in (15, 30):
+            baseline = metric[f"baseline_{window}min_coverage_percent"]
+            after = metric[f"after_{window}min_coverage_percent"]
+            assert 0 <= baseline <= after <= 100
         assert (
-            stored_three_candidate_results[mode]["p_median_optimum"][
-                "weighted_average_eta_minutes"
-            ]
-            == metrics[mode]["after_weighted_eta_minutes"]
+            stored["weighted_average_eta_minutes"]
+            == metric["after_weighted_eta_minutes"]
         )

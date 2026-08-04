@@ -311,6 +311,18 @@ on:
 
 비밀값은 GitHub Secrets와 백엔드 환경변수에만 두며 URL, 예외 메시지, 테스트 fixture와 산출물에 포함하지 않는다.
 
+### 10.4 GitHub App 키 발급과 등록
+
+`POLICY_RELEASE_BOT_APP_ID`와 `POLICY_RELEASE_BOT_PRIVATE_KEY`는 SGIS나 공공데이터포털에서 받는 키가 아니다. 저장소 소유자가 GitHub에서 자동 반영 전용 GitHub App을 만들어 발급한다.
+
+1. GitHub의 `Settings > Developer settings > GitHub Apps > New GitHub App`에서 전용 App을 만든다.
+2. 저장소 권한은 `Contents: Read and write`, `Pull requests: Read and write`, `Metadata: Read-only`로 제한한다. 실행 상태를 App 토큰으로 조회할 때만 `Actions: Read-only`를 추가한다.
+3. App 설정 화면의 숫자형 `App ID`를 저장소 Secret `POLICY_RELEASE_BOT_APP_ID`에 등록한다.
+4. 같은 화면의 `Private keys > Generate a private key`로 내려받은 `.pem` 파일 전체 내용을 `POLICY_RELEASE_BOT_PRIVATE_KEY`에 등록한다.
+5. 만든 App을 `ssg-sak/golden-project` 저장소에 설치한다. 설치하지 않으면 키가 있어도 해당 저장소에 브랜치와 PR을 만들 수 없다.
+
+private key 원문은 로컬 `.env`, 프론트 환경변수, 커밋 파일에 두지 않는다. 유출되거나 노출 가능성이 생기면 기존 private key를 폐기하고 새 키로 회전한다.
+
 ## 11. 프론트 자동 반영
 
 현재 정책 릴리스 저장소는 한 번 읽은 번들을 메모리에 유지한다. 다음 방식으로 변경한다.
@@ -320,6 +332,13 @@ on:
 3. 기존 `validateRelease` 계약 통과 후 상태를 한 번에 교체
 4. 5분 간격 및 브라우저 포커스 복귀 시 `latest` 재확인
 5. 새 번들 실패 시 이전 번들 유지, 상단에 갱신 실패 안내
+
+프론트는 앱 시작 시 최신 정책 기준본을 즉시 확인하며, 빠른 조회 목록·지도·상세 화면이 동일한 릴리스의 취약도 자료를 사용한다. 행정동 상세의 가까운 기관은 다음 두 역할을 별도로 표시한다.
+
+- 일반 응급기관: 권역·지역 응급센터 및 지역응급의료기관 중 도로 이동시간이 가장 짧은 기관
+- 야간·휴일 소아진료: 달빛어린이병원 등 소아 야간·휴일 보완 자원 중 도로 이동시간이 가장 짧은 기관
+
+두 기관은 진료 역할이 다르므로 하나의 최근접 병원으로 합치지 않는다. 각 카드에는 역할 설명, 분석 시점 도로 이동시간과 거리, 전화·길찾기와 이용 전 확인 문구를 함께 표시한다.
 
 화면 표시를 다음과 같이 분리한다.
 
