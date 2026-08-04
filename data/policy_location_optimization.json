@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "version": "2026-07-18-r2",
+    "version": "2026-07-r1",
     "matrix_method": "actual_road_route_api",
-    "matrix_source_sha256": "a40ccedd0a1180916ac45fa8e73f79734716a8cf0080a17b93eb1bb567854e45",
-    "matrix_route_result_sha256": "d0e9d3b21b4e9c5070cb647f8e77565f72f4c2f4352179bda4de2dfc5af61824",
+    "matrix_source_sha256": "1f33b386a91d919fe882b7dd620444d47223be77f164151cb1293728abcc0ba4",
+    "matrix_route_result_sha256": "00e5beecde5e2c04caaa41b158d8243477538dd0672fffda82410e79d5d7185e",
     "resource_count": 25,
     "resource_count_by_mode": {
       "pediatric": 6,
@@ -12,8 +12,8 @@
     "optimization": "exact_enumeration",
     "max_facilities": 3,
     "objective_populations": {
-      "pediatric": 126483,
-      "senior": 529419
+      "pediatric": 130470,
+      "senior": 538222
     },
     "excluded_district_count": 0,
     "excluded_population": 0,
@@ -40,12 +40,12 @@
           "candidate_resource_ids": [
             "candidate:pediatric:1"
           ],
-          "weighted_average_eta_minutes": 14.41,
-          "covered_15min_population": 17305,
-          "covered_15min_ratio": 0.13682,
-          "covered_30min_population": 89846,
-          "covered_30min_ratio": 0.71034,
-          "improved_population": 25285
+          "weighted_average_eta_minutes": 14.684,
+          "covered_15min_population": 17250,
+          "covered_15min_ratio": 0.13221,
+          "covered_30min_population": 93682,
+          "covered_30min_ratio": 0.71803,
+          "improved_population": 29308
         },
         "mclp_15min_optimum": {
           "candidate_ids": [
@@ -54,12 +54,12 @@
           "candidate_resource_ids": [
             "candidate:pediatric:1"
           ],
-          "weighted_average_eta_minutes": 14.41,
-          "covered_15min_population": 17305,
-          "covered_15min_ratio": 0.13682,
-          "covered_30min_population": 89846,
-          "covered_30min_ratio": 0.71034,
-          "improved_population": 25285
+          "weighted_average_eta_minutes": 14.684,
+          "covered_15min_population": 17250,
+          "covered_15min_ratio": 0.13221,
+          "covered_30min_population": 93682,
+          "covered_30min_ratio": 0.71803,
+          "improved_population": 29308
         },
         "mclp_30min_optimum": {
           "candidate_ids": [
@@ -68,12 +68,12 @@
           "candidate_resource_ids": [
             "candidate:pediatric:1"
           ],
-          "weighted_average_eta_minutes": 14.41,
-          "covered_15min_population": 17305,
-          "covered_15min_ratio": 0.13682,
-          "covered_30min_population": 89846,
-          "covered_30min_ratio": 0.71034,
-          "improved_population": 25285
+          "weighted_average_eta_minutes": 14.684,
+          "covered_15min_population": 17250,
+          "covered_15min_ratio": 0.13221,
+          "covered_30min_population": 93682,
+          "covered_30min_ratio": 0.71803,
+          "improved_population": 29308
         }
       },
       {
@@ -88,12 +88,12 @@
             "candidate:pediatric:1",
             "candidate:pediatric:4"
           ],
-          "weighted_average_eta_minutes": 13.423,
-          "covered_15min_population": 32876,
-          "covered_15min_ratio": 0.25992,
-          "covered_30min_population": 103074,
-          "covered_30min_ratio": 0.81492,
-          "improved_population": 42894
+          "weighted_average_eta_minutes": 13.726,
+          "covered_15min_population": 32764,
+          "covered_15min_ratio": 0.25112,
+          "covered_30min_population": 106844,
+          "covered_30min_ratio": 0.81892,
+          "improved_population": 46916
         },
         "mclp_15min_optimum": {
           "candidate_ids": [
@@ -104,12 +104,12 @@
             "candidate:pediatric:1",
             "candidate:pediatric:3"
           ],
-          "weighted_average_eta_minutes": 13.702,
-          "covered_15min_population": 33018,
-          "covered_15min_ratio": 0.26105,
-          "covered_30min_population": 104210,
-          "covered_30min_ratio": 0.82391,
-          "improved_population": 44025
+          "weighted_average_eta_minutes": 13.997,
+          "covered_15min_population": 32921,
+          "covered_15min_ratio": 0.25233,
+          "covered_30min_population": 107945,
+          "covered_30min_ratio": 0.82735,
+          "improved_population": 48035
         },
         "mclp_30min_optimum": {
           "candidate_ids": [
@@ -120,12 +120,12 @@
             "candidate:pediatric:1",
             "candidate:pediatric:3"
           ],
-          "weighted_average_eta_minutes": 13.702,
-          "covered_15min_population": 33018,
-          "covered_15min_ratio": 0.26105,
-          "covered_30min_population": 104210,
-          "covered_30min_ratio": 0.82391,
-          "improved_population": 44025
+          "weighted_average_eta_minutes": 13.997,
+          "covered_15min_population": 32921,
+          "covered_15min_ratio": 0.25233,
+          "covered_30min_population": 107945,
+          "covered_30min_ratio": 0.82735,
+          "improved_population": 48035
         }
       },
       {
@@ -142,12 +142,12 @@
             "candidate:pediatric:3",
             "candidate:pediatric:4"
           ],
-          "weighted_average_eta_minutes": 12.969,
-          "covered_15min_population": 45953,
-          "covered_15min_ratio": 0.36331,
-          "covered_30min_population": 107104,
-          "covered_30min_ratio": 0.84679,
-          "improved_population": 53353
+          "weighted_average_eta_minutes": 13.286,
+          "covered_15min_population": 45811,
+          "covered_15min_ratio": 0.35112,
+          "covered_30min_population": 110845,
+          "covered_30min_ratio": 0.84958,
+          "improved_population": 57327
         },
         "mclp_15min_optimum": {
           "candidate_ids": [
@@ -160,12 +160,12 @@
             "candidate:pediatric:3",
             "candidate:pediatric:4"
           ],
-          "weighted_average_eta_minutes": 12.969,
-          "covered_15min_population": 45953,
-          "covered_15min_ratio": 0.36331,
-          "covered_30min_population": 107104,
-          "covered_30min_ratio": 0.84679,
-          "improved_population": 53353
+          "weighted_average_eta_minutes": 13.286,
+          "covered_15min_population": 45811,
+          "covered_15min_ratio": 0.35112,
+          "covered_30min_population": 110845,
+          "covered_30min_ratio": 0.84958,
+          "improved_population": 57327
         },
         "mclp_30min_optimum": {
           "candidate_ids": [
@@ -178,12 +178,12 @@
             "candidate:pediatric:2",
             "candidate:pediatric:3"
           ],
-          "weighted_average_eta_minutes": 13.691,
-          "covered_15min_population": 36756,
-          "covered_15min_ratio": 0.2906,
-          "covered_30min_population": 113713,
-          "covered_30min_ratio": 0.89904,
-          "improved_population": 44193
+          "weighted_average_eta_minutes": 13.962,
+          "covered_15min_population": 36988,
+          "covered_15min_ratio": 0.2835,
+          "covered_30min_population": 117749,
+          "covered_30min_ratio": 0.9025,
+          "improved_population": 48562
         }
       }
     ],
@@ -198,12 +198,12 @@
           "candidate_resource_ids": [
             "candidate:senior:1"
           ],
-          "weighted_average_eta_minutes": 11.507,
-          "covered_15min_population": 53122,
-          "covered_15min_ratio": 0.10034,
-          "covered_30min_population": 263705,
-          "covered_30min_ratio": 0.4981,
-          "improved_population": 36937
+          "weighted_average_eta_minutes": 11.657,
+          "covered_15min_population": 53325,
+          "covered_15min_ratio": 0.09908,
+          "covered_30min_population": 264579,
+          "covered_30min_ratio": 0.49158,
+          "improved_population": 37071
         },
         "mclp_15min_optimum": {
           "candidate_ids": [
@@ -212,12 +212,12 @@
           "candidate_resource_ids": [
             "candidate:senior:1"
           ],
-          "weighted_average_eta_minutes": 11.507,
-          "covered_15min_population": 53122,
-          "covered_15min_ratio": 0.10034,
-          "covered_30min_population": 263705,
-          "covered_30min_ratio": 0.4981,
-          "improved_population": 36937
+          "weighted_average_eta_minutes": 11.657,
+          "covered_15min_population": 53325,
+          "covered_15min_ratio": 0.09908,
+          "covered_30min_population": 264579,
+          "covered_30min_ratio": 0.49158,
+          "improved_population": 37071
         },
         "mclp_30min_optimum": {
           "candidate_ids": [
@@ -226,12 +226,12 @@
           "candidate_resource_ids": [
             "candidate:senior:1"
           ],
-          "weighted_average_eta_minutes": 11.507,
-          "covered_15min_population": 53122,
-          "covered_15min_ratio": 0.10034,
-          "covered_30min_population": 263705,
-          "covered_30min_ratio": 0.4981,
-          "improved_population": 36937
+          "weighted_average_eta_minutes": 11.657,
+          "covered_15min_population": 53325,
+          "covered_15min_ratio": 0.09908,
+          "covered_30min_population": 264579,
+          "covered_30min_ratio": 0.49158,
+          "improved_population": 37071
         }
       },
       {
@@ -246,12 +246,12 @@
             "candidate:senior:1",
             "candidate:senior:3"
           ],
-          "weighted_average_eta_minutes": 11.236,
-          "covered_15min_population": 54269,
-          "covered_15min_ratio": 0.10251,
-          "covered_30min_population": 270873,
-          "covered_30min_ratio": 0.51164,
-          "improved_population": 48233
+          "weighted_average_eta_minutes": 11.39,
+          "covered_15min_population": 54472,
+          "covered_15min_ratio": 0.10121,
+          "covered_30min_population": 271763,
+          "covered_30min_ratio": 0.50493,
+          "improved_population": 48389
         },
         "mclp_15min_optimum": {
           "candidate_ids": [
@@ -262,12 +262,12 @@
             "candidate:senior:1",
             "candidate:senior:2"
           ],
-          "weighted_average_eta_minutes": 11.426,
-          "covered_15min_population": 60282,
-          "covered_15min_ratio": 0.11386,
-          "covered_30min_population": 427465,
-          "covered_30min_ratio": 0.80742,
-          "improved_population": 50964
+          "weighted_average_eta_minutes": 11.536,
+          "covered_15min_population": 60528,
+          "covered_15min_ratio": 0.11246,
+          "covered_30min_population": 433522,
+          "covered_30min_ratio": 0.80547,
+          "improved_population": 53462
         },
         "mclp_30min_optimum": {
           "candidate_ids": [
@@ -278,12 +278,12 @@
             "candidate:senior:1",
             "candidate:senior:2"
           ],
-          "weighted_average_eta_minutes": 11.426,
-          "covered_15min_population": 60282,
-          "covered_15min_ratio": 0.11386,
-          "covered_30min_population": 427465,
-          "covered_30min_ratio": 0.80742,
-          "improved_population": 50964
+          "weighted_average_eta_minutes": 11.536,
+          "covered_15min_population": 60528,
+          "covered_15min_ratio": 0.11246,
+          "covered_30min_population": 433522,
+          "covered_30min_ratio": 0.80547,
+          "improved_population": 53462
         }
       },
       {
@@ -300,12 +300,12 @@
             "candidate:senior:2",
             "candidate:senior:3"
           ],
-          "weighted_average_eta_minutes": 11.155,
-          "covered_15min_population": 61429,
-          "covered_15min_ratio": 0.11603,
-          "covered_30min_population": 434633,
-          "covered_30min_ratio": 0.82096,
-          "improved_population": 62260
+          "weighted_average_eta_minutes": 11.269,
+          "covered_15min_population": 61675,
+          "covered_15min_ratio": 0.11459,
+          "covered_30min_population": 440706,
+          "covered_30min_ratio": 0.81882,
+          "improved_population": 64780
         },
         "mclp_15min_optimum": {
           "candidate_ids": [
@@ -318,12 +318,12 @@
             "candidate:senior:2",
             "candidate:senior:3"
           ],
-          "weighted_average_eta_minutes": 11.155,
-          "covered_15min_population": 61429,
-          "covered_15min_ratio": 0.11603,
-          "covered_30min_population": 434633,
-          "covered_30min_ratio": 0.82096,
-          "improved_population": 62260
+          "weighted_average_eta_minutes": 11.269,
+          "covered_15min_population": 61675,
+          "covered_15min_ratio": 0.11459,
+          "covered_30min_population": 440706,
+          "covered_30min_ratio": 0.81882,
+          "improved_population": 64780
         },
         "mclp_30min_optimum": {
           "candidate_ids": [
@@ -336,12 +336,12 @@
             "candidate:senior:2",
             "candidate:senior:3"
           ],
-          "weighted_average_eta_minutes": 11.155,
-          "covered_15min_population": 61429,
-          "covered_15min_ratio": 0.11603,
-          "covered_30min_population": 434633,
-          "covered_30min_ratio": 0.82096,
-          "improved_population": 62260
+          "weighted_average_eta_minutes": 11.269,
+          "covered_15min_population": 61675,
+          "covered_15min_ratio": 0.11459,
+          "covered_30min_population": 440706,
+          "covered_30min_ratio": 0.81882,
+          "improved_population": 64780
         }
       }
     ]
