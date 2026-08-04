@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
@@ -69,6 +70,49 @@ def candidate_identity(row: dict[str, Any]) -> tuple[str, int, float, float]:
         round(float(row.get("lat")), 7),
         round(float(row.get("lng")), 7),
     )
+
+
+def attach_nearest_hospitals_by_role(
+    vulnerability: dict[str, Any],
+    matrix: dict[str, Any],
+) -> dict[str, Any]:
+    """도로 행렬의 역할별 최근접 기관을 프론트 단일 번들에 결합한다."""
+    enriched = deepcopy(vulnerability)
+    matrix_districts = {
+        str(row.get("name")): row
+        for row in matrix.get("districts", [])
+        if isinstance(row, dict) and row.get("name")
+    }
+
+    for feature in enriched.get("features", []):
+        properties = feature.get("properties", {})
+        district_name = str(properties.get("adm_nm") or "")
+        district = matrix_districts.get(district_name)
+        if district is None:
+            raise RuntimeError(f"역할별 최근접 기관을 찾을 수 없습니다: {district_name}")
+
+        nearest_by_mode = district.get("nearest_emergency_resource_by_mode", {})
+        pediatric = nearest_by_mode.get("pediatric")
+        general = nearest_by_mode.get("senior")
+        if not isinstance(pediatric, dict) or not isinstance(general, dict):
+            raise RuntimeError(f"역할별 최근접 기관 정보가 누락됐습니다: {district_name}")
+
+        properties["nearest_hospital_by_role"] = {
+            "general_emergency": {
+                "name": str(general["resource_name"]),
+                "tier": int(general["tier"]),
+                "eta_minutes": float(general["eta_minutes"]),
+                "road_distance_km": float(general["road_distance_km"]),
+            },
+            "pediatric_night_holiday": {
+                "name": str(pediatric["resource_name"]),
+                "tier": int(pediatric["tier"]),
+                "eta_minutes": float(pediatric["eta_minutes"]),
+                "road_distance_km": float(pediatric["road_distance_km"]),
+            },
+        }
+
+    return enriched
 
 
 def validate_release_parts(
@@ -191,6 +235,7 @@ def build_release() -> dict[str, Any]:
         population_manifest,
         sensitivity,
     )
+    vulnerability = attach_nearest_hospitals_by_role(vulnerability, matrix)
 
     scores = [float(row["properties"]["vulnerability_index"]) for row in vulnerability["features"]]
     sorted_scores = sorted(scores, reverse=True)

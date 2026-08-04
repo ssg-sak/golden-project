@@ -16,18 +16,21 @@ import build_policy_release
 def test_policy_release_is_complete_and_uses_single_version():
     release = build_policy_release.build_release()
     metadata = release["metadata"]
+    population_manifest = build_policy_release.read_json(
+        build_policy_release.POPULATION_MANIFEST_PATH
+    )
 
-    assert metadata["version"] == "2026-07-18-r2"
+    assert metadata["version"] == build_policy_release.VERSION
     assert metadata["district_count"] == 150
     assert metadata["resource_count"] == 25
     assert metadata["resource_count_by_mode"] == {"pediatric": 6, "senior": 19}
     assert metadata["route_count"] == 5100
     assert metadata["successful_route_count"] == 5100
     assert metadata["missing_route_count"] == 0
-    assert metadata["population_base_month"] == "2026.06"
+    assert metadata["population_base_month"] == population_manifest["population_base_month"]
     assert len(metadata["population_source_sha256"]) == 64
     assert metadata["population_manifest_sha256"] == build_policy_release.payload_hash(
-        build_policy_release.read_json(build_policy_release.POPULATION_MANIFEST_PATH)
+        population_manifest
     )
     assert metadata["sensitivity_sha256"] == build_policy_release.payload_hash(
         build_policy_release.read_json(build_policy_release.SENSITIVITY_PATH)
@@ -45,6 +48,16 @@ def test_policy_release_is_complete_and_uses_single_version():
     assert metadata["coordinate_snap_max_distance_km"] <= 0.75
     assert len(release["hospitals"]) == 25
     assert len(release["vulnerability"]["features"]) == 150
+    for feature in release["vulnerability"]["features"]:
+        nearest_by_role = feature["properties"]["nearest_hospital_by_role"]
+        assert set(nearest_by_role) == {
+            "general_emergency",
+            "pediatric_night_holiday",
+        }
+        assert nearest_by_role["general_emergency"]["tier"] in {1, 2}
+        assert nearest_by_role["pediatric_night_holiday"]["tier"] == 3
+        assert nearest_by_role["general_emergency"]["eta_minutes"] >= 0
+        assert nearest_by_role["pediatric_night_holiday"]["eta_minutes"] >= 0
     assert len(release["candidates"]) == 9
     assert len(release["candidate_trace"]) == 9
     assert {

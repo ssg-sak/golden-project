@@ -1,4 +1,4 @@
-import { useVulnerabilityStore } from '../../shared/store/vulnerabilityStore';
+import type { DistrictVulnerabilityRecord } from '../../shared/types/vulnerability';
 
 import { usePresetStore } from './lib/usePresetStore';
 
@@ -8,6 +8,7 @@ const PANEL_SHELL =
 interface PresetDistrictListPanelProps {
   onDistrictSelect: (admNm: string) => void;
   selectedDistrict: string | null;
+  records: DistrictVulnerabilityRecord[];
 }
 
 function simplifyDistrictName(admNm: string): string {
@@ -22,10 +23,10 @@ function formatScore(value?: number): string {
 export function PresetDistrictListPanel({
   onDistrictSelect,
   selectedDistrict,
+  records,
 }: PresetDistrictListPanelProps) {
   const activePreset = usePresetStore((state) => state.activePreset);
   const presetData = usePresetStore((state) => state.presetData);
-  const records = useVulnerabilityStore((state) => state.records);
 
   const presetMeta =
     activePreset === 'highRiskTop10'
