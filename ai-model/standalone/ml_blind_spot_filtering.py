@@ -98,8 +98,8 @@ def extract_blind_spots(kindergarten_csv_path, hospital_csv_path, output_csv_pat
 if __name__ == "__main__":
     # 실행 예시 (경로는 실제 파일 위치에 맞게 수정 필요)
     # 현재 위치(scripts)를 기준으로 상위 폴더의 data 디렉토리 접근
-    KINDER_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "raw", "daegu_kindergartens.csv")
-    HOSPITAL_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "raw", "daegu_hospitals.csv")
-    OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "processed", "blind_spot_kindergartens.csv")
+    KINDER_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw", "daegu_kindergartens.csv")
+    HOSPITAL_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "raw", "daegu_hospitals.csv")
+    OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "data", "processed", "blind_spot_kindergartens.csv")
     
     extract_blind_spots(KINDER_PATH, HOSPITAL_PATH, OUTPUT_PATH)

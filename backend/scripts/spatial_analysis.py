@@ -195,6 +195,9 @@ def compute_distances_and_index(
 
     metric_gdf = gdf.to_crs(METRIC_CRS)
     hospitals_metric = load_hospitals(hospitals_path).to_crs(METRIC_CRS)
+    # cKDTree가 돌려주는 위치와 pandas 라벨이 섞이지 않도록 입력 순서를
+    # 명시적인 0..n-1 인덱스로 고정한다.
+    hospitals_metric = hospitals_metric.reset_index(drop=True)
     hospital_points = hospitals_metric.geometry
 
     centroids = metric_gdf.geometry.centroid
