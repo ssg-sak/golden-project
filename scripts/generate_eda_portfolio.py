@@ -213,8 +213,9 @@ def main() -> None:
     release_path = project_root / "frontend" / "public" / "data" / "policy_release.json"
     matrix_path = (
         project_root
+        / "frontend"
+        / "public"
         / "data"
-        / "processed"
         / "actual_road_accessibility_matrix.json"
     )
     analysis_dir = project_root / "analysis"
