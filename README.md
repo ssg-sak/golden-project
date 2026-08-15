@@ -167,6 +167,12 @@ python ai-model/run_integrated_policy_pipeline.py
 python ai-model/run_integrated_policy_pipeline.py --offline
 ```
 
+분석·백엔드 회귀 테스트는 저장소 루트에서 한 번에 실행한다.
+
+```bash
+python -m pytest tests/ -q
+```
+
 환경 변수 예시는 [`.env.example`](.env.example)에 있습니다. 비밀키는 커밋하지 않아야 합니다.
 
 ## 9. 결과 화면

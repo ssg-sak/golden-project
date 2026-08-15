@@ -13,7 +13,7 @@ if str(BACKEND_DIR) not in sys.path:
 from app.db.database import engine, Base, SessionLocal
 from app.db.models import Hospital
 
-def main():
+def main() -> None:
     json_path = PROJECT_ROOT / "data" / "processed" / "final_hospitals.json"
     if not json_path.exists():
         raise FileNotFoundError(f"Error: {json_path} does not exist.")

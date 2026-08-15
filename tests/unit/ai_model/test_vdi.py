@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import pytest
 
 
@@ -20,22 +21,30 @@ from vdi_sensitivity import calculate_vdi_rank_sensitivity
 
 
 @pytest.mark.parametrize(
-    ("values", "value", "expected"),
+    ("values", "expected"),
     [
-        ([5.0, 5.0, 5.0], 5.0, 0.0),
-        ([10.0, 20.0, 30.0], 10.0, 0.0),
-        ([10.0, 20.0, 30.0], 30.0, 100.0),
+        ([5.0, 5.0, 5.0], [0.0, 0.0, 0.0]),
+        ([10.0, 20.0, 30.0], [0.0, 50.0, 100.0]),
+        ([0.0, 50.0, 100.0], [0.0, 50.0, 100.0]),
+        ([7.0], [0.0]),
     ],
 )
-def test_normalize_handles_constant_and_boundary_values(
+def test_normalize_scores_handles_boundaries_and_constant_values(
     values: list[float],
-    value: float,
-    expected: float,
+    expected: list[float],
 ) -> None:
-    assert road_accessibility.normalize(values, value) == pytest.approx(expected)
+    scores = pd.Series(
+        values,
+        index=[f"row-{index}" for index in range(len(values))],
+    )
+
+    normalized = road_accessibility.normalize_scores(scores)
+
+    assert normalized.tolist() == pytest.approx(expected)
+    assert normalized.index.equals(scores.index)
 
 
-def _nearest(eta_minutes: float) -> dict[str, Any]:
+def _nearest(eta_minutes: float | int) -> dict[str, Any]:
     return {
         "resource_name": "테스트병원",
         "tier": 1,
@@ -111,6 +120,74 @@ def test_actual_road_vdi_zero_boundaries_and_monotonicity(
     assert scores["증가동"] > scores["기준동"]
 
 
+def test_actual_road_fields_preserve_source_types_and_skip_missing_resource(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    matrix = {
+        "districts": [
+            {
+                "name": "정수동",
+                "vulnerable_population": 100,
+                "nearest_emergency_resource": {
+                    "resource_name": "정수병원",
+                    "tier": 1,
+                    "eta_minutes": 12,
+                    "road_distance_km": 4,
+                },
+            },
+            {
+                "name": "누락동",
+                "vulnerable_population": 0,
+                "nearest_emergency_resource": None,
+            },
+        ]
+    }
+    geojson = {
+        "type": "FeatureCollection",
+        "features": [
+            {"type": "Feature", "properties": {"adm_nm": district["name"]}}
+            for district in matrix["districts"]
+        ],
+    }
+    captured: dict[Path, Any] = {}
+
+    def fake_read_json(path: Path) -> Any:
+        if path == road_accessibility.FRONTEND_GEOJSON_PATH:
+            return copy.deepcopy(geojson)
+        if path == road_accessibility.CANDIDATES_PATH:
+            return []
+        raise AssertionError(f"예상하지 못한 입력 경로: {path}")
+
+    def fake_write_json(
+        path: Path,
+        payload: Any,
+        *,
+        compact: bool = False,
+    ) -> None:
+        captured[path] = copy.deepcopy(payload)
+
+    monkeypatch.setattr(road_accessibility, "read_json", fake_read_json)
+    monkeypatch.setattr(road_accessibility, "write_json", fake_write_json)
+
+    road_accessibility.apply_actual_road_results(matrix, {"results": {}})
+
+    features = {
+        feature["properties"]["adm_nm"]: feature["properties"]
+        for feature in captured[road_accessibility.FRONTEND_GEOJSON_PATH]["features"]
+    }
+    integer_properties = features["정수동"]
+    assert integer_properties["travel_time_minutes"] == 12
+    assert type(integer_properties["travel_time_minutes"]) is int
+    assert integer_properties["road_distance_km"] == 4
+    assert type(integer_properties["road_distance_km"]) is int
+    assert type(integer_properties["nearest_hospital_tier"]) is int
+
+    missing_properties = features["누락동"]
+    assert missing_properties["actual_road_vdi_log"] == pytest.approx(0.0)
+    assert "travel_time_minutes" not in missing_properties
+    assert "nearest_hospital_name" not in missing_properties
+
+
 def _sensitivity_release() -> dict[str, Any]:
     rows = [
         ("가동", 100.0, 100, 10.0),
@@ -141,8 +218,30 @@ def test_vdi_sensitivity_uses_average_ranks_for_ties() -> None:
 
     assert rows["가동"]["baseline_rank"] == pytest.approx(1.5)
     assert rows["나동"]["baseline_rank"] == pytest.approx(1.5)
+
+
+def test_vdi_sensitivity_reports_significant_perfect_correlation() -> None:
+    release = {
+        "vulnerability": {
+            "features": [
+                {
+                    "properties": {
+                        "adm_nm": f"{index}동",
+                        "vulnerability_index": float(index),
+                        "취약인구": index,
+                        "travel_time_minutes": float(index),
+                    }
+                }
+                for index in range(1, 7)
+            ]
+        }
+    }
+
+    result = calculate_vdi_rank_sensitivity(release)
+
     for method in result["methods"].values():
-        assert 0.0 <= method["spearman_p_value"] <= 1.0
+        assert method["spearman_rank_correlation"] == pytest.approx(1.0)
+        assert method["spearman_p_value"] < 0.05
 
 
 def test_vdi_sensitivity_rejects_missing_required_field() -> None:

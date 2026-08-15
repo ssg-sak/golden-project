@@ -14,4 +14,6 @@ reportlab>=4.0.0
 jupyter-client>=8.0.0
 nbclient>=0.8.0
 nbformat>=5.9.0
+# nbclient가 CI에서 `python3` 커널을 시작할 때 필요한 런타임이다.
+ipykernel>=6.0.0
 xmltodict>=0.13.0
