@@ -1,3 +1,5 @@
+> **Note**: 본 문서는 과거(2026-07-26)의 테스트 기록으로 역사적 보존을 위해 남겨둔 문서(Archive)입니다. 최신 검증 결과는 PACKAGE_VALIDATION.md를 참고하세요.
+
 # Golden Governance 최종 테스트 결과 보고서
 
 ## 1. 기본 정보

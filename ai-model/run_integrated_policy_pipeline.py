@@ -37,7 +37,7 @@ ROLLBACK_OUTPUTS = [
     PROJECT_ROOT / "frontend" / "public" / "data" / "accessibility_candidate_trace.json",
     PROJECT_ROOT / "docs" / "reports" / "accessibility_candidate_trace_report_20260715.md",
     PROJECT_ROOT / "frontend" / "public" / "data" / "stable_policy_candidates.json",
-    PROJECT_ROOT / "data" / "processed" / "actual_road_accessibility_matrix.json",
+    PROJECT_ROOT / "frontend" / "public" / "data" / "actual_road_accessibility_matrix.json",
     PROJECT_ROOT / "frontend" / "public" / "data" / "actual_road_accessibility_matrix.json",
     PROJECT_ROOT / "data" / "processed" / "policy_location_optimization.json",
     PROJECT_ROOT / "frontend" / "public" / "data" / "policy_location_optimization.json",

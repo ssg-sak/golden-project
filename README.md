@@ -2,7 +2,7 @@
 
 대구광역시의 응급의료기관 탐색과 행정동별 의료 접근성 분석을 연결한 공공데이터 기반 웹서비스입니다. 시민에게는 현재 위치에서 확인할 응급의료기관 정보를 제공하고, 행정·정책 관점에서는 실제 도로 이동시간과 보호가 필요한 인구를 함께 고려해 취약지역과 거점 후보를 비교합니다.
 
-[서비스 바로가기](https://ssg-sak.github.io/golden-project/) · [정책분석 보고서](docs/reports/EDA_REPORT.md) · [공개 데모 검증 보고서](docs/reports/DEMO_VALIDATION_REPORT_20260724.md)
+[서비스 바로가기](https://ssg-sak.github.io/golden-project/) · [정책분석 보고서](frontend/public/data/reports/golden-governance-portfolio.pdf) · [공개 데모 검증 보고서](docs/reports/DEMO_VALIDATION_REPORT_20260724.md)
 
 > 병상·진료·수용 정보는 조회 시점의 참고값입니다. 응급상황에서는 119·1339 또는 의료기관에 직접 확인해야 합니다.
 

@@ -14,6 +14,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
+.venv-old/
 venv/
 
 # 로컬 실행 산출물 및 임시 파일
@@ -21,6 +22,8 @@ venv/
 *.tmp
 *.temp
 result.txt
+/*_log.txt
+/page_*.png
 
 .DS_Store
 *.log
@@ -69,7 +72,6 @@ docs/**
 !docs/
 
 # 2. 저장소에서 관리할 공개 문서와 이미지 허용
-!docs/README.md
 !docs/*.md
 !docs/core/
 !docs/core/*.md
@@ -80,18 +82,6 @@ docs/**
 !docs/plans/
 !docs/plans/active/
 !docs/plans/active/*.md
-!docs/archive/
-!docs/archive/README.md
-!docs/archive/legacy-consolidated/
-!docs/archive/legacy-consolidated/*.md
-!docs/archive/delivery-evidence/
-!docs/archive/delivery-evidence/*.md
-!docs/archive/plans/
-!docs/archive/plans/*.md
-!docs/archive/repository-history/
-!docs/archive/repository-history/*.md
-!docs/archive/drafts/
-!docs/archive/drafts/*.md
 !docs/**/*.csv
 !docs/images/
 !docs/images/eda/
