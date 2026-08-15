@@ -34,6 +34,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 import requests
+from scipy.spatial import cKDTree
 from shapely.geometry import Point
 
 from data_paths import (
@@ -199,20 +200,32 @@ def compute_distances_and_index(
     centroids = metric_gdf.geometry.centroid
     centers_wgs = centroids.to_crs("EPSG:4326")
 
-    min_dist_km: list[float] = []
-    center_lats: list[float] = []
-    center_lngs: list[float] = []
+    hospital_coordinates = np.column_stack(
+        (hospital_points.x.to_numpy(), hospital_points.y.to_numpy())
+    )
+    centroid_coordinates = np.column_stack(
+        (centroids.x.to_numpy(), centroids.y.to_numpy())
+    )
+    # 기관 수가 늘어날 때 모든 조합을 비교하지 않도록 한 번 만든 공간
+    # 인덱스에서 O(n log m)으로 최근접 기관을 조회한다.
+    hospital_tree = cKDTree(hospital_coordinates)
+    nearest_distances_m, nearest_positions = hospital_tree.query(
+        centroid_coordinates,
+        k=1,
+    )
+
+    min_dist_km = [
+        round(float(distance_m) / 1000.0, 3)
+        for distance_m in nearest_distances_m
+    ]
+    center_lats = [round(center.y, 6) for center in centers_wgs]
+    center_lngs = [round(center.x, 6) for center in centers_wgs]
     nearest_names: list[str] = []
     nearest_tiers: list[int] = []
     nearest_addresses: list[str] = []
 
-    for centroid, center_geo in zip(centroids, centers_wgs, strict=True):
-        distances_m = hospital_points.distance(centroid)
-        nearest_idx = distances_m.idxmin()
-        nearest = hospitals_metric.loc[nearest_idx]
-        min_dist_km.append(round(float(distances_m.min()) / 1000.0, 3))
-        center_lats.append(round(center_geo.y, 6))
-        center_lngs.append(round(center_geo.x, 6))
+    for nearest_position in nearest_positions:
+        nearest = hospitals_metric.iloc[int(nearest_position)]
         nearest_names.append(str(nearest["name"]))
         nearest_tiers.append(int(nearest["tier"]))
         address = nearest.get("address", "")

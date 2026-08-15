@@ -157,6 +157,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ### 정책 분석 파이프라인
 
 ```bash
+pip install -r requirements-analysis.txt
 python ai-model/run_integrated_policy_pipeline.py
 ```
 
