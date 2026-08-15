@@ -195,8 +195,8 @@ def create_policy_comparison_plot(
         0.5,
         0.84,
         plot_text(
-            "2026.06 인구 · 일반 차량 도로 ETA · 기존 기관 + p-median 3개 후보",
-            "June 2026 population · ordinary-vehicle road ETA · existing resources + three p-median candidates",
+            "2026.07 인구 · 일반 차량 도로 ETA · 기존 기관 + p-median 3개 후보",
+            "July 2026 population · ordinary-vehicle road ETA · existing resources + three p-median candidates",
             korean_font_available,
         ),
         ha="center",
@@ -368,7 +368,7 @@ def main() -> None:
     top_names = ", ".join(top10_vdi["adm_nm"].str.replace("대구광역시 ", "", regex=False).head(3))
     report_content = f"""# 대구 골든타임 정책분석 탐색적 데이터 분석(EDA)
 
-이 문서는 `{metadata['version']}` 내부 분석 식별자에 해당하는 **2026.07.18 검증본**을 탐색적으로 점검합니다. EDA는 현재 데이터의 분포와 변수 관계를 설명하며 의료적 위험 임계값이나 시설 신설 효과를 확정하지 않습니다.
+이 문서는 `{metadata['version']}` / 인구 기준월 `{metadata['population_base_month']}` 정책 릴리스를 탐색적으로 점검합니다. EDA는 현재 데이터의 분포와 변수 관계를 설명하며 의료적 위험 임계값이나 시설 신설 효과를 확정하지 않습니다.
 
 ## 1. 데이터 개요 및 기초 구조
 - **분석 대상 행정동 수**: {len(df)}개
@@ -415,7 +415,7 @@ def main() -> None:
 | `ln(1+ETA) × ln(1+취약인구)` | {vdi_sensitivity['methods']['population_log']['spearman_rank_correlation']:.3f} | {vdi_sensitivity['methods']['population_log']['top10_overlap_count']}/10 | {vdi_sensitivity['methods']['population_log']['median_absolute_rank_shift']:.1f}위 | {vdi_sensitivity['methods']['population_log']['maximum_absolute_rank_shift']}위 |
 | 로그 구성요소 Min-Max 정규화 후 동일가중 합 | {vdi_sensitivity['methods']['equal_minmax']['spearman_rank_correlation']:.3f} | {vdi_sensitivity['methods']['equal_minmax']['top10_overlap_count']}/10 | {vdi_sensitivity['methods']['equal_minmax']['median_absolute_rank_shift']:.1f}위 | {vdi_sensitivity['methods']['equal_minmax']['maximum_absolute_rank_shift']}위 |
 
-- **정책적 시사점**: 인구 로그 곱셈 대안은 상위 10개 중 2개만 유지되고 순위상관이 0.518이어서 현재 우선순위가 산식 선택에 민감합니다. 동일가중 정규화 대안은 상위 10개 중 7개를 유지하지만 최대 70위 이동이 남습니다. 따라서 현재 VDI는 확정 서열이 아니라 한 가지 내부 우선순위 기준으로만 사용하고, 가중 ETA·15분 커버율과 함께 판단해야 합니다.
+- **정책적 시사점**: 인구 로그 곱셈 대안은 상위 10개 중 {vdi_sensitivity['methods']['population_log']['top10_overlap_count']}개를 유지하고 순위상관이 {vdi_sensitivity['methods']['population_log']['spearman_rank_correlation']:.3f}이어서 현재 우선순위가 산식 선택에 민감합니다. 동일가중 정규화 대안은 상위 10개 중 {vdi_sensitivity['methods']['equal_minmax']['top10_overlap_count']}개를 유지하며 최대 {vdi_sensitivity['methods']['equal_minmax']['maximum_absolute_rank_shift']}위 이동이 남습니다. 따라서 현재 VDI는 확정 서열이 아니라 한 가지 내부 우선순위 기준으로만 사용하고, 가중 ETA·15분 커버율과 함께 판단해야 합니다.
 
 ## 5. 병원 티어별 접근성 비교
 
@@ -471,13 +471,13 @@ p-median의 3개 후보 조합을 적용하되 기존 기관을 제거하지 않
 """
             ),
             markdown_cell(
-                """## Context & Methods
+                f"""## Context & Methods
 
 이 노트북은 외부 검토자와 분석 검토자가 같은 산출물을 재실행할 수 있도록 만든 분석 보고서입니다.
 
 ### Key Assumptions
 
-- 인구 기준월은 2026.06입니다.
+- 인구 기준월은 {metadata['population_base_month']}입니다.
 - ETA는 단일 수집 시점의 일반 차량 도로 경로이며 119 이송시간이 아닙니다.
 - 후보는 확정 부지가 아니라 현장조사 우선순위입니다.
 - VDI는 `ln(1 + 일반 차량 ETA) × 취약인구`인 내부 상대 비교 지표입니다.
@@ -485,7 +485,7 @@ p-median의 3개 후보 조합을 적용하되 기존 기관을 제거하지 않
 ### Sources
 
 - `frontend/public/data/policy_release.json`
-- `data/processed/actual_road_accessibility_matrix.json`
+- `frontend/public/data/actual_road_accessibility_matrix.json`
 - `scripts/policy_analysis_validation.py`
 - `scripts/kpi_metrics.py`
 """
@@ -531,7 +531,7 @@ plt.rcParams["axes.unicode_minus"] = False
 
 release_path = project_root / "frontend" / "public" / "data" / "policy_release.json"
 matrix_path = (
-    project_root / "data" / "processed" / "actual_road_accessibility_matrix.json"
+    project_root / "frontend" / "public" / "data" / "actual_road_accessibility_matrix.json"
 )
 release = json.loads(release_path.read_text(encoding="utf-8"))
 matrix = json.loads(matrix_path.read_text(encoding="utf-8"))

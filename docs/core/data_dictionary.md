@@ -3,8 +3,8 @@
 이 문서는 시민용 응급의료 화면과 골든 거버넌스 정책분석이 사용하는 데이터의 의미, 상태, 안전한 해석 범위를 정리합니다. 현재 정책분석에는 HIRA 전문의 수·MRI·CT 기반 인프라 가중치나 자원 보강 추천을 사용하지 않습니다.
 
 - **현행 파일 점검일:** 2026-07-31
-- **정책분석 기준 릴리스:** `2026-07-18-r2`
-- **인구 기준월:** `2026.06`
+- **정책분석 기준 릴리스:** `2026-07-r1`
+- **인구 기준월:** `2026.07`
 - **문서 범위:** `data/`의 원천·가공·분석·SQLite 데이터와 이를 배포하기 위한 프론트엔드 복제본
 - **제외 범위:** PNG·PDF·노트북 같은 비정형 산출물, 루트의 미추적 진단 캡처 `test_api.json`, 별도 실험 폴더 `golden-data-lab/`
 
@@ -43,7 +43,7 @@
 | 정책 릴리스 | 기준 기관 | `data/processed/final_hospitals.json` | 25기관 | `name` | 정본 구성요소 |
 | 정책 릴리스 | 안정 후보 | `frontend/public/data/stable_policy_candidates.json` | 9후보 | `mode` + `id` | 정본 구성요소 |
 | 정책 릴리스 | 후보 근거 추적 | `data/processed/accessibility_candidate_trace.json` | 9후보 | `mode` + `id` | 정본 구성요소 |
-| 정책 릴리스 | 도로 접근성 행렬 | `data/processed/actual_road_accessibility_matrix.json` | 150행정동·5,100경로 | 행정동 ID + 자원 ID | 정본 구성요소 |
+| 정책 릴리스 | 도로 접근성 행렬 | `frontend/public/data/actual_road_accessibility_matrix.json` | 150행정동·5,100경로 | 행정동 ID + 자원 ID | 정본 구성요소 |
 | 정책 릴리스 | 후보 민감도 | `data/processed/candidate_sensitivity_analysis.json` | 2모드·480시나리오 | `mode` + `scenario_key` | 정본 구성요소 |
 | 정책 릴리스 | 입지 최적화 | `data/processed/policy_location_optimization.json` | 2모드 × 시설 수 1~3 | `mode` + `facility_count` | 정본 구성요소 |
 | 원천 공간 | 행정동 경계 | `data/raw/geo/daegu_dong.geojson` | 150행정동 | `properties.adm_nm` | 원천 입력 |
@@ -69,7 +69,7 @@
 | 정본 또는 생성 원본 | 복제 위치 | 현재 관계 |
 |---|---|---|
 | `data/processed/policy_release.json` | `frontend/public/data/policy_release.json` | 바이트 동일 |
-| `data/processed/actual_road_accessibility_matrix.json` | `frontend/public/data/actual_road_accessibility_matrix.json` | 바이트 동일 |
+| `frontend/public/data/actual_road_accessibility_matrix.json` | `frontend/public/data/actual_road_accessibility_matrix.json` | 바이트 동일 |
 | `data/processed/accessibility_candidate_trace.json` | `frontend/public/data/accessibility_candidate_trace.json` | 바이트 동일 |
 | `data/processed/policy_location_optimization.json` | `frontend/public/data/policy_location_optimization.json` | 바이트 동일 |
 | `data/processed/final_hospitals.json` | `data/analysis/`, `frontend/src/assets/`, `frontend/src/data/`의 동명 파일 | 바이트 동일 |
@@ -114,7 +114,7 @@
 | `vulnerability_index` | Float | `ln(1 + ETA) × 취약인구` | 행정동 상대 비교 |
 | `vdi_norm` | Float | 현재 VDI의 0~100 선형 정규화 값 | 같은 분석본 내부의 보조 비교값 |
 
-현재 고위험 표시는 의료적 절대 기준이 아니다. 150개 행정동 VDI의 상위 25%를 우선 확인 대상으로 구분하며 현재 경계값은 13,261.43이다.
+현재 고위험 표시는 의료적 절대 기준이 아니다. 150개 행정동 VDI의 상위 25%를 우선 확인 대상으로 구분하며 현재 경계값은 13,429.72이다.
 
 ## 4. 정책 후보와 근거 추적
 
@@ -209,7 +209,7 @@
 
 - 파일: `data/raw/population/kosis_dong_5yr_population_202606.csv`
 - 형식: CP949 CSV, 2행 헤더, 486데이터행
-- 기준월: 2026.06
+- 기준월: 2026.07
 - 분석 대상 행: `항목 == "총인구수 (명)"`; 시도·시군구 합계와 출장소 행은 파싱 단계에서 제외
 
 | 컬럼 | 타입 | 의미 | 파싱 사용 |
@@ -227,7 +227,7 @@
 | `95 - 99세` | Integer text | 95~99세 인구, 명 | 동일 |
 | `100+` | Integer text | 100세 이상 인구, 명 | 동일 |
 
-첫 번째 헤더 행에는 각 연령 컬럼 대신 기준월 `2026.06`이 반복된다. 일반적인 단일 헤더 CSV로 읽으면 안 된다.
+첫 번째 헤더 행에는 각 연령 컬럼 대신 기준월 `2026.07`이 반복된다. 일반적인 단일 헤더 CSV로 읽으면 안 된다.
 
 ### 8.3 행정동별 소아·고령 인구 파싱본과 manifest
 
@@ -358,9 +358,9 @@
 | 논리 컬럼 | 의미 |
 |---|---|
 | `행정구역(시군구)별` | 대구광역시 또는 구·군 명칭 |
-| `2026.06 / 총인구수 (명)` | 2026.06 총인구 |
-| `2026.06 / 남자인구수 (명)` | 2026.06 남자 인구 |
-| `2026.06 / 여자인구수 (명)` | 2026.06 여자 인구 |
+| `2026.07 / 총인구수 (명)` | 2026.07 총인구 |
+| `2026.07 / 남자인구수 (명)` | 2026.07 남자 인구 |
+| `2026.07 / 여자인구수 (명)` | 2026.07 여자 인구 |
 
 ## 9. 정책분석 정본 상세 컬럼
 
@@ -487,7 +487,7 @@ MCLP 커버 필드는 기존 기관을 포함한 전체 체계의 순증가량�
 
 ### 9.5 실제 도로 접근성 행렬
 
-- 파일: `data/processed/actual_road_accessibility_matrix.json`
+- 파일: `frontend/public/data/actual_road_accessibility_matrix.json`
 - 공급 자원: 기준 기관 25곳 + 정책 후보 9곳
 - 경로 계약: `150 × (25 + 9) = 5,100`
 
@@ -955,9 +955,9 @@ CSV의 `최근접병원`은 도로 ETA 기준이고 `최근접거리km`는 직�
 | 데이터 | 저장소에서 확인되는 출처 | 기준시점 | 라이선스·재배포 상태 |
 |---|---|---|---|
 | 행정동 경계 | `vuski/admdongkor` 파일, SGIS 계보 | 파일 버전 2023-07-01 | 저장소 내 명시적 증빙 없음; 확인 필요 |
-| 행정동 연령별 인구 | 통계청 KOSIS 5세별 주민등록인구 | 2026.06 | 저장소 내 명시적 증빙 없음; 확인 필요 |
+| 행정동 연령별 인구 | 통계청 KOSIS 5세별 주민등록인구 | 2026.07 | 저장소 내 명시적 증빙 없음; 확인 필요 |
 | 응급기관 기본정보 | 국립중앙의료원·공공데이터포털 API | 현재 릴리스 입력 수집일은 개별 확정 불가 | 공공데이터포털 이용조건 확인 필요 |
-| 달빛어린이병원 6곳 | 대구광역시 보건 지정 목록 | 코드 주석상 2026.06 | 페이지 이용조건과 최신 지정현황 확인 필요 |
+| 달빛어린이병원 6곳 | 대구광역시 보건 지정 목록 | 코드 주석상 2026.07 | 페이지 이용조건과 최신 지정현황 확인 필요 |
 | 병·의원·약국 추출본 | `전국 병의원 및 약국 현황 2026.3` | 2026.03 | 원본 ZIP의 이용조건·재배포 범위 확인 필요 |
 | 행정동 코드 이력 | `국가데이터처_행정동 정보_20250704.csv` | 파일명상 2025-07-04 | 원본 이용조건 확인 필요 |
 | 어린이집 | 현행 저장소에서 제공기관 미확정 | 확인 필요 | 출처·라이선스 모두 확인 필요 |
@@ -978,6 +978,6 @@ CSV의 `최근접병원`은 도로 ETA 기준이고 `최근접거리km`는 직�
 | 최근접 기관명·주소 불일치 | 45/150 | 주소는 기관 정본에 이름 JOIN하여 조회 필요 |
 | 루트·배포 `priority_targets.json` 불일치 | 있음 | 둘 다 현행 정본에서 제외 |
 | `data/processed/daegu_er_hospitals.json` 규모 | 18기관 | 최종 25기관 정본 대신 사용 금지 |
-| `data/reports/daegu-golden-time-policy-analysis-report.pdf` | 3,202,534바이트·20쪽 | 2026-08-02 검증본과 SHA-256 일치 확인; 데이터셋이 아닌 정책분석 산출물로 관리 |
+| `data/reports/golden-governance-portfolio.pdf` | 3,202,534바이트·20쪽 | 2026-08-02 검증본과 SHA-256 일치 확인; 데이터셋이 아닌 정책분석 산출물로 관리 |
 
 현재 발견된 이름·주소 불일치는 VDI와 도로 ETA 계산값 자체를 바꾸지는 않지만, 상세 화면에서 주소를 함께 표시하면 잘못된 기관 주소가 연결될 수 있다. 생성 단계에서 `nearest_hospital_address`도 도로 ETA 최근접 기관 기준으로 갱신하고 회귀 검사를 추가하는 것이 필요하다.

@@ -99,7 +99,7 @@ const STATUS_STYLE: Record<StageTone, string> = {
   unknown: 'bg-slate-100 text-slate-600 ring-slate-200',
 };
 
-const POLICY_REPORT_URL = `${import.meta.env.BASE_URL}data/reports/daegu-golden-time-policy-analysis-report.pdf`;
+const POLICY_REPORT_URL = 'https://github.com/ssg-sak/golden-project/blob/main/docs/reports/EDA_REPORT.md';
 
 function sourceTone(source?: DataSourceStatusRecord): StageTone {
   if (!source) return 'unknown';
@@ -344,7 +344,7 @@ export function PolicyDataPipeline({
                 rel="noreferrer"
                 className="rounded border border-teal-300 bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-900 transition hover:bg-teal-100"
               >
-                최종 정책보고서 보기 (PDF)
+                정책분석 보고서 보기
               </a>
               <button
                 type="button"
