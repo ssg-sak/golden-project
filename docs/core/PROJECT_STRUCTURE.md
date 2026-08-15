@@ -1,6 +1,6 @@
 # 대구 골든타임 프로젝트 구조
 
-최종 갱신: 2026-08-02
+최종 갱신: 2026-08-15
 
 
 ## 1. 전체 구조
@@ -34,7 +34,7 @@ golden-project/
 │  ├─ core/                 현재 구조·방법론·데이터·KPI 기준
 │  ├─ reports/              날짜가 고정된 분석·검증 기록
 │  ├─ templates/            재사용 문서 양식
-│  ├─ archive/              과거 통합 문서와 완료된 계획
+│  ├─ plans/                현재 진행 중인 계획
 │  └─ images/               문서용 화면·분석 이미지
 ├─ .github/workflows/        CI 검증과 GitHub Pages 배포
 ├─ README.md                 프로젝트 대표 설명
@@ -176,7 +176,6 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 | `docs/reports/EDA_REPORT.md` | 탐색적 데이터 분석 결과 |
 | `docs/reports/DATA_QUALITY_REPORT.md` | 좌표·키·경로·산식 품질 판정 |
 | `docs/core/kpi.md` | 정적 분석과 외부 동적 원천을 구분한 KPI 운영 기준 |
-| `docs/reports/TEST_REPORT_20260726.md` | 단위·통합·E2E·데이터·성능·보안 최종 판정 |
 
 ## 9. 저장소에 두지 않는 파일
 
