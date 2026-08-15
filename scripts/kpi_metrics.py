@@ -7,7 +7,7 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 RELEASE_PATH = PROJECT_ROOT / "data" / "processed" / "policy_release.json"
-MATRIX_PATH = PROJECT_ROOT / "data" / "processed" / "actual_road_accessibility_matrix.json"
+MATRIX_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "actual_road_accessibility_matrix.json"
 
 MODE_POPULATION_KEYS = {
     "pediatric": "pediatric_population",

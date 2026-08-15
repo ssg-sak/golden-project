@@ -43,7 +43,7 @@ def test_notebook_source_signature_normalizes_nbformat_source_shape() -> None:
 
 def test_current_policy_analysis_contract_is_complete() -> None:
     release = _read_json("data/processed/policy_release.json")
-    matrix = _read_json("data/processed/actual_road_accessibility_matrix.json")
+    matrix = _read_json("frontend/public/data/actual_road_accessibility_matrix.json")
 
     summary = validate_policy_analysis(release, matrix)
 
@@ -65,7 +65,7 @@ def test_current_policy_analysis_contract_is_complete() -> None:
 
 def test_missing_required_feature_is_not_replaced_with_zero() -> None:
     release = _read_json("data/processed/policy_release.json")
-    matrix = _read_json("data/processed/actual_road_accessibility_matrix.json")
+    matrix = _read_json("frontend/public/data/actual_road_accessibility_matrix.json")
     invalid_release = copy.deepcopy(release)
     del invalid_release["vulnerability"]["features"][0]["properties"][
         "vulnerability_index"
@@ -77,7 +77,7 @@ def test_missing_required_feature_is_not_replaced_with_zero() -> None:
 
 def test_nearest_eta_tie_requires_resource_id_sort_order() -> None:
     release = _read_json("data/processed/policy_release.json")
-    matrix = _read_json("data/processed/actual_road_accessibility_matrix.json")
+    matrix = _read_json("frontend/public/data/actual_road_accessibility_matrix.json")
     invalid_matrix = copy.deepcopy(matrix)
     tied_district = next(
         district
@@ -121,7 +121,7 @@ def test_nearest_eta_tie_requires_resource_id_sort_order() -> None:
 
 def test_coordinate_snap_concentration_is_recalculated_from_route_details() -> None:
     release = _read_json("data/processed/policy_release.json")
-    matrix = _read_json("data/processed/actual_road_accessibility_matrix.json")
+    matrix = _read_json("frontend/public/data/actual_road_accessibility_matrix.json")
     invalid_matrix = copy.deepcopy(matrix)
     invalid_matrix["metadata"]["route_provenance"]["coordinate_snap_audit"][
         "route_details"
@@ -148,7 +148,7 @@ def test_vdi_alternative_rank_sensitivity_matches_current_release() -> None:
 
 def test_policy_kpis_match_current_release_snapshot() -> None:
     release = _read_json("data/processed/policy_release.json")
-    matrix = _read_json("data/processed/actual_road_accessibility_matrix.json")
+    matrix = _read_json("frontend/public/data/actual_road_accessibility_matrix.json")
 
     metrics = calculate_policy_kpis(
         matrix,
