@@ -54,6 +54,7 @@ jobs:
           import os
           import time
           import urllib.request
+          from pathlib import Path
 
           with open(os.environ["LOCAL_POINTER"], encoding="utf-8") as source:
               local_pointer = json.load(source)
@@ -62,6 +63,11 @@ jobs:
           run_id = os.environ["GITHUB_RUN_ID"]
           expected_version = local_pointer["version"]
           expected_hash = local_pointer["bundle_sha256"]
+          report_path = Path(
+              "frontend/public/data/reports/"
+              "daegu-golden-time-policy-analysis-report.pdf"
+          )
+          expected_report_hash = hashlib.sha256(report_path.read_bytes()).hexdigest()
           last_error = "공개 사이트가 아직 이전 버전을 제공하고 있습니다."
 
           for attempt in range(1, 25):
@@ -89,8 +95,25 @@ jobs:
                           bundle = response.read()
                       actual_hash = hashlib.sha256(bundle).hexdigest()
                       if actual_hash == expected_hash:
-                          print(f"공개 분석 버전 검증 완료: {expected_version}")
-                          break
+                          report_url = (
+                              f"{site_url}data/reports/"
+                              "daegu-golden-time-policy-analysis-report.pdf"
+                              f"?{cache_key}"
+                          )
+                          with urllib.request.urlopen(report_url, timeout=30) as response:
+                              report = response.read()
+                          actual_report_hash = hashlib.sha256(report).hexdigest()
+                          if actual_report_hash == expected_report_hash:
+                              print(
+                                  "공개 분석 버전·정책보고서 검증 완료: "
+                                  f"{expected_version}"
+                              )
+                              break
+                          last_error = (
+                              "공개 정책보고서 해시 불일치: "
+                              f"{actual_report_hash}"
+                          )
+                          continue
                       last_error = f"공개 분석 파일 해시 불일치: {actual_hash}"
               except Exception as error:
                   last_error = f"공개 사이트 확인 실패: {error}"
