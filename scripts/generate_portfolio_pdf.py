@@ -29,15 +29,16 @@ from vdi_sensitivity import calculate_vdi_rank_sensitivity
 RELEASE_PATH = PROJECT_ROOT / "data" / "processed" / "policy_release.json"
 MATRIX_PATH = (
     PROJECT_ROOT
+    / "frontend"
+    / "public"
     / "data"
-    / "processed"
     / "actual_road_accessibility_matrix.json"
 )
 OUTPUT_PATH = (
     PROJECT_ROOT
     / "output"
     / "pdf"
-    / "golden-governance-portfolio-20260726.pdf"
+    / "golden-governance-portfolio.pdf"
 )
 PUBLIC_REPORT_PATH = (
     PROJECT_ROOT
@@ -45,7 +46,7 @@ PUBLIC_REPORT_PATH = (
     / "public"
     / "data"
     / "reports"
-    / "daegu-golden-time-policy-analysis-report.pdf"
+    / "golden-governance-portfolio.pdf"
 )
 
 PAGE_WIDTH, PAGE_HEIGHT = landscape(A4)
@@ -384,7 +385,7 @@ def build_portfolio(
         pagesize=(PAGE_WIDTH, PAGE_HEIGHT),
         invariant=1,
     )
-    pdf.setTitle("Golden Governance Project Portfolio 2026-07-26")
+    pdf.setTitle("Golden Governance Project Portfolio 2026-08-06")
     pdf.setAuthor("Golden Governance Project")
     pdf.setSubject("Daegu emergency medical accessibility and governance portfolio")
 
@@ -414,9 +415,9 @@ def build_portfolio(
     )
     tag_x = MARGIN_X
     for tag in (
-        "2026-07-26 검증",
+        "2026-08-06 검증",
         f"Release {release['metadata']['version']}",
-        "2026.06 인구",
+        "2026.07 인구",
         "일반 차량 도로 ETA",
     ):
         tag_x = draw_tag(
@@ -604,7 +605,7 @@ def build_portfolio(
             ("외부·정적 원천", "기관·인구·행정동·도로 경로"),
             ("품질 계약", "키·해시·결측·좌표·최신성"),
             ("분석 파이프라인", "VDI·민감도·후보·최적화"),
-            ("단일 정책 릴리스", "2026-07-18-r2"),
+            ("단일 정책 릴리스", "2026-07-r1"),
             ("서비스·보고서", "FastAPI·React·EDA·PDF"),
         ],
         MARGIN_X,
@@ -683,7 +684,7 @@ def build_portfolio(
         pdf,
         [
             "병원 운영정보는 API 갱신 가능, 마지막 성공 기록은 2026-07-18",
-            "인구 2026.06은 보고일 기준 최신 공표 완료월",
+            "인구 2026.07은 보고일 기준 최신 공표 완료월",
             "변동 운영정보와 기준자료 정책분석은 화면·상태 계약에서 분리",
             "좌표 보정 460건은 출발지 5곳·목적지 33곳에 집중",
             "달서구 본리동 ETA 5.62분 동률은 자원 키로 2차 정렬",
@@ -957,9 +958,9 @@ def build_portfolio(
     card_width = (PAGE_WIDTH - MARGIN_X * 2 - 42) / 4
     for index, (label, value, note, accent) in enumerate(
         (
-            ("분석 테스트", "14 passed", "키·좌표·VDI·KPI·동률", BLUE),
-            ("백엔드 테스트", "47 passed", "API·파이프라인·공표주기·호출상한", GREEN),
-            ("프론트 테스트", "21 passed", "경계·병상·추천·모바일", GOLD),
+            ("분석 테스트", "16 passed", "키·좌표·VDI·KPI·동률", BLUE),
+            ("백엔드 테스트", "63 passed", "API·파이프라인·공표주기·호출상한", GREEN),
+            ("프론트 테스트", "33 passed", "경계·병상·추천·모바일", GOLD),
             ("정적 검사", "All passed", "ESLint·TS·production build", ORANGE),
         )
     ):
