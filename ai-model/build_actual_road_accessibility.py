@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+import numpy as np
+import pandas as pd
 
 from release_config import analysis_version
 
@@ -708,21 +710,67 @@ def normalize(values: list[float], value: float) -> float:
 
 
 def apply_actual_road_results(matrix: dict[str, Any], optimization: dict[str, Any]) -> None:
-    districts_by_name = {row["name"]: row for row in matrix["districts"]}
     geojson = read_json(FRONTEND_GEOJSON_PATH)
-    raw_scores = []
-    for feature in geojson["features"]:
-        properties = feature["properties"]
-        district = districts_by_name.get(str(properties.get("adm_nm") or ""))
-        nearest = district.get("nearest_emergency_resource") if district else None
-        population = district["vulnerable_population"] if district else 0
-        eta = float(nearest["eta_minutes"]) if nearest else 0.0
-        raw_scores.append(math.log1p(eta) * population)
+    district_frame = pd.DataFrame(matrix["districts"])
+    nearest_frame = pd.json_normalize(
+        district_frame["nearest_emergency_resource"]
+    ).rename(
+        columns={
+            "resource_name": "nearest_hospital_name",
+            "tier": "nearest_hospital_tier",
+        }
+    ).reindex(
+        columns=[
+            "eta_minutes",
+            "road_distance_km",
+            "nearest_hospital_name",
+            "nearest_hospital_tier",
+        ]
+    )
+    district_frame = pd.concat(
+        [
+            district_frame[["name", "vulnerable_population"]].rename(
+                columns={"name": "adm_nm"}
+            ),
+            nearest_frame,
+        ],
+        axis=1,
+    )
+    feature_frame = pd.DataFrame(
+        {
+            "properties": [feature["properties"] for feature in geojson["features"]],
+            "adm_nm": [
+                str(feature["properties"].get("adm_nm") or "")
+                for feature in geojson["features"]
+            ],
+        }
+    )
+    score_frame = feature_frame.merge(
+        district_frame,
+        on="adm_nm",
+        how="left",
+        validate="one_to_one",
+        sort=False,
+    )
+    populations = score_frame["vulnerable_population"].fillna(0).astype(float)
+    eta_minutes = score_frame["eta_minutes"].fillna(0.0).astype(float)
+    raw_scores = np.log1p(eta_minutes) * populations
+    score_minimum = float(raw_scores.min())
+    score_maximum = float(raw_scores.max())
+    if math.isclose(score_minimum, score_maximum):
+        normalized_scores = pd.Series(0.0, index=raw_scores.index)
+    else:
+        normalized_scores = (
+            (raw_scores - score_minimum)
+            / (score_maximum - score_minimum)
+            * 100
+        )
 
-    for feature, score in zip(geojson["features"], raw_scores):
-        properties = feature["properties"]
-        district = districts_by_name.get(str(properties.get("adm_nm") or ""))
-        nearest = district.get("nearest_emergency_resource") if district else None
+    score_frame["raw_score"] = raw_scores
+    score_frame["normalized_score"] = normalized_scores
+    for row in score_frame.itertuples(index=False):
+        properties = row.properties
+        score = float(row.raw_score)
         properties.setdefault("estimated_travel_time_minutes", properties.get("travel_time_minutes"))
         properties.setdefault("estimated_travel_time_vdi_log", properties.get("travel_time_vdi_log"))
         properties["accessibility_metric"] = "actual_road_time"
@@ -731,13 +779,13 @@ def apply_actual_road_results(matrix: dict[str, Any], optimization: dict[str, An
         properties["travel_time_vulnerability_index"] = round(score, 2)
         properties["vulnerability_index"] = round(score, 2)
         properties["vdi_log"] = round(score, 2)
-        properties["vdi_norm"] = round(normalize(raw_scores, score), 2)
+        properties["vdi_norm"] = round(float(row.normalized_score), 2)
         properties["travel_time_vdi_norm"] = properties["vdi_norm"]
-        if nearest:
-            properties["travel_time_minutes"] = nearest["eta_minutes"]
-            properties["road_distance_km"] = nearest["road_distance_km"]
-            properties["nearest_hospital_name"] = nearest["resource_name"]
-            properties["nearest_hospital_tier"] = nearest["tier"]
+        if pd.notna(row.eta_minutes):
+            properties["travel_time_minutes"] = float(row.eta_minutes)
+            properties["road_distance_km"] = float(row.road_distance_km)
+            properties["nearest_hospital_name"] = str(row.nearest_hospital_name)
+            properties["nearest_hospital_tier"] = int(row.nearest_hospital_tier)
     write_json(PROCESSED_GEOJSON_PATH, geojson)
     write_json(FRONTEND_GEOJSON_PATH, geojson)
     write_json(ANALYSIS_GEOJSON_PATH, geojson, compact=True)
