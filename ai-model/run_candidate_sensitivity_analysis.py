@@ -13,6 +13,7 @@ import pandas as pd
 from sklearn.cluster import KMeans
 
 from compare_projected_kmeans_candidates import (
+    CURRENT_CANDIDATES,
     METRIC_CRS,
     PROJECT_ROOT,
     WGS84_CRS,
@@ -20,7 +21,9 @@ from compare_projected_kmeans_candidates import (
     load_hospitals,
     load_pediatric_blind_spots,
     load_senior_blind_spots,
+    read_json,
 )
+from kmeans_evaluation import build_k_selection_report, evaluate_k
 
 K_VALUES = [2, 3, 4, 5]
 SEEDS = [0, 7, 21, 42, 100]
@@ -30,6 +33,7 @@ GROUP_RADIUS_KM = 3.0
 
 OUTPUT_JSON = PROJECT_ROOT / "data" / "processed" / "candidate_sensitivity_analysis.json"
 OUTPUT_REPORT = PROJECT_ROOT / "docs" / "reports" / "candidate_sensitivity_analysis_report_20260715.md"
+K_SELECTION_REPORT = PROJECT_ROOT / "docs" / "reports" / "kmeans_k_selection_sensitivity_20260816.md"
 
 
 def nearest_distance_to_hospitals(point_lat: float, point_lng: float, hospitals: gpd.GeoDataFrame) -> float:
@@ -275,10 +279,27 @@ def build_report(results: list[dict[str, Any]]) -> str:
 
 
 def main() -> None:
+    blind_spots_by_mode = {
+        "pediatric": load_pediatric_blind_spots(),
+        "senior": load_senior_blind_spots(),
+    }
     results = [
-        analyze_mode("pediatric", load_pediatric_blind_spots()),
-        analyze_mode("senior", load_senior_blind_spots()),
+        analyze_mode(mode, blind_spots)
+        for mode, blind_spots in blind_spots_by_mode.items()
     ]
+    evaluations_by_mode = {
+        mode: evaluate_k(
+            [
+                [float(geometry.x), float(geometry.y)]
+                for geometry in blind_spots.to_crs(METRIC_CRS).geometry
+            ]
+        )
+        for mode, blind_spots in blind_spots_by_mode.items()
+    }
+    selected_k_by_mode = {
+        mode: len(read_json(CURRENT_CANDIDATES[mode]))
+        for mode in blind_spots_by_mode
+    }
 
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_JSON.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -286,8 +307,27 @@ def main() -> None:
     OUTPUT_REPORT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_REPORT.write_text(build_report(results), encoding="utf-8")
 
+    K_SELECTION_REPORT.write_text(
+        build_k_selection_report(
+            evaluations_by_mode,
+            selected_k_by_mode,
+            title="정본 후보 민감도 경로의 K-Means 후보 개수 선택 근거",
+            report_date="2026-08-16",
+            scope="`run_candidate_sensitivity_analysis.py` 정본 후보 민감도 분석",
+            selection_reasons={
+                "senior": (
+                    "평균적 군집 분리도만 극대화하는 2개 거점보다 권역별 "
+                    "사각지대를 더 세분해 검토할 수 있는 3개 거점을 유지한다. "
+                    "평가 추가만으로 기존 후보 좌표와 릴리스 계약은 바꾸지 않는다."
+                )
+            },
+        ),
+        encoding="utf-8",
+    )
+
     print(f"wrote {OUTPUT_JSON}")
     print(f"wrote {OUTPUT_REPORT}")
+    print(f"wrote {K_SELECTION_REPORT}")
 
 
 if __name__ == "__main__":

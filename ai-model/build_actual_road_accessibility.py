@@ -701,16 +701,18 @@ def evaluate_combinations(matrix: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def normalize(values: list[float], value: float) -> float:
-    minimum = min(values)
-    maximum = max(values)
+def normalize_scores(scores: pd.Series) -> pd.Series:
+    """min-max를 한 번 계산해 0~100 범위로 정규화한다."""
+    minimum = float(scores.min())
+    maximum = float(scores.max())
     if math.isclose(minimum, maximum):
-        return 0.0
-    return (value - minimum) / (maximum - minimum) * 100
+        return pd.Series(0.0, index=scores.index)
+    return (scores - minimum) / (maximum - minimum) * 100
 
 
 def apply_actual_road_results(matrix: dict[str, Any], optimization: dict[str, Any]) -> None:
     geojson = read_json(FRONTEND_GEOJSON_PATH)
+    districts_by_name = {str(row["name"]): row for row in matrix["districts"]}
     district_frame = pd.DataFrame(matrix["districts"])
     nearest_frame = pd.json_normalize(
         district_frame["nearest_emergency_resource"]
@@ -755,16 +757,7 @@ def apply_actual_road_results(matrix: dict[str, Any], optimization: dict[str, An
     populations = score_frame["vulnerable_population"].fillna(0).astype(float)
     eta_minutes = score_frame["eta_minutes"].fillna(0.0).astype(float)
     raw_scores = np.log1p(eta_minutes) * populations
-    score_minimum = float(raw_scores.min())
-    score_maximum = float(raw_scores.max())
-    if math.isclose(score_minimum, score_maximum):
-        normalized_scores = pd.Series(0.0, index=raw_scores.index)
-    else:
-        normalized_scores = (
-            (raw_scores - score_minimum)
-            / (score_maximum - score_minimum)
-            * 100
-        )
+    normalized_scores = normalize_scores(raw_scores)
 
     score_frame["raw_score"] = raw_scores
     score_frame["normalized_score"] = normalized_scores
@@ -781,11 +774,15 @@ def apply_actual_road_results(matrix: dict[str, Any], optimization: dict[str, An
         properties["vdi_log"] = round(score, 2)
         properties["vdi_norm"] = round(float(row.normalized_score), 2)
         properties["travel_time_vdi_norm"] = properties["vdi_norm"]
-        if pd.notna(row.eta_minutes):
-            properties["travel_time_minutes"] = float(row.eta_minutes)
-            properties["road_distance_km"] = float(row.road_distance_km)
-            properties["nearest_hospital_name"] = str(row.nearest_hospital_name)
-            properties["nearest_hospital_tier"] = int(row.nearest_hospital_tier)
+        district = districts_by_name.get(str(row.adm_nm))
+        nearest = district.get("nearest_emergency_resource") if district else None
+        if nearest:
+            # pandas 병합 과정의 dtype 승격이 릴리스 JSON 숫자 타입을 바꾸지
+            # 않도록 기관 필드는 원본 데이터 계약에서 직접 복원한다.
+            properties["travel_time_minutes"] = nearest["eta_minutes"]
+            properties["road_distance_km"] = nearest["road_distance_km"]
+            properties["nearest_hospital_name"] = nearest["resource_name"]
+            properties["nearest_hospital_tier"] = nearest["tier"]
     write_json(PROCESSED_GEOJSON_PATH, geojson)
     write_json(FRONTEND_GEOJSON_PATH, geojson)
     write_json(ANALYSIS_GEOJSON_PATH, geojson, compact=True)
