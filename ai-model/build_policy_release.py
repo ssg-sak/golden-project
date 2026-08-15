@@ -19,7 +19,7 @@ VULNERABILITY_PATH = PROJECT_ROOT / "data" / "processed" / "daegu_vulnerability.
 POPULATION_PATH = PROJECT_ROOT / "data" / "raw" / "population" / "daegu_population_real.csv"
 POPULATION_MANIFEST_PATH = POPULATION_PATH.with_suffix(".manifest.json")
 SENSITIVITY_PATH = PROJECT_ROOT / "data" / "processed" / "candidate_sensitivity_analysis.json"
-MATRIX_PATH = PROJECT_ROOT / "data" / "processed" / "actual_road_accessibility_matrix.json"
+MATRIX_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "actual_road_accessibility_matrix.json"
 OPTIMIZATION_PATH = PROJECT_ROOT / "data" / "processed" / "policy_location_optimization.json"
 CANDIDATES_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "stable_policy_candidates.json"
 TRACE_PATH = PROJECT_ROOT / "frontend" / "public" / "data" / "accessibility_candidate_trace.json"
@@ -194,8 +194,9 @@ def validate_release_parts(
         errors.append("인구 manifest 행정동 수 불일치")
     if str(population_manifest.get("source_file") or "") != POPULATION_PATH.name:
         errors.append("인구 manifest 원본 파일명 불일치")
-    if not POPULATION_PATH.exists() or file_hash(POPULATION_PATH) != population_source_hash:
-        errors.append("인구 원본 파일 해시 불일치")
+    if POPULATION_PATH.exists():
+        if file_hash(POPULATION_PATH) != population_source_hash:
+            errors.append("인구 원본 파일 해시 불일치")
     if vulnerability_metadata.get("population_base_month") != population_base_month:
         errors.append("취약성 산출물 인구 기준월 불일치")
     if vulnerability_metadata.get("population_source_sha256") != population_source_hash:

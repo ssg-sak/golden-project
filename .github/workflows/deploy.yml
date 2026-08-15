@@ -31,7 +31,7 @@ jobs:
         run: npm run build
         env:
           # Kakao JavaScript 앱 키는 공개 번들에 포함되는 식별자이며 허용 도메인으로 제한한다.
-          VITE_KAKAO_MAP_APP_KEY: b54a1f93a683570c939eeb09a140e9bb
+          VITE_KAKAO_MAP_APP_KEY: ${{ secrets.VITE_KAKAO_MAP_APP_KEY }}
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
       - name: Deploy to GitHub Pages

@@ -54,7 +54,7 @@ BASE_PROMOTION_PATHS = (
     "frontend/public/data/accessibility_candidate_trace.json",
     "docs/reports/accessibility_candidate_trace_report_20260715.md",
     "frontend/public/data/stable_policy_candidates.json",
-    "data/processed/actual_road_accessibility_matrix.json",
+    "frontend/public/data/actual_road_accessibility_matrix.json",
     "frontend/public/data/actual_road_accessibility_matrix.json",
     "data/processed/policy_location_optimization.json",
     "frontend/public/data/policy_location_optimization.json",

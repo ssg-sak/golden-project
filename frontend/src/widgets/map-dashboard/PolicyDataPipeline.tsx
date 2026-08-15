@@ -99,7 +99,7 @@ const STATUS_STYLE: Record<StageTone, string> = {
   unknown: 'bg-slate-100 text-slate-600 ring-slate-200',
 };
 
-const POLICY_REPORT_URL = `${import.meta.env.BASE_URL}data/reports/daegu-golden-time-policy-analysis-report.pdf`;
+const POLICY_REPORT_URL = `${import.meta.env.BASE_URL}data/reports/golden-governance-portfolio.pdf`;
 
 function sourceTone(source?: DataSourceStatusRecord): StageTone {
   if (!source) return 'unknown';
