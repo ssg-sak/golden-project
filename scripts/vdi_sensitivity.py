@@ -6,6 +6,8 @@ import statistics
 from pathlib import Path
 from typing import Any
 
+from scipy.stats import rankdata, spearmanr
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RELEASE_PATH = PROJECT_ROOT / "data" / "processed" / "policy_release.json"
@@ -29,36 +31,19 @@ def _minmax(values: list[float]) -> list[float]:
     return [(value - minimum) / (maximum - minimum) for value in values]
 
 
-def _ranks(names: list[str], scores: list[float]) -> dict[str, int]:
-    ordered = sorted(
-        zip(names, scores),
-        key=lambda item: (-item[1], item[0]),
-    )
-    return {name: rank for rank, (name, _) in enumerate(ordered, start=1)}
-
-
-def _pearson(left: list[float], right: list[float]) -> float:
-    left_mean = statistics.fmean(left)
-    right_mean = statistics.fmean(right)
-    numerator = sum(
-        (left_value - left_mean) * (right_value - right_mean)
-        for left_value, right_value in zip(left, right)
-    )
-    left_scale = math.sqrt(
-        sum((value - left_mean) ** 2 for value in left)
-    )
-    right_scale = math.sqrt(
-        sum((value - right_mean) ** 2 for value in right)
-    )
-    if math.isclose(left_scale, 0.0) or math.isclose(right_scale, 0.0):
-        raise ValueError("순위 상관을 계산할 변동이 없습니다.")
-    return numerator / (left_scale * right_scale)
+def _ranks(names: list[str], scores: list[float]) -> dict[str, int | float]:
+    # 동점에 같은 평균 순위를 부여해야 Spearman의 표준 순위 정의와 일치한다.
+    descending_ranks = rankdata([-score for score in scores], method="average")
+    return {
+        name: int(rank) if float(rank).is_integer() else float(rank)
+        for name, rank in zip(names, descending_ranks)
+    }
 
 
 def _comparison(
     names: list[str],
-    baseline_ranks: dict[str, int],
-    alternative_ranks: dict[str, int],
+    baseline_ranks: dict[str, int | float],
+    alternative_ranks: dict[str, int | float],
 ) -> dict[str, int | float]:
     baseline_values = [float(baseline_ranks[name]) for name in names]
     alternative_values = [float(alternative_ranks[name]) for name in names]
@@ -73,11 +58,15 @@ def _comparison(
         name for name, rank in alternative_ranks.items() if rank <= 10
     }
     top10_overlap = len(baseline_top10 & alternative_top10)
+    correlation = spearmanr(baseline_values, alternative_values)
+    if not math.isfinite(float(correlation.statistic)):
+        raise ValueError("순위 상관을 계산할 변동이 없습니다.")
     return {
         "spearman_rank_correlation": round(
-            _pearson(baseline_values, alternative_values),
+            float(correlation.statistic),
             3,
         ),
+        "spearman_p_value": float(correlation.pvalue),
         "top10_overlap_count": top10_overlap,
         "top10_overlap_percent": round(top10_overlap / 10 * 100, 1),
         "median_absolute_rank_shift": round(
