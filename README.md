@@ -200,5 +200,5 @@ python ai-model/run_integrated_policy_pipeline.py --offline
 - [데이터 사전](docs/core/data_dictionary.md)
 - [프로젝트 구조](docs/core/PROJECT_STRUCTURE.md)
 - [데이터 품질 보고서](docs/reports/DATA_QUALITY_REPORT.md)
-- [최종 테스트 결과 보고서](docs/reports/TEST_REPORT_20260726.md)
+- [최신 패키지 검증 보고서](PACKAGE_VALIDATION.md)
 - [공개 데모 검증 보고서](docs/reports/DEMO_VALIDATION_REPORT_20260724.md)
