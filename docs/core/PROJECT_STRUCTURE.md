@@ -141,14 +141,14 @@ CI는 핵심 정책 릴리스를 재생성한 뒤 처리용·공개용 사본의
 
 ## 6. 최종 정책보고서
 
-정책분석 PDF의 생성본과 서비스 공개 사본은 다음 경로를 사용합니다.
+자동 생성 포트폴리오와 사람이 검증한 서비스 공개 정책분석 보고서는 역할과 경로를 분리합니다.
 
 ```text
-output/pdf/golden-governance-portfolio.pdf
-frontend/public/data/reports/golden-governance-portfolio.pdf
+자동 생성 포트폴리오: output/pdf/golden-governance-portfolio.pdf
+공식 공개 보고서: frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf
 ```
 
-`scripts/generate_portfolio_pdf.py`가 검증된 정책 릴리스와 품질·KPI 산출물을 읽어 두 파일을 같은 바이트로 생성합니다. 정책 화면의 `최종 정책보고서 보기 (PDF)` 링크와 GitHub Pages 빌드는 공개 사본을 사용합니다.
+`scripts/generate_portfolio_pdf.py`는 정책 릴리스와 품질·KPI 산출물로 포트폴리오를 만들지만, 사람이 확인한 공식 보고서를 덮어쓰지 않습니다. 정책 화면의 `최종 정책보고서 보기 (PDF)` 링크와 GitHub Pages 빌드는 별도 공개 검증본을 사용합니다.
 
 ## 7. 테스트와 자동 검증
 
