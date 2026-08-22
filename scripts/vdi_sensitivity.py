@@ -86,6 +86,8 @@ def calculate_vdi_rank_sensitivity(
 
     names: list[str] = []
     baseline_scores: list[float] = []
+    population_scores: list[float] = []
+    eta_scores: list[float] = []
     eta_log_scores: list[float] = []
     population_log_scores: list[float] = []
     for feature in features:
@@ -104,6 +106,8 @@ def calculate_vdi_rank_sensitivity(
             raise ValueError(f"{district_name}의 인구·ETA가 음수입니다.")
         names.append(district_name)
         baseline_scores.append(baseline_vdi)
+        population_scores.append(population)
+        eta_scores.append(eta_minutes)
         eta_log_scores.append(math.log1p(eta_minutes))
         population_log_scores.append(math.log1p(population))
 
@@ -135,6 +139,16 @@ def calculate_vdi_rank_sensitivity(
 
     return {
         "district_count": len(names),
+        "component_correlations": {
+            "vdi_population_pearson": round(
+                statistics.correlation(baseline_scores, population_scores),
+                3,
+            ),
+            "vdi_eta_pearson": round(
+                statistics.correlation(baseline_scores, eta_scores),
+                3,
+            ),
+        },
         "methods": {
             method: _comparison(
                 names,

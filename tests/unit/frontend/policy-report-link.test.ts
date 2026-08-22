@@ -10,7 +10,7 @@ const reportRelativePath =
   'data/reports/daegu-golden-time-policy-analysis-report.pdf';
 
 describe('공식 정책분석 보고서 링크', () => {
-  it('정책 화면이 자동 생성 포트폴리오 대신 검증본을 가리킨다', () => {
+  it('정책 화면이 단일 공개 정본을 가리킨다', () => {
     const source = readFileSync(
       `${projectRoot}frontend/src/widgets/map-dashboard/PolicyDataPipeline.tsx`,
       'utf8',
@@ -22,14 +22,14 @@ describe('공식 정책분석 보고서 링크', () => {
     );
   });
 
-  it('공개 PDF가 전달받은 2026-07-18 검증본과 일치한다', () => {
+  it('공개 PDF가 2026-08-22 생성·검토 정본과 일치한다', () => {
     const report = readFileSync(
       `${projectRoot}frontend/public/${reportRelativePath}`,
     );
     const digest = createHash('sha256').update(report).digest('hex');
 
     expect(digest).toBe(
-      'a43ed0bdccf0919416794060f984dd8a28cd25b045a3fe211a4cb4259aab988d',
+      'fc28064e35cb1b29ba7bb2fc12f728df68c337761a29e9aa841fc148105f9ad8',
     );
   });
 });

@@ -83,6 +83,18 @@ jobs:
       - name: Validate and rebuild the committed policy release
         run: python ai-model/build_policy_release.py
 
+      - name: Rebuild the external operational reference
+        run: python scripts/external_validity_validation.py
+
+      - name: Regenerate the canonical policy report
+        run: python scripts/generate_portfolio_pdf.py
+
+      - name: Verify generated and published reports are byte-identical
+        run: >-
+          cmp --silent
+          output/pdf/daegu-golden-time-policy-analysis-report.pdf
+          frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf
+
       - name: Regenerate EDA artifacts
         run: python scripts/generate_eda_portfolio.py
 
@@ -97,3 +109,6 @@ jobs:
           data/processed/policy_release.json
           frontend/public/data/policy_release.json
           docs/reports/EDA_REPORT.md
+          data/validation/ems_response_time_reference_20240801.json
+          docs/reports/EXTERNAL_VALIDITY_REPORT.md
+          frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf

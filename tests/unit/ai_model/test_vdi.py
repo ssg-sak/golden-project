@@ -218,6 +218,8 @@ def test_vdi_sensitivity_uses_average_ranks_for_ties() -> None:
 
     assert rows["가동"]["baseline_rank"] == pytest.approx(1.5)
     assert rows["나동"]["baseline_rank"] == pytest.approx(1.5)
+    assert -1 <= result["component_correlations"]["vdi_population_pearson"] <= 1
+    assert -1 <= result["component_correlations"]["vdi_eta_pearson"] <= 1
 
 
 def test_vdi_sensitivity_reports_significant_perfect_correlation() -> None:

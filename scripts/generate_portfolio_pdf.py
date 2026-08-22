@@ -38,7 +38,7 @@ OUTPUT_PATH = (
     PROJECT_ROOT
     / "output"
     / "pdf"
-    / "golden-governance-portfolio.pdf"
+    / "daegu-golden-time-policy-analysis-report.pdf"
 )
 PUBLIC_REPORT_PATH = (
     PROJECT_ROOT
@@ -46,7 +46,13 @@ PUBLIC_REPORT_PATH = (
     / "public"
     / "data"
     / "reports"
-    / "golden-governance-portfolio.pdf"
+    / "daegu-golden-time-policy-analysis-report.pdf"
+)
+EXTERNAL_VALIDATION_PATH = (
+    PROJECT_ROOT
+    / "data"
+    / "validation"
+    / "ems_response_time_reference_20240801.json"
 )
 
 PAGE_WIDTH, PAGE_HEIGHT = landscape(A4)
@@ -374,6 +380,7 @@ def build_portfolio(
     quality_summary: dict[str, int | float],
     policy_kpis: dict[str, dict[str, Any]],
     vdi_sensitivity: dict[str, Any],
+    external_validation: dict[str, Any],
 ) -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     PUBLIC_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -385,7 +392,7 @@ def build_portfolio(
         pagesize=(PAGE_WIDTH, PAGE_HEIGHT),
         invariant=1,
     )
-    pdf.setTitle("Golden Governance Project Portfolio 2026-08-06")
+    pdf.setTitle("Daegu Golden Time Policy Analysis Report 2026-08-22")
     pdf.setAuthor("Golden Governance Project")
     pdf.setSubject("Daegu emergency medical accessibility and governance portfolio")
 
@@ -415,7 +422,7 @@ def build_portfolio(
     )
     tag_x = MARGIN_X
     for tag in (
-        "2026-08-06 검증",
+        "2026-08-22 검증",
         f"Release {release['metadata']['version']}",
         "2026.07 인구",
         "일반 차량 도로 ETA",
@@ -739,7 +746,7 @@ def build_portfolio(
         285,
         92,
         "VDI - 취약인구 상관",
-        "0.915",
+        f"{vdi_sensitivity['component_correlations']['vdi_population_pearson']:.3f}",
         "산식 구성요소의 구조적 민감도",
         accent=BLUE,
     )
@@ -750,7 +757,7 @@ def build_portfolio(
         285,
         92,
         "VDI - 일반 차량 ETA 상관",
-        "0.034",
+        f"{vdi_sensitivity['component_correlations']['vdi_eta_pearson']:.3f}",
         "외부 타당성·인과 효과가 아님",
         accent=GOLD,
     )
@@ -817,8 +824,96 @@ def build_portfolio(
     )
     pdf.showPage()
 
-    # 8. Candidate methodology
-    y = draw_header(pdf, "07 / CANDIDATE METHODOLOGY", "한 번의 K=9 실행이 아니라 반복 안정성으로 후보를 만들었습니다", 8)
+    # 8. External operational reference
+    y = draw_header(pdf, "07 / EXTERNAL REFERENCE", "실제 구급 관제 표본으로 시간 변동 한계를 점검했습니다", 8)
+    external_overall = external_validation["overall"]
+    external_slots = external_validation["time_slots"]
+    card_width = (PAGE_WIDTH - MARGIN_X * 2 - 42) / 4
+    external_cards = (
+        (
+            "출동-현장도착",
+            f"{external_overall['count']}쌍",
+            f"전체 중앙값 {external_overall['median_minutes']:.1f}분",
+            BLUE,
+        ),
+        (
+            "아침 90백분위",
+            f"{external_slots['morning_peak']['p90_minutes']:.1f}분",
+            f"07:00-09:59 · {external_slots['morning_peak']['count']}쌍",
+            GREEN,
+        ),
+        (
+            "주간 90백분위",
+            f"{external_slots['daytime']['p90_minutes']:.1f}분",
+            f"10:00-16:59 · {external_slots['daytime']['count']}쌍",
+            GOLD,
+        ),
+        (
+            "저녁 90백분위",
+            f"{external_slots['evening_peak']['p90_minutes']:.1f}분",
+            f"17:00-19:59 · {external_slots['evening_peak']['count']}쌍",
+            ORANGE,
+        ),
+    )
+    for index, (label, value, note, accent) in enumerate(external_cards):
+        draw_metric_card(
+            pdf,
+            MARGIN_X + index * (card_width + 14),
+            y,
+            card_width,
+            112,
+            label,
+            value,
+            note,
+            accent=accent,
+        )
+    y -= 150
+    draw_table(
+        pdf,
+        [
+            ["검증 항목", "확인한 사실", "해석 경계"],
+            [
+                "공식 공개 표본",
+                "대구 구급차 상태 이벤트 878건",
+                "2024-08-01 하루 표본",
+            ],
+            [
+                "시간대 분포",
+                "주요 시간대 중앙값 5분",
+                "90백분위 8.0~11.4분",
+            ],
+            [
+                "직접 ETA 검증",
+                "사고 좌표·병원 목적지 없음",
+                "행정동→병원 오차 검증 불가",
+            ],
+        ],
+        MARGIN_X,
+        y,
+        [185, 300, 270],
+        row_height=42,
+        font_size=8.5,
+    )
+    y -= 195
+    pdf.setFillColor(GOLD_LIGHT)
+    pdf.setStrokeColor(colors.HexColor("#F6C453"))
+    pdf.roundRect(MARGIN_X, y - 96, 755, 96, 10, fill=1, stroke=1)
+    pdf.setFillColor(INK)
+    set_font(pdf, 11, bold=True)
+    pdf.drawString(MARGIN_X + 18, y - 27, "외부 타당성 판정: 보조 근거 확보, 직접 검증은 미완료")
+    draw_paragraph(
+        pdf,
+        "실제 긴급차량 응답시간의 상단 지연 분포가 시간대별로 같지 않다는 신호는 확인했습니다. 그러나 출동센터→현장 구간은 환자 현장→병원 구간과 다르므로 현재 Kakao ETA나 후보 순위의 정확도를 입증했다고 표현하지 않습니다.",
+        MARGIN_X + 18,
+        y - 50,
+        720,
+        size=9,
+        leading=14,
+    )
+    pdf.showPage()
+
+    # 9. Candidate methodology
+    y = draw_header(pdf, "08 / CANDIDATE METHODOLOGY", "한 번의 K=9 실행이 아니라 반복 안정성으로 후보를 만들었습니다", 9)
     draw_flow(
         pdf,
         [
@@ -865,8 +960,8 @@ def build_portfolio(
     )
     pdf.showPage()
 
-    # 9. Citizen product
-    y = draw_header(pdf, "08 / PRODUCT - CITIZEN", "긴급 상황에서 필요한 행동을 짧게 연결합니다", 9)
+    # 10. Citizen product
+    y = draw_header(pdf, "09 / PRODUCT - CITIZEN", "긴급 상황에서 필요한 행동을 짧게 연결합니다", 10)
     draw_image_contain(
         pdf,
         PROJECT_ROOT / "docs" / "images" / "citizen-map.png",
@@ -907,8 +1002,8 @@ def build_portfolio(
     )
     pdf.showPage()
 
-    # 10. Governance product
-    y = draw_header(pdf, "09 / PRODUCT - GOVERNANCE", "정책 담당자가 근거와 한계를 함께 보도록 설계했습니다", 10)
+    # 11. Governance product
+    y = draw_header(pdf, "10 / PRODUCT - GOVERNANCE", "정책 담당자가 근거와 한계를 함께 보도록 설계했습니다", 11)
     draw_image_contain(
         pdf,
         PROJECT_ROOT / "docs" / "images" / "golden-governance.png",
@@ -953,14 +1048,14 @@ def build_portfolio(
     )
     pdf.showPage()
 
-    # 11. Engineering validation
-    y = draw_header(pdf, "10 / ENGINEERING VALIDATION", "분석 결과가 서비스와 문서에서 흔들리지 않게 했습니다", 11)
+    # 12. Engineering validation
+    y = draw_header(pdf, "11 / ENGINEERING VALIDATION", "분석 결과가 서비스와 문서에서 흔들리지 않게 했습니다", 12)
     card_width = (PAGE_WIDTH - MARGIN_X * 2 - 42) / 4
     for index, (label, value, note, accent) in enumerate(
         (
-            ("분석 테스트", "16 passed", "키·좌표·VDI·KPI·동률", BLUE),
-            ("백엔드 테스트", "63 passed", "API·파이프라인·공표주기·호출상한", GREEN),
-            ("프론트 테스트", "33 passed", "경계·병상·추천·모바일", GOLD),
+            ("분석 테스트", "계약 통과", "키·좌표·VDI·KPI·외부표본", BLUE),
+            ("백엔드 테스트", "회귀 통과", "API·파이프라인·공표주기·호출상한", GREEN),
+            ("프론트 테스트", "회귀 통과", "경계·병상·추천·PDF 정본", GOLD),
             ("정적 검사", "All passed", "ESLint·TS·production build", ORANGE),
         )
     ):
@@ -994,21 +1089,22 @@ def build_portfolio(
     )
     pdf.showPage()
 
-    # 12. Limits and demo flow
-    y = draw_header(pdf, "11 / HANDOFF", "검증된 범위 안에서 짧고 안정적으로 설명합니다", 12)
+    # 13. Limits and interview flow
+    y = draw_header(pdf, "12 / HANDOFF", "검증된 범위 안에서 5분으로 설명합니다", 13)
     column_width = (PAGE_WIDTH - MARGIN_X * 2 - 22) / 2
     pdf.setFillColor(PANEL)
     pdf.setStrokeColor(LINE)
     pdf.roundRect(MARGIN_X, y - 335, column_width, 335, 12, fill=1, stroke=1)
     pdf.setFillColor(INK)
     set_font(pdf, 15, bold=True)
-    pdf.drawString(MARGIN_X + 20, y - 32, "3분 데모 흐름")
+    pdf.drawString(MARGIN_X + 20, y - 32, "5분 면접 설명 흐름")
     demo_steps = [
         ("1", "시민 지도", "현재 위치 > 최근접 기관 > 전화·길찾기"),
         ("2", "정책 지도", "취약지역 > VDI·ETA·취약인구"),
         ("3", "후보 분석", "9개 후보 > p-median·15분 비교"),
-        ("4", "검증 근거", "5,100 경로·품질 보고서·테스트"),
-        ("5", "한계", "일반 차량 ETA·정적 릴리스·현장조사 필요"),
+        ("4", "외부 참고", "구급차 400쌍·시간대 상단분포"),
+        ("5", "검증 근거", "5,100 경로·품질 보고서·테스트"),
+        ("6", "한계", "일반 차량 ETA·정적 릴리스·현장조사 필요"),
     ]
     step_y = y - 70
     for number, title, note in demo_steps:
@@ -1030,7 +1126,7 @@ def build_portfolio(
             leading=12,
             color=SUBTLE,
         )
-        step_y -= 53
+        step_y -= 44
     x_right = MARGIN_X + column_width + 22
     pdf.setFillColor(GOLD_LIGHT)
     pdf.setStrokeColor(colors.HexColor("#F6C453"))
@@ -1092,14 +1188,16 @@ def main() -> None:
         selected_p_median_resources(release),
     )
     vdi_sensitivity = calculate_vdi_rank_sensitivity(release)
+    external_validation = read_json(EXTERNAL_VALIDATION_PATH)
     build_portfolio(
         release,
         quality_summary,
         policy_kpis,
         vdi_sensitivity,
+        external_validation,
     )
-    print(f"Project portfolio PDF: {OUTPUT_PATH}")
-    print(f"Public policy PDF: {PUBLIC_REPORT_PATH}")
+    print(f"Canonical policy PDF: {OUTPUT_PATH}")
+    print(f"Published policy PDF: {PUBLIC_REPORT_PATH}")
 
 
 if __name__ == "__main__":
