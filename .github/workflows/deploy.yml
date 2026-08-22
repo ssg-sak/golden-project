@@ -113,8 +113,10 @@ jobs:
                               "공개 정책보고서 해시 불일치: "
                               f"{actual_report_hash}"
                           )
-                          continue
-                      last_error = f"공개 분석 파일 해시 불일치: {actual_hash}"
+                      else:
+                          last_error = (
+                              f"공개 분석 파일 해시 불일치: {actual_hash}"
+                          )
               except Exception as error:
                   last_error = f"공개 사이트 확인 실패: {error}"
 
