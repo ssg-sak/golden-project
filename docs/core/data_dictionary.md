@@ -982,6 +982,6 @@ CSV의 `최근접병원`은 도로 ETA 기준이고 `최근접거리km`는 직�
 | 루트·배포 `priority_targets.json` 불일치 | 있음 | 둘 다 현행 정본에서 제외 |
 | `data/processed/daegu_er_hospitals.json` 규모 | 18기관 | 최종 25기관 정본 대신 사용 금지 |
 | 구급 관제 원문·응답시간 집계 | 2,010행·400쌍 | 원문 SHA-256과 상태 전이 검증 통과; 사고 좌표·병원 목적지가 없어 직접 ETA 검증으로 사용 금지 |
-| `frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf` | 3,050,829바이트·13쪽 | 출력·공개 경로 SHA-256 `FC28064E…05F9AD8` 일치; 전체 페이지 렌더링 시각 검토 통과 |
+| `frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf` | 3,050,808바이트·13쪽 | 출력·공개 경로 SHA-256 `944130D5…E489059` 일치; 전체 페이지 렌더링 시각 검토 통과 |
 
 현재 발견된 이름·주소 불일치는 VDI와 도로 ETA 계산값 자체를 바꾸지는 않지만, 상세 화면에서 주소를 함께 표시하면 잘못된 기관 주소가 연결될 수 있다. 생성 단계에서 `nearest_hospital_address`도 도로 ETA 최근접 기관 기준으로 갱신하고 회귀 검사를 추가하는 것이 필요하다.

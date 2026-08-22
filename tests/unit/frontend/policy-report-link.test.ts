@@ -29,7 +29,7 @@ describe('공식 정책분석 보고서 링크', () => {
     const digest = createHash('sha256').update(report).digest('hex');
 
     expect(digest).toBe(
-      'fc28064e35cb1b29ba7bb2fc12f728df68c337761a29e9aa841fc148105f9ad8',
+      '944130d5f6399720f35d96342b21da0852a2181f57b036bb1b7b36a9ae489059',
     );
   });
 });
