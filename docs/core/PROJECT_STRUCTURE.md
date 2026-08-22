@@ -143,15 +143,14 @@ CI는 핵심 정책 릴리스를 재생성한 뒤 처리용·공개용 사본의
 
 ## 6. 최종 정책보고서
 
-자동 생성물과 서비스 공개본이 서로 다른 숫자를 보이지 않도록 하나의 생성 스크립트와 하나의 정본 PDF를 사용합니다.
+서비스에는 검토를 마친 논문식 정책분석 보고서만 공개하고, 포트폴리오형 자동 생성물은 로컬 검토용으로 분리합니다.
 
 ```text
-생성·검토 대상: output/pdf/daegu-golden-time-policy-analysis-report.pdf
 서비스 공개 정본: frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf
-이전 검증본: frontend/public/data/reports/archive/
+로컬 포트폴리오 산출물: output/pdf/golden-governance-portfolio.pdf
 ```
 
-`scripts/generate_portfolio_pdf.py`는 정책 릴리스, KPI, VDI 민감도, 외부 운영자료 참고 집계를 읽어 두 경로에 같은 바이트의 PDF를 생성합니다. 시각 검토와 해시 확인을 통과한 공개 경로만 정책 화면의 `최종 정책보고서 보기 (PDF)`가 사용하며, 과거 보고서는 `archive/`에 보존합니다.
+서비스 공개 정본은 Release `2026-07-18-r2`, Population `2026.06` 기준의 20쪽 논문식 검증본입니다. `scripts/generate_portfolio_pdf.py`는 최신 릴리스 기반의 13쪽 포트폴리오형 PDF를 로컬 `output/`에만 생성하며 공개 경로를 수정하지 않습니다. 정책 화면의 `최종 정책보고서 보기 (PDF)`는 논문식 보고서만 가리킵니다. README·KPI·대시보드는 Release `2026-07-r1`, Population `2026.07` 기준이므로 보고서와 일부 수치가 다를 수 있습니다.
 
 ## 7. 테스트와 자동 검증
 

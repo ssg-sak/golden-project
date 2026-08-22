@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -38,15 +37,7 @@ OUTPUT_PATH = (
     PROJECT_ROOT
     / "output"
     / "pdf"
-    / "daegu-golden-time-policy-analysis-report.pdf"
-)
-PUBLIC_REPORT_PATH = (
-    PROJECT_ROOT
-    / "frontend"
-    / "public"
-    / "data"
-    / "reports"
-    / "daegu-golden-time-policy-analysis-report.pdf"
+    / "golden-governance-portfolio.pdf"
 )
 EXTERNAL_VALIDATION_PATH = (
     PROJECT_ROOT
@@ -383,7 +374,6 @@ def build_portfolio(
     external_validation: dict[str, Any],
 ) -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    PUBLIC_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
     pediatric = policy_kpis["pediatric"]
     senior = policy_kpis["senior"]
@@ -1180,7 +1170,6 @@ def build_portfolio(
     pdf.showPage()
 
     pdf.save()
-    shutil.copyfile(OUTPUT_PATH, PUBLIC_REPORT_PATH)
 
 
 def main() -> None:
@@ -1201,8 +1190,7 @@ def main() -> None:
         vdi_sensitivity,
         external_validation,
     )
-    print(f"Canonical policy PDF: {OUTPUT_PATH}")
-    print(f"Published policy PDF: {PUBLIC_REPORT_PATH}")
+    print(f"Local portfolio PDF: {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":
