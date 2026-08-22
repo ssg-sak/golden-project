@@ -1,6 +1,6 @@
 # 대구 골든타임 프로젝트 구조
 
-최종 갱신: 2026-08-15
+최종 갱신: 2026-08-22
 
 
 ## 1. 전체 구조
@@ -21,12 +21,13 @@ golden-project/
 │  │  ├─ db/                SQLite 연결과 모델
 │  │  └─ services/          병상·기관·스케줄러·갱신 파이프라인
 │  └─ scripts/              수집·정제·마이그레이션 CLI
-├─ ai-model/                 정책 후보·도로 접근성·릴리스 생성
+├─ ai-model/                 정책 후보·도로 접근성·릴리스 생성(과거 경로명)
 ├─ analysis/                 EDA 노트북
 ├─ data/
 │  ├─ raw/                  수집 원본과 manifest
 │  ├─ analysis/             초기·중간 분석 입력
 │  ├─ processed/            검증된 처리 산출물과 정책 정본
+│  ├─ validation/           외부 운영자료 참고 검증의 결정적 집계
 │  └─ hospitals.db          병원 기준정보 SQLite
 ├─ scripts/                  EDA·추출·로컬 개발 보조 명령
 ├─ tests/                    프론트·백엔드·분석 테스트
@@ -93,7 +94,7 @@ flowchart LR
 
 ## 4. 정책분석 파이프라인
 
-정책분석의 주 실행점은 `ai-model/run_integrated_policy_pipeline.py`입니다.
+정책분석의 주 실행점은 `ai-model/run_integrated_policy_pipeline.py`입니다. `ai-model`은 과거부터 유지한 경로명이며, 공개 설명에서 이 모듈의 정확한 역할은 **공간분석·시설입지 최적화 엔진**입니다.
 
 ```text
 행정동·인구·기관 원천
@@ -122,9 +123,10 @@ flowchart LR
 
 | 계층 | 목적 | 예시 |
 |---|---|---|
-| `data/raw/` | 수집 원본과 기준월·해시 보존 | 인구 CSV, manifest, 행정동 GeoJSON |
+| `data/raw/` | 수집 원본과 기준월·해시 보존 | 인구 CSV, manifest, 행정동 GeoJSON, 외부 구급 관제 표본 |
 | `data/analysis/` | 초기 또는 호환 분석 입력 | 행정동·인구·병원 분석 파일 |
 | `data/processed/` | 검증된 처리 결과와 정책 정본 | 후보, 도로 행렬, 최적화, `policy_release.json` |
+| `data/validation/` | 원문을 바꾸지 않고 재생성한 외부 참고 집계 | 구급차 출동→현장도착 시간대별 요약 |
 | `frontend/public/data/` | GitHub Pages 공개 산출물 | 정책 릴리스, 후보·도로 결과, 최종 PDF |
 | `frontend/src/assets/`, `src/data/` | 번들에 포함되는 정적 fallback | 병원·취약성 GeoJSON |
 
@@ -141,14 +143,15 @@ CI는 핵심 정책 릴리스를 재생성한 뒤 처리용·공개용 사본의
 
 ## 6. 최종 정책보고서
 
-자동 생성 포트폴리오와 사람이 검증한 서비스 공개 정책분석 보고서는 역할과 경로를 분리합니다.
+자동 생성물과 서비스 공개본이 서로 다른 숫자를 보이지 않도록 하나의 생성 스크립트와 하나의 정본 PDF를 사용합니다.
 
 ```text
-자동 생성 포트폴리오: output/pdf/golden-governance-portfolio.pdf
-공식 공개 보고서: frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf
+생성·검토 대상: output/pdf/daegu-golden-time-policy-analysis-report.pdf
+서비스 공개 정본: frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf
+이전 검증본: frontend/public/data/reports/archive/
 ```
 
-`scripts/generate_portfolio_pdf.py`는 정책 릴리스와 품질·KPI 산출물로 포트폴리오를 만들지만, 사람이 확인한 공식 보고서를 덮어쓰지 않습니다. 정책 화면의 `최종 정책보고서 보기 (PDF)` 링크와 GitHub Pages 빌드는 별도 공개 검증본을 사용합니다.
+`scripts/generate_portfolio_pdf.py`는 정책 릴리스, KPI, VDI 민감도, 외부 운영자료 참고 집계를 읽어 두 경로에 같은 바이트의 PDF를 생성합니다. 시각 검토와 해시 확인을 통과한 공개 경로만 정책 화면의 `최종 정책보고서 보기 (PDF)`가 사용하며, 과거 보고서는 `archive/`에 보존합니다.
 
 ## 7. 테스트와 자동 검증
 
@@ -175,6 +178,8 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 | `docs/core/data_dictionary.md` | 데이터 필드와 안전한 해석 범위 |
 | `docs/reports/EDA_REPORT.md` | 탐색적 데이터 분석 결과 |
 | `docs/reports/DATA_QUALITY_REPORT.md` | 좌표·키·경로·산식 품질 판정 |
+| `docs/reports/EXTERNAL_VALIDITY_REPORT.md` | 구급 관제 공개 표본을 이용한 운영시간 참고 검증과 한계 |
+| `docs/reports/INTERVIEW_5MIN_GUIDE.md` | 방법·한계·개인 기여를 설명하는 5분 면접 자료 |
 | `docs/core/kpi.md` | 정적 분석과 외부 동적 원천을 구분한 KPI 운영 기준 |
 
 ## 9. 저장소에 두지 않는 파일

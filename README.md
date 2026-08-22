@@ -2,7 +2,7 @@
 
 시민용 응급의료기관 탐색과 대구 150개 행정동의 소아·고령층 의료 접근성 분석을 연결한 공공데이터 기반 웹서비스입니다. 시민에게는 현재 위치에서 확인할 응급의료기관 정보를 제공하고, 행정·정책 검토자에게는 실제 도로 이동시간과 보호가 필요한 인구를 함께 고려한 취약지역·정책 후보 비교를 제공합니다.
 
-[서비스 바로가기](https://ssg-sak.github.io/golden-project/) · [정책분석 보고서](frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf) · [KPI 운영 보고서](docs/core/kpi.md) · [공개 데모 검증 보고서](docs/reports/DEMO_VALIDATION_REPORT_20260724.md)
+[서비스 바로가기](https://ssg-sak.github.io/golden-project/) · [정책분석 공식 PDF](frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf) · [5분 면접 설명 자료](docs/reports/INTERVIEW_5MIN_GUIDE.md) · [KPI 운영 보고서](docs/core/kpi.md)
 
 > 병상·진료·수용 정보는 조회 시점의 참고값입니다. 응급상황에서는 119·1339 또는 의료기관에 직접 확인해야 합니다.
 
@@ -27,6 +27,8 @@
 | 현재 분석 정본 | Release `2026-07-r1` · Population `2026.07` |
 
 코드와 문서 작성에는 생성형 AI를 보조적으로 활용했으며, 문제 정의·분석 방법 선택·결과 검토와 최종 내용에 대한 책임은 프로젝트 작성자에게 있습니다.
+
+이 프로젝트는 예측 정확도를 겨루는 AI 모델이 아니라, **공간분석·시설입지 최적화 기반 정책 의사결정 지원 프로젝트**입니다. K-Means는 1차 후보권 생성에, p-median·MCLP는 후보군 내부 조합 비교에 사용합니다.
 
 ## 3. 문제 정의와 대상 사용자
 
@@ -105,7 +107,7 @@
 
 ### 공개 판본 안내
 
-사이트의 정책분석 PDF는 보고서 내부 릴리스 `2026-07-18-r2`, 인구 2026.06을 기록한 고정 스냅샷입니다. 현재 README·KPI·대시보드는 2026-08-04 발행된 저장소 릴리스 `2026-07-r1`, 인구 2026.07을 기준으로 하므로 두 판본의 수치가 다를 수 있습니다. 과거 PDF를 덮어쓰지 않고 새 분석 결과를 별도 릴리스로 관리합니다.
+README·KPI·대시보드·서비스의 정책분석 PDF는 모두 Release `2026-07-r1`, Population `2026.07`을 정본으로 사용합니다. 이전 `2026-07-18-r2` PDF와 릴리스 JSON은 공개 기본 동선에서 제외하고 `archive/`에 보관합니다.
 
 ### 분석 흐름
 
@@ -142,7 +144,7 @@ flowchart LR
 
 ```text
 .
-├─ ai-model/       정책 분석·도로 접근성·릴리스 생성
+├─ ai-model/       정책 분석·도로 접근성·릴리스 생성(역사적 경로명)
 ├─ analysis/       EDA 노트북과 분석 산출물
 ├─ backend/        FastAPI 앱과 SQLite 조회·캐시 로직
 ├─ data/           원천·가공·정책 릴리스·데이터베이스
@@ -161,9 +163,9 @@ flowchart LR
 - 모드별 240개 민감도 조건과 5,100개 도로 경로의 완전성을 검증합니다.
 - 분석·백엔드·프론트엔드·E2E 검증 기록을 별도 문서로 보존합니다.
 - 저장된 도로 결과를 사용하는 오프라인 파이프라인으로 공개 분석본을 재현할 수 있습니다.
-- 최신 패키지 검증(2026-08-06) 기준 분석 테스트 16건, 백엔드 테스트 63건, 프론트엔드 테스트 33건을 통과했습니다.
+- 대구소방안전본부 공개 관제 표본 2,010행에서 구급차 출동→현장도착 400쌍을 재구성해 시간대별 분포를 점검했습니다.
 
-현재 판정은 **정적 정책분석·EDA·KPI 공유 가능 / 최신 운영정보 기반 판단은 조건부**입니다. 구체적인 검사 결과와 남은 품질 이슈는 [데이터 품질 보고서](docs/reports/DATA_QUALITY_REPORT.md)와 [최신 패키지 검증 보고서](PACKAGE_VALIDATION.md)를 참고하세요.
+현재 판정은 **정적 정책분석·EDA·KPI 공유 가능 / 실제 이송시간·최신 운영정보 기반 판단은 조건부**입니다. 외부 관제자료는 시간 변동 가능성의 보조 근거이며 사고 좌표·병원 목적지가 없어 행정동→병원 ETA를 직접 검증하지 않습니다. 구체적인 검사 결과는 [데이터 품질 보고서](docs/reports/DATA_QUALITY_REPORT.md), [외부 운영자료 참고 검증](docs/reports/EXTERNAL_VALIDITY_REPORT.md), [최신 패키지 검증 보고서](PACKAGE_VALIDATION.md)를 참고하세요.
 
 ## 10. 실행 방법
 
@@ -230,7 +232,7 @@ python -m pytest tests/ -q
 ### 개선 방향
 
 1. 데이터 수집 시각과 원천 상태를 화면에 더 명확히 표시하고 운영 로그 기반 최신성 KPI를 축적합니다.
-2. 교통 상황·시간대·요일별 ETA를 추가해 단일 시점 비교의 한계를 줄입니다.
+2. 현재 확보한 하루 구급 관제 표본을 넘어 사고 좌표·이송병원 또는 시간대·요일별 반복 ETA를 확보해 직접 오차 검증으로 확장합니다.
 3. 부지 비용, 의료 인력·장비, 재난·구급차 운영 조건을 포함한 다기준 후보 평가로 확장합니다.
 4. 실제 사용자 동선과 접근성 피드백을 수집해 시민 화면의 이해도와 오류 대응을 개선합니다.
 5. 지속적인 운영 데이터와 동시 편집·감사 로그가 요구될 때만 영속 데이터베이스와 인증 구조를 단계적으로 검토합니다.
@@ -243,5 +245,7 @@ python -m pytest tests/ -q
 - [데이터 사전](docs/core/data_dictionary.md)
 - [프로젝트 구조](docs/core/PROJECT_STRUCTURE.md)
 - [데이터 품질 보고서](docs/reports/DATA_QUALITY_REPORT.md)
+- [외부 운영자료 참고 검증](docs/reports/EXTERNAL_VALIDITY_REPORT.md)
+- [5분 면접 설명 자료](docs/reports/INTERVIEW_5MIN_GUIDE.md)
 - [최신 패키지 검증 보고서](PACKAGE_VALIDATION.md)
 - [공개 데모 검증 보고서](docs/reports/DEMO_VALIDATION_REPORT_20260724.md)

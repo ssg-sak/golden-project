@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "dataset_id": "15136291",
+    "dataset_name": "대구광역시_소방 구조구급 구급관제진행사항(출동대정보)",
+    "provider": "대구광역시 대구소방안전본부",
+    "source_url": "https://www.data.go.kr/data/15136291/fileData.do",
+    "source_download_url": "https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId=FILE_000000003186349&fileDetailSn=1&insertDataPrcus=N",
+    "license": "이용허락범위 제한 없음",
+    "source_encoding": "CP949",
+    "source_sha256": "e9549594d5a41f4e8aa18babe9c5177d4012671ac73d6610c5ded1c60069331d",
+    "source_date_min": "2024-08-01 00:00",
+    "source_date_max": "2024-08-01 23:58",
+    "analysis_scope": "구급차 출동보고부터 현장도착보고까지의 공개 표본 응답시간",
+    "direct_eta_validation": false
+  },
+  "data_quality": {
+    "source_row_count": 2010,
+    "ambulance_event_count": 878,
+    "ambulance_vehicle_count": 62,
+    "matched_pair_count": 400,
+    "unmatched_dispatch_count": 51,
+    "unmatched_arrival_count": 25,
+    "invalid_duration_count": 1,
+    "exact_duplicate_count": 0,
+    "missing_required_value_count": 0,
+    "same_minute_pair_count": 3,
+    "over_60_minute_pair_count": 1,
+    "match_rate_of_ambulance_arrivals_percent": 94.12
+  },
+  "overall": {
+    "count": 400,
+    "median_minutes": 4.0,
+    "mean_minutes": 5.54,
+    "p90_minutes": 10.0,
+    "minimum_minutes": 0.0,
+    "maximum_minutes": 85.0
+  },
+  "time_slots": {
+    "morning_peak": {
+      "count": 56,
+      "median_minutes": 5.0,
+      "mean_minutes": 5.32,
+      "p90_minutes": 8.0,
+      "minimum_minutes": 0.0,
+      "maximum_minutes": 20.0
+    },
+    "daytime": {
+      "count": 138,
+      "median_minutes": 5.0,
+      "mean_minutes": 6.15,
+      "p90_minutes": 10.0,
+      "minimum_minutes": 1.0,
+      "maximum_minutes": 85.0
+    },
+    "evening_peak": {
+      "count": 67,
+      "median_minutes": 5.0,
+      "mean_minutes": 6.27,
+      "p90_minutes": 11.4,
+      "minimum_minutes": 0.0,
+      "maximum_minutes": 18.0
+    }
+  },
+  "time_slot_median_range_minutes": 0.0,
+  "time_slot_p90_range_minutes": 3.4,
+  "interpretation": {
+    "supported": "세 주요 시간대의 중앙값은 같았지만 90백분위가 달라 상단 지연 분포의 시간대 차이를 탐색적으로 확인했다. 단일 시점 일반 차량 ETA는 시간 민감도 검증 없이 보편화할 수 없다.",
+    "not_supported": "사고 좌표·병원 목적지·환자 이송구간이 없어 행정동 중심점에서 병원까지의 Kakao ETA 오차나 후보 순위의 외부 타당성은 직접 검증하지 못한다."
+  }
+}

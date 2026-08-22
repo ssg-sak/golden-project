@@ -50,6 +50,8 @@
 | 원천 인구 | KOSIS 5세 구간 인구 | `data/raw/population/kosis_dong_5yr_population_202606.csv` | 486데이터행·2행 헤더 | 지역명 + 항목 | 원천 입력·CP949 |
 | 분석 인구 | 소아·고령 인구 파싱본 | `data/raw/population/daegu_population_real.csv` | 150행정동 | `동이름` | 검증 입력 |
 | 분석 인구 | 인구 원천 manifest | `data/raw/population/daegu_population_real.manifest.json` | 파일 1건 | `source_sha256` | 검증 메타데이터 |
+| 외부 운영 참고 | 대구 구급 관제 진행사항 | `data/raw/external/daegu_ems_dispatch_control_20240801.csv` | 차량 상태 이벤트 2,010행 | 차량명 + 관제내역 + 시간 | 원천 입력·CP949 |
+| 외부 운영 참고 | 구급차 응답시간 집계 | `data/validation/ems_response_time_reference_20240801.json` | 출동→현장도착 400쌍의 결정적 요약 | 시간대 키 | 보조 검증·정책 ETA 직접 검증 아님 |
 | 원천 수요 | 어린이집 | `data/raw/daegu_kindergartens.csv` | 992시설 | 명시적 PK 없음 | 원천 입력·CP949 |
 | 가공 수요 | 지오코딩 어린이집 | `data/processed/daegu_kindergartens_geocoded.csv` | 992시설 | 명시적 PK 없음 | 실험 입력 |
 | 외부 기초 | 대구 병·의원·약국 | `data/processed/daegu_medical_facilities.csv` | 5,647기관 | `암호화요양기호` | 별도 추출본·현행 정책 미사용 |
@@ -963,9 +965,10 @@ CSV의 `최근접병원`은 도로 ETA 기준이고 `최근접거리km`는 직�
 | 어린이집 | 현행 저장소에서 제공기관 미확정 | 확인 필요 | 출처·라이선스 모두 확인 필요 |
 | 어린이집 좌표 | OpenStreetMap Nominatim 지오코딩 | 개별 수집일 미확정 | 표시·캐시·재배포 조건 확인 필요 |
 | 도로 ETA | Kakao Mobility Directions API 캐시 | 릴리스 경로 수집 스냅샷 | API 약관상 저장·재배포 허용범위 확인 필요 |
+| 구급 관제 진행사항 | 대구광역시 대구소방안전본부·공공데이터포털 데이터셋 15136291 | 2024-08-01 하루 표본 | 이용허락범위 제한 없음; 원문 해시와 출처 URL 보존 |
 | 목업 데이터 | 프로젝트 스크립트, 난수 시드 42 | 생성 버전별 | 합성 자료임을 표시; 프로젝트 자체 라이선스 파일 없음 |
 
-## 15. 2026-07-31 문서화 점검 결과
+## 15. 2026-08-22 문서화 점검 결과
 
 | 검사 | 결과 | 판정·조치 |
 |---|---:|---|
@@ -978,6 +981,7 @@ CSV의 `최근접병원`은 도로 ETA 기준이고 `최근접거리km`는 직�
 | 최근접 기관명·주소 불일치 | 45/150 | 주소는 기관 정본에 이름 JOIN하여 조회 필요 |
 | 루트·배포 `priority_targets.json` 불일치 | 있음 | 둘 다 현행 정본에서 제외 |
 | `data/processed/daegu_er_hospitals.json` 규모 | 18기관 | 최종 25기관 정본 대신 사용 금지 |
-| `frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf` | 3,202,576바이트·20쪽 | 첨부 검증본 SHA-256 `A43ED0BD…AAB988D`와 일치; 자동 생성 포트폴리오와 분리해 관리 |
+| 구급 관제 원문·응답시간 집계 | 2,010행·400쌍 | 원문 SHA-256과 상태 전이 검증 통과; 사고 좌표·병원 목적지가 없어 직접 ETA 검증으로 사용 금지 |
+| `frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf` | 3,050,829바이트·13쪽 | 출력·공개 경로 SHA-256 `FC28064E…05F9AD8` 일치; 전체 페이지 렌더링 시각 검토 통과 |
 
 현재 발견된 이름·주소 불일치는 VDI와 도로 ETA 계산값 자체를 바꾸지는 않지만, 상세 화면에서 주소를 함께 표시하면 잘못된 기관 주소가 연결될 수 있다. 생성 단계에서 `nearest_hospital_address`도 도로 ETA 최근접 기관 기준으로 갱신하고 회귀 검사를 추가하는 것이 필요하다.
