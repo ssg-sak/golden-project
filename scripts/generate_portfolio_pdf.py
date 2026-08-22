@@ -1089,25 +1089,30 @@ def build_portfolio(
     )
     pdf.showPage()
 
-    # 13. Limits and interview flow
-    y = draw_header(pdf, "12 / HANDOFF", "검증된 범위 안에서 5분으로 설명합니다", 13)
+    # 13. Interpretation boundaries
+    y = draw_header(
+        pdf,
+        "12 / INTERPRETATION",
+        "정책 후보를 실행안이 아니라 검토 우선순위로 해석합니다",
+        13,
+    )
     column_width = (PAGE_WIDTH - MARGIN_X * 2 - 22) / 2
     pdf.setFillColor(PANEL)
     pdf.setStrokeColor(LINE)
     pdf.roundRect(MARGIN_X, y - 335, column_width, 335, 12, fill=1, stroke=1)
     pdf.setFillColor(INK)
     set_font(pdf, 15, bold=True)
-    pdf.drawString(MARGIN_X + 20, y - 32, "5분 면접 설명 흐름")
-    demo_steps = [
-        ("1", "시민 지도", "현재 위치 > 최근접 기관 > 전화·길찾기"),
-        ("2", "정책 지도", "취약지역 > VDI·ETA·취약인구"),
-        ("3", "후보 분석", "9개 후보 > p-median·15분 비교"),
-        ("4", "외부 참고", "구급차 400쌍·시간대 상단분포"),
-        ("5", "검증 근거", "5,100 경로·품질 보고서·테스트"),
-        ("6", "한계", "일반 차량 ETA·정적 릴리스·현장조사 필요"),
+    pdf.drawString(MARGIN_X + 20, y - 32, "공개 결과를 읽는 순서")
+    interpretation_steps = [
+        ("1", "분석 범위", "150개 행정동·25개 기관·9개 후보"),
+        ("2", "취약도", "VDI는 확정 순위가 아닌 1차 스크리닝"),
+        ("3", "후보 조합", "p-median·MCLP 목적함수별 대안 비교"),
+        ("4", "외부 참고", "구급차 400쌍의 시간대 상단분포"),
+        ("5", "검증 계약", "5,100 경로·해시·결정적 재생성"),
+        ("6", "후속 검토", "부지·인력·병상·실제 이송자료 확인"),
     ]
     step_y = y - 70
-    for number, title, note in demo_steps:
+    for number, title, note in interpretation_steps:
         pdf.setFillColor(BLUE)
         pdf.circle(MARGIN_X + 36, step_y + 4, 13, fill=1, stroke=0)
         pdf.setFillColor(WHITE)
@@ -1133,15 +1138,15 @@ def build_portfolio(
     pdf.roundRect(x_right, y - 335, column_width, 335, 12, fill=1, stroke=1)
     pdf.setFillColor(INK)
     set_font(pdf, 15, bold=True)
-    pdf.drawString(x_right + 20, y - 32, "반드시 함께 말할 한계")
+    pdf.drawString(x_right + 20, y - 32, "해석에서 제외해야 할 주장")
     draw_bullets(
         pdf,
         [
-            "ETA는 119 이송시간이 아니라 단일 수집 시점의 일반 차량 경로입니다.",
-            "병상·의료진·환자 수용 가능성과 실제 환자 흐름은 모델에 포함되지 않습니다.",
-            "p-median·MCLP는 안정 후보 9곳 안의 1~3개 조합 비교입니다.",
-            "병원 운영정보는 API로 갱신할 수 있지만 2026-07-18 이후 성공 기록은 확인되지 않았습니다.",
-            "후보는 현장조사 우선순위이며 확정 부지나 시설 신설안이 아닙니다.",
+            "일반 차량 ETA를 119 구급차의 실제 이송시간으로 해석하지 않습니다.",
+            "모델에 없는 병상·의료진·환자 수용 가능성을 충족했다고 보지 않습니다.",
+            "후보군 내부 정확해를 대구 전역의 전역 최적해로 표현하지 않습니다.",
+            "확인되지 않은 최신 병원 운영상태를 정적 릴리스가 보장한다고 보지 않습니다.",
+            "후보를 확정 부지·시설 신설안 또는 승인된 정책 효과로 표현하지 않습니다.",
         ],
         x_right + 20,
         y - 70,
@@ -1170,7 +1175,7 @@ def build_portfolio(
     pdf.drawCentredString(
         PAGE_WIDTH / 2,
         52,
-        "검증된 사실은 단정하고, 확인되지 않은 운영 상태는 명확히 제한합니다.",
+        "수치는 후보 비교 근거이며, 사업 승인 효과나 실제 이송성과를 의미하지 않습니다.",
     )
     pdf.showPage()
 

@@ -179,7 +179,6 @@ GitHub Actions의 CI는 커밋된 정책 정본의 계약과 결정성을 검증
 | `docs/reports/EDA_REPORT.md` | 탐색적 데이터 분석 결과 |
 | `docs/reports/DATA_QUALITY_REPORT.md` | 좌표·키·경로·산식 품질 판정 |
 | `docs/reports/EXTERNAL_VALIDITY_REPORT.md` | 구급 관제 공개 표본을 이용한 운영시간 참고 검증과 한계 |
-| `docs/reports/INTERVIEW_5MIN_GUIDE.md` | 방법·한계·개인 기여를 설명하는 5분 면접 자료 |
 | `docs/core/kpi.md` | 정적 분석과 외부 동적 원천을 구분한 KPI 운영 기준 |
 
 ## 9. 저장소에 두지 않는 파일
