@@ -7,7 +7,7 @@
 - 인구 기준월: 2026.07
 - 분석 계약: 행정동 150개·기준 기관 25개·후보 9개·도로 경로 5,100개·누락 0개
 - 공개 PDF: `frontend/public/data/reports/daegu-golden-time-policy-analysis-report.pdf`
-- PDF: 3,050,808바이트·13쪽·SHA-256 `944130D5F6399720F35D96342B21DA0852A2181F57B036BB1B7B36A9AE489059`
+- PDF: 논문식 검증본 Release `2026-07-18-r2`·Population `2026.06`·3,202,576바이트·20쪽·SHA-256 `A43ED0BDCCF0919416794060F984DD8A28CD25B045A3FE211A4CB4259AAB988D`
 
 현재 패키지는 **저장된 입력과 릴리스 범위에서 결정적으로 재생성·검증 가능**하다. 이는 코드·파일·산식·경로·해시의 내부 재현성 판정이며, 실제 환자 이송성과나 정책 효과의 외부 타당성을 100% 입증했다는 뜻은 아니다.
 
@@ -16,7 +16,7 @@
 | 범위 | 실행 명령 | 결과 |
 |---|---|---:|
 | Python 전체 | `backend\.venv\Scripts\python.exe -m pytest tests\ -q` | **105 passed** |
-| 프론트 단위 테스트 | `npm.cmd test --prefix frontend` | **35 passed / 9 files** |
+| 프론트 단위 테스트 | `npm.cmd test --prefix frontend` | **36 passed / 9 files** |
 | ESLint | `npm.cmd run lint --prefix frontend` | **통과** |
 | TypeScript | `npm.cmd run typecheck --prefix frontend` | **통과** |
 | 프로덕션 빌드 | `npm.cmd run build --prefix frontend` | **통과 / 630 modules** |
@@ -25,15 +25,16 @@
 | 외부 참고 집계 | `python scripts/external_validity_validation.py` | **재생성 성공** |
 | EDA 산출물 | `python scripts/generate_eda_portfolio.py` | **재생성 성공** |
 | EDA 노트북 | `python scripts/execute_eda_notebook.py --verify-committed-source` | **5개 코드 셀 실행·출력 검증** |
-| 정본 PDF | `python scripts/generate_portfolio_pdf.py` | **출력·공개본 바이트 동일** |
+| 공개 논문식 보고서 | 프론트 해시 회귀 검사·CI `sha256sum` | **고정 해시 통과** |
 
 ## 3. PDF·링크 검증
 
-- 생성 스크립트가 로컬 검토본과 서비스 공개본을 같은 바이트로 만든다.
-- 두 경로의 SHA-256은 `944130D5…E489059`로 일치한다.
-- 13쪽 전체를 PNG로 렌더링해 한글 깨짐, 잘림, 겹침, 빈 페이지가 없음을 확인했다.
+- 서비스 공개본은 Release `2026-07-18-r2`, Population `2026.06` 기준의 논문식 검증본으로 고정한다.
+- 공개본 SHA-256은 `A43ED0BD…AAB988D`이며 CI와 프론트 회귀 테스트가 이를 검사한다.
+- 20쪽 전체를 PNG로 렌더링해 한글 깨짐, 잘림, 겹침, 빈 페이지가 없음을 확인했다.
 - 프론트 테스트가 정책 화면의 공개 경로와 PDF 해시를 고정한다.
-- 이전 `2026-07-18-r2` PDF·릴리스는 `archive/`에 보존하고 기본 서비스 동선에서는 제외한다.
+- `scripts/generate_portfolio_pdf.py`의 13쪽 포트폴리오형 산출물은 로컬 `output/`에만 생성되며 공개 정책보고서 경로를 덮어쓰지 않는다.
+- README·KPI·대시보드는 Release `2026-07-r1`, Population `2026.07` 기준이므로 공개 PDF와의 기준월 차이를 README에 명시한다.
 
 ## 4. 외부 운영자료 참고 검증
 
