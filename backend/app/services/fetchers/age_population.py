@@ -6,13 +6,18 @@ import csv
 import hashlib
 import io
 import json
+import logging
 import re
+import time
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
 import httpx
+
+
+logger = logging.getLogger(__name__)
 
 
 MOIS_AGE_PAGE_URL = "https://jumin.mois.go.kr/ageStatMonth.do"
@@ -257,8 +262,10 @@ class AgePopulationClient:
         *,
         data: dict[str, str] | None = None,
         params: dict[str, str] | None = None,
+        context: str = "공식 자료 요청",
     ) -> httpx.Response:
         for attempt in range(1, self.max_attempts + 1):
+            started_at = time.monotonic()
             try:
                 response = await client.request(
                     method,
@@ -271,10 +278,22 @@ class AgePopulationClient:
             except httpx.HTTPStatusError as exc:
                 status_code = exc.response.status_code
                 retryable = status_code in {408, 429} or status_code >= 500
+                logger.warning(
+                    "%s: HTTP %s (%s, 시도 %s/%s, %.1f초)",
+                    context, status_code, method, attempt, self.max_attempts,
+                    time.monotonic() - started_at,
+                )
                 if not retryable or attempt == self.max_attempts:
+                    exc.add_note(f"{context}: HTTP {status_code}, {method}, 시도 {attempt}/{self.max_attempts}")
                     raise
-            except httpx.TransportError:
+            except httpx.TransportError as exc:
+                logger.warning(
+                    "%s: %s (%s, 시도 %s/%s, %.1f초)",
+                    context, type(exc).__name__, method, attempt, self.max_attempts,
+                    time.monotonic() - started_at,
+                )
                 if attempt == self.max_attempts:
+                    exc.add_note(f"{context}: {method}, 시도 {attempt}/{self.max_attempts}")
                     raise
 
             await asyncio.sleep(self.retry_delay_seconds * (2 ** (attempt - 1)))
@@ -290,16 +309,20 @@ class AgePopulationClient:
         }
         timeout = httpx.Timeout(self.timeout_seconds)
         async with httpx.AsyncClient(headers=headers, timeout=timeout, follow_redirects=True) as client:
-            await self._request(client, "GET", MOIS_AGE_PAGE_URL)
+            await self._request(client, "GET", MOIS_AGE_PAGE_URL, context="행안부 연령별 인구 페이지")
             for sigungu_code in DAEGU_SGG_CODES:
                 body = _request_body(source_month, sigungu_code)
-                await self._request(client, "POST", MOIS_AGE_PAGE_URL, data=body)
+                await self._request(
+                    client, "POST", MOIS_AGE_PAGE_URL, data=body,
+                    context=f"{source_month} {sigungu_code} 조회",
+                )
                 response = await self._request(
                     client,
                     "POST",
                     MOIS_AGE_CSV_URL,
                     params={"searchYearMonth": "month", "xlsStats": "1"},
                     data=body,
+                    context=f"{source_month} {sigungu_code} CSV 다운로드",
                 )
                 parsed_records.extend(parse_official_age_csv(response.content, source_month))
                 official_parts.append(_decode_official_csv(response.content))
