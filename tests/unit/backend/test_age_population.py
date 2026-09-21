@@ -142,3 +142,23 @@ def test_age_population_request_does_not_retry_permanent_client_error() -> None:
         asyncio.run(run())
 
     assert request_count == 1
+
+
+def test_age_population_request_records_final_timeout_context(caplog) -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectTimeout("connection timed out", request=request)
+
+    async def run() -> None:
+        population_client = AgePopulationClient(max_attempts=2, retry_delay_seconds=0)
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            await population_client._request(
+                client, "POST", "https://test.local",
+                context="202608 2711000000 CSV 다운로드",
+            )
+
+    with pytest.raises(httpx.ConnectTimeout) as caught:
+        asyncio.run(run())
+
+    assert "202608 2711000000 CSV 다운로드" in caught.value.__notes__[0]
+    assert "시도 2/2" in caught.value.__notes__[0]
+    assert len([record for record in caplog.records if "ConnectTimeout" in record.message]) == 2
