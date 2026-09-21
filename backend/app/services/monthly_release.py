@@ -518,7 +518,7 @@ async def run_monthly_release(
             previous_source_month=current_month,
             version=str(current_metadata.get("version") or "") or None,
             run_directory=str(run_directory),
-            message=type(exc).__name__,
+            message="; ".join((type(exc).__name__, *getattr(exc, "__notes__", []))),
         )
         _write_result(run_directory, result)
         return result
