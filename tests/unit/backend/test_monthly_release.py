@@ -144,6 +144,7 @@ def test_monthly_release_records_official_source_connection_failure(
         "connection failed",
         request=httpx.Request("GET", "https://example.test"),
     )
+    error.add_note("202607 2711000000 CSV 다운로드: POST, 시도 3/3")
 
     result = asyncio.run(
         monthly_release_module.run_monthly_release(
@@ -156,6 +157,7 @@ def test_monthly_release_records_official_source_connection_failure(
 
     assert result.state == "blocked"
     assert result.status_label == "공식 자료 확인 실패"
+    assert "2711000000 CSV 다운로드" in result.message
     assert (tmp_path / "connection-error" / "run_result.json").exists()
 
 
